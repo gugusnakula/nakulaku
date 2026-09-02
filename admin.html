@@ -2,119 +2,282 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin - Pusat Akun Nakula</title>
+<title>Panel Admin — Nakulaku</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+tailwind.config={theme:{extend:{
+colors:{wine:{50:'#FBF2F5',100:'#F7E1E8',200:'#EFC3D1',300:'#E19AB1',400:'#D06A8C',500:'#B9446C',600:'#A62C57',700:'#8C1D3C',800:'#771731',900:'#64142B',950:'#400A1B'},ink:'#202024'},
+fontFamily:{sans:['"Plus Jakarta Sans"','system-ui','sans-serif']},
+boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
+}}}
+</script>
 </head>
-<body class="bg-slate-100 min-h-screen p-4">
-<div class="max-w-4xl mx-auto">
-  <div class="flex justify-between items-center mb-4">
-    <h1 class="text-xl font-bold">🛠️ Admin Nakulaku</h1>
-    <div><a href="index.html" class="text-blue-600 text-sm mr-3">Beranda</a>
-    <button id="btn-logout" class="text-red-500 text-sm">Keluar</button></div>
-  </div>
-  <div id="no-access" class="hidden bg-red-50 text-red-600 p-4 rounded-lg">Akun Anda bukan admin.</div>
+<body class="bg-[#F7F4F5] font-sans text-ink">
 
-  <div id="admin-panel" class="hidden">
-    <div class="bg-white rounded-xl shadow p-4 mb-4">
-      <h2 class="font-semibold mb-2">➕ Tambah User</h2>
-      <div class="grid grid-cols-2 gap-2">
-        <input id="a-email" placeholder="Email" class="border rounded p-2">
-        <input id="a-pass" placeholder="Password awal" class="border rounded p-2">
-        <input id="a-nama" placeholder="Nama" class="border rounded p-2">
-        <input id="a-jab" placeholder="Jabatan" class="border rounded p-2">
-        <input id="a-ins" placeholder="Instansi" class="border rounded p-2">
-        <input id="a-role" placeholder="Role (guru / admin,narasumber)" class="border rounded p-2">
-      </div>
-      <button id="btn-add" class="mt-2 bg-blue-600 text-white rounded p-2 w-full">Simpan User</button>
-    </div>
-    <div class="bg-white rounded-xl shadow p-4">
-      <input id="search" placeholder="Cari nama / email / instansi…" class="border rounded p-2 w-full mb-3">
-      <div id="list" class="space-y-2"></div>
-    </div>
+<div id="no-access" class="hidden min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl shadow-card p-8 max-w-md text-center">
+    <i data-lucide="shield-alert" class="w-12 h-12 text-wine-700 mx-auto mb-3"></i>
+    <p class="font-extrabold text-lg">Akses Ditolak</p>
+    <p class="text-sm text-gray-500 mt-1">Akun Anda bukan admin.</p>
+    <a href="index.html" class="inline-block mt-4 bg-wine-800 text-white rounded-xl px-5 py-2 text-sm font-bold">Kembali</a>
   </div>
 </div>
 
-<div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4">
-  <div class="bg-white rounded-xl p-4 w-full max-w-md">
-    <h2 class="font-semibold mb-2">✏️ Edit User</h2>
-    <input id="e-nama" placeholder="Nama" class="border rounded p-2 w-full mb-2">
-    <input id="e-jab" placeholder="Jabatan" class="border rounded p-2 w-full mb-2">
-    <input id="e-ins" placeholder="Instansi" class="border rounded p-2 w-full mb-2">
-    <input id="e-role" placeholder="Role" class="border rounded p-2 w-full mb-2">
-    <select id="e-status" class="border rounded p-2 w-full mb-3">
-      <option value="active">active</option><option value="nonactive">nonactive</option>
-    </select>
-    <div class="flex gap-2">
-      <button id="btn-save" class="bg-blue-600 text-white rounded p-2 flex-1">Simpan</button>
-      <button id="btn-close" class="bg-slate-300 rounded p-2 flex-1">Batal</button>
+<div id="shell" class="hidden">
+  <div id="overlay" class="fixed inset-0 bg-black/40 z-30 hidden" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-72 md:w-64 bg-gradient-to-b from-wine-900 to-wine-950 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+    <div class="flex items-center gap-3 px-5 py-5 border-b border-white/10">
+      <div class="w-10 h-10 rounded-xl bg-wine-700 flex items-center justify-center"><i data-lucide="settings-2" class="w-5 h-5 text-white"></i></div>
+      <div><p class="text-white font-extrabold leading-tight">Nakulaku</p><p class="text-xs text-white/50">Panel Admin</p></div>
     </div>
+    <nav class="flex-1 px-3 py-4 space-y-1 text-[13px] font-semibold text-white/60">
+      <div class="nav active flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" data-page="approval" onclick="showPage('approval')"><i data-lucide="user-check" class="w-4 h-4"></i> Persetujuan <span id="b-pending" class="ml-auto hidden bg-amber-400 text-amber-950 text-[10px] px-2 py-0.5 rounded-full">0</span></div>
+      <div class="nav flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" data-page="users" onclick="showPage('users')"><i data-lucide="users" class="w-4 h-4"></i> Kelola User</div>
+      <div class="nav flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" data-page="logs" onclick="showPage('logs')"><i data-lucide="scroll-text" class="w-4 h-4"></i> Audit Log</div>
+      <div class="my-2 border-t border-white/10"></div>
+      <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" onclick="location.href='index.html'"><i data-lucide="home" class="w-4 h-4"></i> Pusat Akun</div>
+      <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" onclick="openAdd()"><i data-lucide="user-plus" class="w-4 h-4"></i> Tambah User</div>
+    </nav>
+    <div class="px-4 py-4 border-t border-white/10 flex items-center gap-3">
+      <div id="sb-avatar" class="w-9 h-9 rounded-full bg-wine-700 text-white flex items-center justify-center text-sm font-bold">?</div>
+      <div class="flex-1 min-w-0"><p id="sb-nama" class="text-sm text-white truncate">-</p><p id="sb-email" class="text-xs text-white/40 truncate">-</p></div>
+      <button onclick="auth.signOut()" class="text-white/40 hover:text-red-400"><i data-lucide="log-out" class="w-4 h-4"></i></button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="md:pl-64 flex flex-col min-h-screen">
+    <header class="bg-white shadow-sm sticky top-0 z-20 px-4 md:px-6 py-3 flex items-center gap-3">
+      <button class="md:hidden" onclick="openSidebar()"><i data-lucide="menu" class="w-6 h-6"></i></button>
+      <h2 id="page-title" class="font-extrabold text-lg">Persetujuan</h2>
+      <button onclick="reload()" class="ml-auto text-gray-400 hover:text-wine-700" title="Muat ulang"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
+    </header>
+
+    <main class="p-4 md:p-6 w-full max-w-6xl mx-auto space-y-5 pb-24 md:pb-8">
+
+      <!-- STATS -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Total User</p><p id="s-total" class="text-2xl font-extrabold text-wine-700">0</p></div>
+        <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Aktif</p><p id="s-active" class="text-2xl font-extrabold text-emerald-600">0</p></div>
+        <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Pending</p><p id="s-pending" class="text-2xl font-extrabold text-amber-500">0</p></div>
+        <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Nonaktif</p><p id="s-nonactive" class="text-2xl font-extrabold text-red-500">0</p></div>
+      </div>
+
+      <!-- PERSETUJUAN -->
+      <section id="page-approval" class="space-y-4">
+        <div id="pend-list" class="space-y-3"></div>
+      </section>
+
+      <!-- KELOLA USER -->
+      <section id="page-users" class="hidden space-y-4">
+        <div class="flex flex-col md:flex-row gap-3">
+          <div class="flex items-center bg-white rounded-xl px-4 py-2.5 shadow-card flex-1"><input id="search" oninput="renderUsers()" class="flex-1 outline-none text-sm bg-transparent" placeholder="Cari nama / email / instansi…"><i data-lucide="search" class="w-4 h-4 text-gray-400"></i></div>
+          <select id="filterStatus" onchange="renderUsers()" class="bg-white rounded-xl px-4 py-2.5 text-sm shadow-card outline-none">
+            <option value="all">Semua Status</option><option value="active">Aktif</option><option value="pending">Pending</option><option value="nonactive">Nonaktif</option><option value="rejected">Ditolak</option>
+          </select>
+        </div>
+        <!-- Desktop table -->
+        <div class="hidden md:block bg-white rounded-2xl shadow-card overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead><tr class="text-left text-gray-400 text-xs bg-gray-50"><th class="p-3">Nama</th><th class="p-3">Instansi</th><th class="p-3">Role</th><th class="p-3">PIN</th><th class="p-3">Status</th><th class="p-3 text-right">Aksi</th></tr></thead>
+            <tbody id="tbody-users"></tbody>
+          </table>
+        </div>
+        <!-- Mobile cards -->
+        <div id="m-users" class="md:hidden space-y-3"></div>
+      </section>
+
+      <!-- AUDIT LOG -->
+      <section id="page-logs" class="hidden">
+        <div id="log-list" class="bg-white rounded-2xl shadow-card divide-y divide-gray-50"></div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- MODAL EDIT -->
+<div id="mEdit" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-3xl p-6 w-full max-w-md">
+    <p class="font-extrabold mb-3">✏️ Edit User</p>
+    <input id="e-nama" placeholder="Nama" class="w-full border rounded-xl p-3 mb-2">
+    <input id="e-jab" placeholder="Jabatan" class="w-full border rounded-xl p-3 mb-2">
+    <input id="e-ins" placeholder="Instansi" class="w-full border rounded-xl p-3 mb-2">
+    <input id="e-role" placeholder="Role (pisahkan koma)" class="w-full border rounded-xl p-3 mb-2">
+    <select id="e-status" class="w-full border rounded-xl p-3 mb-4"><option value="active">active</option><option value="pending">pending</option><option value="nonactive">nonactive</option><option value="rejected">rejected</option></select>
+    <div class="flex gap-2"><button onclick="saveEdit()" class="flex-1 bg-wine-800 text-white rounded-xl py-2.5 font-bold">Simpan</button><button onclick="closeM('mEdit')" class="flex-1 bg-gray-100 rounded-xl py-2.5 font-bold">Batal</button></div>
+  </div>
+</div>
+
+<!-- MODAL PIN -->
+<div id="mPin" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-3xl p-6 w-full max-w-md">
+    <p class="font-extrabold mb-1">🔑 PIN User</p>
+    <p id="pin-email" class="text-xs text-gray-400 mb-3">-</p>
+    <div class="flex items-center gap-2 mb-3"><span class="text-xs text-gray-400 w-24">PIN saat ini</span><span id="pin-cur" class="font-extrabold tracking-widest">•••••</span><button onclick="toggleCur()" class="text-gray-400"><i id="pin-eye" data-lucide="eye" class="w-4 h-4"></i></button></div>
+    <div class="flex gap-2 mb-4">
+      <input id="pin-new" placeholder="PIN baru (5 digit)" maxlength="5" class="flex-1 border rounded-xl p-3">
+      <button onclick="genPin()" class="bg-gray-100 rounded-xl px-4 text-sm font-bold flex items-center gap-1"><i data-lucide="dices" class="w-4 h-4"></i> Acak</button>
+    </div>
+    <div class="flex gap-2"><button onclick="savePin()" class="flex-1 bg-wine-800 text-white rounded-xl py-2.5 font-bold">Simpan PIN</button><button onclick="closeM('mPin')" class="flex-1 bg-gray-100 rounded-xl py-2.5 font-bold">Batal</button></div>
+  </div>
+</div>
+
+<!-- MODAL APPROVE -->
+<div id="mApprove" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-3xl p-6 w-full max-w-md">
+    <p class="font-extrabold mb-1">✅ Setujui Pendaftaran</p>
+    <p id="ap-info" class="text-xs text-gray-400 mb-3">-</p>
+    <input id="ap-role" placeholder="Role (default: guru)" class="w-full border rounded-xl p-3 mb-2">
+    <div class="flex gap-2 mb-4"><input id="ap-pin" placeholder="PIN (5 digit)" maxlength="5" class="flex-1 border rounded-xl p-3"><button onclick="document.getElementById('ap-pin').value=genPin()" class="bg-gray-100 rounded-xl px-4 text-sm font-bold">Acak</button></div>
+    <div class="flex gap-2"><button onclick="doApprove()" class="flex-1 bg-emerald-600 text-white rounded-xl py-2.5 font-bold">Setujui</button><button onclick="doReject()" class="flex-1 bg-red-600 text-white rounded-xl py-2.5 font-bold">Tolak</button></div>
+    <button onclick="closeM('mApprove')" class="w-full mt-2 bg-gray-100 rounded-xl py-2.5 font-bold">Batal</button>
+  </div>
+</div>
+
+<!-- MODAL ADD -->
+<div id="mAdd" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-3xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <p class="font-extrabold mb-3">➕ Tambah User</p>
+    <input id="a-email" placeholder="Email" class="w-full border rounded-xl p-3 mb-2">
+    <input id="a-pass" placeholder="Password awal" class="w-full border rounded-xl p-3 mb-2">
+    <input id="a-nama" placeholder="Nama" class="w-full border rounded-xl p-3 mb-2">
+    <input id="a-jab" placeholder="Jabatan" class="w-full border rounded-xl p-3 mb-2">
+    <input id="a-ins" placeholder="Instansi" class="w-full border rounded-xl p-3 mb-2">
+    <input id="a-role" placeholder="Role (default: guru)" class="w-full border rounded-xl p-3 mb-2">
+    <input id="a-pin" placeholder="PIN (kosongkan utk acak)" maxlength="5" class="w-full border rounded-xl p-3 mb-4">
+    <div class="flex gap-2"><button onclick="doAdd()" class="flex-1 bg-wine-800 text-white rounded-xl py-2.5 font-bold">Simpan</button><button onclick="closeM('mAdd')" class="flex-1 bg-gray-100 rounded-xl py-2.5 font-bold">Batal</button></div>
   </div>
 </div>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyDaTXg2_oaKNYjJ0HxSGa9qXPQQ7VK0uDs",
-  authDomain: "nakulaku-ekosistem.firebaseapp.com",
-  projectId: "nakulaku-ekosistem",
-  storageBucket: "nakulaku-ekosistem.firebasestorage.app",
-  messagingSenderId: "672296906494",
-  appId: "1:672296906494:web:2e90334b9d3136a4917faf"
-};
-firebase.initializeApp(firebaseConfig);
-firebase.initializeApp(firebaseConfig,'secondary');
+const firebaseConfig={apiKey:"AIzaSyDaTXg2_oaKNYjJ0HxSGa9qXPQQ7VK0uDs",authDomain:"nakulaku-ekosistem.firebaseapp.com",projectId:"nakulaku-ekosistem",storageBucket:"nakulaku-ekosistem.firebasestorage.app",messagingSenderId:"672296906494",appId:"1:672296906494:web:2e90334b9d3136a4917faf"};
+firebase.initializeApp(firebaseConfig); firebase.initializeApp(firebaseConfig,'secondary');
 const auth=firebase.auth(), db=firebase.firestore(), sec=firebase.app('secondary').auth();
 const $=id=>document.getElementById(id);
-let ALL=[], editEmail=null;
+let ALL=[], curEmail=null, curPin='';
+
+function showToast(m,t='success'){const ic={success:'check-circle-2',error:'x-circle',info:'info'};const bg={success:'bg-emerald-600',error:'bg-red-600',info:'bg-wine-800'};const e=document.createElement('div');e.className=`${bg[t]} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 fixed bottom-5 left-1/2 -translate-x-1/2 z-[60]`;e.innerHTML=`<i data-lucide="${ic[t]}" class="w-5 h-5"></i><span class="text-sm font-bold">${m}</span>`;document.body.appendChild(e);lucide.createIcons();setTimeout(()=>{e.style.opacity='0';e.style.transition='.4s';setTimeout(()=>e.remove(),400)},2600);}
 
 auth.onAuthStateChanged(async u=>{
-  if(!u){ location.href='index.html'; return; }
-  const doc=await db.collection('users').doc(u.email).get();
-  const role=doc.exists?(doc.data().role||''):'';
-  if(!role.includes('admin')){ $('no-access').classList.remove('hidden'); return; }
-  $('admin-panel').classList.remove('hidden'); load();
+  if(!u){location.href='index.html';return;}
+  const d=await db.collection('users').doc(u.email).get();
+  const role=d.exists?(d.data().role||''):'';
+  if(!role.includes('admin')){$('no-access').classList.remove('hidden');lucide.createIcons();return;}
+  $('sb-nama').textContent=d.exists?d.data().nama:u.email; $('sb-email').textContent=u.email; $('sb-avatar').textContent=(d.data().nama||u.email).split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  $('shell').classList.remove('hidden');
+  await reload();
+  lucide.createIcons();
 });
 
-async function load(){
-  const s=await db.collection('users').get();
-  ALL=s.docs.map(d=>({email:d.id,...d.data()})); render();
-}
-function render(){
-  const q=($('search').value||'').toLowerCase();
-  $('list').innerHTML=ALL.filter(u=>(u.nama+u.email+u.instansi+u.role).toLowerCase().includes(q))
-   .map(u=>`<div class="border rounded p-2 flex justify-between items-center text-sm">
-     <div><b>${u.nama||u.email}</b> <span class="text-xs text-slate-500">(${u.role||'-'})</span><br>
-     <span class="text-xs">${u.email} • ${u.instansi||'-'} • ${u.status==='active'?'🟢':'🔴'}</span></div>
-     <div class="flex gap-1">
-       <button onclick="openEdit('${u.email}')" class="bg-blue-100 text-blue-700 rounded px-2 py-1">Edit</button>
-       <button onclick="resetPw('${u.email}')" class="bg-yellow-100 text-yellow-700 rounded px-2 py-1">Reset PW</button>
-     </div></div>`).join('');
-}
-$('search').oninput=render;
+async function loadUsers(){const s=await db.collection('users').get();ALL=s.docs.map(x=>({email:x.id,...x.data()}));}
+async function loadLogs(){const s=await db.collection('audit_logs').orderBy('waktu','desc').limit(50).get();return s.docs.map(x=>x.data());}
+async function reload(){await loadUsers();renderStats();renderPending();renderUsers();renderLogs();}
 
-$('btn-add').onclick=async()=>{
-  const em=$('a-email').value.trim().toLowerCase();
-  try{
-    await sec.createUserWithEmailAndPassword(em,$('a-pass').value); await sec.signOut();
-    await db.collection('users').doc(em).set({email:em,pin:'',nama:$('a-nama').value,jabatan:$('a-jab').value,instansi:$('a-ins').value,role:$('a-role').value||'guru',status:'active'});
-    alert('User dibuat ✅'); load();
-  }catch(e){ alert('Gagal: '+e.message); }
-};
-function openEdit(em){
-  editEmail=em; const u=ALL.find(x=>x.email===em);
-  $('e-nama').value=u.nama||''; $('e-jab').value=u.jabatan||''; $('e-ins').value=u.instansi||'';
-  $('e-role').value=u.role||''; $('e-status').value=u.status||'active';
-  $('modal').classList.remove('hidden'); $('modal').classList.add('flex');
+function renderStats(){
+  $('s-total').textContent=ALL.length;
+  $('s-active').textContent=ALL.filter(u=>(u.status||'active')==='active').length;
+  const p=ALL.filter(u=>u.status==='pending').length;
+  $('s-pending').textContent=p;
+  $('s-nonactive').textContent=ALL.filter(u=>u.status==='nonactive').length;
+  $('b-pending').textContent=p; $('b-pending').classList.toggle('hidden',p===0);
 }
-$('btn-close').onclick=()=>{ $('modal').classList.add('hidden'); $('modal').classList.remove('flex'); };
-$('btn-save').onclick=async()=>{
-  await db.collection('users').doc(editEmail).update({nama:$('e-nama').value,jabatan:$('e-jab').value,instansi:$('e-ins').value,role:$('e-role').value,status:$('e-status').value});
-  $('btn-close').onclick(); load();
-};
-function resetPw(em){ auth.sendPasswordResetEmail(em).then(()=>alert('Email reset terkirim ✅')).catch(e=>alert(e.message)); }
-$('btn-logout').onclick=()=>auth.signOut();
+function pill(s){s=s||'active';const m={active:['bg-emerald-100 text-emerald-700','AKTIF'],pending:['bg-amber-100 text-amber-700','PENDING'],nonactive:['bg-red-100 text-red-600','NONAKTIF'],rejected:['bg-gray-200 text-gray-500','DITOLAK']};const[c,l]=m[s]||m.active;return `<span class="text-[10px] font-extrabold px-2 py-1 rounded-full ${c}">${l}</span>`;}
+
+function renderPending(){
+  const P=ALL.filter(u=>u.status==='pending');
+  $('pend-list').innerHTML=P.length?P.map(u=>`
+    <div class="bg-white rounded-2xl shadow-card p-4 flex flex-col md:flex-row md:items-center gap-3 border-l-4 border-amber-400">
+      <div class="flex-1"><p class="font-bold">${u.nama||u.email}</p><p class="text-xs text-gray-400">${u.email}</p><p class="text-xs text-gray-500 mt-1">${u.jabatan||'-'} • ${u.instansi||'-'}</p></div>
+      <button onclick="openApprove('${u.email}')" class="bg-wine-800 text-white rounded-xl px-4 py-2 text-sm font-bold">Proses</button>
+    </div>`).join('')
+   :`<div class="bg-white rounded-2xl shadow-card p-8 text-center text-gray-400"><i data-lucide="inbox" class="w-10 h-10 mx-auto mb-2"></i>Tidak ada pendaftaran menunggu.</div>`;
+  lucide.createIcons();
+}
+
+function filtered(){const q=($('search').value||'').toLowerCase();const st=$('filterStatus').value;
+  return ALL.filter(u=>((u.nama||'')+' '+u.email+' '+(u.instansi||'')+' '+(u.role||'')).toLowerCase().includes(q)&&(st==='all'||(u.status||'active')===st));}
+
+function actions(u){return `
+  <button onclick="openEdit('${u.email}')" class="text-blue-600" title="Edit"><i data-lucide="pen-line" class="w-4 h-4"></i></button>
+  <button onclick="openPin('${u.email}')" class="text-wine-700" title="PIN"><i data-lucide="key-round" class="w-4 h-4"></i></button>
+  <button onclick="resetPw('${u.email}')" class="text-amber-600" title="Reset PW"><i data-lucide="mail" class="w-4 h-4"></i></button>
+  <button onclick="toggleStatus('${u.email}')" class="${(u.status||'active')==='active'?'text-red-500':'text-emerald-600'}" title="Status"><i data-lucide="${(u.status||'active')==='active'?'user-x':'user-check'}" class="w-4 h-4"></i></button>`;}
+
+function renderUsers(){
+  const F=filtered();
+  $('tbody-users').innerHTML=F.map(u=>`<tr class="border-t border-gray-50">
+    <td class="p-3"><p class="font-bold">${u.nama||u.email}</p><p class="text-xs text-gray-400">${u.email}</p></td>
+    <td class="p-3 text-gray-500">${u.instansi||'-'}</td>
+    <td class="p-3 text-gray-500">${u.role||'-'}</td>
+    <td class="p-3">${u.pin?'✅':'—'}</td>
+    <td class="p-3">${pill(u.status)}</td>
+    <td class="p-3"><div class="flex justify-end gap-2">${actions(u)}</div></td></tr>`).join('');
+  $('m-users').innerHTML=F.map(u=>`<div class="bg-white rounded-2xl shadow-card p-4">
+    <div class="flex justify-between items-start"><div><p class="font-bold">${u.nama||u.email}</p><p class="text-xs text-gray-400">${u.email}</p></div>${pill(u.status)}</div>
+    <p class="text-xs text-gray-500 mt-1">${u.jabatan||'-'} • ${u.instansi||'-'}</p>
+    <div class="flex gap-3 mt-3">${actions(u)}</div></div>`).join('');
+  lucide.createIcons();
+}
+
+async function renderLogs(){
+  const L=await loadLogs();
+  $('log-list').innerHTML=L.length?L.map(l=>`<div class="p-4 flex items-center gap-3 text-sm">
+    <span class="w-8 h-8 rounded-lg bg-wine-100 text-wine-700 flex items-center justify-center"><i data-lucide="history" class="w-4 h-4"></i></span>
+    <div class="flex-1"><p class="font-bold">${l.aksi} <span class="text-gray-400 font-normal">→ ${l.target}</span></p><p class="text-xs text-gray-400">${l.detail||''} • oleh ${l.admin||'-'}</p></div>
+    <span class="text-xs text-gray-400">${fmtT(l.waktu)}</span></div>`).join('')
+  :`<div class="p-8 text-center text-gray-400">Belum ada log.</div>`;
+  lucide.createIcons();
+}
+function fmtT(t){if(!t)return'-';const d=t.toDate?t.toDate():new Date(t);return d.toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});}
+
+async function log(aksi,target,detail){await db.collection('audit_logs').add({waktu:firebase.firestore.FieldValue.serverTimestamp(),admin:auth.currentUser.email,aksi,target,detail});}
+
+// ---- Modal helpers ----
+function openM(id){$(id).classList.remove('hidden');$(id).classList.add('flex');}
+function closeM(id){$(id).classList.add('hidden');$(id).classList.remove('flex');}
+
+// ---- Edit ----
+function openEdit(em){curEmail=em;const u=ALL.find(x=>x.email===em);$('e-nama').value=u.nama||'';$('e-jab').value=u.jabatan||'';$('e-ins').value=u.instansi||'';$('e-role').value=u.role||'';$('e-status').value=u.status||'active';openM('mEdit');}
+async function saveEdit(){await db.collection('users').doc(curEmail).update({nama:$('e-nama').value,jabatan:$('e-jab').value,instansi:$('e-ins').value,role:$('e-role').value,status:$('e-status').value});await log('EDIT_USER',curEmail,'Profil diubah');closeM('mEdit');showToast('User diperbarui ✅');reload();}
+
+// ---- PIN ----
+function genPin(){let p;do{p=String(Math.floor(10000+Math.random()*90000));}while(ALL.some(u=>u.pin===p));return p;}
+function openPin(em){curEmail=em;curPin=(ALL.find(x=>x.email===em).pin||'');$('pin-email').textContent=em;$('pin-cur').textContent='•••••';$('pin-new').value='';openM('mPin');}
+function toggleCur(){$('pin-cur').textContent=$('pin-cur').textContent==='•••••'?(curPin||'-'):'•••••';}
+async function savePin(){const p=$('pin-new').value.trim();if(!/^\d{5}$/.test(p))return showToast('PIN harus 5 digit','error');if(ALL.some(u=>u.pin===p&&u.email!==curEmail))return showToast('PIN sudah dipakai user lain','error');await db.collection('users').doc(curEmail).update({pin:p,pinUpdatedAt:new Date().toISOString(),pinUpdatedBy:auth.currentUser.email});await log('SET_PIN',curEmail,'PIN diubah admin');closeM('mPin');showToast('PIN disimpan ✅');reload();}
+
+// ---- Status / Reset PW ----
+async function toggleStatus(em){const u=ALL.find(x=>x.email===em);const ns=(u.status||'active')==='active'?'nonactive':'active';await db.collection('users').doc(em).update({status:ns});await log(ns==='active'?'AKTIFKAN':'NONAKTIFKAN',em,'Status diubah');showToast('Status diperbarui ✅');reload();}
+async function resetPw(em){try{await auth.sendPasswordResetEmail(em);await log('RESET_PW',em,'Email reset dikirim');showToast('Email reset terkirim ✅');}catch(e){showToast('Gagal: '+e.message,'error');}}
+
+// ---- Approve ----
+function openApprove(em){curEmail=em;const u=ALL.find(x=>x.email===em);$('ap-info').textContent=u.nama+' • '+u.email;$('ap-role').value=(u.role==='calon'||!u.role)?'guru':u.role;$('ap-pin').value=genPin();openM('mApprove');}
+async function doApprove(){const p=$('ap-pin').value.trim();if(!/^\d{5}$/.test(p))return showToast('PIN harus 5 digit','error');if(ALL.some(u=>u.pin===p&&u.email!==curEmail))return showToast('PIN duplikat','error');await db.collection('users').doc(curEmail).update({status:'active',role:$('ap-role').value||'guru',pin:p,approvedAt:new Date().toISOString(),approvedBy:auth.currentUser.email});await log('APPROVE',curEmail,'Pendaftaran disetujui');closeM('mApprove');showToast('User disetujui ✅');reload();}
+async function doReject(){await db.collection('users').doc(curEmail).update({status:'rejected'});await log('REJECT',curEmail,'Pendaftaran ditolak');closeM('mApprove');showToast('Ditolak','info');reload();}
+
+// ---- Add ----
+function openAdd(){$('a-pin').value='';openM('mAdd');}
+async function doAdd(){const em=$('a-email').value.trim().toLowerCase();const pw=$('a-pass').value;let pin=$('a-pin').value.trim()||genPin();
+  if(!em||!pw)return showToast('Email & password wajib','error');
+  if(!/^\d{5}$/.test(pin))return showToast('PIN 5 digit','error');
+  if(ALL.some(u=>u.pin===pin))return showToast('PIN duplikat','error');
+  try{await sec.createUserWithEmailAndPassword(em,pw);await sec.signOut();
+    await db.collection('users').doc(em).set({email:em,pin:pin,nama:$('a-nama').value,jabatan:$('a-jab').value,instansi:$('a-ins').value,role:$('a-role').value||'guru',status:'active',sumber:'admin'});
+    await log('ADD_USER',em,'User dibuat admin');closeM('mAdd');showToast('User dibuat ✅');reload();
+  }catch(e){showToast('Gagal: '+e.message,'error');}}
+
+// ---- Nav ----
+function showPage(n){['approval','users','logs'].forEach(x=>$('page-'+x).classList.toggle('hidden',x!==n));document.querySelectorAll('.nav[data-page]').forEach(x=>{const on=x.dataset.page===n;x.classList.toggle('active',on);x.classList.toggle('bg-white/10',on);x.classList.toggle('text-white',on);});$('page-title').textContent={approval:'Persetujuan',users:'Kelola User',logs:'Audit Log'}[n];closeSidebar();}
+function openSidebar(){$('sidebar').classList.remove('-translate-x-full');$('overlay').classList.remove('hidden');}
+function closeSidebar(){$('sidebar').classList.add('-translate-x-full');$('overlay').classList.add('hidden');}
+lucide.createIcons();
 </script>
 </body>
 </html>
