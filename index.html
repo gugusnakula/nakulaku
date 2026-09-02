@@ -1,133 +1,179 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pusat Akun Nakula - Ekosistem Gugus Nakula</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <style>
-    body { font-family: system-ui, -apple-system, sans-serif; }
-    .hidden { display: none !important; }
-  </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pusat Akun Nakula</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+tailwind.config={theme:{extend:{
+colors:{wine:{50:'#FBF2F5',100:'#F7E1E8',200:'#EFC3D1',300:'#E19AB1',400:'#D06A8C',500:'#B9446C',600:'#A62C57',700:'#8C1D3C',800:'#771731',900:'#64142B',950:'#400A1B'},ink:'#202024'},
+fontFamily:{sans:['"Plus Jakarta Sans"','system-ui','sans-serif']},
+boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
+}}}
+</script>
 </head>
-<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-[#F7F4F5] font-sans text-ink">
 
-  <!-- Layar Login -->
-  <div id="login-screen" class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
-    <div class="text-center mb-6">
-      <h1 class="text-2xl font-bold text-slate-800">Pusat Akun Nakula</h1>
-      <p class="text-sm text-slate-500">Ekosistem Digital Gugus Nakula</p>
-    </div>
-    <div id="error-msg" class="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-4 hidden"></div>
-    <input id="email" type="email" placeholder="Email" class="w-full border border-slate-300 rounded-lg p-3 mb-3 focus:ring-2 focus:ring-blue-500 outline-none">
-    <input id="password" type="password" placeholder="Password" class="w-full border border-slate-300 rounded-lg p-3 mb-4 focus:ring-2 focus:ring-blue-500 outline-none">
-    <button id="btn-login" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg p-3 transition">Masuk</button>
-    <p class="text-xs text-center text-slate-400 mt-4">Password awal: <b>PIN Anda + "nk"</b><br>(Contoh: 81101nk)</p>
+<!-- ========== LOGIN ========== -->
+<div id="login-screen" class="min-h-screen bg-gradient-to-b from-wine-800 to-wine-700 flex items-center justify-center p-4 relative overflow-hidden">
+  <svg class="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 400 300" fill="none"><path d="M-20 220 C120 140,260 260,420 120" stroke="white" stroke-width="1.5"/><path d="M-20 120 C140 40,240 180,420 60" stroke="white"/></svg>
+  <div class="relative bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md">
+    <div class="w-12 h-12 rounded-2xl bg-wine-700 flex items-center justify-center mx-auto mb-3"><i data-lucide="graduation-cap" class="w-6 h-6 text-white"></i></div>
+    <h1 class="text-2xl font-extrabold text-center">Pusat Akun Nakula</h1>
+    <p class="text-sm text-gray-500 text-center mb-6">Ekosistem Digital Gugus Nakula</p>
+    <div id="login-error" class="hidden bg-red-50 text-red-600 text-sm rounded-xl p-3 mb-3"></div>
+    <input id="li-email" type="email" placeholder="Email" class="w-full border border-gray-200 rounded-xl p-3 mb-3 focus:ring-2 focus:ring-wine-500 outline-none">
+    <input id="li-pass" type="password" placeholder="Password" class="w-full border border-gray-200 rounded-xl p-3 mb-2 focus:ring-2 focus:ring-wine-500 outline-none">
+    <div class="text-right mb-4"><button onclick="forgot()" class="text-xs text-wine-600 hover:underline">Lupa password?</button></div>
+    <button id="btn-login" class="w-full bg-wine-800 hover:bg-wine-900 text-white font-bold rounded-xl p-3 flex items-center justify-center gap-2"><i data-lucide="log-in" class="w-4 h-4"></i> Masuk</button>
+    <p class="text-xs text-center text-gray-400 mt-4">Password awal: <b>PIN + "nk"</b> (contoh 81101nk)</p>
   </div>
+</div>
 
-  <!-- Layar Dashboard -->
-  <div id="dashboard-screen" class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md hidden">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-xl font-bold text-slate-800">Selamat Datang!</h2>
-      <button id="btn-logout" class="text-red-500 text-sm font-medium hover:underline">Keluar</button>
+<!-- ========== APP SHELL ========== -->
+<div id="app-shell" class="hidden">
+  <div id="overlay" class="fixed inset-0 bg-black/40 z-30 hidden" onclick="closeSidebar()"></div>
+
+  <!-- Sidebar (desktop + drawer mobile) -->
+  <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-72 md:w-64 bg-gradient-to-b from-wine-900 to-wine-950 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+    <div class="flex items-center gap-3 px-5 py-5 border-b border-white/10">
+      <div class="w-10 h-10 rounded-xl bg-wine-700 flex items-center justify-center"><i data-lucide="graduation-cap" class="w-5 h-5 text-white"></i></div>
+      <div><p class="text-white font-extrabold leading-tight">Nakulaku</p><p class="text-xs text-white/50">Pusat Akun</p></div>
     </div>
-    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200">
-      <p class="text-lg font-semibold text-slate-800" id="user-name">-</p>
-      <p class="text-sm text-slate-600 mt-1" id="user-email">-</p>
-      <p class="text-xs mt-3 text-blue-600 font-medium" id="user-role">-</p>
-      <p class="text-xs text-slate-500" id="user-instansi">-</p>
+    <nav class="flex-1 px-3 py-4 space-y-1 text-[13px] font-semibold text-white/60">
+      <div class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" data-page="dashboard" onclick="showPage('dashboard')"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard</div>
+      <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" data-page="profil" onclick="showPage('profil')"><i data-lucide="id-card" class="w-4 h-4"></i> Profil Saya</div>
+      <div class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" data-page="keamanan" onclick="showPage('keamanan')"><i data-lucide="shield-check" class="w-4 h-4"></i> Keamanan</div>
+      <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl opacity-50 cursor-not-allowed"><i data-lucide="layout-grid" class="w-4 h-4"></i> Launcher <span class="ml-auto text-[9px] bg-white/10 px-1.5 py-0.5 rounded">SEGERA</span></div>
+      <div id="nav-admin" class="hidden nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer" onclick="location.href='admin.html'"><i data-lucide="settings-2" class="w-4 h-4"></i> Panel Admin</div>
+    </nav>
+    <div class="px-4 py-4 border-t border-white/10 flex items-center gap-3">
+      <div id="sb-avatar" class="w-9 h-9 rounded-full bg-wine-700 text-white flex items-center justify-center text-sm font-bold">?</div>
+      <div class="flex-1 min-w-0"><p id="sb-nama" class="text-sm text-white truncate">-</p><p id="sb-email" class="text-xs text-white/40 truncate">-</p></div>
+      <button onclick="doLogout()" class="text-white/40 hover:text-red-400"><i data-lucide="log-out" class="w-4 h-4"></i></button>
     </div>
-    
-    <div class="mt-6">
-      <p class="text-sm text-slate-500 mb-3 font-medium">Akses Aplikasi Ekosistem:</p>
-      <div class="grid grid-cols-2 gap-3">
-        <a href="/nakulaku/presensi/" class="bg-green-500 text-white text-center p-3 rounded-lg font-medium hover:bg-green-600 transition">Presensi</a>
-        <a href="/nakulaku/lms/" class="bg-purple-500 text-white text-center p-3 rounded-lg font-medium hover:bg-purple-600 transition">LMS</a>
-      </div>
-      <p class="text-xs text-slate-400 mt-4 text-center">*Aplikasi akan segera tersedia</p>
-    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="md:pl-64 flex flex-col min-h-screen">
+    <header class="bg-white shadow-sm sticky top-0 z-20 px-4 md:px-6 py-3 flex items-center gap-3">
+      <button class="md:hidden text-ink" onclick="openSidebar()"><i data-lucide="menu" class="w-6 h-6"></i></button>
+      <h2 id="page-title" class="font-extrabold text-lg">Dashboard</h2>
+      <span class="ml-auto hidden sm:flex items-center gap-1 text-xs font-bold text-wine-700 bg-wine-100 px-2.5 py-1 rounded-full"><i data-lucide="link-2" class="w-3 h-3"></i> SSO Aktif</span>
+      <div id="hd-avatar" class="w-8 h-8 rounded-full bg-wine-700 text-white flex items-center justify-center text-xs font-bold">?</div>
+    </header>
+
+    <main class="p-4 md:p-6 w-full max-w-6xl mx-auto space-y-5 pb-24 md:pb-8">
+
+      <!-- DASHBOARD -->
+      <section id="page-dashboard" class="space-y-5">
+        <div class="rounded-3xl bg-gradient-to-r from-wine-800 to-wine-600 text-white p-6 flex items-center gap-4 relative overflow-hidden">
+          <div id="d-avatar" class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-2xl font-extrabold">?</div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs uppercase tracking-widest text-wine-200">Selamat datang</p>
+            <h3 id="d-nama" class="text-xl font-extrabold truncate">-</h3>
+            <p id="d-instansi" class="text-sm text-wine-100 truncate">-</p>
+            <div id="d-roles" class="flex flex-wrap gap-1 mt-2"></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400 flex items-center gap-1"><i data-lucide="user-check" class="w-3.5 h-3.5"></i> Status Akun</p><p id="d-status" class="text-lg font-extrabold mt-1">-</p></div>
+          <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400 flex items-center gap-1"><i data-lucide="key-round" class="w-3.5 h-3.5"></i> PIN</p><p id="d-pin" class="text-lg font-extrabold mt-1">-</p></div>
+          <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400 flex items-center gap-1"><i data-lucide="briefcase" class="w-3.5 h-3.5"></i> Jabatan</p><p id="d-jabatan" class="text-lg font-extrabold mt-1 truncate">-</p></div>
+          <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400 flex items-center gap-1"><i data-lucide="school" class="w-3.5 h-3.5"></i> Instansi</p><p id="d-inst" class="text-lg font-extrabold mt-1 truncate">-</p></div>
+        </div>
+        <div class="bg-white rounded-2xl shadow-card p-5 border-l-4 border-wine-700">
+          <p class="font-bold flex items-center gap-2"><i data-lucide="info" class="w-4 h-4 text-wine-700"></i> Tentang Pusat Akun</p>
+          <p class="text-sm text-gray-600 mt-1">Pusat Akun adalah <b>induk identitas</b> seluruh aplikasi Nakulaku Ekosistem. Satu kali login, semua aplikasi otomatis mengenali Anda — <b>SSO Lite</b>.</p>
+        </div>
+      </section>
+
+      <!-- PROFIL -->
+      <section id="page-profil" class="hidden space-y-5">
+        <div class="bg-white rounded-2xl shadow-card p-5">
+          <div class="flex justify-between items-center mb-4"><p class="font-bold">Data Diri</p><button onclick="refreshProfile()" class="text-xs text-wine-600 flex items-center gap-1 hover:underline"><i data-lucide="refresh-cw" class="w-3 h-3"></i> Muat ulang</button></div>
+          <div class="grid md:grid-cols-2 gap-x-8 text-sm divide-y md:divide-y-0 divide-gray-100">
+            <div class="py-2 flex"><span class="w-28 text-gray-400">Nama</span><span id="p-nama" class="font-bold">-</span></div>
+            <div class="py-2 flex"><span class="w-28 text-gray-400">Email</span><span id="p-email" class="font-bold">-</span></div>
+            <div class="py-2 flex"><span class="w-28 text-gray-400">Jabatan</span><span id="p-jabatan">-</span></div>
+            <div class="py-2 flex"><span class="w-28 text-gray-400">Instansi</span><span id="p-instansi">-</span></div>
+            <div class="py-2 flex"><span class="w-28 text-gray-400">Role</span><span id="p-role" class="font-bold">-</span></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-3">Perubahan data diri dilakukan oleh <b>admin</b> untuk menjaga keabsahan.</p>
+        </div>
+      </section>
+
+      <!-- KEAMANAN -->
+      <section id="page-keamanan" class="hidden space-y-5">
+        <div class="grid lg:grid-cols-2 gap-5">
+          <div class="bg-white rounded-2xl shadow-card p-5">
+            <p class="font-bold flex items-center gap-2 mb-3"><i data-lucide="key-round" class="w-4 h-4 text-wine-700"></i> PIN Saya</p>
+            <div class="flex items-center gap-3"><span id="k-pin" class="text-2xl font-extrabold tracking-widest">•••••</span><button onclick="togglePin()" class="text-gray-400 hover:text-wine-600"><i id="k-eye" data-lucide="eye" class="w-5 h-5"></i></button></div>
+            <p class="text-xs text-gray-400 mt-2">PIN untuk akses aplikasi lama & referensi admin.</p>
+          </div>
+          <div class="bg-white rounded-2xl shadow-card p-5">
+            <p class="font-bold flex items-center gap-2 mb-3"><i data-lucide="lock-keyhole" class="w-4 h-4 text-wine-700"></i> Ganti Password</p>
+            <input id="pw-now" type="password" placeholder="Password saat ini" class="w-full border border-gray-200 rounded-xl p-3 mb-2">
+            <input id="pw-new" type="password" placeholder="Password baru (min. 6)" class="w-full border border-gray-200 rounded-xl p-3 mb-2">
+            <input id="pw-conf" type="password" placeholder="Ulangi password baru" class="w-full border border-gray-200 rounded-xl p-3 mb-3">
+            <button onclick="gantiPassword()" class="bg-wine-800 hover:bg-wine-900 text-white rounded-xl px-5 py-2 text-sm font-bold">Simpan</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
   </div>
+</div>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDaTXg2_oaKNYjJ0HxSGa9qXPQQ7VK0uDs",
-      authDomain: "nakulaku-ekosistem.firebaseapp.com",
-      projectId: "nakulaku-ekosistem",
-      storageBucket: "nakulaku-ekosistem.firebasestorage.app",
-      messagingSenderId: "672296906494",
-      appId: "1:672296906494:web:2e90334b9d3136a4917faf"
-    };
+<script>
+const firebaseConfig={apiKey:"AIzaSyDaTXg2_oaKNYjJ0HxSGa9qXPQQ7VK0uDs",authDomain:"nakulaku-ekosistem.firebaseapp.com",projectId:"nakulaku-ekosistem",storageBucket:"nakulaku-ekosistem.firebasestorage.app",messagingSenderId:"672296906494",appId:"1:672296906494:web:2e90334b9d3136a4917faf"};
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(), db=firebase.firestore();
+const $=id=>document.getElementById(id);
+let ME=null, pinShown=false;
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+function showToast(m,t='success'){const ic={success:'check-circle-2',error:'x-circle',info:'info'};const bg={success:'bg-emerald-600',error:'bg-red-600',info:'bg-wine-800'};const e=document.createElement('div');e.className=`${bg[t]} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 fixed bottom-5 left-1/2 -translate-x-1/2 z-50`;e.innerHTML=`<i data-lucide="${ic[t]}" class="w-5 h-5"></i><span class="text-sm font-bold">${m}</span>`;document.body.appendChild(e);lucide.createIcons();setTimeout(()=>{e.style.opacity='0';e.style.transition='.4s';setTimeout(()=>e.remove(),400)},2600);}
 
-    const loginScreen = document.getElementById('login-screen');
-    const dashScreen = document.getElementById('dashboard-screen');
-    const errorMsg = document.getElementById('error-msg');
+$('btn-login').onclick=async()=>{const e=$('li-email').value.trim(),p=$('li-pass').value;$('login-error').classList.add('hidden');try{await auth.signInWithEmailAndPassword(e,p);}catch(err){$('login-error').textContent='Email atau password salah.';$('login-error').classList.remove('hidden');}};
+function forgot(){const e=$('li-email').value.trim();if(!e)return showToast('Isi email dulu','info');auth.sendPasswordResetEmail(e).then(()=>showToast('Email reset terkirim ✅')).catch(()=>showToast('Gagal kirim reset','error'));}
 
-    // Pantau status login (Ini adalah jantung dari SSO Lite)
-    auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        loginScreen.classList.add('hidden');
-        dashScreen.classList.remove('hidden');
-        document.getElementById('user-email').innerText = user.email;
-        
-        // Ambil data profil dari Firestore
-        try {
-          const doc = await db.collection('users').doc(user.email).get();
-          if (doc.exists) {
-            const data = doc.data();
-            document.getElementById('user-name').innerText = data.nama || user.displayName || "User";
-            document.getElementById('user-role').innerText = "Role: " + (data.role || "-");
-            document.getElementById('user-instansi').innerText = data.instansi || "";
-          } else {
-            document.getElementById('user-name').innerText = user.displayName || "User";
-            document.getElementById('user-role').innerText = "Role: Belum diatur";
-          }
-        } catch (e) {
-          console.error("Gagal ambil profil:", e);
-          document.getElementById('user-name').innerText = user.displayName || "User";
-        }
-      } else {
-        loginScreen.classList.remove('hidden');
-        dashScreen.classList.add('hidden');
-      }
-    });
+auth.onAuthStateChanged(async u=>{
+  if(!u){$('app-shell').classList.add('hidden');$('login-screen').classList.remove('hidden');lucide.createIcons();return;}
+  ME=await loadProfile(u.email); renderAll(u);
+  $('login-screen').classList.add('hidden');$('app-shell').classList.remove('hidden');lucide.createIcons();
+});
 
-    // Aksi Login
-    document.getElementById('btn-login').addEventListener('click', async () => {
-      const email = document.getElementById('email').value.trim();
-      const pass = document.getElementById('password').value;
-      errorMsg.classList.add('hidden');
-      
-      if (!email || !pass) {
-        errorMsg.innerText = "Email dan Password wajib diisi!";
-        errorMsg.classList.remove('hidden');
-        return;
-      }
+async function loadProfile(email,force=false){const k='nk_profile_'+email;if(!force){const r=localStorage.getItem(k);if(r){const c=JSON.parse(r);if(Date.now()-c.t<5*60*1000)return c.data;}}const d=await db.collection('users').doc(email).get();const data=d.exists?d.data():{email};localStorage.setItem(k,JSON.stringify({t:Date.now(),data}));return data;}
+async function refreshProfile(){ME=await loadProfile(auth.currentUser.email,true);renderAll(auth.currentUser);showToast('Profil dimuat ulang ✅','info');}
 
-      try {
-        await auth.signInWithEmailAndPassword(email, pass);
-      } catch (e) {
-        let msg = "Login gagal. Periksa kembali email/password Anda.";
-        if (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
-          msg = "Email atau Password salah!";
-        } else if (e.code === 'auth/unauthorized-domain') {
-          msg = "Domain belum diizinkan di Firebase Console! (Cek langkah Authorized Domains)";
-        }
-        errorMsg.innerText = msg;
-        errorMsg.classList.remove('hidden');
-      }
-    });
+function initials(n){return (n||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();}
+function statusColor(s){return{active:'text-emerald-600',pending:'text-amber-600',nonactive:'text-red-600',rejected:'text-red-600'}[s]||'text-gray-500';}
 
-    // Aksi Logout
-    document.getElementById('btn-logout').addEventListener('click', () => {
-      auth.signOut();
-    });
-  </script>
+function renderAll(u){
+  const nama=ME.nama||u.displayName||u.email;
+  $('sb-nama').textContent=nama;$('sb-email').textContent=u.email;$('sb-avatar').textContent=initials(nama);$('hd-avatar').textContent=initials(nama);
+  $('d-avatar').textContent=initials(nama);$('d-nama').textContent=nama;$('d-instansi').textContent=ME.instansi||'-';
+  $('d-jabatan').textContent=ME.jabatan||'-';$('d-inst').textContent=ME.instansi||'-';
+  $('d-status').innerHTML=`<span class="${statusColor(ME.status)}">${(ME.status||'active').toUpperCase()}</span>`;
+  $('d-pin').textContent=ME.pin?'Aktif':'Belum ada';
+  $('d-roles').innerHTML=(ME.role||'').split(',').filter(Boolean).map(r=>`<span class="text-[11px] bg-white/20 px-2 py-0.5 rounded-full">${r.trim()}</span>`).join('');
+  $('p-nama').textContent=nama;$('p-email').textContent=u.email;$('p-jabatan').textContent=ME.jabatan||'-';$('p-instansi').textContent=ME.instansi||'-';$('p-role').textContent=ME.role||'-';
+  if((ME.role||'').includes('admin'))$('nav-admin').classList.remove('hidden');
+}
+
+function showPage(n){document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));$('page-'+n).classList.remove('hidden');document.querySelectorAll('.nav-item[data-page]').forEach(x=>{const on=x.dataset.page===n;x.classList.toggle('active',on);x.classList.toggle('bg-white/10',on);x.classList.toggle('text-white',on);});$('page-title').textContent={dashboard:'Dashboard',profil:'Profil Saya',keamanan:'Keamanan'}[n];closeSidebar();}
+function openSidebar(){$('sidebar').classList.remove('-translate-x-full');$('overlay').classList.remove('hidden');}
+function closeSidebar(){$('sidebar').classList.add('-translate-x-full');$('overlay').classList.add('hidden');}
+
+function togglePin(){pinShown=!pinShown;$('k-pin').textContent=pinShown?(ME.pin||'-'):'•••••';$('k-eye').setAttribute('data-lucide',pinShown?'eye-off':'eye');lucide.createIcons();}
+async function gantiPassword(){const c=$('pw-now').value,n=$('pw-new').value,f=$('pw-conf').value;if(n.length<6)return showToast('Minimal 6 karakter','error');if(n!==f)return showToast('Konfirmasi tidak sama','error');try{const cr=firebase.auth.EmailAuthProvider.credential(auth.currentUser.email,c);await auth.currentUser.reauthenticateWithCredential(cr);await auth.currentUser.updatePassword(n);['pw-now','pw-new','pw-conf'].forEach(i=>$(i).value='');showToast('Password diganti ✅');}catch(e){showToast('Password saat ini salah?','error');}}
+function doLogout(){auth.signOut();}
+lucide.createIcons();
+</script>
 </body>
 </html>
