@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presensi - Nakulaku</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="bg-slate-100 min-h-screen p-4">
+<div class="max-w-md mx-auto">
+
+  <div class="flex justify-between items-center mb-4">
+    <h1 class="text-xl font-bold flex items-center gap-2"><i data-lucide="clipboard-check" class="text-green-600"></i> Presensi</h1>
+    <a href="../index.html" class="text-blue-600 text-sm flex items-center gap-1"><i data-lucide="home" class="w-4 h-4"></i> Pusat Akun</a>
+  </div>
+
+  <div id="loading" class="bg-white rounded-xl shadow p-6 text-center text-slate-500">Memuat…</div>
+
+  <div id="form-box" class="hidden bg-white rounded-xl shadow p-5 space-y-3">
+    <div class="bg-green-50 border border-green-200 rounded-lg p-3">
+      <p class="font-semibold text-slate-800" id="u-nama">-</p>
+      <p class="text-xs text-slate-600" id="u-info">-</p>
+      <p class="text-xs mt-1 flex items-center gap-1" id="geo-status"><i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> Mencari lokasi…</p>
+    </div>
+
+    <input id="tempat" placeholder="Tempat Kegiatan" class="w-full border rounded-lg p-3">
+    <input id="materi" placeholder="Materi Kegiatan" class="w-full border rounded-lg p-3">
+    <select id="status" class="w-full border rounded-lg p-3">
+      <option value="Hadir Tepat">✅ Hadir Tepat</option>
+      <option value="Terlambat">⏰ Terlambat</option>
+      <option value="Izin">📩 Izin</option>
+    </select>
+    <input id="jenis-izin" placeholder="Jenis Izin (jika izin)" class="w-full border rounded-lg p-3 hidden">
+    <input id="foto" placeholder="Link Foto (Google Drive)" class="w-full border rounded-lg p-3">
+
+    <button id="btn-submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg p-3 flex items-center justify-center gap-2">
+      <i data-lucide="send" class="w-4 h-4"></i> Kirim Presensi
+    </button>
+  </div>
+</div>
+
+<!-- Confirm modal -->
+<div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-xl p-5 w-full max-w-sm text-center">
+    <i data-lucide="help-circle" class="w-10 h-10 mx-auto text-green-600 mb-2"></i>
+    <p class="font-semibold mb-1">Kirim Presensi?</p>
+    <p class="text-sm text-slate-500 mb-4">Pastikan data sudah benar. Presensi tidak dapat diubah setelah dikirim.</p>
+    <div class="flex gap-2">
+      <button id="m-batal" class="flex-1 bg-slate-200 rounded-lg p-2">Batal</button>
+      <button id="m-ya" class="flex-1 bg-green-600 text-white rounded-lg p-2">Ya, Kirim</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDaTXg2_oaKNYjJ0HxSGa9qXPQQ7VK0uDs",
+  authDomain: "nakulaku-ekosistem.firebaseapp.com",
+  projectId: "nakulaku-ekosistem",
+  storageBucket: "nakulaku-ekosistem.firebasestorage.app",
+  messagingSenderId: "672296906494",
+  appId: "1:672296906494:web:2e90334b9d3136a4917faf"
+};
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(), db=firebase.firestore();
+const $=id=>document.getElementById(id);
+let ME=null, KOORD='', MAPS='';
+
+// Toast (standar Nakulaku)
+function showToast(msg,type='success'){
+  const ic={success:'check-circle-2',error:'x-circle',info:'info'};
+  const bg={success:'bg-emerald-600',error:'bg-red-600',info:'bg-slate-800'};
+  const t=document.createElement('div');
+  t.className=`${bg[type]} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 fixed bottom-5 left-1/2 -translate-x-1/2 z-50`;
+  t.innerHTML=`<i data-lucide="${ic[type]}" class="w-5 h-5"></i><span class="text-sm font-medium">${msg}</span>`;
+  document.body.appendChild(t); lucide.createIcons();
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='.4s';setTimeout(()=>t.remove(),400)},2600);
+}
+
+// SSO: kalau belum login → lempar ke Pusat Akun
+auth.onAuthStateChanged(async u=>{
+  if(!u){ location.href='../index.html'; return; }
+  const doc=await db.collection('users').doc(u.email).get(); // 1 read
+  ME=doc.exists?doc.data():{email:u.email,nama:u.displayName};
+  $('u-nama').innerText=ME.nama||u.email;
+  $('u-info').innerText=(ME.jabatan||'')+' • '+(ME.instansi||'');
+  $('loading').classList.add('hidden'); $('form-box').classList.remove('hidden');
+  lucide.createIcons();
+});
+
+// Geolocation
+navigator.geolocation.getCurrentPosition(p=>{
+  KOORD=p.coords.latitude+','+p.coords.longitude;
+  MAPS='https://maps.google.com/?q='+KOORD;
+  $('geo-status').innerHTML='<i data-lucide="map-pin" class="w-3 h-3 text-green-600"></i> Lokasi terdeteksi';
+  lucide.createIcons();
+},()=>{ $('geo-status').innerHTML='⚠️ Lokasi tidak aktif (opsional)'; },{enableHighAccuracy:true,timeout:8000});
+
+$('status').onchange=e=> $('jenis-izin').classList.toggle('hidden', e.target.value!=='Izin');
+
+$('btn-submit').onclick=()=>{ $('modal').classList.remove('hidden'); $('modal').classList.add('flex'); };
+$('m-batal').onclick=()=>{ $('modal').classList.add('hidden'); $('modal').classList.remove('flex'); };
+$('m-ya').onclick=async()=>{
+  $('m-batal').onclick();
+  try{
+    await db.collection('presensi').add({ // 1 write
+      waktu_submit:new Date().toISOString(),
+      email:ME.email, nama:ME.nama||'', unit_kerja:ME.instansi||'', jabatan:ME.jabatan||'',
+      tempat_kegiatan:$('tempat').value, materi:$('materi').value,
+      status:$('status').value, jenis_izin:$('jenis-izin').value,
+      lokasi_terdeteksi:KOORD?'ya':'tidak', koordinat:KOORD, link_maps:MAPS, link_foto:$('foto').value,
+      tahun:new Date().getFullYear()
+    });
+    showToast('Presensi terkirim ✅');
+    ['tempat','materi','jenis-izin','foto'].forEach(i=>$(i).value='');
+  }catch(e){ showToast('Gagal: '+e.message,'error'); }
+};
+lucide.createIcons();
+</script>
+</body>
+</html>
