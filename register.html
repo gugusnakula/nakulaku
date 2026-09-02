@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daftar — Nakulaku</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+tailwind.config={theme:{extend:{
+colors:{wine:{50:'#FBF2F5',100:'#F7E1E8',200:'#EFC3D1',300:'#E19AB1',400:'#D06A8C',500:'#B9446C',600:'#A62C57',700:'#8C1D3C',800:'#771731',900:'#64142B',950:'#400A1B'},ink:'#202024'},
+fontFamily:{sans:['"Plus Jakarta Sans"','system-ui','sans-serif']},
+boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
+}}}
+</script>
+</head>
+<body class="bg-gradient-to-b from-wine-800 to-wine-700 min-h-screen font-sans text-ink relative overflow-hidden">
+<svg class="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 400 300" fill="none"><path d="M-20 220 C120 140,260 260,420 120" stroke="white" stroke-width="1.5"/><path d="M-20 120 C140 40,240 180,420 60" stroke="white"/></svg>
+
+<div class="relative max-w-md mx-auto p-4 py-8">
+
+  <!-- FORM -->
+  <div id="form-card" class="bg-white rounded-3xl shadow-2xl p-6 md:p-8">
+    <div class="w-12 h-12 rounded-2xl bg-wine-700 flex items-center justify-center mx-auto mb-3"><i data-lucide="user-plus" class="w-6 h-6 text-white"></i></div>
+    <h1 class="text-2xl font-extrabold text-center">Bergabung ke Nakulaku</h1>
+    <p class="text-sm text-gray-500 text-center mb-6">Isi data diri Anda. Akun akan ditinjau admin sebelum aktif.</p>
+
+    <div id="err" class="hidden bg-red-50 text-red-600 text-sm rounded-xl p-3 mb-3"></div>
+
+    <label class="text-xs font-bold text-gray-500">Nama Lengkap & Gelar</label>
+    <input id="f-nama" placeholder="Contoh: Arvi Dwi Utami, S.Pd" class="w-full border border-gray-200 rounded-xl p-3 mb-3 focus:ring-2 focus:ring-wine-500 outline-none">
+
+    <label class="text-xs font-bold text-gray-500">Email</label>
+    <input id="f-email" type="email" placeholder="nama@gmail.com" class="w-full border border-gray-200 rounded-xl p-3 mb-3 focus:ring-2 focus:ring-wine-500 outline-none">
+
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div><label class="text-xs font-bold text-gray-500">Password</label>
+      <input id="f-pass" type="password" placeholder="min. 6 karakter" class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-wine-500 outline-none"></div>
+      <div><label class="text-xs font-bold text-gray-500">Ulangi</label>
+      <input id="f-conf" type="password" placeholder="ulangi" class="w-full border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-wine-500 outline-none"></div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <div><label class="text-xs font-bold text-gray-500">Jabatan</label>
+        <select id="f-jab" class="w-full border border-gray-200 rounded-xl p-3 bg-white outline-none">
+          <option>Guru Kelas</option><option>Guru Agama</option><option>Guru PJOK</option><option>Kepala Sekolah</option><option>Operator</option><option>Lainnya</option>
+        </select></div>
+      <div><label class="text-xs font-bold text-gray-500">Instansi</label>
+        <select id="f-inst" onchange="toggleOther()" class="w-full border border-gray-200 rounded-xl p-3 bg-white outline-none">
+          <option>SD Negeri 1 Krisak</option><option>SD Negeri 1 Pare</option><option>SD Negeri 2 Keloran</option><option>SD Negeri 2 Krisak</option><option>SD Negeri 2 Pare</option><option>SD Negeri 3 Keloran</option><option>SD Negeri 3 Krisak</option><option>SD Negeri 4 Pare</option><option>SD Negeri Singodutan</option><option value="other">Lainnya…</option>
+        </select></div>
+    </div>
+    <input id="f-inst-other" placeholder="Tulis nama instansi" class="hidden w-full border border-gray-200 rounded-xl p-3 mb-3">
+
+    <label class="text-xs font-bold text-gray-500">No. WhatsApp <span class="text-gray-400 font-normal">(opsional)</span></label>
+    <input id="f-wa" placeholder="08xxxxxxxxxx" class="w-full border border-gray-200 rounded-xl p-3 mb-4">
+
+    <button id="btn-reg" class="w-full bg-wine-800 hover:bg-wine-900 text-white font-bold rounded-xl p-3 flex items-center justify-center gap-2"><i data-lucide="send" class="w-4 h-4"></i> Daftar Sekarang</button>
+    <p class="text-xs text-center text-gray-400 mt-4">Sudah punya akun? <a href="index.html" class="text-wine-700 font-bold hover:underline">Masuk di sini</a></p>
+  </div>
+
+  <!-- SUKSES -->
+  <div id="success-card" class="hidden bg-white rounded-3xl shadow-2xl p-8 text-center">
+    <div class="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4"><i data-lucide="hourglass" class="w-8 h-8 text-amber-600"></i></div>
+    <h2 class="text-xl font-extrabold">Pendaftaran Diterima!</h2>
+    <p class="text-sm text-gray-500 mt-2 mb-6">Akun Anda berstatus <b class="text-amber-600">PENDING</b> dan menunggu persetujuan admin. Setelah disetujui, Anda dapat login dan mengakses seluruh ekosistem Nakulaku.</p>
+    <a href="index.html" class="inline-block bg-wine-800 text-white rounded-xl px-6 py-3 font-bold">Ke Halaman Login</a>
+  </div>
+</div>
+
+<script>
+const firebaseConfig={apiKey:"AIzaSyDaTXg2_oaKNYjJ0HxSGa9qXPQQ7VK0uDs",authDomain:"nakulaku-ekosistem.firebaseapp.com",projectId:"nakulaku-ekosistem",storageBucket:"nakulaku-ekosistem.firebasestorage.app",messagingSenderId:"672296906494",appId:"1:672296906494:web:2e90334b9d3136a4917faf"};
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(), db=firebase.firestore();
+const $=id=>document.getElementById(id);
+let busy=false;
+
+// Jika sudah login (bukan proses daftar), arahkan ke Pusat Akun
+auth.onAuthStateChanged(u=>{ if(u && !busy) location.href='index.html'; });
+
+function showToast(m,t='success'){const ic={success:'check-circle-2',error:'x-circle',info:'info'};const bg={success:'bg-emerald-600',error:'bg-red-600',info:'bg-wine-800'};const e=document.createElement('div');e.className=`${bg[t]} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 fixed bottom-5 left-1/2 -translate-x-1/2 z-50`;e.innerHTML=`<i data-lucide="${ic[t]}" class="w-5 h-5"></i><span class="text-sm font-bold">${m}</span>`;document.body.appendChild(e);lucide.createIcons();setTimeout(()=>{e.style.opacity='0';e.style.transition='.4s';setTimeout(()=>e.remove(),400)},2600);}
+function fail(m){$('err').textContent=m;$('err').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});}
+function toggleOther(){$('f-inst-other').classList.toggle('hidden',$('f-inst').value!=='other');}
+
+$('btn-reg').onclick=async()=>{
+  $('err').classList.add('hidden');
+  const nama=$('f-nama').value.trim(), email=$('f-email').value.trim().toLowerCase();
+  const pass=$('f-pass').value, conf=$('f-conf').value;
+  const jab=$('f-jab').value;
+  const inst=$('f-inst').value==='other'? $('f-inst-other').value.trim() : $('f-inst').value;
+  const wa=$('f-wa').value.trim();
+
+  if(!nama||!email) return fail('Nama dan email wajib diisi.');
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return fail('Format email tidak valid.');
+  if(pass.length<6) return fail('Password minimal 6 karakter.');
+  if(pass!==conf) return fail('Konfirmasi password tidak sama.');
+  if(!inst) return fail('Instansi wajib diisi.');
+
+  busy=true;
+  $('btn-reg').disabled=true; $('btn-reg').innerHTML='Memproses…';
+  try{
+    // 1) Buat akun Auth (otomatis login sementara sebagai user baru)
+    await auth.createUserWithEmailAndPassword(email,pass);
+    // 2) Tulis profil sendiri (diizinkan rules: auth.email == doc id)
+    await db.collection('users').doc(email).set({
+      email, nama, jabatan:jab, instansi:inst, wa,
+      role:'calon', status:'pending', pin:'',
+      sumber:'self-register',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    // 3) Logout lagi → kembali jadi tamu
+    await auth.signOut();
+    $('form-card').classList.add('hidden');
+    $('success-card').classList.remove('hidden');
+    lucide.createIcons();
+    showToast('Pendaftaran terkirim ✅');
+  }catch(e){
+    busy=false; $('btn-reg').disabled=false;
+    $('btn-reg').innerHTML='Daftar Sekarang';
+    if(e.code==='auth/email-already-in-use') fail('Email sudah terdaftar. Silakan login atau hubungi admin.');
+    else fail('Gagal: '+e.message);
+  }
+};
+lucide.createIcons();
+</script>
+</body>
+</html>
