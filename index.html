@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pusat Akun Nakula - Ekosistem Gugus Nakula</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+
+  <!-- Layar Login -->
+  <div id="login-screen" class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+    <div class="text-center mb-6">
+      <h1 class="text-2xl font-bold text-slate-800">Pusat Akun Nakula</h1>
+      <p class="text-sm text-slate-500">Ekosistem Digital Gugus Nakula</p>
+    </div>
+    <div id="error-msg" class="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-4 hidden"></div>
+    <input id="email" type="email" placeholder="Email" class="w-full border border-slate-300 rounded-lg p-3 mb-3 focus:ring-2 focus:ring-blue-500 outline-none">
+    <input id="password" type="password" placeholder="Password" class="w-full border border-slate-300 rounded-lg p-3 mb-4 focus:ring-2 focus:ring-blue-500 outline-none">
+    <button id="btn-login" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg p-3 transition">Masuk</button>
+    <p class="text-xs text-center text-slate-400 mt-4">Password awal: <b>PIN Anda + "nk"</b><br>(Contoh: 81101nk)</p>
+  </div>
+
+  <!-- Layar Dashboard -->
+  <div id="dashboard-screen" class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md hidden">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-bold text-slate-800">Selamat Datang!</h2>
+      <button id="btn-logout" class="text-red-500 text-sm font-medium hover:underline">Keluar</button>
+    </div>
+    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200">
+      <p class="text-lg font-semibold text-slate-800" id="user-name">-</p>
+      <p class="text-sm text-slate-600 mt-1" id="user-email">-</p>
+      <p class="text-xs mt-3 text-blue-600 font-medium" id="user-role">-</p>
+      <p class="text-xs text-slate-500" id="user-instansi">-</p>
+    </div>
+    
+    <div class="mt-6">
+      <p class="text-sm text-slate-500 mb-3 font-medium">Akses Aplikasi Ekosistem:</p>
+      <div class="grid grid-cols-2 gap-3">
+        <a href="/nakulaku/presensi/" class="bg-green-500 text-white text-center p-3 rounded-lg font-medium hover:bg-green-600 transition">Presensi</a>
+        <a href="/nakulaku/lms/" class="bg-purple-500 text-white text-center p-3 rounded-lg font-medium hover:bg-purple-600 transition">LMS</a>
+      </div>
+      <p class="text-xs text-slate-400 mt-4 text-center">*Aplikasi akan segera tersedia</p>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDaTXg2_oaKNYjJ0HxSGa9qXPQQ7VK0uDs",
+      authDomain: "nakulaku-ekosistem.firebaseapp.com",
+      projectId: "nakulaku-ekosistem",
+      storageBucket: "nakulaku-ekosistem.firebasestorage.app",
+      messagingSenderId: "672296906494",
+      appId: "1:672296906494:web:2e90334b9d3136a4917faf"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const loginScreen = document.getElementById('login-screen');
+    const dashScreen = document.getElementById('dashboard-screen');
+    const errorMsg = document.getElementById('error-msg');
+
+    // Pantau status login (Ini adalah jantung dari SSO Lite)
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        loginScreen.classList.add('hidden');
+        dashScreen.classList.remove('hidden');
+        document.getElementById('user-email').innerText = user.email;
+        
+        // Ambil data profil dari Firestore
+        try {
+          const doc = await db.collection('users').doc(user.email).get();
+          if (doc.exists) {
+            const data = doc.data();
+            document.getElementById('user-name').innerText = data.nama || user.displayName || "User";
+            document.getElementById('user-role').innerText = "Role: " + (data.role || "-");
+            document.getElementById('user-instansi').innerText = data.instansi || "";
+          } else {
+            document.getElementById('user-name').innerText = user.displayName || "User";
+            document.getElementById('user-role').innerText = "Role: Belum diatur";
+          }
+        } catch (e) {
+          console.error("Gagal ambil profil:", e);
+          document.getElementById('user-name').innerText = user.displayName || "User";
+        }
+      } else {
+        loginScreen.classList.remove('hidden');
+        dashScreen.classList.add('hidden');
+      }
+    });
+
+    // Aksi Login
+    document.getElementById('btn-login').addEventListener('click', async () => {
+      const email = document.getElementById('email').value.trim();
+      const pass = document.getElementById('password').value;
+      errorMsg.classList.add('hidden');
+      
+      if (!email || !pass) {
+        errorMsg.innerText = "Email dan Password wajib diisi!";
+        errorMsg.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        await auth.signInWithEmailAndPassword(email, pass);
+      } catch (e) {
+        let msg = "Login gagal. Periksa kembali email/password Anda.";
+        if (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
+          msg = "Email atau Password salah!";
+        } else if (e.code === 'auth/unauthorized-domain') {
+          msg = "Domain belum diizinkan di Firebase Console! (Cek langkah Authorized Domains)";
+        }
+        errorMsg.innerText = msg;
+        errorMsg.classList.remove('hidden');
+      }
+    });
+
+    // Aksi Logout
+    document.getElementById('btn-logout').addEventListener('click', () => {
+      auth.signOut();
+    });
+  </script>
+</body>
+</html>
