@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LMS — Nakulaku Ekosistem</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+tailwind.config={theme:{extend:{
+colors:{wine:{50:'#FBF2F5',100:'#F7E1E8',200:'#EFC3D1',300:'#E19AB1',400:'#D06A8C',500:'#B9446C',600:'#A62C57',700:'#8C1D3C',800:'#771731',900:'#64142B',950:'#400A1B'},accent:{500:'#C9A227'},ink:'#202024'},
+fontFamily:{sans:['"Plus Jakarta Sans"','system-ui','sans-serif']},
+boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
+}}}
+</script>
+</head>
+<body class="bg-[#F7F4F5] font-sans text-ink">
+
+<header class="bg-gradient-to-b from-wine-800 to-wine-700 rounded-b-[28px] px-4 md:px-6 pt-5 pb-6 relative overflow-hidden">
+  <svg class="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 400 300" fill="none"><path d="M-20 220 C120 140,260 260,420 120" stroke="white" stroke-width="1.5"/></svg>
+  <div class="relative max-w-5xl mx-auto flex items-center gap-3">
+    <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center"><i data-lucide="book-open" class="w-5 h-5 text-white"></i></div>
+    <div class="flex-1"><h1 class="text-white font-extrabold text-lg">LMS Nakulaku</h1><p class="text-white/60 text-xs">Portal Kinerja Guru & KS</p></div>
+    <span id="demo-badge" class="hidden bg-amber-400 text-amber-950 text-[9px] font-extrabold px-1.5 py-0.5 rounded">DEMO</span>
+    <a href="../home.html" class="text-white/80 text-xs font-bold flex items-center gap-1 bg-white/10 px-3 py-1.5 rounded-full"><i data-lucide="home" class="w-3.5 h-3.5"></i> Beranda</a>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto p-4 md:p-6 space-y-5 pb-24">
+  <div id="gate" class="hidden bg-amber-50 border border-amber-200 text-amber-700 rounded-2xl p-4 text-sm font-semibold">Akun Anda belum aktif. Hubungi admin.</div>
+
+  <div class="bg-white rounded-2xl shadow-card p-1 flex text-sm font-bold overflow-x-auto">
+    <button onclick="showTab('materi')" id="t-materi" class="flex-1 py-2.5 rounded-xl bg-wine-800 text-white whitespace-nowrap">Materi</button>
+    <button onclick="showTab('kinerja')" id="t-kinerja" class="flex-1 py-2.5 rounded-xl text-gray-500 whitespace-nowrap">Kinerja</button>
+    <button onclick="showTab('kirim')" id="t-kirim" class="flex-1 py-2.5 rounded-xl text-gray-500 whitespace-nowrap">Kirim</button>
+    <button onclick="showTab('validasi')" id="t-validasi" class="flex-1 py-2.5 rounded-xl text-gray-500 whitespace-nowrap">Validasi</button>
+    <button onclick="showTab('monitor')" id="t-monitor" class="flex-1 py-2.5 rounded-xl text-gray-500 whitespace-nowrap">Monitor</button>
+  </div>
+
+  <!-- MATERI -->
+  <section id="tab-materi" class="space-y-4">
+    <div class="flex gap-2">
+      <button onclick="setMatFilter('all')" id="mf-all" class="px-3 py-1.5 rounded-full text-xs font-bold bg-wine-800 text-white">Semua</button>
+      <button onclick="setMatFilter('coming')" id="mf-coming" class="px-3 py-1.5 rounded-full text-xs font-bold bg-white text-gray-500">Akan Datang</button>
+      <button onclick="setMatFilter('done')" id="mf-done" class="px-3 py-1.5 rounded-full text-xs font-bold bg-white text-gray-500">Selesai</button>
+    </div>
+    <div id="mat-list" class="space-y-3"></div>
+  </section>
+
+  <!-- KINERJA -->
+  <section id="tab-kinerja" class="hidden space-y-4">
+    <div class="rounded-2xl bg-gradient-to-r from-wine-800 to-wine-600 text-white p-5">
+      <p class="text-xs uppercase tracking-widest text-wine-200">Capaian Kinerja Saya</p>
+      <p class="text-3xl font-extrabold mt-1" id="k-pct">0%</p>
+      <p class="text-xs text-wine-100" id="k-sum">0/0 laporan diterima</p>
+      <div class="h-2 bg-white/20 rounded-full mt-3"><div id="k-bar" class="h-2 bg-accent-500 rounded-full" style="width:0%"></div></div>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Tugas</p><p id="c-tugas" class="text-xl font-extrabold text-wine-700">0</p></div>
+      <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Implementasi</p><p id="c-implem" class="text-xl font-extrabold text-wine-700">0</p></div>
+      <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Inovasi</p><p id="c-inov" class="text-xl font-extrabold text-wine-700">0</p></div>
+      <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Portofolio</p><p id="c-porto" class="text-xl font-extrabold text-wine-700">0</p></div>
+    </div>
+    <div class="bg-white rounded-2xl shadow-card p-5">
+      <p class="font-bold mb-3">Rapor Laporan Saya</p>
+      <div id="my-list" class="space-y-2 text-sm"></div>
+    </div>
+  </section>
+
+  <!-- KIRIM -->
+  <section id="tab-kirim" class="hidden space-y-4">
+    <div class="bg-white rounded-2xl shadow-card p-5 space-y-3">
+      <p class="font-bold flex items-center gap-2"><i data-lucide="upload" class="w-4 h-4 text-wine-700"></i> <span id="kirim-title">Kirim Laporan / Karya</span></p>
+      <select id="f-jenis" onchange="jenisChange()" class="w-full border border-gray-200 rounded-xl p-3 bg-white">
+        <option>Tugas</option><option>Implementasi KKG</option><option>Karya Inovasi</option><option>Prestasi</option><option>Pembiasaan</option><option>Event</option>
+      </select>
+      <input id="f-detail" placeholder="Detail (mis. Juara 1 / Kecamatan / Harian)" class="w-full border border-gray-200 rounded-xl p-3">
+      <input id="f-judul" placeholder="Judul laporan / karya" class="w-full border border-gray-200 rounded-xl p-3">
+      <textarea id="f-desk" rows="3" placeholder="Deskripsi / catatan pelaksanaan" class="w-full border border-gray-200 rounded-xl p-3"></textarea>
+      <input id="f-link" placeholder="Link Google Drive (wajib)" class="w-full border border-gray-200 rounded-xl p-3">
+      <div>
+        <input type="file" id="f-foto" accept="image/*" class="hidden" onchange="handleFoto(this)">
+        <button onclick="document.getElementById('f-foto').click()" class="w-full border-2 border-dashed border-wine-200 rounded-xl p-3 text-sm text-gray-500 flex items-center justify-center gap-2"><i data-lucide="image" class="w-4 h-4"></i> <span id="f-foto-label">Foto pendukung (opsional, maks ~50KB)</span></button>
+      </div>
+      <button id="btn-kirim" onclick="submitKarya()" class="w-full bg-wine-800 hover:bg-wine-900 text-white font-bold rounded-xl p-3 flex items-center justify-center gap-2"><i data-lucide="send" class="w-4 h-4"></i> Kirim</button>
+      <p class="text-[11px] text-gray-400 text-center">Penilaian menggunakan Blind Review — identitas Anda disembunyikan dari penilai.</p>
+    </div>
+  </section>
+
+  <!-- VALIDASI -->
+  <section id="tab-validasi" class="hidden space-y-4">
+    <div class="bg-white rounded-2xl shadow-card p-5">
+      <p class="font-bold flex items-center gap-2 mb-1"><i data-lucide="shield-check" class="w-4 h-4 text-wine-700"></i> Antrean Validasi (Blind Review)</p>
+      <p class="text-xs text-gray-400 mb-3">Identitas peserta disembunyikan. Grade D/E = minta revisi. Feedback wajib.</p>
+      <div id="val-list" class="space-y-3"></div>
+    </div>
+  </section>
+
+  <!-- MONITOR -->
+  <section id="tab-monitor" class="hidden space-y-4">
+    <div class="bg-white rounded-2xl shadow-card p-5 flex flex-col md:flex-row gap-3 md:items-end">
+      <div class="flex-1"><label class="text-xs font-bold text-gray-500">Sekolah</label><select id="mon-sekolah" onchange="loadMonitor()" class="w-full border rounded-xl p-2.5 bg-white"></select></div>
+      <button onclick="exportCSV()" class="bg-wine-800 text-white rounded-xl px-4 py-2.5 text-sm font-bold flex items-center gap-1"><i data-lucide="download" class="w-4 h-4"></i> Export</button>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Total Laporan</p><p id="m-total" class="text-2xl font-extrabold text-wine-700">0</p></div>
+      <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Menunggu</p><p id="m-wait" class="text-2xl font-extrabold text-amber-500">0</p></div>
+      <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Diterima</p><p id="m-ok" class="text-2xl font-extrabold text-emerald-600">0</p></div>
+      <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Revisi</p><p id="m-rev" class="text-2xl font-extrabold text-red-500">0</p></div>
+    </div>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="bg-white rounded-2xl shadow-card p-5"><p class="font-bold mb-3">Keaktifan Sekolah (Top 10)</p><div id="m-top" class="space-y-2 text-xs"></div></div>
+      <div class="bg-white rounded-2xl shadow-card p-5"><p class="font-bold mb-3">Sebaran Status</p><div id="m-dist" class="space-y-2 text-xs"></div></div>
+    </div>
+    <div class="bg-white rounded-2xl shadow-card p-5">
+      <p class="font-bold mb-3">Database Laporan</p>
+      <div class="hidden md:block overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-gray-400 text-xs"><th class="p-2">Waktu</th><th class="p-2">Nama</th><th class="p-2">Sekolah</th><th class="p-2">Jenis</th><th class="p-2">Judul</th><th class="p-2">Status</th><th class="p-2">Nilai</th><th class="p-2">Penilai</th></tr></thead><tbody id="m-tbody"></tbody></table></div>
+      <div id="m-cards" class="md:hidden space-y-2"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+const GAS_URL='https://script.google.com/macros/s/AKfycbyUYOMxIBfBOPTqn7W5r5Pj_Ee2SZ4jK6jnAYUtfc_vbk4Dc279wyL8H9GrUUd1b-mU8A/exec';
+const DEMO=location.protocol==='file:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.search.includes('demo=1');
+const firebaseConfig={apiKey:"AIzaSyDaTXg2_oaKNYjJ0HxSGa9qXPQQ7VK0uDs",authDomain:"nakulaku-ekosistem.firebaseapp.com",projectId:"nakulaku-ekosistem",storageBucket:"nakulaku-ekosistem.firebasestorage.app",messagingSenderId:"672296906494",appId:"1:672296906494:web:2e90334b9d3136a4917faf"};
+let auth=null,db=null;
+if(!DEMO){firebase.initializeApp(firebaseConfig);auth=firebase.auth();db=firebase.firestore();}
+const $=id=>document.getElementById(id);
+let ME=null,LEVEL=4,MYKARYA=[],AGENDA=[],SEKOLAHS=[],MONLIST=[],matFilter='all',FOTO_BLOB=null,curKaryaId=null;
+
+function levelOf(u){const r=(u.role||'').toLowerCase(),j=(u.jabatan||'').toLowerCase();if(r.includes('admin'))return 1;if(r.includes('narasumber'))return 2;if(r.includes('kepala')||j.includes('kepala'))return 3;return 4;}
+function showToast(m,t='success'){const ic={success:'check-circle-2',error:'x-circle',info:'info'};const bg={success:'bg-emerald-600',error:'bg-red-600',info:'bg-wine-800'};const e=document.createElement('div');e.className=`${bg[t]} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 fixed bottom-20 left-1/2 -translate-x-1/2 z-[60]`;e.innerHTML=`<i data-lucide="${ic[t]}" class="w-5 h-5"></i><span class="text-sm font-bold">${m}</span>`;document.body.appendChild(e);lucide.createIcons();setTimeout(()=>{e.style.opacity='0';e.style.transition='.4s';setTimeout(()=>e.remove(),400)},2600);}
+function stPill(s){const m={menunggu:['bg-amber-100 text-amber-700','MENUNGGU'],diterima:['bg-emerald-100 text-emerald-700','DITERIMA'],revisi:['bg-red-100 text-red-600','REVISI']};const[c,l]=m[s]||m.menunggu;return `<span class="text-[10px] font-extrabold px-2 py-1 rounded-full ${c}">${l}</span>`;}
+function gradePill(g){if(!g)return '<span class="text-gray-300">-</span>';const c=g==='A'?'bg-emerald-600':g==='B'?'bg-emerald-500':g==='C'?'bg-amber-500':'bg-red-500';return `<span class="text-[10px] font-extrabold text-white px-2 py-1 rounded ${c}">${g}</span>`;}
+function toISO(t){if(!t)return '';const s=String(t);if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);const m=s.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');return s;}
+function catOf(j){return j==='Tugas'?'t':j==='Implementasi KKG'?'i':j==='Karya Inovasi'?'n':'p';}
+
+function showTab(n){['materi','kinerja','kirim','validasi','monitor'].forEach(x=>{$('tab-'+x).classList.toggle('hidden',x!==n);$('t-'+x).classList.toggle('bg-wine-800',x===n);$('t-'+x).classList.toggle('text-white',x===n);$('t-'+x).classList.toggle('text-gray-500',x!==n);});
+ if(n==='kinerja')loadKinerja();if(n==='validasi')loadValidasi();if(n==='monitor')loadMonitor();if(n==='materi')renderMateri();}
+
+if(DEMO){
+  $('demo-badge').classList.remove('hidden');
+  ME={email:'iwan4943@gmail.com',nama:'Ekwan Nugroho, S.Pd.I.',jabatan:'Kepala Sekolah',instansi:'SD Negeri 3 Krisak',role:'admin,narasumber',status:'active'};
+  LEVEL=1;SEKOAHS_FIX();
+  AGENDA=[{nama_kegiatan:'KKG Sesi 1',tanggal:'2026-01-10',link_materi:'https://drive.google.com/x'},{nama_kegiatan:'KKG Sesi 2',tanggal:'2026-12-10',link_materi:'https://drive.google.com/y'}];
+  MYKARYA=[{id:'1',id_blind:'ID-1234',jenis:'Implementasi KKG',judul:'Penerapan PMRI di Kelas 4',status:'diterima',grade:'A',feedback:'Sangat inovatif!',link:'https://drive.google.com/a',waktu_submit:'2026-01-12T08:00:00Z'},
+           {id:'2',id_blind:'ID-5678',jenis:'Karya Inovasi',judul:'Alat Peraga Pecahan',status:'revisi',grade:'D',feedback:'Tambahkan video pemakaian.',link:'https://drive.google.com/b',waktu_submit:'2026-01-13T08:00:00Z'}];
+  initUI();
+}else{
+  auth.onAuthStateChanged(async u=>{
+    if(!u){location.href='../index.html';return;}
+    const d=await db.collection('users').doc(u.email).get();
+    ME=d.exists?d.data():{email:u.email,nama:u.displayName};
+    LEVEL=levelOf(ME);
+    if((ME.status||'active')!=='active'){$('gate').classList.remove('hidden');}
+    const s=await db.collection('sekolah').get();SEKOLAHS=s.docs.map(x=>x.data());
+    const a=await db.collection('pengaturan').get();AGENDA=a.docs.map(x=>x.data());
+    initUI();
+  });
+}
+function SEKOAHS_FIX(){SEKOLAHS=[{nama:'SD Negeri 3 Krisak'},{nama:'SD Negeri 1 Pare'}];}
+
+function initUI(){
+  if(LEVEL>2)$('t-validasi').classList.add('hidden');
+  if(LEVEL>3)$('t-monitor').classList.add('hidden');
+  $('mon-sekolah').innerHTML=(LEVEL<=2?`<option value="all">Semua Sekolah</option>`:'')+SEKOLAHS.map(s=>`<option>${s.nama}</option>`).join('');
+  if(LEVEL===3)$('mon-sekolah').value=ME.instansi;
+  renderMateri();lucide.createIcons();
+}
+
+// ===== MATERI =====
+function setMatFilter(f){matFilter=f;['all','coming','done'].forEach(x=>{$('mf-'+x).classList.toggle('bg-wine-800',x===f);$('mf-'+x).classList.toggle('text-white',x===f);$('mf-'+x).classList.toggle('bg-white',x!==f);$('mf-'+x).classList.toggle('text-gray-500',x!==f);});renderMateri();}
+function renderMateri(){
+  const t=new Date().toISOString().slice(0,10);
+  let L=AGENDA.slice();
+  if(matFilter==='coming')L=L.filter(a=>toISO(a.tanggal)>=t);
+  if(matFilter==='done')L=L.filter(a=>toISO(a.tanggal)<t);
+  L.sort((a,b)=>toISO(b.tanggal).localeCompare(toISO(a.tanggal)));
+  $('mat-list').innerHTML=L.length?L.map(a=>`<div class="bg-white rounded-2xl shadow-card p-4 flex items-center gap-3">
+    <span class="w-10 h-10 rounded-xl bg-wine-100 text-wine-700 flex items-center justify-center"><i data-lucide="presentation" class="w-5 h-5"></i></span>
+    <div class="flex-1 min-w-0"><p class="font-bold text-sm">${a.nama_kegiatan}</p><p class="text-xs text-gray-400">${toISO(a.tanggal)} • ${a.narsum||'-'}</p></div>
+    ${a.link_materi?`<a href="${a.link_materi}" target="_blank" class="bg-wine-800 text-white text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1"><i data-lucide="external-link" class="w-3 h-3"></i> Materi</a>`:'<span class="text-xs text-gray-300">-</span>'}
+  </div>`).join(''):'<p class="text-gray-400 text-sm">Tidak ada materi.</p>';
+  lucide.createIcons();
+}
+
+// ===== KINERJA =====
+async function loadKinerja(){
+  if(DEMO){renderKinerja(MYKARYA);return;}
+  const s=await db.collection('karya').where('email','==',ME.email).get();
+  MYKARYA=s.docs.map(x=>({id:x.id,...x.data()})).sort((a,b)=>(b.waktu_submit||'').localeCompare(a.waktu_submit||''));
+  renderKinerja(MYKARYA);
+}
+function renderKaryaRow(x,withAction){
+  return `<div class="border-b border-gray-50 pb-2">
+    <div class="flex justify-between items-start"><div class="min-w-0"><p class="font-semibold truncate">${x.judul}</p><p class="text-xs text-gray-400">${x.jenis}${x.detail?' • '+x.detail:''} • ${(x.waktu_submit||'').slice(0,10)}</p></div>
+    <div class="flex items-center gap-1 ml-2">${gradePill(x.grade)}${stPill(x.status)}</div></div>
+    ${x.feedback?`<p class="text-xs bg-wine-50 text-wine-700 rounded-lg p-2 mt-1">💬 ${x.feedback}</p>`:''}
+    ${withAction&&x.status==='revisi'?`<button onclick="prefillRevisi('${x.id}')" class="mt-1 text-xs font-bold text-wine-700 flex items-center gap-1"><i data-lucide="refresh-cw" class="w-3 h-3"></i> Kirim Revisi</button>`:''}
+  </div>`;
+}
+function renderKinerja(L){
+  const ok=L.filter(x=>x.status==='diterima').length;
+  const pct=L.length?Math.round(ok/L.length*100):0;
+  $('k-pct').textContent=pct+'%';$('k-sum').textContent=`${ok}/${L.length} laporan diterima`;$('k-bar').style.width=pct+'%';
+  $('c-tugas').textContent=L.filter(x=>catOf(x.jenis)==='t'&&x.status==='diterima').length;
+  $('c-implem').textContent=L.filter(x=>catOf(x.jenis)==='i'&&x.status==='diterima').length;
+  $('c-inov').textContent=L.filter(x=>catOf(x.jenis)==='n'&&x.status==='diterima').length;
+  $('c-porto').textContent=L.filter(x=>catOf(x.jenis)==='p'&&x.status==='diterima').length;
+  $('my-list').innerHTML=L.length?L.map(x=>renderKaryaRow(x,true)).join(''):'<p class="text-gray-400">Belum ada laporan.</p>';
+  lucide.createIcons();
+}
+function prefillRevisi(id){
+  if(DEMO){showToast('Demo: form revisi terbuka','info');showTab('kirim');return;}
+  const x=MYKARYA.find(k=>k.id===id);if(!x)return;
+  curKaryaId=id;
+  $('f-jenis').value=x.jenis;$('f-detail').value=x.detail||'';$('f-judul').value=x.judul;$('f-desk').value=x.deskripsi||'';$('f-link').value=x.link||'';
+  $('kirim-title').textContent='Kirim Revisi: '+x.judul;
+  showTab('kirim');showToast('Perbaiki lalu kirim ulang','info');
+}
+
+// ===== KIRIM =====
+function jenisChange(){const j=$('f-jenis').value;const ph={Prestasi:'mis. Juara 1 Tingkat Kabupaten',Pembiasaan:'mis. Harian / Mingguan / Bulanan',Event:'mis. Internal / Orang Tua / Umum'}[j]||'Detail tambahan (opsional)';$('f-detail').placeholder=ph;}
+function handleFoto(inp){
+  const f=inp.files[0];if(!f)return;
+  const img=new Image();
+  img.onload=async()=>{
+    const MAX=640;let w=img.width,h=img.height;
+    if(w>h){if(w>MAX){h=h*MAX/w;w=MAX;}}else{if(h>MAX){w=w*MAX/h;h=MAX;}}
+    const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);
+    let q=0.55,blob;
+    for(let i=0;i<5;i++){blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',q));if(blob.size<=50*1024||q<=0.3)break;q-=0.1;}
+    FOTO_BLOB=blob;$('f-foto-label').textContent=`Foto siap: ${(blob.size/1024).toFixed(1)} KB ✓`;
+  };
+  img.src=URL.createObjectURL(f);
+}
+async function submitKarya(){
+  const jenis=$('f-jenis').value,judul=$('f-judul').value.trim(),link=$('f-link').value.trim();
+  if(!judul)return showToast('Judul wajib','error');
+  if(!link)return showToast('Link Drive wajib','error');
+  if(DEMO){showToast('(Demo) Laporan terkirim ✅');return;}
+  const btn=$('btn-kirim');btn.disabled=true;
+  try{
+    let foto_url='';
+    if(FOTO_BLOB){
+      const base64=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result.split(',')[1]);fr.readAsDataURL(FOTO_BLOB);});
+      const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({base64,filename:'karya_'+Date.now()+'.jpg'})});
+      const j=await res.json();if(j.ok)foto_url=j.url;
+    }
+    const data={jenis,detail:$('f-detail').value.trim(),judul,deskripsi:$('f-desk').value.trim(),link,foto_url,
+      email:ME.email,nama:ME.nama||'',unit_kerja:ME.instansi||'',jabatan:ME.jabatan||'',
+      status:'menunggu',grade:'',feedback:'',validator:'',waktu_validasi:'',
+      waktu_submit:new Date().toISOString(),tanggal:new Date().toISOString().slice(0,10),tahun:new Date().getFullYear()};
+    if(curKaryaId){
+      data.id_blind=(MYKARYA.find(k=>k.id===curKaryaId)||{}).id_blind||('ID-'+Math.floor(1000+Math.random()*9000));
+      await db.collection('karya').doc(curKaryaId).update(data);
+      showToast('Revisi terkirim ✅');
+    }else{
+      data.id_blind='ID-'+Math.floor(1000+Math.random()*9000);
+      await db.collection('karya').add(data);
+      showToast('Laporan terkirim ✅');
+    }
+    ['f-detail','f-judul','f-desk','f-link'].forEach(i=>$(i).value='');FOTO_BLOB=null;$('f-foto-label').textContent='Foto pendukung (opsional, maks ~50KB)';curKaryaId=null;$('kirim-title').textContent='Kirim Laporan / Karya';
+  }catch(e){showToast('Gagal: '+e.message,'error');}
+  btn.disabled=false;
+}
+
+// ===== VALIDASI (BLIND) =====
+async function loadValidasi(){
+  let L=[];
+  if(DEMO){L=[{id:'9',id_blind:'ID-4321',jenis:'Implementasi KKG',judul:'Literasi Numerasi Kelas 5',deskripsi:'Penerapan alat peraga...',link:'https://drive.google.com/c',waktu_submit:'2026-01-14T08:00:00Z'}];}
+  else{const s=await db.collection('karya').where('status','==','menunggu').limit(100).get();L=s.docs.map(x=>({id:x.id,...x.data()}));}
+  $('val-list').innerHTML=L.length?L.map(x=>`
+    <div class="border border-gray-100 rounded-2xl p-4">
+      <div class="flex justify-between items-center mb-1"><span class="text-[10px] font-extrabold bg-gray-100 text-gray-600 px-2 py-1 rounded">#${x.id_blind}</span><span class="text-[10px] text-gray-400">${(x.waktu_submit||'').slice(0,10)}</span></div>
+      <p class="font-bold text-sm">${x.judul}</p>
+      <p class="text-xs text-gray-500">${x.jenis}${x.detail?' • '+x.detail:''}</p>
+      <p class="text-xs text-gray-600 mt-1">${x.deskripsi||''}</p>
+      <a href="${x.link}" target="_blank" class="inline-flex items-center gap-1 text-xs font-bold text-wine-700 mt-2"><i data-lucide="external-link" class="w-3 h-3"></i> Lihat Bukti</a>
+      <div class="grid grid-cols-2 gap-2 mt-3">
+        <select id="g-${x.id}" class="border rounded-xl p-2 bg-white text-sm"><option value="">Grade…</option><option>A - Sangat Baik</option><option>B - Baik</option><option>C - Cukup</option><option>D - Perlu Revisi</option><option>E - Belum Lengkap</option></select>
+      </div>
+      <textarea id="fb-${x.id}" rows="2" placeholder="Umpan balik (wajib)" class="w-full border rounded-xl p-2 mt-2 text-sm"></textarea>
+      <button onclick="doValidasi('${x.id}')" class="w-full mt-2 bg-wine-800 text-white rounded-xl py-2 text-sm font-bold">Kirim Validasi</button>
+    </div>`).join(''):'<p class="text-gray-400 text-sm">Tidak ada antrean. Semua tervalidasi ✅</p>';
+  lucide.createIcons();
+}
+async function doValidasi(id){
+  const gv=($('g-'+id).value||'').charAt(0);
+  const fb=$('fb-'+id).value.trim();
+  if(!gv)return showToast('Pilih grade','error');
+  if(!fb)return showToast('Feedback wajib','error');
+  if(DEMO){showToast('(Demo) Validasi terkirim ✅');return;}
+  const status=(gv==='D'||gv==='E')?'revisi':'diterima';
+  try{
+    await db.collection('karya').doc(id).update({status,grade:gv,feedback:fb,validator:ME.email,waktu_validasi:new Date().toISOString()});
+    showToast(status==='diterima'?'Diterima ✅':'Diminta revisi','info');
+    loadValidasi();
+  }catch(e){showToast('Gagal: '+e.message,'error');}
+}
+
+// ===== MONITOR =====
+async function loadMonitor(){
+  const sel=$('mon-sekolah').value;
+  let L=[];
+  if(DEMO){L=MYKARYA.concat([{id:'3',jenis:'Tugas',judul:'Rangkuman Materi',status:'diterima',grade:'B',nama:'Arvi Dwi Utami',unit_kerja:'SD Negeri 3 Krisak',waktu_submit:'2026-01-11T08:00:00Z',validator:'iwan4943@gmail.com'}]);}
+  else{
+    let q=db.collection('karya');
+    if(LEVEL===3)q=q.where('unit_kerja','==',ME.instansi);
+    else if(sel&&sel!=='all')q=q.where('unit_kerja','==',sel);
+    const s=await q.limit(300).get();
+    L=s.docs.map(x=>x.data());
+  }
+  MONLIST=L;
+  $('m-total').textContent=L.length;
+  $('m-wait').textContent=L.filter(x=>x.status==='menunggu').length;
+  $('m-ok').textContent=L.filter(x=>x.status==='diterima').length;
+  $('m-rev').textContent=L.filter(x=>x.status==='revisi').length;
+  // top sekolah
+  const agg={};L.forEach(x=>{const k=x.unit_kerja||'-';agg[k]=(agg[k]||0)+1;});
+  const top=Object.entries(agg).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const max=top.length?top[0][1]:1;
+  $('m-top').innerHTML=top.map(([k,v])=>`<div><div class="flex justify-between"><span class="font-semibold truncate">${k}</span><span>${v}</span></div><div class="h-1.5 bg-gray-100 rounded-full mt-1"><div class="h-1.5 bg-wine-600 rounded-full" style="width:${v/max*100}%"></div></div></div>`).join('')||'-';
+  // distribusi
+  const dist=[['Menunggu',L.filter(x=>x.status==='menunggu').length,'bg-amber-400'],['Diterima',L.filter(x=>x.status==='diterima').length,'bg-emerald-500'],['Revisi',L.filter(x=>x.status==='revisi').length,'bg-red-500']];
+  $('m-dist').innerHTML=dist.map(([l,v,c])=>`<div><div class="flex justify-between"><span>${l}</span><span>${v}</span></div><div class="h-1.5 bg-gray-100 rounded-full mt-1"><div class="h-1.5 ${c} rounded-full" style="width:${(L.length?v/L.length*100:0)}%"></div></div></div>`).join('');
+  // db
+  const rows=L.slice().sort((a,b)=>(b.waktu_submit||'').localeCompare(a.waktu_submit||''));
+  $('m-tbody').innerHTML=rows.map(x=>`<tr class="border-t"><td class="p-2 text-xs">${(x.waktu_submit||'').slice(0,10)}</td><td class="p-2 font-semibold">${x.nama}</td><td class="p-2 text-xs">${x.unit_kerja}</td><td class="p-2 text-xs">${x.jenis}</td><td class="p-2 text-xs">${x.judul}</td><td class="p-2">${stPill(x.status)}</td><td class="p-2">${gradePill(x.grade)}</td><td class="p-2 text-xs">${x.validator||'-'}</td></tr>`).join('')||'<tr><td colspan="8" class="p-4 text-center text-gray-400">Belum ada data.</td></tr>';
+  $('m-cards').innerHTML=rows.map(x=>`<div class="border-b pb-2"><div class="flex justify-between"><p class="font-semibold text-sm">${x.nama}</p>${stPill(x.status)}</div><p class="text-xs text-gray-400">${x.jenis} • ${x.judul}</p><p class="text-xs text-gray-400">${(x.waktu_submit||'').slice(0,10)} • Nilai: ${x.grade||'-'} • ${x.validator||'-'}</p></div>`).join('')||'<p class="text-gray-400">Belum ada data.</p>';
+  lucide.createIcons();
+}
+function exportCSV(){
+  let csv='Waktu,Nama,Sekolah,Jenis,Detail,Judul,Status,Nilai,Feedback,Validator,Link\n';
+  MONLIST.forEach(x=>{csv+=`"${(x.waktu_submit||'').slice(0,10)}","${x.nama}","${x.unit_kerja}","${x.jenis}","${x.detail||''}","${x.judul}","${x.status}","${x.grade||''}","${(x.feedback||'').replace(/"/g,'""')}","${x.validator||''}","${x.link||''}"\n`;});
+  const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`lms_nakulaku_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+  showToast('Export CSV berhasil ✅');
+}
+lucide.createIcons();
+</script>
+</body>
+</html>
