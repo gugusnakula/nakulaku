@@ -54,8 +54,13 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
       </div>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-card p-5">
-      <p class="font-bold mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4 text-wine-700"></i> Lokasi Anda & Target Sekolah</p>
+    <div class="bg-white rounded-2xl shadow-card p-4 border-l-4 border-accent-500">
+  <p class="text-xs font-extrabold text-gray-400">TARGET PRESENSI HARI INI</p>
+  <p class="font-bold text-sm mt-1" id="tgt-nama">-</p>
+  <p class="text-xs text-gray-500 mt-0.5" id="tgt-detail">-</p>
+</div>
+<div class="bg-white rounded-2xl shadow-card p-5">
+  <p class="font-bold mb-2 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4 text-wine-700"></i> Lokasi Anda & Target</p>
       <div id="map"></div>
       <div class="mt-3 bg-wine-50 rounded-xl p-3">
         <p class="text-xs font-extrabold text-wine-700 flex items-center gap-1" id="geo-st"><i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> Mencari lokasi…</p>
@@ -223,17 +228,23 @@ if(DEMO){
 }
 
 async function loadSekolahs(){if(DEMO)return;const s=await db.collection('sekolah').get();SEKOLAHS=s.docs.map(x=>({id:x.id,...x.data()}));}
-async function loadTarget(){
-  if(DEMO)return;
-  if(!ME.instansi)return;
-  const s=await db.collection('sekolah').where('nama','==',ME.instansi).limit(1).get();
-  if(!s.empty)SCH=s.docs[0].data();
-  else SCH={nama:ME.instansi,lat:null,lng:null,radius:200,jam_mulai:'06:00',jam_selesai:'14:00',jam_batas:'07:30'};
+async function loadTarget() {
+  if (DEMO) return;
+  const t = new Date().toISOString().slice(0, 10);
+  const all = await db.collection('pengaturan').get();
+  const act = all.docs.map(x => ({ id: x.id, ...x.data() })).find(x => toISO(x.tanggal) === t && (x.status || 'ON') === 'ON' && x.lat && x.lng);
+  if (act) { SCH = { nama: act.nama_kegiatan, lokasi: act.lokasi || act.nama_kegiatan, lat: parseFloat(act.lat), lng: parseFloat(act.lng), radius: parseInt(act.radius) || 100, jam_mulai: act.jam_mulai || act.waktu || '06:00', jam_selesai: act.jam_selesai || '14:00', jam_batas: act.jam_batas || act.jam_mulai || '07:30', jenis: 'kegiatan', agenda_id: act.id }; return; }
+  if (!ME.instansi) return;
+  const s = await db.collection('sekolah').where('nama', '==', ME.instansi).limit(1).get();
+  if (!s.empty) SCH = { ...s.docs[0].data(), jenis: 'sekolah' };
+  else SCH = { nama: ME.instansi, lokasi: ME.instansi, lat: null, lng: null, radius: 200, jam_mulai: '06:00', jam_selesai: '14:00', jam_batas: '07:30', jenis: 'sekolah' };
 }
 
 function initUI(){
   $('a-nama').textContent=ME.nama||ME.email;
   $('a-info').textContent=(ME.jabatan||'')+' • '+(ME.instansi||'');
+  $('tgt-nama').textContent=(SCH&&SCH.jenis==='kegiatan'?'🎯 Kegiatan: ':'🏫 Sekolah: ')+((SCH&&(SCH.lokasi||SCH.nama))||'-');
+  $('tgt-detail').textContent=SCH?`Radius ${SCH.radius||200} m • Jam ${SCH.jam_mulai||'-'}–${SCH.jam_selesai||'-'} • Batas tepat ${SCH.jam_batas||'-'}`:'-';
   tickJam();setInterval(tickJam,30000);
   $('iz-tanggal').value=new Date().toISOString().slice(0,10);
   $('m-tanggal').value=new Date().toISOString().slice(0,10);
@@ -332,7 +343,7 @@ async function kirimAbsen(){
     await db.collection('presensi').add({
       waktu_submit:now.toISOString(),tanggal:now.toISOString().slice(0,10),jam,
       email:ME.email,nama:ME.nama||'',unit_kerja:ME.instansi||'',jabatan:ME.jabatan||'',
-      jenis:'absen',status,dalam_radius,jarak_meter:jarak,target_sekolah:SCH?.nama||'',
+      jenis:'absen',status,dalam_radius,jarak_meter:jarak,target_sekolah:SCH?.nama||'',target_jenis:SCH?.jenis||'sekolah',lokasi:SCH?.lokasi||'',agenda_id:SCH?.agenda_id||'',luar_waktu:jam>(SCH?.jam_selesai||'23:59'),
       koordinat:KOORD?`${KOORD.lat},${KOORD.lng}`:'',link_maps:KOORD?`https://maps.google.com/?q=${KOORD.lat},${KOORD.lng}`:'',
       foto_url,laporan:$('laporan').value.trim(),tahun:now.getFullYear()
     });
@@ -413,7 +424,7 @@ async function loadMonitor(){
   const telat=P.filter(x=>x.status==='Terlambat').length;
   const izin=P.filter(x=>x.jenis==='izin').length;
   $('m-hadir').textContent=hadir;$('m-telat').textContent=telat;$('m-izin').textContent=Math.max(0,G.length-hadir-telat-izin);
-  const row=x=>({'Hadir Tepat':['bg-emerald-100 text-emerald-700','HADIR'],'Terlambat':['bg-amber-100 text-amber-700','TELAT'],'Izin':['bg-sky-100 text-sky-700','IZIN']}[x.status]||['bg-gray-100',x.status]);
+  const row=x=>{const b=({'Hadir Tepat':['bg-emerald-100 text-emerald-700','HADIR'],'Terlambat':['bg-amber-100 text-amber-700','TELAT'],'Izin':['bg-sky-100 text-sky-700','IZIN']}[x.status]||['bg-gray-100',x.status]);return [b[0],b[1]+(x.dalam_radius===false?' ⚠️':'')+(x.luar_waktu?' 🕒':'')];};
   $('m-tbody').innerHTML=P.map(x=>{const c=row(x);return `<tr class="border-t"><td class="p-2 font-semibold">${x.nama}${semua?` <span class="text-xs text-gray-400">• ${x.unit_kerja}</span>`:''}</td><td class="p-2">${x.jam}</td><td class="p-2"><span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full ${c[0]}">${c[1]}</span></td><td class="p-2">${x.jarak_meter||0}m</td><td class="p-2">${x.foto_url?`<img src="${x.foto_url}" onclick="showFoto('${x.foto_url}')" class="w-8 h-8 rounded object-cover cursor-pointer">`:'-'}</td></tr>`;}).join('')||'<tr><td colspan="5" class="p-4 text-center text-gray-400">Belum ada data.</td></tr>';
   $('m-mcards').innerHTML=P.map(x=>{const c=row(x);return `<div class="flex justify-between items-center border-b pb-2"><div><p class="font-semibold">${x.nama}</p><p class="text-xs text-gray-400">${x.jam} • ${x.jarak_meter||0}m${semua?' • '+x.unit_kerja:''}</p></div><span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full ${c[0]}">${c[1]}</span></div>`;}).join('')||'<p class="text-gray-400">Belum ada data.</p>';
   const emailHadir=new Set(P.filter(x=>x.jenis==='absen').map(x=>x.email));
