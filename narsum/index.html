@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Narasumber — Nakulaku Ekosistem</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+tailwind.config={theme:{extend:{
+colors:{wine:{50:'#FBF2F5',100:'#F7E1E8',200:'#EFC3D1',300:'#E19AB1',400:'#D06A8C',500:'#B9446C',600:'#A62C57',700:'#8C1D3C',800:'#771731',900:'#64142B',950:'#400A1B'},accent:{500:'#C9A227'},ink:'#202024'},
+fontFamily:{sans:['"Plus Jakarta Sans"','system-ui','sans-serif']},
+boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
+}}}
+</script>
+</head>
+<body class="bg-[#F7F4F5] font-sans text-ink">
+
+<header class="bg-gradient-to-b from-wine-800 to-wine-700 rounded-b-[28px] px-4 md:px-6 pt-5 pb-6 relative overflow-hidden">
+  <svg class="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 400 300" fill="none"><path d="M-20 220 C120 140,260 260,420 120" stroke="white" stroke-width="1.5"/></svg>
+  <div class="relative max-w-5xl mx-auto flex items-center gap-3">
+    <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center"><i data-lucide="award" class="w-5 h-5 text-white"></i></div>
+    <div class="flex-1"><h1 class="text-white font-extrabold text-lg">Panel Narasumber</h1><p class="text-white/60 text-xs" id="h-sub">Validasi karya per materi penugasan Anda</p></div>
+    <span id="demo-badge" class="hidden bg-amber-400 text-amber-950 text-[9px] font-extrabold px-1.5 py-0.5 rounded">DEMO</span>
+    <a href="../home.html" class="text-white/80 text-xs font-bold flex items-center gap-1 bg-white/10 px-3 py-1.5 rounded-full"><i data-lucide="home" class="w-3.5 h-3.5"></i> Beranda</a>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto p-4 md:p-6 space-y-5 pb-24">
+  <div id="gate" class="hidden bg-amber-50 border border-amber-200 text-amber-700 rounded-2xl p-4 text-sm font-semibold">Akses hanya untuk Narasumber / Admin.</div>
+
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+    <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Topik Saya</p><p id="st-topik" class="text-2xl font-extrabold text-wine-700">0</p></div>
+    <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Menunggu</p><p id="st-queue" class="text-2xl font-extrabold text-amber-500">0</p></div>
+    <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Sudah Dinilai</p><p id="st-done" class="text-2xl font-extrabold text-emerald-600">0</p></div>
+    <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">% Diterima</p><p id="st-pct" class="text-2xl font-extrabold text-wine-700">0%</p></div>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-card p-1 flex text-sm font-bold">
+    <button onclick="showTab('antrean')" id="t-antrean" class="flex-1 py-2.5 rounded-xl bg-wine-800 text-white">Antrean</button>
+    <button onclick="showTab('topik')" id="t-topik" class="flex-1 py-2.5 rounded-xl text-gray-500">Topik Saya</button>
+    <button onclick="showTab('riwayat')" id="t-riwayat" class="flex-1 py-2.5 rounded-xl text-gray-500">Riwayat</button>
+  </div>
+
+  <section id="tab-antrean" class="space-y-4">
+    <label class="flex items-center justify-between bg-white rounded-2xl shadow-card p-4"><span class="text-sm font-bold flex items-center gap-2"><i data-lucide="eye-off" class="w-4 h-4 text-wine-700"></i> Blind Review</span><input id="blind-toggle" type="checkbox" checked onchange="renderQueue()" class="w-5 h-5 accent-wine-700"></label>
+    <p class="text-xs text-gray-500">Hanya karya dari materi yang ditugaskan kepada Anda yang muncul di sini.</p>
+    <div id="queue-list" class="space-y-3"></div>
+  </section>
+
+  <section id="tab-topik" class="hidden space-y-3">
+    <div id="topik-list" class="space-y-3"></div>
+  </section>
+
+  <section id="tab-riwayat" class="hidden space-y-3">
+    <div id="hist-list" class="space-y-2 text-sm"></div>
+  </section>
+</main>
+
+<!-- MODAL VALIDASI -->
+<div id="mVal" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-3xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <p class="font-extrabold mb-1">🧾 Penilaian</p>
+    <p id="v-blind" class="text-xs font-bold text-wine-700 mb-2">-</p>
+    <p id="v-topik" class="text-xs text-gray-400 mb-1">-</p>
+    <p id="v-judul" class="font-bold mb-1">-</p>
+    <p id="v-catatan" class="text-sm text-gray-500 mb-2">-</p>
+    <a id="v-link" target="_blank" class="inline-flex items-center gap-1 text-sm font-bold text-wine-700 mb-3"><i data-lucide="external-link" class="w-4 h-4"></i> Lihat Bukti Karya</a>
+    <select id="v-grade" class="w-full border rounded-xl p-3 mb-2 bg-white">
+      <option value="">-- Pilih Grade --</option>
+      <option value="A">A - Sangat Baik (Inovatif)</option>
+      <option value="B">B - Baik (Sesuai Standar)</option>
+      <option value="C">C - Cukup (Perlu Peningkatan)</option>
+      <option value="D">D - Revisi (Belum Layak)</option>
+      <option value="E">E - Belum Lengkap</option>
+    </select>
+    <textarea id="v-fb" rows="3" placeholder="Umpan balik (wajib)…" class="w-full border rounded-xl p-3 mb-4"></textarea>
+    <div class="flex gap-2"><button onclick="saveVal()" class="flex-1 bg-wine-800 text-white rounded-xl py-2.5 font-bold">Kirim Validasi</button><button onclick="closeM('mVal')" class="flex-1 bg-gray-100 rounded-xl py-2.5 font-bold">Batal</button></div>
+  </div>
+</div>
+
+<script>
+const DEMO=location.protocol==='file:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.search.includes('demo=1');
+const firebaseConfig={apiKey:"AIzaSyDaTXg2_oaKNYjJ0HxSGa9qXPQQ7VK0uDs",authDomain:"nakulaku-ekosistem.firebaseapp.com",projectId:"nakulaku-ekosistem",storageBucket:"nakulaku-ekosistem.firebasestorage.app",messagingSenderId:"672296906494",appId:"1:672296906494:web:2e90334b9d3136a4917faf"};
+let auth=null,db=null;
+if(!DEMO){firebase.initializeApp(firebaseConfig);auth=firebase.auth();db=firebase.firestore();}
+const $=id=>document.getElementById(id);
+let ME=null,LEVEL=4,TUGAS=[],QUEUE=[],HIST=[],curKarya=null;
+function levelOf(u){const r=(u.role||'').toLowerCase(),j=(u.jabatan||'').toLowerCase();if(r.includes('admin'))return 1;if(r.includes('narasumber'))return 2;if(r.includes('kepala')||j.includes('kepala'))return 3;return 4;}
+function showToast(m,t='success'){const ic={success:'check-circle-2',error:'x-circle',info:'info'};const bg={success:'bg-emerald-600',error:'bg-red-600',info:'bg-wine-800'};const e=document.createElement('div');e.className=`${bg[t]} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 fixed bottom-20 left-1/2 -translate-x-1/2 z-[60]`;e.innerHTML=`<i data-lucide="${ic[t]}" class="w-5 h-5"></i><span class="text-sm font-bold">${m}</span>`;document.body.appendChild(e);lucide.createIcons();setTimeout(()=>{e.style.opacity='0';e.style.transition='.4s';setTimeout(()=>e.remove(),400)},2600);}
+function showTab(n){['antrean','topik','riwayat'].forEach(x=>{$('tab-'+x).classList.toggle('hidden',x!==n);$('t-'+x).classList.toggle('bg-wine-800',x===n);$('t-'+x).classList.toggle('text-white',x===n);$('t-'+x).classList.toggle('text-gray-500',x!==n);});}
+function openM(id){$(id).classList.remove('hidden');$(id).classList.add('flex');}
+function closeM(id){$(id).classList.add('hidden');$(id).classList.remove('flex');}
+function tugasOf(k){return TUGAS.find(t=>t.id===k.tugas_id)||{};}
+function myTopics(){return TUGAS.filter(t=>(t.validator||'').split(/[,;]/).map(s=>s.trim()).includes(ME.email));}
+function isMine(t){return LEVEL===1?true:((t.validator||'').split(/[,;]/).map(s=>s.trim()).includes(ME.email));}
+function getCached(k,ttl,fn){const r=localStorage.getItem('nk_'+k);if(r){const c=JSON.parse(r);if(Date.now()-c.t<ttl)return Promise.resolve(c.data);}return fn().then(d=>{localStorage.setItem('nk_'+k,JSON.stringify({t:Date.now(),data:d}));return d;});}
+
+const D_TUGAS=[
+ {id:'t1',judul:'Materi 1: Kurikulum & Capaian Pembelajaran',jenis:'Materi KKG',validator:'narsum1@nakulaku.id',deadline:'2026-10-01',link:'https://drive.google.com/',status:'ON'},
+ {id:'t2',judul:'Materi 2: Pembelajaran Diferensiasi',jenis:'Materi KKG',validator:'narsum2@nakulaku.id',deadline:'2026-10-15',link:'https://drive.google.com/',status:'ON'}
+];
+const D_QUEUE=[
+ {id:'k2',tugas_id:'t1',tugas_judul:'Materi 1: Kurikulum & Capaian Pembelajaran',kategori:'Materi KKG',email:'guruA@sd.id',nama:'Guru A',unit_kerja:'SD Negeri 1 Krisak',judul:'Rangkuman & implementasi CP',catatan:'Sudah saya terapkan di kelas 5.',link:'https://drive.google.com/',status:'menunggu',blind_id:'#ID-2P9Q'},
+ {id:'k3',tugas_id:'t2',tugas_judul:'Materi 2: Pembelajaran Diferensiasi',kategori:'Materi KKG',email:'guruB@sd.id',nama:'Guru B',unit_kerja:'SD Negeri 1 Pare',judul:'Strategi diferensiasi konten',catatan:'',link:'https://drive.google.com/',status:'menunggu',blind_id:'#ID-7T4M'}
+];
+const D_HIST=[{id:'k1',tugas_id:'t1',judul:'Rangkuman diklat',nama:'Guru C',unit_kerja:'SD Negeri 3 Krisak',grade:'A',status:'diterima',feedback:'Sangat baik.',waktu_validasi:'2026-09-20T08:00:00Z',validator:'narsum1@nakulaku.id'}];
+
+if(DEMO){
+  $('demo-badge').classList.remove('hidden');
+  ME={email:'narsum1@nakulaku.id',nama:'Narasumber Satu, S.Pd.',jabatan:'Guru Kelas',instansi:'SD Negeri 3 Keloran',role:'narasumber',status:'active'};
+  LEVEL=2;TUGAS=D_TUGAS;QUEUE=D_QUEUE.filter(k=>isMine(tugasOf(k)));HIST=D_HIST;
+  renderAll();
+}else{
+  auth.onAuthStateChanged(async u=>{
+    if(!u){location.href='../index.html';return;}
+    const d=await db.collection('users').doc(u.email).get();
+    ME=d.exists?d.data():{email:u.email,nama:u.displayName};
+    LEVEL=levelOf(ME);
+    if(LEVEL>2){$('gate').classList.remove('hidden');}
+    $('h-sub').textContent=(ME.nama||ME.email)+' • hanya materi penugasan Anda';
+    await loadAll();
+  });
+}
+
+async function loadAll(){
+  TUGAS=(await getCached('tugas',10*60*1000,()=>db.collection('tugas').get().then(s=>s.docs.map(x=>({id:x.id,...x.data()}))))).filter(t=>(t.status||'ON')==='ON');
+  const q=await db.collection('karya').where('status','==','menunggu').get();
+  let QQ=q.docs.map(x=>({id:x.id,...x.data()}));
+  if(LEVEL===2)QQ=QQ.filter(k=>isMine(tugasOf(k)));
+  QUEUE=QQ;
+  const h=await db.collection('karya').where('validator','==',ME.email).limit(50).get();
+  HIST=h.docs.map(x=>({id:x.id,...x.data()}));
+  renderAll();
+}
+
+function renderAll(){
+  const top=myTopics();
+  $('st-topik').textContent=LEVEL===1?TUGAS.length:top.length;
+  $('st-queue').textContent=QUEUE.length;
+  $('st-done').textContent=HIST.length;
+  const acc=HIST.filter(k=>k.status==='diterima').length;
+  $('st-pct').textContent=(HIST.length?Math.round(acc/HIST.length*100):0)+'%';
+  renderQueue();renderTopik();renderHist();lucide.createIcons();
+}
+
+function renderQueue(){
+  const blind=$('blind-toggle').checked;
+  $('queue-list').innerHTML=QUEUE.length?QUEUE.map(k=>{const t=tugasOf(k);
+    return `<div class="bg-white rounded-2xl shadow-card p-4"><div class="flex justify-between items-start"><div><p class="text-xs font-extrabold text-wine-700">${blind?(k.blind_id||'#ID-????'):((k.nama||'')+' • '+(k.unit_kerja||''))} ${t.blind===false?'<span class="text-gray-400">(non-blind)</span>':''}</p><p class="font-bold text-sm mt-1">${k.judul}</p><p class="text-xs text-gray-400">${k.kategori||'-'} • ${k.tugas_judul||'-'}</p></div><button onclick="openVal('${k.id}')" class="bg-wine-800 text-white rounded-xl px-3 py-2 text-xs font-bold">Nilai</button></div>${!blind?`<p class="text-xs text-gray-500 mt-2">${k.catatan||''}</p>`:''}</div>`;}).join('')
+   :'<div class="bg-white rounded-2xl shadow-card p-8 text-center text-gray-400"><i data-lucide="inbox" class="w-10 h-10 mx-auto mb-2"></i>Tidak ada antrean untuk topik Anda. 🎉</div>';
+  lucide.createIcons();
+}
+function renderTopik(){
+  const list=LEVEL===1?TUGAS:myTopics();
+  $('topik-list').innerHTML=list.length?list.map(t=>{const w=QUEUE.filter(k=>k.tugas_id===t.id).length;
+    return `<div class="bg-white rounded-2xl shadow-card p-4 flex justify-between items-center"><div><p class="font-bold text-sm">${t.judul}</p><p class="text-xs text-gray-400 mt-0.5">${t.jenis||'-'} • Deadline ${t.deadline||'-'} • Penilai: ${LEVEL===1?(t.validator||'belum ditugaskan'):'Anda'}</p></div><div class="text-right"><span class="text-[10px] font-extrabold px-2 py-1 rounded-full ${w?'bg-amber-100 text-amber-700':'bg-emerald-100 text-emerald-700'}">${w} menunggu</span>${t.link?`<a href="${t.link}" target="_blank" class="block text-xs font-bold text-wine-700 mt-1">📖 Materi</a>`:''}</div></div>`;}).join('')
+   :'<p class="text-gray-400">Belum ada materi yang ditugaskan kepada Anda.</p>';
+  lucide.createIcons();
+}
+function renderHist(){
+  $('hist-list').innerHTML=HIST.length?HIST.map(k=>`<div class="flex justify-between items-center bg-white rounded-2xl shadow-card p-3"><div><p class="font-semibold">${k.judul} <span class="text-xs text-gray-400">• ${k.nama||''}</span></p><p class="text-xs text-gray-400">${k.tugas_judul||k.kategori||'-'}</p></div><div class="text-right"><span class="font-extrabold text-wine-700">${k.grade||'-'}</span><p class="text-[10px] ${k.status==='diterima'?'text-emerald-600':'text-red-500'} font-extrabold">${(k.status||'').toUpperCase()}</p></div></div>`).join('')
+   :'<p class="text-gray-400">Belum ada penilaian.</p>';
+  lucide.createIcons();
+}
+
+function openVal(id){curKarya=QUEUE.find(k=>k.id===id);const t=tugasOf(curKarya);const blind=(t.blind!==false)?$('blind-toggle').checked:false;
+ $('v-blind').textContent=blind?(curKarya.blind_id||'#ID-????'):('TERBUKA: '+(curKarya.nama||'')+' • '+(curKarya.unit_kerja||''));
+ $('v-topik').textContent='Topik: '+(curKarya.tugas_judul||'-');
+ $('v-judul').textContent=curKarya.judul;$('v-catatan').textContent=curKarya.catatan||'-';$('v-link').href=curKarya.link||'#';$('v-grade').value='';$('v-fb').value='';openM('mVal');}
+async function saveVal(){
+  const g=$('v-grade').value,fb=$('v-fb').value.trim();
+  if(!g)return showToast('Pilih grade','error');
+  if(!fb)return showToast('Umpan balik wajib','error');
+  if(DEMO){showToast('(Demo) Validasi terkirim ✅');closeM('mVal');return;}
+  const st=(g==='D'||g==='E')?'revisi':'diterima';
+  try{
+    await db.collection('karya').doc(curKarya.id).update({status:st,grade:g,feedback:fb,validator:ME.email,waktu_validasi:new Date().toISOString()});
+    closeM('mVal');showToast('Validasi terkirim ✅');
+    QUEUE=QUEUE.filter(k=>k.id!==curKarya.id);
+    HIST.unshift({...curKarya,status:st,grade:g,feedback:fb,validator:ME.email});
+    renderAll();
+  }catch(e){showToast('Ditolak rules: Anda bukan penilai materi ini. '+e.message,'error');}
+}
+lucide.createIcons();
+</script>
+</body>
+</html>
