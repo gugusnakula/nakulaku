@@ -2,122 +2,393 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Presensi - Nakulaku</title>
+<title>Presensi — Nakulaku Ekosistem</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+<script>
+tailwind.config={theme:{extend:{
+colors:{wine:{50:'#FBF2F5',100:'#F7E1E8',200:'#EFC3D1',300:'#E19AB1',400:'#D06A8C',500:'#B9446C',600:'#A62C57',700:'#8C1D3C',800:'#771731',900:'#64142B',950:'#400A1B'},accent:{500:'#C9A227'},ink:'#202024'},
+fontFamily:{sans:['"Plus Jakarta Sans"','system-ui','sans-serif']},
+boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
+}}}
+</script>
 </head>
-<body class="bg-slate-100 min-h-screen p-4">
-<div class="max-w-md mx-auto">
+<body class="bg-[#F7F4F5] font-sans text-ink">
 
-  <div class="flex justify-between items-center mb-4">
-    <h1 class="text-xl font-bold flex items-center gap-2"><i data-lucide="clipboard-check" class="text-green-600"></i> Presensi</h1>
-    <a href="../index.html" class="text-blue-600 text-sm flex items-center gap-1"><i data-lucide="home" class="w-4 h-4"></i> Pusat Akun</a>
+<header class="bg-gradient-to-b from-wine-800 to-wine-700 rounded-b-[28px] px-4 md:px-6 pt-5 pb-6 relative overflow-hidden">
+  <svg class="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 400 300" fill="none"><path d="M-20 220 C120 140,260 260,420 120" stroke="white" stroke-width="1.5"/></svg>
+  <div class="relative max-w-5xl mx-auto flex items-center gap-3">
+    <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center"><i data-lucide="clipboard-check" class="w-5 h-5 text-white"></i></div>
+    <div class="flex-1"><h1 class="text-white font-extrabold text-lg">Presensi</h1><p class="text-white/60 text-xs">Nakulaku Ekosistem</p></div>
+    <span id="demo-badge" class="hidden bg-amber-400 text-amber-950 text-[9px] font-extrabold px-1.5 py-0.5 rounded">DEMO</span>
+    <a href="../home.html" class="text-white/80 text-xs font-bold flex items-center gap-1 bg-white/10 px-3 py-1.5 rounded-full"><i data-lucide="home" class="w-3.5 h-3.5"></i> Beranda</a>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto p-4 md:p-6 space-y-5 pb-24">
+  <div id="gate" class="hidden bg-amber-50 border border-amber-200 text-amber-700 rounded-2xl p-4 text-sm font-semibold">Akun Anda belum aktif. Hubungi admin.</div>
+
+  <!-- TABS -->
+  <div class="bg-white rounded-2xl shadow-card p-1 flex text-sm font-bold">
+    <button onclick="showTab('absen')" id="t-absen" class="flex-1 py-2.5 rounded-xl bg-wine-800 text-white">Absen</button>
+    <button onclick="showTab('izin')" id="t-izin" class="flex-1 py-2.5 rounded-xl text-gray-500">Izin</button>
+    <button onclick="showTab('riwayat')" id="t-riwayat" class="flex-1 py-2.5 rounded-xl text-gray-500">Riwayat</button>
+    <button onclick="showTab('monitor')" id="t-monitor" class="flex-1 py-2.5 rounded-xl text-gray-500">Monitor</button>
   </div>
 
-  <div id="loading" class="bg-white rounded-xl shadow p-6 text-center text-slate-500">Memuat…</div>
-
-  <div id="form-box" class="hidden bg-white rounded-xl shadow p-5 space-y-3">
-    <div class="bg-green-50 border border-green-200 rounded-lg p-3">
-      <p class="font-semibold text-slate-800" id="u-nama">-</p>
-      <p class="text-xs text-slate-600" id="u-info">-</p>
-      <p class="text-xs mt-1 flex items-center gap-1" id="geo-status"><i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> Mencari lokasi…</p>
+  <!-- ===== TAB ABSEN ===== -->
+  <section id="tab-absen" class="space-y-4">
+    <div class="bg-white rounded-2xl shadow-card p-5">
+      <div class="flex justify-between items-start">
+        <div><p class="font-extrabold" id="a-nama">-</p><p class="text-xs text-gray-500" id="a-info">-</p></div>
+        <span class="text-xs font-bold text-wine-700 bg-wine-100 px-2.5 py-1 rounded-full" id="a-time">-</span>
+      </div>
+      <div class="mt-3 bg-wine-50 rounded-xl p-3">
+        <p class="text-xs font-extrabold text-wine-700 flex items-center gap-1" id="geo-st"><i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> Mencari lokasi…</p>
+        <p class="text-xs text-gray-500 mt-0.5" id="geo-detail">-</p>
+      </div>
     </div>
 
-    <input id="tempat" placeholder="Tempat Kegiatan" class="w-full border rounded-lg p-3">
-    <input id="materi" placeholder="Materi Kegiatan" class="w-full border rounded-lg p-3">
-    <select id="status" class="w-full border rounded-lg p-3">
-      <option value="Hadir Tepat">✅ Hadir Tepat</option>
-      <option value="Terlambat">⏰ Terlambat</option>
-      <option value="Izin">📩 Izin</option>
-    </select>
-    <input id="jenis-izin" placeholder="Jenis Izin (jika izin)" class="w-full border rounded-lg p-3 hidden">
-    <input id="foto" placeholder="Link Foto (Google Drive)" class="w-full border rounded-lg p-3">
-
-    <button id="btn-submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg p-3 flex items-center justify-center gap-2">
-      <i data-lucide="send" class="w-4 h-4"></i> Kirim Presensi
-    </button>
-  </div>
-</div>
-
-<!-- Confirm modal -->
-<div id="modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-  <div class="bg-white rounded-xl p-5 w-full max-w-sm text-center">
-    <i data-lucide="help-circle" class="w-10 h-10 mx-auto text-green-600 mb-2"></i>
-    <p class="font-semibold mb-1">Kirim Presensi?</p>
-    <p class="text-sm text-slate-500 mb-4">Pastikan data sudah benar. Presensi tidak dapat diubah setelah dikirim.</p>
-    <div class="flex gap-2">
-      <button id="m-batal" class="flex-1 bg-slate-200 rounded-lg p-2">Batal</button>
-      <button id="m-ya" class="flex-1 bg-green-600 text-white rounded-lg p-2">Ya, Kirim</button>
+    <div class="bg-white rounded-2xl shadow-card p-5">
+      <p class="font-bold mb-2 flex items-center gap-2"><i data-lucide="file-text" class="w-4 h-4 text-wine-700"></i> Laporan Kegiatan</p>
+      <textarea id="laporan" rows="3" placeholder="Ringkasan kegiatan hari ini…" class="w-full border border-gray-200 rounded-xl p-3"></textarea>
     </div>
-  </div>
-</div>
+
+    <div class="bg-white rounded-2xl shadow-card p-5">
+      <p class="font-bold mb-2 flex items-center gap-2"><i data-lucide="camera" class="w-4 h-4 text-wine-700"></i> Bukti Foto Selfie</p>
+      <input type="file" id="foto-in" accept="image/*" capture="user" class="hidden" onchange="handleFoto(this)">
+      <div id="foto-area" onclick="document.getElementById('foto-in').click()" class="border-2 border-dashed border-wine-200 rounded-xl p-6 text-center cursor-pointer hover:border-wine-500">
+        <img id="foto-prev" class="hidden max-h-48 mx-auto rounded-xl">
+        <div id="foto-ph" class="text-gray-400"><i data-lucide="camera" class="w-8 h-8 mx-auto mb-1"></i><p class="text-sm font-semibold">Ketuk untuk foto selfie</p><p class="text-xs">Otomatis dikompres ~50KB</p></div>
+      </div>
+      <button id="btn-retake" onclick="retakeFoto()" class="hidden w-full mt-2 bg-gray-100 rounded-xl py-2 text-sm font-bold">Ambil Ulang</button>
+    </div>
+
+    <div id="status-box" class="hidden rounded-2xl p-4"></div>
+
+    <button id="btn-kirim" onclick="kirimAbsen()" class="w-full bg-wine-800 hover:bg-wine-900 text-white font-bold rounded-xl p-3.5 flex items-center justify-center gap-2"><i data-lucide="send" class="w-4 h-4"></i> Kirim Presensi</button>
+    <p class="text-[11px] text-gray-400 text-center">Status otomatis: Hadir Tepat / Terlambat (berdasarkan jam batas sekolah)</p>
+  </section>
+
+  <!-- ===== TAB IZIN ===== -->
+  <section id="tab-izin" class="hidden space-y-4">
+    <div class="bg-white rounded-2xl shadow-card p-5">
+      <p class="font-bold mb-3 flex items-center gap-2"><i data-lucide="calendar-off" class="w-4 h-4 text-wine-700"></i> Pengajuan Izin</p>
+      <input id="iz-tanggal" type="date" class="w-full border border-gray-200 rounded-xl p-3 mb-2">
+      <select id="iz-jenis" class="w-full border border-gray-200 rounded-xl p-3 mb-2 bg-white">
+        <option>Sakit</option><option>Izin</option><option>Dinas Luar</option><option>Cuti</option>
+      </select>
+      <textarea id="iz-alasan" rows="3" placeholder="Alasan lengkap…" class="w-full border border-gray-200 rounded-xl p-3 mb-3"></textarea>
+      <button onclick="kirimIzin()" class="w-full bg-wine-800 text-white font-bold rounded-xl p-3">Ajukan Izin</button>
+      <p class="text-[11px] text-gray-400 mt-2 text-center">Izin akan diproses oleh Kepala Sekolah Anda</p>
+    </div>
+    <div class="bg-white rounded-2xl shadow-card p-5">
+      <p class="font-bold mb-2">Riwayat Izin</p>
+      <div id="iz-list" class="space-y-2 text-sm"></div>
+    </div>
+  </section>
+
+  <!-- ===== TAB RIWAYAT ===== -->
+  <section id="tab-riwayat" class="hidden space-y-4">
+    <div class="bg-white rounded-2xl shadow-card p-5">
+      <p class="font-bold mb-3 flex items-center gap-2"><i data-lucide="history" class="w-4 h-4 text-wine-700"></i> Riwayat Presensi</p>
+      <div id="hist-list" class="space-y-2 text-sm"></div>
+    </div>
+  </section>
+
+  <!-- ===== TAB MONITOR ===== -->
+  <section id="tab-monitor" class="hidden space-y-4">
+    <div id="no-monitor" class="hidden bg-white rounded-2xl shadow-card p-8 text-center text-gray-400">Akses hanya untuk KS / Narasumber / Admin</div>
+    <div id="monitor-box">
+      <div class="bg-white rounded-2xl shadow-card p-5">
+        <div class="flex gap-2 items-end">
+          <div class="flex-1"><label class="text-xs font-bold text-gray-500">Tanggal</label><input id="m-tanggal" type="date" onchange="loadMonitor()" class="w-full border rounded-xl p-2.5"></div>
+          <select id="m-sekolah" onchange="loadMonitor()" class="border rounded-xl p-2.5 bg-white"></select>
+        </div>
+      </div>
+      <div class="grid grid-cols-3 gap-3 mt-4">
+        <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Hadir</p><p id="m-hadir" class="text-2xl font-extrabold text-emerald-600">0</p></div>
+        <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Terlambat</p><p id="m-telat" class="text-2xl font-extrabold text-amber-500">0</p></div>
+        <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Izin/Belum</p><p id="m-izin" class="text-2xl font-extrabold text-red-500">0</p></div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-card p-5 mt-4">
+        <p class="font-bold mb-3">Detail Guru</p>
+        <div class="hidden md:block overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-gray-400 text-xs"><th class="p-2">Nama</th><th class="p-2">Jam</th><th class="p-2">Status</th><th class="p-2">Jarak</th><th class="p-2">Foto</th></tr></thead><tbody id="m-tbody"></tbody></table></div>
+        <div id="m-mcards" class="md:hidden space-y-2"></div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-card p-5 mt-4">
+        <p class="font-bold mb-2 text-red-600 flex items-center gap-1"><i data-lucide="user-x" class="w-4 h-4"></i> Belum Absen</p>
+        <div id="m-belum" class="text-sm"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- MODAL FOTO FULL -->
+<div id="mFoto" class="fixed inset-0 bg-black/90 hidden items-center justify-center p-4 z-50" onclick="closeM('mFoto')"><img id="mFoto-img" class="max-w-full max-h-full rounded-xl"></div>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyDaTXg2_oaKNYjJ0HxSGa9qXPQQ7VK0uDs",
-  authDomain: "nakulaku-ekosistem.firebaseapp.com",
-  projectId: "nakulaku-ekosistem",
-  storageBucket: "nakulaku-ekosistem.firebasestorage.app",
-  messagingSenderId: "672296906494",
-  appId: "1:672296906494:web:2e90334b9d3136a4917faf"
-};
-firebase.initializeApp(firebaseConfig);
-const auth=firebase.auth(), db=firebase.firestore();
+const DEMO=location.protocol==='file:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.search.includes('demo=1');
+const firebaseConfig={apiKey:"AIzaSyDaTXg2_oaKNYjJ0HxSGa9qXPQQ7VK0uDs",authDomain:"nakulaku-ekosistem.firebaseapp.com",projectId:"nakulaku-ekosistem",storageBucket:"nakulaku-ekosistem.firebasestorage.app",messagingSenderId:"672296906494",appId:"1:672296906494:web:2e90334b9d3136a4917faf"};
+let auth=null,db=null,st=null;
+if(!DEMO){firebase.initializeApp(firebaseConfig);auth=firebase.auth();db=firebase.firestore();st=firebase.storage();}
+const GAS_URL='https://script.google.com/macros/s/AKfycbyUYOMxIBfBOPTqn7W5r5Pj_Ee2SZ4jK6jnAYUtfc_vbk4Dc279wyL8H9GrUUd1b-mU8A/exec';
 const $=id=>document.getElementById(id);
-let ME=null, KOORD='', MAPS='';
+let ME=null,SCH=null,KOORD=null,FOTO_BLOB=null,LEVEL=4,SEKOLAHS=[];
+const LVL={1:'ADMIN',2:'NARASUMBER',3:'KEPSEK',4:'GURU'};
+function levelOf(u){const r=(u.role||'').toLowerCase(),j=(u.jabatan||'').toLowerCase();if(r.includes('admin'))return 1;if(r.includes('narasumber'))return 2;if(r.includes('kepala')||j.includes('kepala'))return 3;return 4;}
 
-// Toast (standar Nakulaku)
-function showToast(msg,type='success'){
-  const ic={success:'check-circle-2',error:'x-circle',info:'info'};
-  const bg={success:'bg-emerald-600',error:'bg-red-600',info:'bg-slate-800'};
-  const t=document.createElement('div');
-  t.className=`${bg[type]} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 fixed bottom-5 left-1/2 -translate-x-1/2 z-50`;
-  t.innerHTML=`<i data-lucide="${ic[type]}" class="w-5 h-5"></i><span class="text-sm font-medium">${msg}</span>`;
-  document.body.appendChild(t); lucide.createIcons();
-  setTimeout(()=>{t.style.opacity='0';t.style.transition='.4s';setTimeout(()=>t.remove(),400)},2600);
+function showToast(m,t='success'){const ic={success:'check-circle-2',error:'x-circle',info:'info'};const bg={success:'bg-emerald-600',error:'bg-red-600',info:'bg-wine-800'};const e=document.createElement('div');e.className=`${bg[t]} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 fixed bottom-20 left-1/2 -translate-x-1/2 z-[60]`;e.innerHTML=`<i data-lucide="${ic[t]}" class="w-5 h-5"></i><span class="text-sm font-bold">${m}</span>`;document.body.appendChild(e);lucide.createIcons();setTimeout(()=>{e.style.opacity='0';e.style.transition='.4s';setTimeout(()=>e.remove(),400)},2600);}
+
+function showTab(n){['absen','izin','riwayat','monitor'].forEach(x=>{$('tab-'+x).classList.toggle('hidden',x!==n);$('t-'+x).classList.toggle('bg-wine-800',x===n);$('t-'+x).classList.toggle('text-white',x===n);$('t-'+x).classList.toggle('text-gray-500',x!==n);});if(n==='riwayat')loadRiwayat();if(n==='izin')loadIzin();if(n==='monitor')loadMonitor();}
+function openM(id){$(id).classList.remove('hidden');$(id).classList.add('flex');}
+function closeM(id){$(id).classList.add('hidden');$(id).classList.remove('flex');}
+
+// Haversine
+function haversine(a,b,c,d){const R=6371e3,toR=x=>x*Math.PI/180;const φ1=toR(a),φ2=toR(c),dφ=toR(c-a),dλ=toR(d-b);const h=Math.sin(dφ/2)**2+Math.cos(φ1)*Math.cos(φ2)*Math.sin(dλ/2)**2;return 2*R*Math.asin(Math.sqrt(h));}
+
+if(DEMO){
+  $('demo-badge').classList.remove('hidden');
+  ME={email:'iwan4943@gmail.com',nama:'Ekwan Nugroho, S.Pd.I.',jabatan:'Kepala Sekolah',instansi:'SD Negeri 3 Krisak',role:'admin,narasumber',status:'active'};
+  SCH={nama:'SD Negeri 3 Krisak',lat:-7.7,lng:110.4,radius:200,jam_mulai:'06:00',jam_selesai:'14:00',jam_batas:'07:30'};
+  SEKOLAHS=[{nama:'SD Negeri 3 Krisak'},{nama:'SD Negeri 1 Pare'}];
+  LEVEL=1;
+  initUI();
+}else{
+  auth.onAuthStateChanged(async u=>{
+    if(!u){location.href='../index.html';return;}
+    const d=await db.collection('users').doc(u.email).get();
+    ME=d.exists?d.data():{email:u.email,nama:u.displayName};
+    LEVEL=levelOf(ME);
+    if((ME.status||'active')!=='active'){$('gate').classList.remove('hidden');$('btn-kirim').disabled=true;}
+    await loadSekolahs();
+    await loadTarget();
+    initUI();
+  });
 }
 
-// SSO: kalau belum login → lempar ke Pusat Akun
-auth.onAuthStateChanged(async u=>{
-  if(!u){ location.href='../index.html'; return; }
-  const doc=await db.collection('users').doc(u.email).get(); // 1 read
-  ME=doc.exists?doc.data():{email:u.email,nama:u.displayName};
-  $('u-nama').innerText=ME.nama||u.email;
-  $('u-info').innerText=(ME.jabatan||'')+' • '+(ME.instansi||'');
-  $('loading').classList.add('hidden'); $('form-box').classList.remove('hidden');
+async function loadSekolahs(){
+  if(DEMO)return;
+  const s=await db.collection('sekolah').get();
+  SEKOLAHS=s.docs.map(x=>({id:x.id,...x.data()}));
+}
+async function loadTarget(){
+  if(DEMO)return;
+  if(!ME.instansi)return;
+  const s=await db.collection('sekolah').where('nama','==',ME.instansi).limit(1).get();
+  if(!s.empty)SCH=s.docs[0].data();
+  else SCH={nama:ME.instansi,lat:null,lng:null,radius:200,jam_mulai:'06:00',jam_selesai:'14:00',jam_batas:'07:30'};
+}
+
+function initUI(){
+  $('a-nama').textContent=ME.nama||ME.email;
+  $('a-info').textContent=(ME.jabatan||'')+' • '+(ME.instansi||'');
+  tickJam(); setInterval(tickJam,30000);
+  $('iz-tanggal').value=new Date().toISOString().slice(0,10);
+  $('m-tanggal').value=new Date().toISOString().slice(0,10);
+  $('m-sekolah').innerHTML=LEVEL<=2?SEKOLAHS.map(s=>`<option>${s.nama}</option>`).join(''):`<option>${ME.instansi}</option>`;
+  if(LEVEL===4){$('t-monitor').classList.add('hidden');}
+  ambilLokasi();
   lucide.createIcons();
-});
+}
+function tickJam(){$('a-time').textContent=new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});}
 
-// Geolocation
-navigator.geolocation.getCurrentPosition(p=>{
-  KOORD=p.coords.latitude+','+p.coords.longitude;
-  MAPS='https://maps.google.com/?q='+KOORD;
-  $('geo-status').innerHTML='<i data-lucide="map-pin" class="w-3 h-3 text-green-600"></i> Lokasi terdeteksi';
-  lucide.createIcons();
-},()=>{ $('geo-status').innerHTML='⚠️ Lokasi tidak aktif (opsional)'; },{enableHighAccuracy:true,timeout:8000});
+function ambilLokasi(){
+  if(DEMO){
+    $('geo-st').innerHTML='<i data-lucide="map-pin" class="w-3 h-3 text-emerald-600"></i> Lokasi terdeteksi (demo)';
+    $('geo-detail').textContent=`Target: ${SCH.nama} (jarak disimulasikan < radius)`;
+    KOORD={lat:-7.7,lng:110.4};
+    lucide.createIcons();return;
+  }
+  if(!navigator.geolocation){$('geo-st').innerHTML='⚠️ Geolocation tidak didukung';return;}
+  navigator.geolocation.getCurrentPosition(p=>{
+    KOORD={lat:p.coords.latitude,lng:p.coords.longitude};
+    if(SCH&&SCH.lat&&SCH.lng){
+      const d=haversine(KOORD.lat,KOORD.lng,SCH.lat,SCH.lng);
+      const ok=d<=(SCH.radius||200);
+      $('geo-st').innerHTML=`<i data-lucide="${ok?'map-pin':'alert-triangle'}" class="w-3 h-3 ${ok?'text-emerald-600':'text-amber-500'}"></i> ${ok?'Dalam radius sekolah':'Di luar radius sekolah'}`;
+      $('geo-detail').textContent=`${SCH.nama} • ${Math.round(d)} m dari target (radius ${SCH.radius||200} m)`;
+    }else{
+      $('geo-st').innerHTML='<i data-lucide="map-pin" class="w-3 h-3 text-emerald-600"></i> Lokasi terdeteksi';
+      $('geo-detail').textContent='Target sekolah belum diatur admin';
+    }
+    lucide.createIcons();
+  },()=>{
+    $('geo-st').innerHTML='⚠️ Izin lokasi ditolak';
+    $('geo-detail').textContent='Aktifkan GPS untuk validasi';
+    lucide.createIcons();
+  },{enableHighAccuracy:true,timeout:10000});
+}
 
-$('status').onchange=e=> $('jenis-izin').classList.toggle('hidden', e.target.value!=='Izin');
+// Kompresi foto ke ~50KB
+function handleFoto(inp){
+  const f=inp.files[0];if(!f)return;
+  const img=new Image();
+  img.onload=async()=>{
+    const MAX=640;
+    let w=img.width,h=img.height;
+    if(w>h){if(w>MAX){h=h*MAX/w;w=MAX;}}else{if(h>MAX){w=w*MAX/h;h=MAX;}}
+    const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+    cv.getContext('2d').drawImage(img,0,0,w,h);
+    // Iteratif turunin quality sampai <= 50KB
+    let q=0.55;
+    let blob;
+    for(let i=0;i<5;i++){
+      blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',q));
+      if(blob.size<=50*1024||q<=0.3)break;
+      q-=0.1;
+    }
+    FOTO_BLOB=blob;
+    const url=URL.createObjectURL(blob);
+    $('foto-prev').src=url;$('foto-prev').classList.remove('hidden');
+    $('foto-ph').classList.add('hidden');$('btn-retake').classList.remove('hidden');
+    const kb=(blob.size/1024).toFixed(1);
+    showToast(`Foto dikompres: ${kb} KB`,'info');
+  };
+  img.src=URL.createObjectURL(f);
+}
+function retakeFoto(){FOTO_BLOB=null;$('foto-prev').classList.add('hidden');$('foto-ph').classList.remove('hidden');$('btn-retake').classList.add('hidden');$('foto-in').value='';}
 
-$('btn-submit').onclick=()=>{ $('modal').classList.remove('hidden'); $('modal').classList.add('flex'); };
-$('m-batal').onclick=()=>{ $('modal').classList.add('hidden'); $('modal').classList.remove('flex'); };
-$('m-ya').onclick=async()=>{
-  $('m-batal').onclick();
+async function kirimAbsen(){
+  if(DEMO){showToast('(Demo) Presensi terkirim ✅');return;}
+  if((ME.status||'active')!=='active')return showToast('Akun belum aktif','error');
+  if(!FOTO_BLOB)return showToast('Foto selfie wajib','error');
+  if(!$('laporan').value.trim())return showToast('Laporan kegiatan wajib','error');
+  const btn=$('btn-kirim');btn.disabled=true;btn.innerHTML='<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Mengupload…';lucide.createIcons();
   try{
-    await db.collection('presensi').add({ // 1 write
+    // Upload foto via bridge GAS -> Google Drive
+    const base64=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result.split(',')[1]);fr.readAsDataURL(FOTO_BLOB);});
+    const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({base64:base64,filename:ME.email.replace(/[^a-z0-9]/gi,'_')+'_'+Date.now()+'.jpg'})});
+    const j=await res.json();
+    if(!j.ok)throw new Error(j.error||'Upload gagal');
+    const foto_url=j.url;
+    // Tentukan status dari jam batas
+    const now=new Date();
+    const jam=now.toTimeString().slice(0,5);
+    const batas=SCH?.jam_batas||'07:30';
+    const status=jam<=batas?'Hadir Tepat':'Terlambat';
+    // Validasi radius
+    let jarak=0,dalam_radius=false;
+    if(KOORD&&SCH&&SCH.lat){jarak=Math.round(haversine(KOORD.lat,KOORD.lng,SCH.lat,SCH.lng));dalam_radius=jarak<=(SCH.radius||200);}
+    await db.collection('presensi').add({
       waktu_submit:new Date().toISOString(),
-      email:ME.email, nama:ME.nama||'', unit_kerja:ME.instansi||'', jabatan:ME.jabatan||'',
-      tempat_kegiatan:$('tempat').value, materi:$('materi').value,
-      status:$('status').value, jenis_izin:$('jenis-izin').value,
-      lokasi_terdeteksi:KOORD?'ya':'tidak', koordinat:KOORD, link_maps:MAPS, link_foto:$('foto').value,
+      tanggal:now.toISOString().slice(0,10),
+      jam,
+      email:ME.email,
+      nama:ME.nama||'',
+      unit_kerja:ME.instansi||'',
+      jabatan:ME.jabatan||'',
+      jenis:'absen',
+      status,
+      dalam_radius,
+      jarak_meter:jarak,
+      target_sekolah:SCH?.nama||'',
+      koordinat:KOORD?`${KOORD.lat},${KOORD.lng}`:'',
+      link_maps:KOORD?`https://maps.google.com/?q=${KOORD.lat},${KOORD.lng}`:'',
+      foto_url,
+      laporan:$('laporan').value.trim(),
+      tahun:now.getFullYear()
+    });
+    const sb=document.getElementById('status-box');
+    sb.className=`rounded-2xl p-4 ${status==='Hadir Tepat'?'bg-emerald-50 border border-emerald-200 text-emerald-700':'bg-amber-50 border border-amber-200 text-amber-700'}`;
+    sb.innerHTML=`<p class="font-extrabold">${status} ✓</p><p class="text-sm">Jam ${jam} • Jarak ${jarak} m ${dalam_radius?'(dalam radius)':'(di luar radius — ditandai)'}</p>`;
+    sb.classList.remove('hidden');
+    showToast('Presensi terkirim ✅');
+    $('laporan').value='';retakeFoto();
+  }catch(e){showToast('Gagal: '+e.message,'error');}
+  btn.disabled=false;btn.innerHTML='<i data-lucide="send" class="w-4 h-4"></i> Kirim Presensi';lucide.createIcons();
+}
+
+async function kirimIzin(){
+  const tgl=$('iz-tanggal').value,jns=$('iz-jenis').value,als=$('iz-alasan').value.trim();
+  if(!tgl||!als)return showToast('Tanggal & alasan wajib','error');
+  if(DEMO){showToast('(Demo) Izin diajukan ✅');$('iz-alasan').value='';return;}
+  try{
+    await db.collection('presensi').add({
+      waktu_submit:new Date().toISOString(),tanggal:tgl,jam:'-',
+      email:ME.email,nama:ME.nama||'',unit_kerja:ME.instansi||'',jabatan:ME.jabatan||'',
+      jenis:'izin',status:'Izin',status_approval:'menunggu',
+      jenis_izin:jns,alasan:als,foto_url:'',koordinat:'',link_maps:'',laporan:'',
       tahun:new Date().getFullYear()
     });
-    showToast('Presensi terkirim ✅');
-    ['tempat','materi','jenis-izin','foto'].forEach(i=>$(i).value='');
-  }catch(e){ showToast('Gagal: '+e.message,'error'); }
-};
+    showToast('Izin diajukan ke KS ✅');$('iz-alasan').value='';loadIzin();
+  }catch(e){showToast('Gagal: '+e.message,'error');}
+}
+
+async function loadIzin(){
+  if(DEMO){$('iz-list').innerHTML='<p class="text-gray-400">Belum ada izin.</p>';return;}
+  const s=await db.collection('presensi').where('email','==',ME.email).where('jenis','==','izin').orderBy('waktu_submit','desc').limit(10).get();
+  const L=s.docs.map(x=>x.data());
+  $('iz-list').innerHTML=L.length?L.map(x=>{
+    const c={menunggu:['bg-amber-100 text-amber-700','MENUNGGU'],disetujui:['bg-emerald-100 text-emerald-700','DISETUJUI'],ditolak:['bg-red-100 text-red-600','DITOLAK']}[x.status_approval||'menunggu']||['bg-gray-100',''];
+    return `<div class="border-b border-gray-50 pb-2"><div class="flex justify-between"><p class="font-semibold">${x.jenis_izin} • ${x.tanggal}</p><span class="text-[10px] font-extrabold px-2 py-1 rounded-full ${c[0]}">${c[1]}</span></div><p class="text-xs text-gray-500 mt-1">${x.alasan}</p></div>`;
+  }).join(''):'<p class="text-gray-400">Belum ada pengajuan izin.</p>';
+}
+
+async function loadRiwayat(){
+  if(DEMO){$('hist-list').innerHTML='<p class="text-gray-400">Belum ada presensi.</p>';return;}
+  const s=await db.collection('presensi').where('email','==',ME.email).where('jenis','==','absen').orderBy('waktu_submit','desc').limit(30).get();
+  const L=s.docs.map(x=>({id:x.id,...x.data()}));
+  $('hist-list').innerHTML=L.length?L.map(x=>{
+    const c={
+      'Hadir Tepat':['bg-emerald-100 text-emerald-700','HADIR TEPAT'],
+      'Terlambat':['bg-amber-100 text-amber-700','TERLAMBAT'],
+      'Izin':['bg-sky-100 text-sky-700','IZIN']
+    }[x.status]||['bg-gray-100',x.status];
+    return `<div class="flex justify-between items-center border-b border-gray-50 pb-2">
+      <div class="flex items-center gap-2">
+        ${x.foto_url?`<img src="${x.foto_url}" onclick="showFoto('${x.foto_url}')" class="w-10 h-10 rounded-lg object-cover cursor-pointer">`:'<div class="w-10 h-10 rounded-lg bg-gray-100"></div>'}
+        <div><p class="font-semibold">${x.tanggal}</p><p class="text-xs text-gray-400">${x.jam} • ${x.target_sekolah||'-'} • ${x.jarak_meter||0}m</p></div>
+      </div>
+      <span class="text-[10px] font-extrabold px-2 py-1 rounded-full ${c[0]}">${c[1]}</span>
+    </div>`;
+  }).join(''):'<p class="text-gray-400">Belum ada presensi.</p>';
+  lucide.createIcons();
+}
+function showFoto(u){$('mFoto-img').src=u;openM('mFoto');}
+
+async function loadMonitor(){
+  if(LEVEL===4){$('no-monitor').classList.remove('hidden');$('monitor-box').classList.add('hidden');return;}
+  $('no-monitor').classList.add('hidden');$('monitor-box').classList.remove('hidden');
+  const tgl=$('m-tanggal').value;const sek=$('m-sekolah').value;
+  if(!tgl||!sek)return;
+  if(DEMO){
+    $('m-hadir').textContent='8';$('m-telat').textContent='1';$('m-izin').textContent='1';
+    $('m-tbody').innerHTML='<tr class="border-t"><td class="p-2">Arvi Dwi Utami</td><td class="p-2">07:12</td><td class="p-2"><span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">HADIR</span></td><td class="p-2">45m</td><td class="p-2">—</td></tr>';
+    $('m-mcards').innerHTML='<div class="border-b pb-2"><p class="font-semibold">Arvi Dwi Utami</p><p class="text-xs text-gray-400">07:12 • 45m</p></div>';
+    $('m-belum').innerHTML='<p class="text-gray-400">Semua guru sudah absen</p>';
+    return;
+  }
+  // Query presensi di tanggal & sekolah
+  const s=await db.collection('presensi').where('tanggal','==',tgl).where('unit_kerja','==',sek).get();
+  const P=s.docs.map(x=>x.data());
+  // Guru sekolah
+  let G=[];
+  if(LEVEL<=2){const gs=await db.collection('users').where('instansi','==',sek).get();G=gs.docs.map(x=>x.data());}
+  else{G=await db.collection('users').where('instansi','==',sek).get().then(s=>s.docs.map(x=>x.data()));}
+  const hadir=P.filter(x=>x.status==='Hadir Tepat').length;
+  const telat=P.filter(x=>x.status==='Terlambat').length;
+  const izin=P.filter(x=>x.jenis==='izin').length;
+  $('m-hadir').textContent=hadir;$('m-telat').textContent=telat;$('m-izin').textContent=Math.max(0,G.length-hadir-telat-izin);
+  $('m-tbody').innerHTML=P.map(x=>{
+    const c={'Hadir Tepat':['bg-emerald-100 text-emerald-700','HADIR'],'Terlambat':['bg-amber-100 text-amber-700','TELAT'],'Izin':['bg-sky-100 text-sky-700','IZIN']}[x.status]||['bg-gray-100',x.status];
+    return `<tr class="border-t"><td class="p-2 font-semibold">${x.nama}</td><td class="p-2">${x.jam}</td><td class="p-2"><span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full ${c[0]}">${c[1]}</span></td><td class="p-2">${x.jarak_meter||0}m</td><td class="p-2">${x.foto_url?`<img src="${x.foto_url}" onclick="showFoto('${x.foto_url}')" class="w-8 h-8 rounded object-cover cursor-pointer">`:'-'}</td></tr>`;
+  }).join('')||'<tr><td colspan="5" class="p-4 text-center text-gray-400">Belum ada data.</td></tr>';
+  $('m-mcards').innerHTML=P.map(x=>{
+    const c={'Hadir Tepat':['bg-emerald-100 text-emerald-700','HADIR'],'Terlambat':['bg-amber-100 text-amber-700','TELAT'],'Izin':['bg-sky-100 text-sky-700','IZIN']}[x.status]||['bg-gray-100',x.status];
+    return `<div class="flex justify-between items-center border-b pb-2"><div><p class="font-semibold">${x.nama}</p><p class="text-xs text-gray-400">${x.jam} • ${x.jarak_meter||0}m</p></div><span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full ${c[0]}">${c[1]}</span></div>`;
+  }).join('')||'<p class="text-gray-400">Belum ada data.</p>';
+  const emailHadir=new Set(P.filter(x=>x.jenis==='absen').map(x=>x.email));
+  const emailIzin=new Set(P.filter(x=>x.jenis==='izin').map(x=>x.email));
+  const belum=G.filter(g=>!emailHadir.has(g.email)&&!emailIzin.has(g.email));
+  $('m-belum').innerHTML=belum.length?belum.map(g=>`<div class="py-1 border-b border-gray-50">${g.nama} <span class="text-xs text-gray-400">• ${g.jabatan||'-'}</span></div>`).join(''):'<p class="text-gray-400">Semua guru sudah absen ✅</p>';
+  lucide.createIcons();
+}
 lucide.createIcons();
 </script>
 </body>
