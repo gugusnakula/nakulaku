@@ -34,7 +34,8 @@ body.noanim *{transition:none!important;animation:none!important}
       <p class="text-white/70 text-xs"><span id="h-date">-</span> <span id="demo-badge" class="hidden ml-1 bg-amber-400 text-amber-950 text-[9px] font-extrabold px-1.5 py-0.5 rounded">DEMO</span></p>
       <h1 class="text-white font-extrabold text-lg truncate" id="h-nama">-</h1>
     </div>
-    <button onclick="openSet()" class="bg-white/10 text-white p-2 rounded-full"><i data-lucide="settings" class="w-4 h-4"></i></button>
+    <button onclick="refreshMenu()" title="Muat ulang menu" class="bg-white/10 text-white p-2 rounded-full mr-1"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
+<button onclick="openSet()" class="bg-white/10 text-white p-2 rounded-full"><i data-lucide="settings" class="w-4 h-4"></i></button>
   </div>
 </header>
 
@@ -216,6 +217,16 @@ function loadPref(){const p=JSON.parse(localStorage.getItem('nk_pref')||'{}');$(
 function applyPref(){const p={dark:$('t-dark').checked,big:$('t-big').checked,anim:$('t-anim').checked};localStorage.setItem('nk_pref',JSON.stringify(p));document.body.classList.toggle('darkmode',p.dark);document.body.classList.toggle('bigtext',p.big);document.body.classList.toggle('noanim',p.anim);}
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('btn-install').classList.remove('hidden');});
 function doInstall(){if(deferred){deferred.prompt();}else{showToast('Buka menu browser → "Tambahkan ke Layar Utama"');}}
+async function refreshMenu(){
+  localStorage.removeItem('nk_menu');
+  localStorage.removeItem('nk_banner');
+  localStorage.removeItem('nk_pengaturan');
+  localStorage.removeItem('nk_quotes');
+  showToast('Memuat ulang…','info');
+  if(!DEMO) await loadAll();
+  else { startRender(); }
+  showToast('Menu dimuat ulang ✅');
+}
 loadPref(); lucide.createIcons();
 </script>
 </body>
