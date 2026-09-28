@@ -2,17 +2,16 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nakulaku — Beranda</title>
+<title>Nakulaku Ekosistem</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
 tailwind.config={theme:{extend:{
-colors:{wine:{50:'#FBF2F5',100:'#F7E1E8',200:'#EFC3D1',300:'#E19AB1',400:'#D06A8C',500:'#B9446C',600:'#A62C57',700:'#8C1D3C',800:'#771731',900:'#64142B',950:'#400A1B'},ink:'#202024'},
+colors:{wine:{50:'#FBF2F5',100:'#F7E1E8',200:'#EFC3D1',300:'#E19AB1',400:'#D06A8C',500:'#B9446C',600:'#A62C57',700:'#8C1D3C',800:'#771731',900:'#64142B',950:'#400A1B'},accent:{500:'#C9A227'},ink:'#202024'},
 fontFamily:{sans:['"Plus Jakarta Sans"','system-ui','sans-serif']},
 boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
 }}}
@@ -21,83 +20,71 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
 body.darkmode{background:#160a0d}
 body.darkmode .dm-card{background:#2a1419;color:#f6e9eb}
 body.darkmode .dm-sub{color:#cfa9ae}
-body.darkmode .dm-input{background:#2a1419;border-color:#4a2530;color:#f6e9eb}
 body.bigtext{font-size:112.5%}
 body.noanim *{transition:none!important;animation:none!important}
 </style>
 </head>
 <body class="bg-[#F7F4F5] font-sans text-ink">
 
-<!-- HEADER -->
 <header class="bg-gradient-to-b from-wine-800 to-wine-700 rounded-b-[28px] px-4 md:px-6 pt-5 pb-6 relative overflow-hidden">
   <svg class="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 400 300" fill="none"><path d="M-20 220 C120 140,260 260,420 120" stroke="white" stroke-width="1.5"/></svg>
-  <div class="relative max-w-5xl mx-auto">
-    <div class="flex items-center gap-3">
-      <div id="h-avatar" class="w-11 h-11 rounded-full bg-white/20 text-white flex items-center justify-center font-extrabold">?</div>
-      <div class="flex-1 min-w-0"><p class="text-white/70 text-xs" id="h-date">-</p><h1 class="text-white font-extrabold text-lg truncate" id="h-nama">-</h1></div>
-      <button onclick="openKTA()" class="bg-white/10 text-white text-xs font-bold px-3 py-2 rounded-full flex items-center gap-1"><i data-lucide="id-card" class="w-4 h-4"></i> KTA</button>
-      <button onclick="openSet()" class="bg-white/10 text-white p-2 rounded-full"><i data-lucide="settings" class="w-4 h-4"></i></button>
+  <div class="relative max-w-5xl mx-auto flex items-center gap-3">
+    <div id="h-avatar" class="w-11 h-11 rounded-full bg-white/20 text-white flex items-center justify-center font-extrabold">?</div>
+    <div class="flex-1 min-w-0">
+      <p class="text-white/70 text-xs"><span id="h-date">-</span> <span id="demo-badge" class="hidden ml-1 bg-amber-400 text-amber-950 text-[9px] font-extrabold px-1.5 py-0.5 rounded">DEMO</span></p>
+      <h1 class="text-white font-extrabold text-lg truncate" id="h-nama">-</h1>
     </div>
+    <button onclick="openSet()" class="bg-white/10 text-white p-2 rounded-full"><i data-lucide="settings" class="w-4 h-4"></i></button>
   </div>
 </header>
 
 <main class="max-w-5xl mx-auto p-4 md:p-6 space-y-5 pb-24 md:pb-10">
-
   <div id="gate" class="hidden bg-amber-50 border border-amber-200 text-amber-700 rounded-2xl p-4 text-sm font-semibold">Akun Anda belum aktif. Hubungi admin untuk persetujuan.</div>
 
-  <!-- AGENDA HARI INI -->
-  <div class="dm-card bg-white rounded-2xl shadow-card p-5 border-l-4 border-wine-700">
-    <p class="text-xs font-extrabold tracking-widest text-wine-700">HARI INI</p>
-    <p id="agenda-text" class="font-bold mt-1">Memuat agenda…</p>
-    <p id="agenda-sub" class="dm-sub text-xs text-gray-500 mt-0.5">-</p>
-    <a id="agenda-cta" href="presensi/" class="mt-3 inline-flex items-center gap-2 bg-wine-800 hover:bg-wine-900 text-white text-sm font-bold rounded-xl px-4 py-2.5"><i data-lucide="clipboard-check" class="w-4 h-4"></i> Presensi Sekarang</a>
-  </div>
+  <!-- TAB: BERANDA -->
+  <section id="tab-beranda" class="space-y-5">
+    <div id="banner-card"></div>
+    <div class="dm-card bg-white rounded-2xl shadow-card p-5">
+      <p class="italic text-ink/80" id="quote-text">"…"</p>
+      <p class="text-xs text-wine-600 mt-1" id="quote-by">-</p>
+    </div>
+    <div>
+      <p class="font-extrabold mb-3">Aplikasi Utama</p>
+      <div id="apps-utama" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+    </div>
+  </section>
 
-  <!-- QUOTE -->
-  <div class="dm-card bg-white rounded-2xl shadow-card p-5">
-    <p class="italic text-ink/80" id="quote-text">"…"</p>
-    <p class="text-xs text-wine-600 mt-1" id="quote-by">-</p>
-  </div>
-
-  <!-- APPS -->
-  <div id="apps-section">
-    <div class="flex items-center justify-between mb-3">
-      <p class="font-extrabold">Aplikasi Ekosistem</p>
+  <!-- TAB: APLIKASI -->
+  <section id="tab-apps" class="hidden space-y-5">
+    <div class="flex items-center justify-between">
+      <p class="font-extrabold">Semua Aplikasi</p>
       <div class="flex items-center gap-1 bg-white rounded-full p-1 shadow-card">
         <button id="v-grid" onclick="setView('grid')" class="p-1.5 rounded-full bg-wine-700 text-white"><i data-lucide="layout-grid" class="w-4 h-4"></i></button>
         <button id="v-list" onclick="setView('list')" class="p-1.5 rounded-full text-gray-400"><i data-lucide="list" class="w-4 h-4"></i></button>
       </div>
     </div>
-    <div class="dm-input flex items-center bg-white rounded-xl px-4 py-2.5 shadow-card mb-4"><input id="search" oninput="renderApps()" class="flex-1 outline-none text-sm bg-transparent" placeholder="Cari aplikasi…"><i data-lucide="search" class="w-4 h-4 text-gray-400"></i></div>
-    <div id="apps" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
-  </div>
+    <div class="flex items-center bg-white rounded-xl px-4 py-2.5 shadow-card"><input id="search" oninput="renderApps()" class="flex-1 outline-none text-sm bg-transparent" placeholder="Cari aplikasi…"><i data-lucide="search" class="w-4 h-4 text-gray-400"></i></div>
+    <div id="apps-all" class="space-y-6"></div>
+  </section>
+
+  <!-- TAB: INFO -->
+  <section id="tab-info" class="hidden space-y-4">
+    <p class="font-extrabold">Info & Pengumuman</p>
+    <div id="info-list" class="space-y-3"></div>
+    <p class="font-extrabold mt-4">Agenda Mendatang</p>
+    <div id="agenda-list" class="space-y-2 text-sm"></div>
+  </section>
 </main>
 
-<!-- BOTTOM NAV (mobile) -->
-<nav class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-gray-100 z-30 grid grid-cols-4 py-2">
-  <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="flex flex-col items-center text-wine-700 text-[10px] font-bold"><i data-lucide="home" class="w-5 h-5"></i>Beranda</button>
-  <button onclick="document.getElementById('apps').scrollIntoView({behavior:'smooth'})" class="flex flex-col items-center text-gray-400 text-[10px] font-bold"><i data-lucide="layout-grid" class="w-5 h-5"></i>Aplikasi</button>
-  <button onclick="openKTA()" class="flex flex-col items-center text-gray-400 text-[10px] font-bold"><i data-lucide="id-card" class="w-5 h-5"></i>KTA</button>
-  <button onclick="location.href='index.html'" class="flex flex-col items-center text-gray-400 text-[10px] font-bold"><i data-lucide="user" class="w-5 h-5"></i>Profil</button>
+<!-- BOTTOM NAV 4 TAB -->
+<nav class="fixed bottom-0 inset-x-0 bg-white border-t border-gray-100 z-30 grid grid-cols-4 py-2 max-w-5xl mx-auto">
+  <button onclick="showTab('beranda')" id="nb-beranda" class="flex flex-col items-center text-wine-700 text-[10px] font-bold"><i data-lucide="home" class="w-5 h-5"></i>Beranda</button>
+  <button onclick="showTab('apps')" id="nb-apps" class="flex flex-col items-center text-gray-400 text-[10px] font-bold"><i data-lucide="layout-grid" class="w-5 h-5"></i>Aplikasi</button>
+  <button onclick="showTab('info')" id="nb-info" class="flex flex-col items-center text-gray-400 text-[10px] font-bold"><i data-lucide="megaphone" class="w-5 h-5"></i>Info</button>
+  <button onclick="location.href='profil.html'" class="flex flex-col items-center text-gray-400 text-[10px] font-bold"><i data-lucide="user" class="w-5 h-5"></i>Profil</button>
 </nav>
 
-<!-- KTA MODAL -->
-<div id="mKTA" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-  <div class="w-full max-w-sm">
-    <div class="rounded-3xl bg-gradient-to-br from-wine-800 to-wine-600 text-white p-6 shadow-2xl">
-      <div class="flex justify-between items-center mb-4"><p class="font-extrabold">KTA Digital Nakulaku</p><i data-lucide="graduation-cap" class="w-6 h-6"></i></div>
-      <p class="text-xl font-extrabold" id="k-nama">-</p>
-      <p class="text-sm text-white/80" id="k-jab">-</p>
-      <p class="text-sm text-white/80" id="k-inst">-</p>
-      <p class="text-xs text-white/60 mt-1" id="k-email">-</p>
-      <div class="bg-white rounded-xl p-3 mt-4 flex justify-center"><div id="qr"></div></div>
-      <p class="text-[10px] text-white/60 text-center mt-2">Tunjukkan QR saat check-in kegiatan</p>
-    </div>
-    <button onclick="closeM('mKTA')" class="w-full mt-3 bg-white rounded-xl py-2.5 font-bold">Tutup</button>
-  </div>
-</div>
-
-<!-- SETTINGS MODAL -->
+<!-- SETTINGS -->
 <div id="mSet" class="fixed inset-0 bg-black/50 hidden items-end md:items-center justify-center z-50">
   <div class="dm-card bg-white w-full max-w-md rounded-t-3xl md:rounded-3xl p-6">
     <div class="flex justify-between items-center mb-4"><p class="font-extrabold">Pengaturan</p><button onclick="closeM('mSet')"><i data-lucide="x" class="w-5 h-5"></i></button></div>
@@ -105,92 +92,130 @@ body.noanim *{transition:none!important;animation:none!important}
     <label class="flex items-center justify-between py-2"><span class="text-sm font-semibold">Teks Besar</span><input id="t-big" type="checkbox" onchange="applyPref()" class="w-5 h-5 accent-wine-700"></label>
     <label class="flex items-center justify-between py-2"><span class="text-sm font-semibold">Hemat Animasi</span><input id="t-anim" type="checkbox" onchange="applyPref()" class="w-5 h-5 accent-wine-700"></label>
     <button id="btn-install" onclick="doInstall()" class="hidden w-full mt-3 bg-wine-800 text-white rounded-xl py-2.5 font-bold flex items-center justify-center gap-2"><i data-lucide="download" class="w-4 h-4"></i> Pasang Aplikasi</button>
-    <a href="index.html" class="block w-full mt-2 bg-gray-100 rounded-xl py-2.5 font-bold text-center">Ke Pusat Akun</a>
-    <button onclick="auth.signOut()" class="w-full mt-2 bg-red-50 text-red-600 rounded-xl py-2.5 font-bold">Keluar</button>
+    <a href="index.html" class="block w-full mt-2 bg-gray-100 rounded-xl py-2.5 font-bold text-center">Kelola Akun (Pusat Akun)</a>
+    <button onclick="doLogout()" class="w-full mt-2 bg-red-50 text-red-600 rounded-xl py-2.5 font-bold">Keluar</button>
   </div>
 </div>
 
 <script>
+const DEMO = location.protocol==='file:' || location.hostname==='localhost' || location.hostname==='127.0.0.1' || location.search.includes('demo=1');
 const firebaseConfig={apiKey:"AIzaSyDaTXg2_oaKNYjJ0HxSGa9qXPQQ7VK0uDs",authDomain:"nakulaku-ekosistem.firebaseapp.com",projectId:"nakulaku-ekosistem",storageBucket:"nakulaku-ekosistem.firebasestorage.app",messagingSenderId:"672296906494",appId:"1:672296906494:web:2e90334b9d3136a4917faf"};
-firebase.initializeApp(firebaseConfig);
-const auth=firebase.auth(), db=firebase.firestore();
+let auth=null, db=null;
+if(!DEMO){ firebase.initializeApp(firebaseConfig); auth=firebase.auth(); db=firebase.firestore(); }
 const $=id=>document.getElementById(id);
-let ME=null, MENU=[], view='grid', deferred=null;
-
+let ME=null, MENU=[], BANNERS=[], AGENDA=[], view='grid', deferred=null;
+const KATEGORI=['Utama','Pembelajaran','Administrasi','Komunitas'];
 const ICON={presensi:'clipboard-check',lms:'book-open',feedback:'message-square',penilaian:'pen-line',validasi:'shield-check',audit:'search-check',admin:'settings-2',info:'info',tugas:'briefcase',sekolah:'school'};
 const PAL=[['bg-wine-100','text-wine-700'],['bg-emerald-100','text-emerald-700'],['bg-amber-100','text-amber-700'],['bg-sky-100','text-sky-700'],['bg-violet-100','text-violet-700']];
 
 function getCached(k,ttl,fn){const r=localStorage.getItem('nk_'+k);if(r){const c=JSON.parse(r);if(Date.now()-c.t<ttl)return Promise.resolve(c.data);}return fn().then(d=>{localStorage.setItem('nk_'+k,JSON.stringify({t:Date.now(),data:d}));return d;});}
-function showToast(m,t='info'){const e=document.createElement('div');e.className='bg-wine-800 text-white px-4 py-3 rounded-xl shadow-lg fixed bottom-20 md:bottom-5 left-1/2 -translate-x-1/2 z-50 text-sm font-bold';e.textContent=m;document.body.appendChild(e);setTimeout(()=>e.remove(),2600);}
+function showToast(m){const e=document.createElement('div');e.className='bg-wine-800 text-white px-4 py-3 rounded-xl shadow-lg fixed bottom-20 left-1/2 -translate-x-1/2 z-50 text-sm font-bold';e.textContent=m;document.body.appendChild(e);setTimeout(()=>e.remove(),2600);}
 function openM(id){$(id).classList.remove('hidden');$(id).classList.add('flex');}
 function closeM(id){$(id).classList.add('hidden');$(id).classList.remove('flex');}
+function toISO(t){if(!t)return '';const s=String(t);if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);const m=s.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');return s;}
+function namaDepan(n){return ((n||'').split(',')[0]||'').trim().split(/\s+/)[0]||'User';}
+function today(){return new Date().toISOString().slice(0,10);}
 
-// Normalisasi tanggal (YYYY-MM-DD atau DD/MM/YYYY)
-function toISO(t){
-  if(!t) return '';
-  const s=String(t);
-  if(/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0,10);
-  const m=s.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
-  if(m) return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
-  return s;
+if(DEMO){
+  $('demo-badge').classList.remove('hidden');
+  ME={email:'iwan4943@gmail.com',nama:'Ekwan Nugroho, S.Pd.I.',jabatan:'Kepala Sekolah',instansi:'SD Negeri 3 Krisak',role:'admin,narasumber',status:'active'};
+  BANNERS=[{judul:'KKG Gugus Nakula',teks:'Aula SD N 3 Krisak, pukul 08.00. Wajib presensi.',tipe:'penting',tanggal_mulai:today(),tanggal_selesai:today(),status:'ON'}];
+  AGENDA=[{nama_kegiatan:'KKG Gugus Nakula',tanggal:today(),waktu:'08.00',narsum:'Ekwan Nugroho'}];
+  MENU=[
+    {judul:'Presensi',deskripsi:'Absensi kegiatan',url:'presensi/',status:'ON',role:'all',kategori:'Utama'},
+    {judul:'LMS',deskripsi:'Materi & tugas',url:'lms/',status:'ON',role:'all',kategori:'Pembelajaran'},
+    {judul:'Feedback',deskripsi:'Saran & masukan',url:'feedback/',status:'ON',role:'all',kategori:'Komunitas'},
+    {judul:'Admin',deskripsi:'Panel admin',url:'admin.html',status:'ON',role:'admin',kategori:'Administrasi'}
+  ];
+  startRender();
+}else{
+  auth.onAuthStateChanged(async u=>{
+    if(!u){location.href='index.html';return;}
+    const d=await db.collection('users').doc(u.email).get();
+    ME=d.exists?d.data():{email:u.email,nama:u.displayName};
+    if((ME.status||'active')!=='active'){$('gate').classList.remove('hidden');}
+    loadAll();
+  });
 }
 
-auth.onAuthStateChanged(async u=>{
-  if(!u){location.href='index.html';return;}
-  const d=await db.collection('users').doc(u.email).get();
-  ME=d.exists?d.data():{email:u.email,nama:u.displayName};
-  const nama=ME.nama||u.email;
-  $('h-nama').textContent='Halo, '+nama.split(',')[0]+' 👋';
+async function loadAll(){
+  MENU=await getCached('menu',10*60*1000,()=>db.collection('menu').get().then(s=>s.docs.map(x=>x.data())));
+  BANNERS=await getCached('banner',5*60*1000,()=>db.collection('banner').get().then(s=>s.docs.map(x=>x.data())));
+  AGENDA=await getCached('pengaturan',10*60*1000,()=>db.collection('pengaturan').get().then(s=>s.docs.map(x=>x.data())));
+  getCached('quotes',30*60*1000,()=>db.collection('quotes').limit(100).get().then(s=>s.docs.map(x=>x.data()))).then(Q=>{if(Q.length){const q=Q[Math.floor(Math.random()*Q.length)];$('quote-text').textContent='"'+q.kata+'"';$('quote-by').textContent='— '+(q.tokoh||'');}});
+  startRender();
+}
+
+function startRender(){
+  const nama=ME.nama||ME.email||'User';
+  $('h-nama').textContent='Halo, '+namaDepan(nama)+' 👋';
   $('h-date').textContent=new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   $('h-avatar').textContent=nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
-  if((ME.status||'active')!=='active'){$('gate').classList.remove('hidden');$('apps-section').classList.add('hidden');$('agenda-cta').classList.add('hidden');}
-  loadAll(); lucide.createIcons();
-});
+  renderBanner(); renderApps(); renderInfo(); lucide.createIcons();
+}
 
-async function loadAll(){ loadAgenda(); loadQuote();
-  MENU=await getCached('menu',10*60*1000,()=>db.collection('menu').get().then(s=>s.docs.map(x=>x.data())));
-  renderApps();
+// ===== BANNER DINAMIS (prioritas: penting > info > agenda hari ini) =====
+function renderBanner(){
+  const t=today();
+  const aktif=(BANNERS||[]).filter(b=>(b.status||'ON')==='ON'&&(!b.tanggal_mulai||toISO(b.tanggal_mulai)<=t)&&(!b.tanggal_selesai||toISO(b.tanggal_selesai)>=t))
+    .sort((a,b)=>(a.tipe==='penting'?-1:1)-(b.tipe==='penting'?-1:1));
+  if(aktif.length){
+    const b=aktif[0];
+    const style=b.tipe==='penting'?'bg-gradient-to-r from-wine-800 to-wine-600 text-white':'dm-card bg-white border-l-4 border-wine-700';
+    const sub=b.tipe==='penting'?'text-wine-100':'dm-sub text-gray-500';
+    $('banner-card').innerHTML=`<div class="${style} rounded-2xl shadow-card p-5">
+      <p class="text-xs font-extrabold tracking-widest ${b.tipe==='penting'?'text-amber-300':'text-wine-700'}">${b.tipe==='penting'?'⚠ INFORMASI PENTING':'HARI INI'}</p>
+      <p class="font-bold mt-1">${b.judul}</p>
+      <p class="text-sm mt-1 ${sub}">${b.teks||''}</p>
+      ${b.link?`<a href="${b.link}" target="_blank" class="mt-3 inline-flex items-center gap-2 ${b.tipe==='penting'?'bg-white text-wine-800':'bg-wine-800 text-white'} text-sm font-bold rounded-xl px-4 py-2.5"><i data-lucide="external-link" class="w-4 h-4"></i> Buka</a>`:''}
+    </div>`;
+  }else{
+    const a=(AGENDA||[]).find(x=>toISO(x.tanggal)===t&&(x.status||'').toUpperCase()!=='OFF');
+    if(a){$('banner-card').innerHTML=`<div class="dm-card bg-white rounded-2xl shadow-card p-5 border-l-4 border-wine-700"><p class="text-xs font-extrabold tracking-widest text-wine-700">HARI INI</p><p class="font-bold mt-1">${a.nama_kegiatan}</p><p class="dm-sub text-xs text-gray-500 mt-0.5">${a.waktu||''} • ${a.narsum||''}</p><a href="presensi/" class="mt-3 inline-flex items-center gap-2 bg-wine-800 text-white text-sm font-bold rounded-xl px-4 py-2.5"><i data-lucide="clipboard-check" class="w-4 h-4"></i> Presensi Sekarang</a></div>`;}
+    else{$('banner-card').innerHTML=`<div class="dm-card bg-white rounded-2xl shadow-card p-5 border-l-4 border-wine-700"><p class="text-xs font-extrabold tracking-widest text-wine-700">HARI INI</p><p class="font-bold mt-1">Tidak ada agenda</p><p class="dm-sub text-xs text-gray-500 mt-0.5">Tetap semangat mengajar! 🌟</p></div>`;}
+  }
+  lucide.createIcons();
 }
-function loadAgenda(){
-  getCached('pengaturan',10*60*1000,()=>db.collection('pengaturan').get().then(s=>s.docs.map(x=>x.data()))).then(A=>{
-    const today=new Date().toISOString().slice(0,10);
-    const t=A.find(a=>toISO(a.tanggal)===today && (a.status||'').toUpperCase()!=='OFF');
-    if(t){$('agenda-text').textContent=t.nama_kegiatan;$('agenda-sub').textContent=(t.waktu||'')+' • '+(t.narsum||'');}
-    else{$('agenda-text').textContent='Tidak ada agenda hari ini';$('agenda-sub').textContent='Tetap semangat mengajar! 🌟';}
-    lucide.createIcons();
-  });
-}
-function loadQuote(){
-  getCached('quotes',30*60*1000,()=>db.collection('quotes').limit(100).get().then(s=>s.docs.map(x=>x.data()))).then(Q=>{
-    if(Q.length){const q=Q[Math.floor(Math.random()*Q.length)];$('quote-text').textContent='"'+q.kata+'"';$('quote-by').textContent='— '+(q.tokoh||'');}
-  });
-}
+
+// ===== APLIKASI PER KATEGORI =====
 function hasAccess(m){const r=(m.role||'all').toLowerCase();if(!r||r==='all')return true;const mine=(ME.role||'').toLowerCase().split(/[,;]/).map(s=>s.trim());return r.split(/[,;]/).map(s=>s.trim()).some(x=>mine.includes(x));}
 function iconFor(m){const t=(m.judul||'').toLowerCase();for(const k in ICON)if(t.includes(k))return ICON[k];return (m.icon&&m.icon.includes('-'))?m.icon:'app-window';}
-
+function tile(m,i){const p=PAL[i%PAL.length];
+  return view==='grid'
+  ?`<a href="${m.url}" class="dm-card bg-white rounded-2xl shadow-card p-4 hover:shadow-lg transition"><span class="w-11 h-11 rounded-xl ${p[0]} ${p[1]} flex items-center justify-center mb-3"><i data-lucide="${iconFor(m)}" class="w-5 h-5"></i></span><p class="font-bold text-sm">${m.judul}</p><p class="dm-sub text-xs text-gray-500 mt-0.5">${m.deskripsi||''}</p></a>`
+  :`<a href="${m.url}" class="dm-card bg-white rounded-2xl shadow-card p-4 flex items-center gap-3"><span class="w-10 h-10 rounded-xl ${p[0]} ${p[1]} flex items-center justify-center"><i data-lucide="${iconFor(m)}" class="w-5 h-5"></i></span><div class="flex-1"><p class="font-bold text-sm">${m.judul}</p><p class="dm-sub text-xs text-gray-500">${m.deskripsi||''}</p></div><i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i></a>`;}
 function renderApps(){
-  const q=($('search').value||'').toLowerCase();
-  const F=MENU.filter(m=>(m.status||'ON').toUpperCase()==='ON'&&hasAccess(m)&&((m.judul||'')+(m.deskripsi||'')).toLowerCase().includes(q));
-  $('apps').className=view==='grid'?'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4':'space-y-3';
-  $('apps').innerHTML=F.map((m,i)=>{
-    const p=PAL[i%PAL.length];
-    return view==='grid'
-    ?`<a href="${m.url}" class="dm-card bg-white rounded-2xl shadow-card p-4 hover:shadow-lg transition"><span class="w-11 h-11 rounded-xl ${p[0]} ${p[1]} flex items-center justify-center mb-3"><i data-lucide="${iconFor(m)}" class="w-5 h-5"></i></span><p class="font-bold text-sm">${m.judul}</p><p class="dm-sub text-xs text-gray-500 mt-0.5">${m.deskripsi||''}</p></a>`
-    :`<a href="${m.url}" class="dm-card bg-white rounded-2xl shadow-card p-4 flex items-center gap-3"><span class="w-10 h-10 rounded-xl ${p[0]} ${p[1]} flex items-center justify-center"><i data-lucide="${iconFor(m)}" class="w-5 h-5"></i></span><div class="flex-1"><p class="font-bold text-sm">${m.judul}</p><p class="dm-sub text-xs text-gray-500">${m.deskripsi||''}</p></div><i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i></a>`;
-  }).join('')||'<p class="dm-sub text-gray-400 col-span-full">Tidak ada aplikasi.</p>';
+  const ON=(MENU||[]).filter(m=>(m.status||'ON')==='ON'&&hasAccess(m));
+  $('apps-utama').innerHTML=ON.filter(m=>(m.kategori||'Utama')==='Utama').map(tile).join('')||'<p class="dm-sub text-gray-400 text-sm col-span-full">Belum ada menu.</p>';
+  const q=($('search')?$('search').value:'').toLowerCase();
+  const F=ON.filter(m=>((m.judul||'')+(m.deskripsi||'')).toLowerCase().includes(q));
+  $('apps-all').innerHTML=KATEGORI.map(k=>{const L=F.filter(m=>(m.kategori||'Utama')===k);if(!L.length)return '';
+    return `<div><p class="font-bold text-sm text-gray-500 mb-2">${k}</p><div class="${view==='grid'?'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4':'space-y-3'}">${L.map(tile).join('')}</div></div>`;}).join('')
+    ||'<p class="dm-sub text-gray-400">Tidak ada aplikasi.</p>';
   lucide.createIcons();
 }
 function setView(v){view=v;$('v-grid').classList.toggle('bg-wine-700',v==='grid');$('v-grid').classList.toggle('text-white',v==='grid');$('v-grid').classList.toggle('text-gray-400',v!=='grid');$('v-list').classList.toggle('bg-wine-700',v==='list');$('v-list').classList.toggle('text-white',v==='list');$('v-list').classList.toggle('text-gray-400',v!=='list');renderApps();}
 
-function openKTA(){$('k-nama').textContent=ME.nama||'-';$('k-jab').textContent=ME.jabatan||'-';$('k-inst').textContent=ME.instansi||'-';$('k-email').textContent=ME.email||'-';$('qr').innerHTML='';new QRCode($('qr'),{text:JSON.stringify({e:ME.email,n:ME.nama}),width:140,height:140});openM('mKTA');}
-function openSet(){openM('mSet');}
+// ===== INFO =====
+function renderInfo(){
+  const t=today();
+  const B=(BANNERS||[]).filter(b=>(b.status||'ON')==='ON').sort((a,b)=>(b.tanggal_mulai||'').localeCompare(a.tanggal_mulai||'')).slice(0,8);
+  $('info-list').innerHTML=B.length?B.map(b=>{const aktif=(!b.tanggal_mulai||toISO(b.tanggal_mulai)<=t)&&(!b.tanggal_selesai||toISO(b.tanggal_selesai)>=t);
+    return `<div class="dm-card bg-white rounded-2xl shadow-card p-4 ${b.tipe==='penting'?'border-l-4 border-red-500':'border-l-4 border-wine-200'}"><div class="flex justify-between"><p class="font-bold text-sm">${b.judul}</p>${b.tipe==='penting'?'<span class="text-[9px] font-extrabold bg-red-100 text-red-600 px-1.5 py-0.5 rounded">PENTING</span>':(aktif?'<span class="text-[9px] font-extrabold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded">AKTIF</span>':'')}</div><p class="dm-sub text-xs text-gray-500 mt-1">${b.teks||''}</p><p class="text-[10px] text-gray-400 mt-1">${b.tanggal_mulai||''} s/d ${b.tanggal_selesai||'-'}</p></div>`;}).join('')
+   :'<p class="dm-sub text-gray-400">Belum ada informasi.</p>';
+  const A=(AGENDA||[]).filter(a=>toISO(a.tanggal)>=t).sort((a,b)=>(a.tanggal||'').localeCompare(b.tanggal||'')).slice(0,5);
+  $('agenda-list').innerHTML=A.length?A.map(a=>`<div class="dm-card bg-white rounded-2xl shadow-card p-3 flex justify-between items-center"><div><p class="font-semibold">${a.nama_kegiatan}</p><p class="text-xs text-gray-400">${a.waktu||''} • ${a.narsum||''}</p></div><span class="text-xs font-bold text-wine-700">${toISO(a.tanggal)}</span></div>`).join('')
+   :'<p class="dm-sub text-gray-400">Tidak ada agenda mendatang.</p>';
+  lucide.createIcons();
+}
 
+function showTab(n){['beranda','apps','info'].forEach(x=>$('tab-'+x).classList.toggle('hidden',x!==n));['beranda','apps','info'].forEach(x=>{const b=$('nb-'+x);b.classList.toggle('text-wine-700',x===n);b.classList.toggle('text-gray-400',x!==n);});window.scrollTo({top:0});}
+function openSet(){openM('mSet');}
+function doLogout(){ if(auth) auth.signOut(); else showToast('Mode demo: tidak ada sesi.'); }
 function loadPref(){const p=JSON.parse(localStorage.getItem('nk_pref')||'{}');$('t-dark').checked=!!p.dark;$('t-big').checked=!!p.big;$('t-anim').checked=!!p.anim;applyPref();}
 function applyPref(){const p={dark:$('t-dark').checked,big:$('t-big').checked,anim:$('t-anim').checked};localStorage.setItem('nk_pref',JSON.stringify(p));document.body.classList.toggle('darkmode',p.dark);document.body.classList.toggle('bigtext',p.big);document.body.classList.toggle('noanim',p.anim);}
-
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('btn-install').classList.remove('hidden');});
-function doInstall(){if(deferred){deferred.prompt();}else{showToast('Buka menu browser → "Tambahkan ke Layar Utama"','info');}}
-
+function doInstall(){if(deferred){deferred.prompt();}else{showToast('Buka menu browser → "Tambahkan ke Layar Utama"');}}
 loadPref(); lucide.createIcons();
 </script>
 </body>
