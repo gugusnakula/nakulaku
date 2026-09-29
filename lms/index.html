@@ -57,6 +57,11 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
     <button onclick="showTab('portofolio')" id="t-portofolio" class="flex-1 py-2.5 rounded-xl text-gray-500 flex items-center justify-center gap-1"><i data-lucide="trophy" class="w-3.5 h-3.5"></i> Portofolio</button>
   </div>
 
+  <div class="bg-white rounded-2xl shadow-card p-1 flex text-sm font-bold gap-1">
+    <button onclick="showTab('kalender')" id="t-kalender" class="flex-1 py-2.5 rounded-xl text-gray-500 flex items-center justify-center gap-1"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i> Kalender</button>
+    <button onclick="showTab('peringkat')" id="t-peringkat" class="flex-1 py-2.5 rounded-xl text-gray-500 flex items-center justify-center gap-1"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i> Peringkat</button>
+  </div>
+
   <section id="tab-tagihan" class="space-y-4">
     <div id="tagihan-list" class="space-y-3"></div>
   </section>
@@ -91,6 +96,29 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
     <div class="bg-white rounded-2xl shadow-card p-4">
       <p class="font-bold mb-2 flex items-center gap-2"><i data-lucide="folder" class="w-4 h-4 text-wine-700"></i> Portofolio Saya</p>
       <div id="pf-list" class="space-y-2 text-sm"></div>
+    </div>
+  </section>
+
+  <section id="tab-kalender" class="hidden space-y-4">
+    <div class="bg-white rounded-2xl shadow-card p-4">
+      <div class="flex justify-between items-center mb-3">
+        <button onclick="kalNav(-1)" class="bg-gray-100 rounded-xl p-2"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+        <p class="font-extrabold" id="kal-title">-</p>
+        <button onclick="kalNav(1)" class="bg-gray-100 rounded-xl p-2"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+      </div>
+      <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-extrabold text-gray-400 mb-1"><span>SEN</span><span>SEL</span><span>RAB</span><span>KAM</span><span>JUM</span><span>SAB</span><span>MIN</span></div>
+      <div id="kal-grid" class="grid grid-cols-7 gap-1"></div>
+      <div class="flex gap-3 mt-3 text-[10px] font-bold text-gray-500"><span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-wine-700"></span> Deadline tugas</span><span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Kegiatan</span></div>
+    </div>
+    <div class="bg-white rounded-2xl shadow-card p-4"><p class="font-bold mb-2" id="kal-list-title">-</p><div id="kal-list" class="space-y-1 text-sm"></div></div>
+  </section>
+
+  <section id="tab-peringkat" class="hidden space-y-4">
+    <div class="bg-white rounded-2xl shadow-card p-4">
+      <p class="font-bold mb-1 flex items-center gap-2"><i data-lucide="bar-chart-3" class="w-4 h-4 text-wine-700"></i> Papan Peringkat Sekolah</p>
+      <p class="text-xs text-gray-400 mb-2" id="pk-sek">-</p>
+      <select id="pk-tahun" onchange="loadPeringkat()" class="w-full border rounded-xl p-2.5 bg-white mb-3"></select>
+      <div id="pk-list" class="space-y-2"></div>
     </div>
   </section>
 </main>
@@ -147,6 +175,14 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
   </div>
 </div>
 
+<div id="mDiskusi" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-3xl p-6 w-full max-w-md max-h-[80vh] flex flex-col">
+    <div class="flex justify-between items-center mb-3"><p class="font-extrabold flex items-center gap-2"><i data-lucide="messages-square" class="w-4 h-4 text-wine-700"></i> Diskusi: <span id="dk-judul" class="truncate">-</span></p><button onclick="closeM('mDiskusi')"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+    <div id="dk-list" class="flex-1 overflow-y-auto space-y-2 mb-3 text-sm"></div>
+    <div class="flex gap-2"><input id="dk-input" placeholder="Tulis pesan…" class="flex-1 border rounded-xl p-3" onkeydown="if(event.key==='Enter')postDiskusi()"><button onclick="postDiskusi()" class="bg-wine-800 text-white rounded-xl px-4"><i data-lucide="send" class="w-4 h-4"></i></button></div>
+  </div>
+</div>
+
 <script>
 const DEMO=location.protocol==='file:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.search.includes('demo=1');
 const firebaseConfig={apiKey:"AIzaSyDaTXg2_oaKNYjJ0HxSGa9qXPQQ7VK0uDs",authDomain:"nakulaku-ekosistem.firebaseapp.com",projectId:"nakulaku-ekosistem",storageBucket:"nakulaku-ekosistem.firebasestorage.app",messagingSenderId:"672296906494",appId:"1:672296906494:web:2e90334b9d3136a4917faf"};
@@ -154,14 +190,14 @@ let auth=null,db=null;
 if(!DEMO){firebase.initializeApp(firebaseConfig);auth=firebase.auth();db=firebase.firestore();}
 const GAS_URL='https://script.google.com/macros/s/AKfycbyUYOMxIBfBOPTqn7W5r5Pj_Ee2SZ4jK6jnAYUtfc_vbk4Dc279wyL8H9GrUUd1b-mU8A/exec';
 const $=id=>document.getElementById(id);
-let ME=null,LEVEL=4,TUGAS=[],KARYA=[],NOTIF=[],PORTO=[],curKirim=null,curVal=null,selGrade=null;
+let ME=null,LEVEL=4,TUGAS=[],KARYA=[],NOTIF=[],PORTO=[],AGENDA_LMS=[],DISKUSI=[],diskTugas=null,curKirim=null,curVal=null,selGrade=null,kalY=new Date().getFullYear(),kalM=new Date().getMonth(),kalSel=new Date().toISOString().slice(0,10);
 const D_PORTO=[{id:'p1',kategori:'prestasi',judul:'Juara 2 Lomba Guru Berprestasi',field_a:'Juara 2',field_b:'Kecamatan',link:'https://drive.google.com/',waktu:'2026-08-17T08:00:00Z',tahun:2026}];
 const PF_META={prestasi:['trophy','bg-amber-100 text-amber-700','Prestasi'],pembiasaan:['repeat','bg-emerald-100 text-emerald-700','Pembiasaan'],event:['calendar-days','bg-sky-100 text-sky-700','Event']};
 function levelOf(u){const r=(u.role||'').toLowerCase(),j=(u.jabatan||'').toLowerCase();if(r.includes('admin'))return 1;if(r.includes('narasumber'))return 2;if(r.includes('kepala')||j.includes('kepala'))return 3;return 4;}
 function showToast(m,t='success'){const ic={success:'check-circle-2',error:'x-circle',info:'info'};const bg={success:'bg-emerald-600',error:'bg-red-600',info:'bg-wine-800'};const e=document.createElement('div');e.className=`${bg[t]} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 fixed bottom-20 left-1/2 -translate-x-1/2 z-[60]`;e.innerHTML=`<i data-lucide="${ic[t]}" class="w-5 h-5"></i><span class="text-sm font-bold">${m}</span>`;document.body.appendChild(e);lucide.createIcons();setTimeout(()=>{e.style.opacity='0';e.style.transition='.4s';setTimeout(()=>e.remove(),400)},2600);}
 function openM(id){$(id).classList.remove('hidden');$(id).classList.add('flex');}
 function closeM(id){$(id).classList.add('hidden');$(id).classList.remove('flex');}
-function showTab(n){['tagihan','riwayat','validasi','portofolio'].forEach(x=>{$('tab-'+x).classList.toggle('hidden',x!==n);$('t-'+x).classList.toggle('bg-wine-800',x===n);$('t-'+x).classList.toggle('text-white',x===n);$('t-'+x).classList.toggle('text-gray-500',x!==n);});if(n==='riwayat')renderRiwayat();if(n==='validasi')loadValidasiOpts();lucide.createIcons();}
+function showTab(n){['tagihan','riwayat','validasi','portofolio','kalender','peringkat'].forEach(x=>{$('tab-'+x).classList.toggle('hidden',x!==n);$('t-'+x).classList.toggle('bg-wine-800',x===n);$('t-'+x).classList.toggle('text-white',x===n);$('t-'+x).classList.toggle('text-gray-500',x!==n);});if(n==='riwayat')renderRiwayat();if(n==='validasi')loadValidasiOpts();if(n==='kalender')renderKalender();if(n==='peringkat'){fillPkTahun();loadPeringkat();}lucide.createIcons();}
 function daysUntil(tgl){if(!tgl)return null;const d=new Date(tgl);const t=new Date();t.setHours(0,0,0,0);d.setHours(0,0,0,0);return Math.round((d-t)/86400000);}
 
 const D_TUGAS=[{id:'t1',judul:'Implementasi Kurikulum Merdeka',jenis:'Materi KKG',sasaran:'guru',wajib:true,urutan:1,blind:true,deadline:'2026-10-15',rubrik:{A:'Implementasi di kelas + foto + refleksi tertulis',B:'Implementasi di kelas + foto',C:'Belum implementasi, rencana tertulis',D:'Belum layak',E:'Belum lengkap'},status:'ON'}];
@@ -171,7 +207,7 @@ const D_NOTIF=[{id:'n1',jenis:'karya_dinilai',judul:'Karya Anda dinilai A',pesan
 if(DEMO){
   $('demo-badge').classList.remove('hidden');
   ME={email:'guru@sd.id',nama:'Arvi Dwi Utami, S.Pd.',jabatan:'Guru Kelas',instansi:'SD Negeri 1 Krisak',role:'guru',status:'active'};
-  LEVEL=4;TUGAS=D_TUGAS;KARYA=D_KARYA;NOTIF=D_NOTIF;PORTO=D_PORTO;
+  LEVEL=4;TUGAS=D_TUGAS;KARYA=D_KARYA;NOTIF=D_NOTIF;PORTO=D_PORTO;AGENDA_LMS=[{nama_kegiatan:'KKG Gugus Nakula',tanggal:new Date().toISOString().slice(0,10),lokasi:'SD Negeri 3 Krisak'}];DISKUSI=[{id:'d1',tugas_id:'t1',nama:'Narasumber',pesan:'Silakan unggah foto implementasi di kelas.',waktu:new Date().toISOString()}];
   initUI();
 }else{
   auth.onAuthStateChanged(async u=>{
@@ -180,7 +216,7 @@ if(DEMO){
     ME=d.exists?d.data():{email:u.email,nama:u.displayName};
     LEVEL=levelOf(ME);
     if((ME.status||'active')!=='active')$('gate').classList.remove('hidden');
-    await loadTugas();await loadKarya();await loadNotif();await loadPorto();
+    await loadTugas();await loadKarya();await loadNotif();await loadPorto();await loadAgendaLMS();await loadDiskusi();
     initUI();
   });
 }
@@ -203,7 +239,7 @@ async function loadNotif(){
 function initUI(){
   $('u-nama').textContent=ME.nama||ME.email;
   $('u-info').textContent=(ME.jabatan||'')+' • '+(ME.instansi||'');
-  renderCapaian();renderTagihan();renderBell();renderReminder();renderPfForm();renderPorto();lucide.createIcons();
+  renderCapaian();renderTagihan();renderBell();renderReminder();renderPfForm();renderPorto();updateDiskusiCounts();lucide.createIcons();
 }
 
 function renderCapaian(){
@@ -248,6 +284,7 @@ function renderTagihan(){
         :lock?'<button disabled class="flex-1 bg-gray-100 text-gray-400 rounded-xl py-2 text-xs font-bold inline-flex items-center justify-center gap-1"><i data-lucide="lock" class="w-3.5 h-3.5"></i> Terkunci (selesaikan urutan sebelumnya)</button>'
         :!k?`<button onclick="openKirim('${t.id}')" class="flex-1 bg-wine-800 text-white rounded-xl py-2 text-xs font-bold inline-flex items-center justify-center gap-1"><i data-lucide="upload" class="w-3.5 h-3.5"></i> Kirim Karya</button>`
         :`<button disabled class="flex-1 bg-gray-100 text-gray-500 rounded-xl py-2 text-xs font-bold inline-flex items-center justify-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> Sudah Dikirim</button>`}
+        <button onclick="openDiskusi('${t.id}')" class="bg-gray-100 text-gray-600 rounded-xl px-3 py-2 text-xs font-bold inline-flex items-center gap-1"><i data-lucide="messages-square" class="w-3.5 h-3.5"></i><span id="dk-count-${t.id}">0</span></button>
       </div>
     </div>`;
   }).join(''):'<div class="bg-white rounded-2xl shadow-card p-8 text-center text-gray-400"><i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2"></i><p>Belum ada tagihan.</p></div>';
@@ -416,6 +453,66 @@ function unduhSertifikat(){
   const a=document.createElement('a');a.download='sertifikat_'+(ME.nama||'guru').replace(/[^a-z0-9]/gi,'_')+'.png';a.href=cv.toDataURL('image/png');a.click();
   showToast('Sertifikat diunduh');
 }
+// ===== KALENDER AKADEMIK =====
+function isoA(t){const s=String(t||'');if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);const m=s.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);return m?m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'):s;}
+function kalNav(d){kalM+=d;if(kalM<0){kalM=11;kalY--;}if(kalM>11){kalM=0;kalY++;}renderKalender();}
+function kalPick(k){kalSel=k;renderKalender();}
+function renderKalender(){
+  const BL=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  $('kal-title').textContent=BL[kalM]+' '+kalY;
+  const off=(new Date(kalY,kalM,1).getDay()+6)%7;const dim=new Date(kalY,kalM+1,0).getDate();
+  const ev={};
+  TUGAS.forEach(t=>{const k=isoA(t.deadline||t.tanggal);if(k){(ev[k]=ev[k]||{}).deadline=1;}});
+  (AGENDA_LMS||[]).forEach(a=>{const k=isoA(a.tanggal);if(k){(ev[k]=ev[k]||{}).kegiatan=1;}});
+  const todayK=new Date().toISOString().slice(0,10);
+  let cells='';for(let i=0;i<off;i++)cells+='<div></div>';
+  for(let d=1;d<=dim;d++){const k=kalY+'-'+String(kalM+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');const e=ev[k];
+    cells+=`<button onclick="kalPick('${k}')" class="p-1.5 rounded-xl text-left min-h-[48px] ${k===kalSel?'ring-2 ring-accent-500 bg-wine-50':k===todayK?'ring-1 ring-wine-300 bg-wine-50':'bg-gray-50'}"><span class="text-xs font-bold">${d}</span><span class="flex gap-0.5 mt-1">${e&&e.deadline?'<span class="w-1.5 h-1.5 rounded-full bg-wine-700"></span>':''}${e&&e.kegiatan?'<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>':''}</span></button>`;}
+  $('kal-grid').innerHTML=cells;
+  $('kal-list-title').textContent='Isi pada '+kalSel;
+  const items=[];
+  TUGAS.forEach(t=>{if(isoA(t.deadline||t.tanggal)===kalSel)items.push(['deadline','Deadline: '+t.judul]);});
+  (AGENDA_LMS||[]).forEach(a=>{if(isoA(a.tanggal)===kalSel)items.push(['kegiatan','Kegiatan: '+(a.nama_kegiatan||'')+(a.lokasi?' @ '+a.lokasi:'')]);});
+  $('kal-list').innerHTML=items.length?items.map(([ty,l])=>`<div class="flex items-center gap-2 border-b border-gray-50 pb-1"><span class="w-2 h-2 rounded-full ${ty==='deadline'?'bg-wine-700':'bg-emerald-500'}"></span><span>${l}</span></div>`).join(''):'<p class="text-gray-400">Tidak ada agenda/deadline.</p>';
+  lucide.createIcons();
+}
+// ===== PAPAN PERINGKAT =====
+function fillPkTahun(){const cy=new Date().getFullYear();$('pk-tahun').innerHTML=[cy,cy-1].map(y=>`<option>${y}</option>`).join('');$('pk-sek').textContent=(ME.instansi||'')+' • Indeks = 60% tagihan wajib + 40% portofolio. Kehadiran dinilai terpisah di Rapor (KS/Admin).';}
+async function loadAgendaLMS(){if(DEMO)return;try{const s=await db.collection('pengaturan').get();AGENDA_LMS=s.docs.map(x=>x.data());}catch(e){AGENDA_LMS=[];}}
+async function loadPeringkat(){
+  const Y=parseInt($('pk-tahun').value)||new Date().getFullYear();const sek=ME.instansi||'';
+  let G,KY,PF;
+  if(DEMO){G=[{email:'g1@sd.id',nama:'Arvi Dwi Utami'},{email:'g2@sd.id',nama:'Triyanti'},{email:ME.email,nama:ME.nama}];KY=D_KARYA;PF=D_PORTO;}
+  else{const [gu,ky,pf]=await Promise.all([db.collection('users').where('instansi','==',sek).get(),db.collection('karya').where('unit_kerja','==',sek).get(),db.collection('portofolio').where('unit_kerja','==',sek).get()]);
+    G=gu.docs.map(x=>x.data()).filter(u=>(u.status||'active')==='active');KY=ky.docs.map(x=>x.data());PF=pf.docs.map(x=>x.data());}
+  const wajib=TUGAS.filter(t=>t.wajib&&((t.sasaran||'guru')==='guru'||t.sasaran==='all'));
+  const rows=G.map(g=>{const done=wajib.filter(t=>KY.some(k=>k.email===g.email&&k.tugas_id===t.id&&k.status==='diterima')).length;
+    const lms=wajib.length?Math.round(done/wajib.length*100):0;
+    const pc=PF.filter(p=>p.email===g.email&&p.tahun===Y).length;const porto=Math.min(100,pc*20);
+    const gr=KY.filter(k=>k.email===g.email&&['A','B','C','D','E'].includes(k.grade)).map(k=>({A:4,B:3,C:2,D:1,E:0}[k.grade]));
+    const mutu=gr.length?gr.reduce((a,b)=>a+b,0)/gr.length:0;
+    return{nama:g.nama||g.email,email:g.email,lms,porto,index:Math.round(0.6*lms+0.4*porto),mutu};}).sort((a,b)=>b.index-a.index||b.mutu-a.mutu);
+  const med=['trophy','medal','award'];
+  $('pk-list').innerHTML=rows.map((r,i)=>`<div class="flex items-center gap-3 border-b border-gray-50 pb-2 ${r.email===ME.email?'bg-wine-50 -mx-2 px-2 rounded-xl':''}">
+    <span class="w-8 text-center font-extrabold ${i<3?'text-accent-500':'text-gray-400'}">${i<3?`<i data-lucide="${med[i]}" class="w-5 h-5 inline"></i>`:'#'+(i+1)}</span>
+    <div class="flex-1 min-w-0"><p class="font-bold text-sm truncate">${r.nama}${r.email===ME.email?' <span class="text-[9px] bg-wine-700 text-white px-1.5 py-0.5 rounded">ANDA</span>':''}</p><p class="text-xs text-gray-400">LMS ${r.lms}% • Portofolio ${r.porto} • Mutu ${r.mutu?r.mutu.toFixed(1):'-'}</p></div>
+    <span class="text-lg font-extrabold text-wine-700">${r.index}</span></div>`).join('')||'<p class="text-gray-400">Belum ada data.</p>';
+  lucide.createIcons();
+}
+// ===== DISKUSI =====
+async function loadDiskusi(){if(DEMO)return;try{const s=await db.collection('diskusi').limit(300).get();DISKUSI=s.docs.map(x=>({id:x.id,...x.data()}));}catch(e){DISKUSI=[];}}
+function updateDiskusiCounts(){TUGAS.forEach(t=>{const el=$('dk-count-'+t.id);if(el)el.textContent=DISKUSI.filter(d=>d.tugas_id===t.id).length;});}
+function openDiskusi(tid){diskTugas=TUGAS.find(t=>t.id===tid);renderDiskusi();openM('mDiskusi');}
+function renderDiskusi(){if(!diskTugas)return;$('dk-judul').textContent=diskTugas.judul;
+ const list=DISKUSI.filter(d=>d.tugas_id===diskTugas.id).sort((a,b)=>(a.waktu||'').localeCompare(b.waktu||''));
+ $('dk-list').innerHTML=list.length?list.map(d=>{const own=d.email===ME.email;
+  return `<div class="border-b border-gray-50 pb-2"><div class="flex justify-between"><p class="font-bold text-sm">${d.nama||d.email}${LEVEL<=2?' <span class="text-[9px] bg-accent-500 text-white px-1.5 py-0.5 rounded">NARSUM/ADMIN</span>':''}</p>${own?`<button onclick="delDiskusi('${d.id}')" class="text-red-400"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>`:''}</div><p class="text-sm text-gray-600">${d.pesan}</p><p class="text-[10px] text-gray-400">${(d.waktu||'').slice(0,16).replace('T',' ')}</p></div>`;}).join(''):'<p class="text-gray-400 text-sm">Belum ada diskusi. Jadilah yang pertama!</p>';
+ lucide.createIcons();}
+async function postDiskusi(){const p=$('dk-input').value.trim();if(!p)return showToast('Tulis pesan dulu','error');
+ const data={tugas_id:diskTugas.id,email:ME.email,nama:ME.nama||'',unit_kerja:ME.instansi||'',pesan:p,waktu:new Date().toISOString()};
+ if(DEMO){DISKUSI.push({id:'d'+Date.now(),...data});$('dk-input').value='';renderDiskusi();updateDiskusiCounts();return;}
+ try{await db.collection('diskusi').add(data);DISKUSI.push(data);$('dk-input').value='';renderDiskusi();updateDiskusiCounts();showToast('Terkirim');}catch(e){showToast('Gagal: '+e.message,'error');}}
+async function delDiskusi(id){if(!confirm('Hapus pesan?'))return;try{await db.collection('diskusi').doc(id).delete();DISKUSI=DISKUSI.filter(d=>d.id!==id);renderDiskusi();updateDiskusiCounts();}catch(e){showToast('Gagal: '+e.message,'error');}}
 lucide.createIcons();
 </script>
 </body>
