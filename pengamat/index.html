@@ -16,6 +16,10 @@ fontFamily:{sans:['"Plus Jakarta Sans"','system-ui','sans-serif']},
 boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
 }}}
 </script>
+<style>
+@keyframes pulse-live{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.3)}}
+.pulse-live{animation:pulse-live 1.5s ease-in-out infinite}
+</style>
 </head>
 <body class="bg-[#F7F4F5] font-sans text-ink">
 
@@ -24,54 +28,82 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
   <div class="relative max-w-5xl mx-auto flex items-center gap-3">
     <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center"><i data-lucide="eye" class="w-5 h-5 text-white"></i></div>
     <div class="flex-1"><h1 class="text-white font-extrabold text-lg">Panel Pengamat</h1><p class="text-white/60 text-xs" id="h-sub">Observasi live kegiatan KKG</p></div>
+    <span id="live-badge" class="hidden items-center gap-1.5 bg-emerald-500 text-white text-[10px] font-extrabold px-2 py-1 rounded-full"><span class="w-1.5 h-1.5 bg-white rounded-full pulse-live"></span>LIVE</span>
     <span id="demo-badge" class="hidden bg-amber-400 text-amber-950 text-[9px] font-extrabold px-1.5 py-0.5 rounded">DEMO</span>
     <a href="../home.html" class="text-white/80 text-xs font-bold flex items-center gap-1 bg-white/10 px-3 py-1.5 rounded-full"><i data-lucide="home" class="w-3.5 h-3.5"></i> Beranda</a>
   </div>
 </header>
 
 <main class="max-w-5xl mx-auto p-4 md:p-6 space-y-5 pb-24">
-  <div id="gate" class="hidden bg-amber-50 border border-amber-200 text-amber-700 rounded-2xl p-4 text-sm font-semibold">Anda tidak ditugaskan sebagai pengamat. Hubungi admin.</div>
+  <div id="gate" class="hidden bg-amber-50 border border-amber-200 text-amber-700 rounded-2xl p-4 text-sm font-semibold flex items-start gap-2"><i data-lucide="shield-alert" class="w-4 h-4 mt-0.5 shrink-0"></i><span>Anda tidak ditugaskan sebagai pengamat. Hubungi admin.</span></div>
 
-  <div id="main-box" class="space-y-5">
-    <!-- SESI -->
-    <div class="bg-white rounded-2xl shadow-card p-5">
-      <p class="text-xs font-extrabold text-wine-700 mb-1">SESI KEGIATAN ANDA</p>
-      <select id="sesi" onchange="loadSession()" class="w-full border rounded-xl p-3 bg-white font-semibold"></select>
-      <p class="text-xs text-gray-500 mt-2" id="sesi-info">-</p>
+  <div id="no-session" class="hidden bg-white rounded-2xl shadow-card p-8 text-center">
+    <i data-lucide="calendar-x" class="w-10 h-10 text-gray-300 mx-auto mb-2"></i>
+    <p class="font-extrabold">Belum ada kegiatan hari ini yang menugaskan Anda</p>
+    <p class="text-xs text-gray-400 mt-1">Pastikan admin sudah mengisi email pengamat pada agenda hari ini.</p>
+    <button onclick="reloadSesi()" class="mt-4 bg-wine-800 text-white rounded-xl px-4 py-2 text-sm font-bold inline-flex items-center gap-1"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Cek Ulang</button>
+  </div>
+
+  <div id="main-box" class="hidden space-y-5">
+
+    <!-- SESI (TERKUNCI) -->
+    <div class="bg-white rounded-2xl shadow-card p-5 border-l-4 border-wine-700">
+      <div class="flex justify-between items-start">
+        <div class="flex-1 min-w-0">
+          <p class="text-[10px] font-extrabold text-gray-400 uppercase flex items-center gap-1"><i data-lucide="calendar-check-2" class="w-3 h-3"></i> Sesi Kegiatan Hari Ini (terkunci)</p>
+          <p class="font-extrabold text-base mt-1 truncate" id="sesi-nama">-</p>
+          <p class="text-xs text-gray-500 mt-0.5" id="sesi-info">-</p>
+          <p class="text-xs font-bold mt-1" id="sesi-timer">-</p>
+        </div>
+        <div id="sesi-status" class="text-right">
+          <span id="sesi-pill" class="text-[9px] font-extrabold px-2 py-1 rounded-full">-</span>
+        </div>
+      </div>
     </div>
 
-    <div class="grid grid-cols-3 gap-3">
-      <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Hadir</p><p id="st-hadir" class="text-2xl font-extrabold text-emerald-600">0</p></div>
-      <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Catatan Sesi</p><p id="st-cat" class="text-2xl font-extrabold text-wine-700">0</p></div>
-      <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Sekolah Dinilai</p><p id="st-rate" class="text-2xl font-extrabold text-amber-500">0</p></div>
+    <div class="grid grid-cols-4 gap-2">
+      <div class="bg-white rounded-2xl shadow-card p-3"><p class="text-[10px] text-gray-400">Hadir</p><p id="st-hadir" class="text-xl font-extrabold text-emerald-600">0</p></div>
+      <div class="bg-white rounded-2xl shadow-card p-3"><p class="text-[10px] text-gray-400">Catatan</p><p id="st-cat" class="text-xl font-extrabold text-wine-700">0</p></div>
+      <div class="bg-white rounded-2xl shadow-card p-3"><p class="text-[10px] text-gray-400">Peserta Aktif</p><p id="st-aktif" class="text-xl font-extrabold text-sky-600">0</p></div>
+      <div class="bg-white rounded-2xl shadow-card p-3"><p class="text-[10px] text-gray-400">Sekolah Dinilai</p><p id="st-rate" class="text-xl font-extrabold text-amber-500">0</p></div>
     </div>
 
     <div class="bg-white rounded-2xl shadow-card p-1 flex text-sm font-bold">
-      <button onclick="showTab('catat')" id="t-catat" class="flex-1 py-2.5 rounded-xl bg-wine-800 text-white">Catat Aktivitas</button>
-      <button onclick="showTab('riwayat')" id="t-riwayat" class="flex-1 py-2.5 rounded-xl text-gray-500">Riwayat Sesi</button>
-      <button onclick="showTab('rating')" id="t-rating" class="flex-1 py-2.5 rounded-xl text-gray-500">Rating Sekolah</button>
+      <button onclick="showTab('catat')" id="t-catat" class="flex-1 py-2.5 rounded-xl bg-wine-800 text-white flex items-center justify-center gap-1"><i data-lucide="pen-line" class="w-3.5 h-3.5"></i> Catat</button>
+      <button onclick="showTab('riwayat')" id="t-riwayat" class="flex-1 py-2.5 rounded-xl text-gray-500 flex items-center justify-center gap-1"><i data-lucide="history" class="w-3.5 h-3.5"></i> Riwayat</button>
+      <button onclick="showTab('rating')" id="t-rating" class="flex-1 py-2.5 rounded-xl text-gray-500 flex items-center justify-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5"></i> Rating</button>
     </div>
 
     <!-- CATAT -->
     <section id="tab-catat" class="space-y-3">
-      <p class="text-xs text-gray-500">Ketuk jenis aktivitas untuk mencatat personil secara cepat selama kegiatan berlangsung.</p>
-      <div class="flex flex-wrap gap-2 text-[10px] font-extrabold text-gray-500">
-        <span class="bg-sky-100 text-sky-700 px-2 py-1 rounded-full">❓ BERTANYA</span>
-        <span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full">💬 MENJAWAB</span>
-        <span class="bg-violet-100 text-violet-700 px-2 py-1 rounded-full">🎤 PRESENTASI</span>
-        <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded-full">🧊 ICE BREAKING</span>
+      <p class="text-xs text-gray-500 flex items-center gap-1"><i data-lucide="info" class="w-3 h-3"></i> Ketuk jenis aktivitas untuk mencatat personil secara cepat. Counter otomatis update.</p>
+      <div class="flex flex-wrap gap-1.5 text-[10px] font-extrabold text-gray-500">
+        <span class="bg-sky-100 text-sky-700 px-2 py-1 rounded-full inline-flex items-center gap-1"><i data-lucide="message-circle-question" class="w-3 h-3"></i> BERTANYA</span>
+        <span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full inline-flex items-center gap-1"><i data-lucide="message-circle" class="w-3 h-3"></i> MENJAWAB</span>
+        <span class="bg-violet-100 text-violet-700 px-2 py-1 rounded-full inline-flex items-center gap-1"><i data-lucide="mic" class="w-3 h-3"></i> PRESENTASI</span>
+        <span class="bg-amber-100 text-amber-700 px-2 py-1 rounded-full inline-flex items-center gap-1"><i data-lucide="snowflake" class="w-3 h-3"></i> ICE BREAKING</span>
       </div>
       <div id="peserta-list" class="space-y-3"></div>
     </section>
 
     <!-- RIWAYAT -->
     <section id="tab-riwayat" class="hidden space-y-2">
+      <div class="flex gap-2">
+        <select id="filter-jenis" onchange="renderEvents()" class="flex-1 border rounded-xl p-2.5 bg-white text-sm">
+          <option value="">Semua Aktivitas</option>
+          <option value="Bertanya">Bertanya</option>
+          <option value="Menjawab">Menjawab</option>
+          <option value="Presentasi">Presentasi</option>
+          <option value="Ice Breaking">Ice Breaking</option>
+        </select>
+        <button onclick="exportCSV()" class="bg-wine-800 text-white rounded-xl px-3 py-2 text-xs font-bold flex items-center gap-1"><i data-lucide="download" class="w-3.5 h-3.5"></i> CSV</button>
+      </div>
       <div id="event-list" class="space-y-2 text-sm"></div>
     </section>
 
     <!-- RATING -->
     <section id="tab-rating" class="hidden space-y-3">
-      <p class="text-xs text-gray-500">Berikan bintang (1–5) untuk keaktifan/kekompakan tiap sekolah pada sesi ini.</p>
+      <p class="text-xs text-gray-500 flex items-center gap-1"><i data-lucide="info" class="w-3 h-3"></i> Berikan bintang (1–5) untuk keaktifan/kekompakan tiap sekolah pada sesi ini.</p>
       <div id="rating-list" class="space-y-3"></div>
     </section>
   </div>
@@ -83,17 +115,23 @@ const firebaseConfig={apiKey:"AIzaSyDaTXg2_oaKNYjJ0HxSGa9qXPQQ7VK0uDs",authDomai
 let auth=null,db=null;
 if(!DEMO){firebase.initializeApp(firebaseConfig);auth=firebase.auth();db=firebase.firestore();}
 const $=id=>document.getElementById(id);
-let ME=null,LEVEL=4,IS_PENGAMAT=false,AGENDA=[],SESI=null,PESERTA=[],PRESENT=new Set(),EVENTS=[],RATINGS=[],selStars={};
-const JENIS=[['Bertanya','❓','bg-sky-100 text-sky-700'],['Menjawab','💬','bg-emerald-100 text-emerald-700'],['Presentasi','🎤','bg-violet-100 text-violet-700'],['Ice Breaking','🧊','bg-amber-100 text-amber-700']];
+let ME=null,LEVEL=4,IS_PENGAMAT=false,AGENDA=[],SESI=null,PESERTA=[],PRESENT=new Set(),EVENTS=[],RATINGS=[],selStars={},timerId=null;
+const JENIS=[
+  ['Bertanya','message-circle-question','bg-sky-100 text-sky-700'],
+  ['Menjawab','message-circle','bg-emerald-100 text-emerald-700'],
+  ['Presentasi','mic','bg-violet-100 text-violet-700'],
+  ['Ice Breaking','snowflake','bg-amber-100 text-amber-700']
+];
 function levelOf(u){const r=(u.role||'').toLowerCase(),j=(u.jabatan||'').toLowerCase();if(r.includes('admin'))return 1;if(r.includes('narasumber'))return 2;if(r.includes('kepala')||j.includes('kepala'))return 3;return 4;}
 function showToast(m,t='success'){const ic={success:'check-circle-2',error:'x-circle',info:'info'};const bg={success:'bg-emerald-600',error:'bg-red-600',info:'bg-wine-800'};const e=document.createElement('div');e.className=`${bg[t]} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 fixed bottom-20 left-1/2 -translate-x-1/2 z-[60]`;e.innerHTML=`<i data-lucide="${ic[t]}" class="w-5 h-5"></i><span class="text-sm font-bold">${m}</span>`;document.body.appendChild(e);lucide.createIcons();setTimeout(()=>{e.style.opacity='0';e.style.transition='.4s';setTimeout(()=>e.remove(),400)},2600);}
-function showTab(n){['catat','riwayat','rating'].forEach(x=>{$('tab-'+x).classList.toggle('hidden',x!==n);$('t-'+x).classList.toggle('bg-wine-800',x===n);$('t-'+x).classList.toggle('text-white',x===n);$('t-'+x).classList.toggle('text-gray-500',x!==n);});}
+function showTab(n){['catat','riwayat','rating'].forEach(x=>{$('tab-'+x).classList.toggle('hidden',x!==n);$('t-'+x).classList.toggle('bg-wine-800',x===n);$('t-'+x).classList.toggle('text-white',x===n);$('t-'+x).classList.toggle('text-gray-500',x!==n);});lucide.createIcons();}
 function toISO(t){if(!t)return '';const s=String(t);if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);const m=s.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');return s;}
 function today(){return new Date().toISOString().slice(0,10);}
 function slug(s){return (s||'').replace(/[^a-z0-9]/gi,'');}
-function getCached(k,ttl,fn){const r=localStorage.getItem('nk_'+k);if(r){const c=JSON.parse(r);if(Date.now()-c.t<ttl)return Promise.resolve(c.data);}return fn().then(d=>{localStorage.setItem('nk_'+k,JSON.stringify({t:Date.now(),data:d}));return d;});}
+function hmToMin(hm){const p=(hm||'00:00').split(':').map(Number);return p[0]*60+p[1];}
+function diffHM(hm){return hmToMin(hm)-(new Date().getHours()*60+new Date().getMinutes());}
 
-const D_AGENDA=[{id:'a1',nama_kegiatan:'KKG Gugus Nakula',tanggal:today(),waktu:'08.00',narsum:'Ekwan Nugroho',pengamat_email:'pengamat@nakulaku.id'}];
+const D_AGENDA=[{id:'a1',nama_kegiatan:'KKG Gugus Nakula',tanggal:today(),waktu:'08:00',jam_mulai:'08:00',jam_selesai:'12:00',narsum:'Ekwan Nugroho',pengamat_email:'pengamat@nakulaku.id'}];
 const D_PESERTA=[{email:'g1@sd.id',nama:'Arvi Dwi Utami',instansi:'SD Negeri 1 Krisak'},{email:'g2@sd.id',nama:'Triyanti',instansi:'SD Negeri 1 Krisak'},{email:'g3@sd.id',nama:'Mukti Adi Abadi',instansi:'SD Negeri 1 Pare'}];
 const D_EVENTS=[{id:'e1',agenda_id:'a1',jenis:'Bertanya',target_nama:'Arvi Dwi Utami',target_sekolah:'SD Negeri 1 Krisak',nama_pengamat:'Pengamat Satu',waktu:new Date().toISOString()}];
 const D_RATINGS=[{id:'r1',agenda_id:'a1',sekolah:'SD Negeri 1 Krisak',bintang:4,catatan:'Sangat aktif.',nama_pengamat:'Pengamat Satu'}];
@@ -106,96 +144,178 @@ if(DEMO){
 }else{
   auth.onAuthStateChanged(async u=>{
     if(!u){location.href='../index.html';return;}
-    const d=await db.collection('users').doc(u.email).get();
-    ME=d.exists?d.data():{email:u.email,nama:u.displayName};
-    LEVEL=levelOf(ME);IS_PENGAMAT=(ME.role||'').includes('pengamat')||LEVEL===1;
-    if(!IS_PENGAMAT){$('gate').classList.remove('hidden');$('main-box').classList.add('hidden');lucide.createIcons();return;}
-    $('h-sub').textContent=(ME.nama||ME.email)+' • ditugaskan admin';
-    AGENDA=await getCached('pengaturan',10*60*1000,()=>db.collection('pengaturan').get().then(s=>s.docs.map(x=>({id:x.id,...x.data()}))));
-    AGENDA=AGENDA.filter(a=>LEVEL===1||(a.pengamat_email||'').split(/[,;]/).map(s=>s.trim()).includes(ME.email));
-    if(!AGENDA.length){$('gate').textContent='Belum ada penugasan pengamat untuk Anda.';$('gate').classList.remove('hidden');$('main-box').classList.add('hidden');lucide.createIcons();return;}
-    await loadPeserta();
-    initSesi();
-    await loadSession();
+    try{
+      const d=await db.collection('users').doc(u.email).get();
+      ME=d.exists?d.data():{email:u.email,nama:u.displayName};
+      LEVEL=levelOf(ME);IS_PENGAMAT=(ME.role||'').includes('pengamat')||LEVEL===1;
+      if(!IS_PENGAMAT){$('gate').classList.remove('hidden');lucide.createIcons();return;}
+      $('h-sub').textContent=(ME.nama||ME.email)+' • ditugaskan admin';
+      AGENDA=await db.collection('pengaturan').get().then(s=>s.docs.map(x=>({id:x.id,...x.data()})));
+      AGENDA=AGENDA.filter(a=>LEVEL===1||(a.pengamat_email||'').split(/[,;]/).map(s=>s.trim()).includes(ME.email));
+      await loadPeserta();
+      initSesi();
+      await loadSession();
+      lucide.createIcons();
+    }catch(e){showToast('Gagal memuat: '+e.message,'error');}
   });
 }
 
 async function loadPeserta(){
   if(DEMO)return;
-  const all=await getCached('users_all',5*60*1000,()=>db.collection('users').get().then(s=>s.docs.map(x=>x.data())));
+  const all=await db.collection('users').get().then(s=>s.docs.map(x=>x.data()));
   PESERTA=all.filter(u=>((u.jabatan||'').includes('Guru')||(u.role||'').includes('guru'))&&(u.status||'active')==='active');
 }
+
 function initSesi(){
   const t=today();
-  const def=AGENDA.find(a=>toISO(a.tanggal)===t)||AGENDA[0];
-  $('sesi').innerHTML=AGENDA.map(a=>`<option value="${a.id}" ${a.id===def.id?'selected':''}>${a.nama_kegiatan} • ${toISO(a.tanggal)}</option>`).join('');
-  SESI=def;
+  // LOCK: ambil agenda HARI INI yang menugaskan pengamat ini
+  SESI=AGENDA.find(a=>toISO(a.tanggal)===t)||null;
+  if(!SESI){
+    $('no-session').classList.remove('hidden');$('main-box').classList.add('hidden');
+    lucide.createIcons();return;
+  }
+  $('no-session').classList.add('hidden');$('main-box').classList.remove('hidden');
+  $('sesi-nama').textContent=SESI.nama_kegiatan||'-';
+  $('sesi-info').textContent=`${toISO(SESI.tanggal)} • ${SESI.jam_mulai||SESI.waktu||'-'} – ${SESI.jam_selesai||'-'} • Narsum: ${SESI.narsum||'-'} • Pengamat: ${SESI.pengamat_email||'-'}`;
+  updateTimer();
+  if(timerId)clearInterval(timerId);
+  timerId=setInterval(updateTimer,30000);
+  lucide.createIcons();
 }
+
+function updateTimer(){
+  if(!SESI)return;
+  const now=new Date();
+  const mulai=hmToMin(SESI.jam_mulai||SESI.waktu||'08:00');
+  const selesai=hmToMin(SESI.jam_selesai||'14:00');
+  const cur=now.getHours()*60+now.getMinutes();
+  let st='belum',label='Belum dimulai',cls='bg-gray-100 text-gray-500';
+  if(cur>=mulai&&cur<=selesai){st='live';label='Sedang berlangsung';cls='bg-emerald-100 text-emerald-700';}
+  else if(cur>selesai){st='selesai';label='Kegiatan selesai';cls='bg-gray-200 text-gray-500';}
+  else{const m=mulai-cur;const h=Math.floor(m/60),mn=m%60;label=`Mulai dalam ${h} jam ${mn} menit`;}
+  $('sesi-pill').className='text-[9px] font-extrabold px-2 py-1 rounded-full inline-flex items-center gap-1 '+cls;
+  $('sesi-pill').innerHTML=(st==='live'?'<span class="w-1.5 h-1.5 bg-emerald-600 rounded-full pulse-live"></span>':'')+label;
+  $('live-badge').classList.toggle('hidden',st!=='live');$('live-badge').classList.toggle('flex',st==='live');
+  $('sesi-timer').textContent=st==='live'?`Berakhir dalam ${Math.max(0,selesai-cur)} menit`:'';
+  $('sesi-timer').className='text-xs font-bold mt-1 '+(st==='live'?'text-emerald-600':st==='belum'?'text-amber-500':'text-gray-400');
+  lucide.createIcons();
+}
+
+function reloadSesi(){location.reload();}
+
 async function loadSession(){
-  SESI=AGENDA.find(a=>a.id===$('sesi').value)||SESI;
-  $('sesi-info').textContent=`${SESI.nama_kegiatan||'-'} • ${toISO(SESI.tanggal)} • ${SESI.waktu||'-'} • Narsum: ${SESI.narsum||'-'} • Pengamat: ${SESI.pengamat_email||'-'}`;
-  if(!DEMO){
+  if(!SESI||!SESI.id)return;
+  if(DEMO){renderAll();return;}
+  try{
     const p=await db.collection('presensi').where('tanggal','==',toISO(SESI.tanggal)).where('jenis','==','absen').get();
     PRESENT=new Set(p.docs.map(x=>x.data().email));
     const e=await db.collection('pengamatan').where('agenda_id','==',SESI.id).get();
     EVENTS=e.docs.map(x=>({id:x.id,...x.data()})).sort((a,b)=>(b.waktu||'').localeCompare(a.waktu||''));
     const r=await db.collection('rating_sekolah').where('agenda_id','==',SESI.id).get();
     RATINGS=r.docs.map(x=>({id:x.id,...x.data()}));
-  }
+  }catch(err){showToast('Gagal memuat sesi: '+err.message,'error');}
   renderAll();
 }
+
 function renderAll(){
+  if(!SESI)return;
   $('st-hadir').textContent=PRESENT.size;
   $('st-cat').textContent=EVENTS.length;
+  const aktifSet=new Set(EVENTS.map(e=>e.target_email).filter(Boolean));
+  $('st-aktif').textContent=aktifSet.size;
   $('st-rate').textContent=RATINGS.length;
   renderPeserta();renderEvents();renderRating();lucide.createIcons();
 }
+
 function renderPeserta(){
-  const list=[...PESERTA].sort((a,b)=>(PRESENT.has(b.email)?1:0)-(PRESENT.has(a.email)?1:0));
+  const list=[...PESERTA].sort((a,b)=>{
+    const ca=EVENTS.filter(e=>e.target_email===a.email).length;
+    const cb=EVENTS.filter(e=>e.target_email===b.email).length;
+    if(cb!==ca)return cb-ca;
+    return (PRESENT.has(b.email)?1:0)-(PRESENT.has(a.email)?1:0);
+  });
   $('peserta-list').innerHTML=list.length?list.map(p=>{
     const cnt=EVENTS.filter(e=>e.target_email===p.email).length;
+    const hadir=PRESENT.has(p.email);
     return `<div class="bg-white rounded-2xl shadow-card p-4">
-      <div class="flex justify-between items-center mb-2"><div><p class="font-bold text-sm">${p.nama||p.email} ${PRESENT.has(p.email)?'<span class="text-[9px] font-extrabold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded">HADIR</span>':'<span class="text-[9px] font-extrabold bg-gray-200 text-gray-500 px-1.5 py-0.5 rounded">BELUM</span>'}</p><p class="text-xs text-gray-400">${p.instansi||'-'} • ${cnt} catatan</p></div></div>
-      <div class="grid grid-cols-4 gap-1">${JENIS.map(j=>`<button onclick="addEvent('${p.email}','${(p.nama||'').replace(/'/g,"\\'")}','${(p.instansi||'').replace(/'/g,"\\'")}','${j[0]}')" class="${j[2]} rounded-xl py-2 text-[10px] font-extrabold">${j[1]}<span class="block">${j[0]}</span></button>`).join('')}</div>
-    </div>`;}).join(''):'<p class="text-gray-400">Tidak ada peserta.</p>';
+      <div class="flex justify-between items-center mb-2">
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-sm truncate">${p.nama||p.email}</p>
+          <p class="text-xs text-gray-400 truncate">${p.instansi||'-'}</p>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+          ${cnt?`<span class="text-[10px] font-extrabold bg-wine-100 text-wine-700 px-2 py-0.5 rounded-full inline-flex items-center gap-0.5"><i data-lucide="pen-line" class="w-3 h-3"></i>${cnt}</span>`:''}
+          <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded ${hadir?'bg-emerald-100 text-emerald-700':'bg-gray-200 text-gray-500'} inline-flex items-center gap-0.5"><i data-lucide="${hadir?'check':'user-x'}" class="w-2.5 h-2.5"></i>${hadir?'HADIR':'BELUM'}</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-4 gap-1">${JENIS.map(j=>`<button onclick="addEvent('${p.email}','${(p.nama||'').replace(/'/g,"\\'")}','${(p.instansi||'').replace(/'/g,"\\'")}','${j[0]}')" class="${j[2]} rounded-xl py-2 text-[10px] font-extrabold inline-flex flex-col items-center justify-center gap-0.5 hover:opacity-80"><i data-lucide="${j[1]}" class="w-3.5 h-3.5"></i><span>${j[0]}</span></button>`).join('')}</div>
+    </div>`;}).join(''):'<p class="text-gray-400 text-sm">Tidak ada peserta terdaftar.</p>';
   lucide.createIcons();
 }
+
 async function addEvent(em,nm,sk,jn){
-  if(DEMO){EVENTS.unshift({id:'e'+Date.now(),agenda_id:SESI.id,jenis:jn,target_nama:nm,target_sekolah:sk,nama_pengamat:ME.nama,waktu:new Date().toISOString()});renderAll();showToast('Tercatat: '+jn+' ✅');return;}
+  if(!SESI||!SESI.id)return showToast('Sesi belum siap','error');
+  if(DEMO){EVENTS.unshift({id:'e'+Date.now(),agenda_id:SESI.id,jenis:jn,target_email:em,target_nama:nm,target_sekolah:sk,nama_pengamat:ME.nama,waktu:new Date().toISOString()});renderAll();showToast(jn+' tercatat');return;}
   try{
     await db.collection('pengamatan').add({agenda_id:SESI.id,agenda_nama:SESI.nama_kegiatan,tanggal:toISO(SESI.tanggal),waktu:new Date().toISOString(),email_pengamat:ME.email,nama_pengamat:ME.nama||'',target_email:em,target_nama:nm,target_sekolah:sk,jenis:jn,catatan:''});
-    showToast('Tercatat: '+jn+' ✅');
+    showToast(jn+' tercatat');
     const e=await db.collection('pengamatan').where('agenda_id','==',SESI.id).get();
     EVENTS=e.docs.map(x=>({id:x.id,...x.data()})).sort((a,b)=>(b.waktu||'').localeCompare(a.waktu||''));
     renderAll();
   }catch(err){showToast('Gagal: '+err.message,'error');}
 }
+
 function renderEvents(){
-  $('event-list').innerHTML=EVENTS.length?EVENTS.map(e=>{const j=JENIS.find(x=>x[0]===e.jenis)||['','📌','bg-gray-100'];
-    return `<div class="bg-white rounded-2xl shadow-card p-3 flex justify-between items-center"><div class="flex items-center gap-2"><span class="w-9 h-9 rounded-xl ${j[2]} flex items-center justify-center">${j[1]}</span><div><p class="font-semibold">${e.target_nama||'-'} <span class="text-xs text-gray-400">• ${e.target_sekolah||'-'}</span></p><p class="text-xs text-gray-400">${e.jenis} • ${(e.waktu||'').slice(11,16)} • oleh ${e.nama_pengamat||'-'}</p></div></div>${LEVEL===1?`<button onclick="delEvent('${e.id}')" class="text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div>`;}).join('')
-   :'<div class="bg-white rounded-2xl shadow-card p-8 text-center text-gray-400">Belum ada catatan sesi ini.</div>';
+  const flt=$('filter-jenis').value;
+  const list=flt?EVENTS.filter(e=>e.jenis===flt):EVENTS;
+  $('event-list').innerHTML=list.length?list.map(e=>{const j=JENIS.find(x=>x[0]===e.jenis)||['','pin','bg-gray-100 text-gray-500'];
+    return `<div class="bg-white rounded-2xl shadow-card p-3 flex justify-between items-center">
+      <div class="flex items-center gap-2 min-w-0 flex-1">
+        <span class="w-9 h-9 rounded-xl ${j[2]} flex items-center justify-center shrink-0"><i data-lucide="${j[1]}" class="w-4 h-4"></i></span>
+        <div class="min-w-0 flex-1">
+          <p class="font-semibold truncate">${e.target_nama||'-'}</p>
+          <p class="text-xs text-gray-400 truncate">${e.target_sekolah||'-'} • ${(e.waktu||'').slice(11,16)} • oleh ${e.nama_pengamat||'-'}</p>
+        </div>
+      </div>
+      ${LEVEL===1?`<button onclick="delEvent('${e.id}')" class="text-red-500 shrink-0 ml-2"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}
+    </div>`;}).join('')
+   :'<div class="bg-white rounded-2xl shadow-card p-8 text-center text-gray-400"><i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2"></i><p>Belum ada catatan sesi ini.</p></div>';
   lucide.createIcons();
 }
-async function delEvent(id){if(!confirm('Hapus catatan ini?'))return;try{await db.collection('pengamatan').doc(id).delete();showToast('Catatan dihapus ✅');loadSession();}catch(e){showToast('Gagal: '+e.message,'error');}}
+
+async function delEvent(id){if(!confirm('Hapus catatan ini?'))return;try{await db.collection('pengamatan').doc(id).delete();showToast('Catatan dihapus');loadSession();}catch(e){showToast('Gagal: '+e.message,'error');}}
+
+function exportCSV(){
+  if(!EVENTS.length)return showToast('Belum ada catatan','info');
+  let csv='Waktu,Jenis,Nama Peserta,Sekolah,Pengamat\n';
+  EVENTS.forEach(e=>{csv+=`"${(e.waktu||'').slice(0,19)}","${e.jenis}","${(e.target_nama||'').replace(/"/g,'""')}","${(e.target_sekolah||'').replace(/"/g,'""')}","${(e.nama_pengamat||'').replace(/"/g,'""')}"\n`;});
+  const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='pengamatan_'+(SESI?.id||'')+'.csv';a.click();
+  showToast('Export CSV berhasil');
+}
+
 function renderRating(){
   const schools=[...new Set(PESERTA.map(p=>p.instansi).filter(Boolean))].sort();
   $('rating-list').innerHTML=schools.length?schools.map(sk=>{
     const ex=RATINGS.find(r=>r.sekolah===sk);const sl=slug(sk);const cur=selStars[sl]||ex?.bintang||0;
     return `<div class="bg-white rounded-2xl shadow-card p-4">
-      <div class="flex justify-between items-center"><p class="font-bold text-sm">${sk}</p>${ex?`<span class="text-xs text-gray-400">★${ex.bintang} • ${ex.nama_pengamat||''}</span>`:'<span class="text-xs text-gray-400">belum dinilai</span>'}</div>
-      <div class="flex gap-1 my-2" id="stars-${sl}">${[1,2,3,4,5].map(n=>`<button onclick="clickStar('${sl}',${n})" class="text-2xl ${n<=cur?'text-amber-400':'text-gray-200'}">★</button>`).join('')}</div>
+      <div class="flex justify-between items-center">
+        <p class="font-bold text-sm">${sk}</p>
+        ${ex?`<span class="text-xs text-gray-400 inline-flex items-center gap-1"><i data-lucide="star" class="w-3 h-3 text-amber-400 fill-amber-400"></i>${ex.bintang} • ${ex.nama_pengamat||''}</span>`:'<span class="text-xs text-gray-400">belum dinilai</span>'}
+      </div>
+      <div class="flex gap-1 my-2" id="stars-${sl}">${[1,2,3,4,5].map(n=>`<button onclick="clickStar('${sl}',${n})" class="text-2xl ${n<=cur?'text-amber-400':'text-gray-200'}"><i data-lucide="star" class="w-5 h-5 ${n<=cur?'fill-amber-400':''}"></i></button>`).join('')}</div>
       ${ex&&ex.catatan?`<p class="text-xs italic text-gray-500 mb-2">"${ex.catatan}"</p>`:''}
-      <div class="flex gap-2"><input id="rc-${sl}" placeholder="Catatan (opsional)" value="${ex?.catatan||''}" class="flex-1 border rounded-xl p-2.5 text-sm"><button onclick="saveRating('${sk.replace(/'/g,"\\'")}','${sl}')" class="bg-wine-800 text-white rounded-xl px-4 py-2.5 text-sm font-bold">Simpan</button></div>
-    </div>`;}).join(''):'<p class="text-gray-400">Tidak ada sekolah.</p>';
+      <div class="flex gap-2"><input id="rc-${sl}" placeholder="Catatan (opsional)" value="${ex?.catatan||''}" class="flex-1 border rounded-xl p-2.5 text-sm"><button onclick="saveRating('${sk.replace(/'/g,"\\'")}','${sl}')" class="bg-wine-800 text-white rounded-xl px-4 py-2.5 text-sm font-bold inline-flex items-center gap-1"><i data-lucide="save" class="w-3.5 h-3.5"></i> Simpan</button></div>
+    </div>`;}).join(''):'<p class="text-gray-400 text-sm">Tidak ada sekolah terdaftar.</p>';
   lucide.createIcons();
 }
-function clickStar(sl,n){selStars[sl]=n;const c=$('stars-'+sl).children;for(let i=0;i<5;i++)c[i].className='text-2xl '+(i<n?'text-amber-400':'text-gray-200');}
+function clickStar(sl,n){selStars[sl]=n;const c=$('stars-'+sl).children;for(let i=0;i<5;i++){const fill=i<n?'fill-amber-400':'';c[i].className='text-2xl '+(i<n?'text-amber-400':'text-gray-200');c[i].innerHTML=`<i data-lucide="star" class="w-5 h-5 ${fill}"></i>`;}lucide.createIcons();}
 async function saveRating(sk,sl){
   const b=selStars[sl]||0;if(!b)return showToast('Pilih bintang dulu','error');
   const cat=$('rc-'+sl).value;
   const data={agenda_id:SESI.id,agenda_nama:SESI.nama_kegiatan,tanggal:toISO(SESI.tanggal),sekolah:sk,bintang:b,catatan:cat,email_pengamat:ME.email,nama_pengamat:ME.nama||'',waktu:new Date().toISOString()};
-  if(DEMO){const i=RATINGS.findIndex(r=>r.sekolah===sk);if(i>=0)RATINGS[i]={...RATINGS[i],...data};else RATINGS.push({id:'r'+Date.now(),...data});renderAll();showToast('Rating disimpan ✅');return;}
-  try{await db.collection('rating_sekolah').doc(SESI.id+'_'+sl).set(data);showToast('Rating disimpan ✅');loadSession();}catch(e){showToast('Gagal: '+e.message,'error');}
+  if(DEMO){const i=RATINGS.findIndex(r=>r.sekolah===sk);if(i>=0)RATINGS[i]={...RATINGS[i],...data};else RATINGS.push({id:'r'+Date.now(),...data});renderAll();showToast('Rating disimpan');return;}
+  try{await db.collection('rating_sekolah').doc(SESI.id+'_'+sl).set(data);showToast('Rating disimpan');loadSession();}catch(e){showToast('Gagal: '+e.message,'error');}
 }
 lucide.createIcons();
 </script>
