@@ -44,15 +44,13 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
 
   <!-- ===== TAB ABSEN ===== -->
   <section id="tab-absen" class="space-y-4 pb-28">
-
-    <!-- STRUK SUDAH ABSEN -->
     <div id="done-card" class="hidden space-y-4">
       <div class="bg-white rounded-2xl shadow-card p-5 border-l-4 border-emerald-500">
         <p class="text-xs font-extrabold text-emerald-600 flex items-center gap-1"><i data-lucide="check-circle-2" class="w-4 h-4"></i> ANDA SUDAH ABSEN HARI INI</p>
-        <div class="flex justify-between items-center mt-2"><p class="text-2xl font-extrabold" id="d-status">-</p><span class="text-xs font-bold text-gray-400" id="d-jam">-</span></div>
-        <p class="text-sm text-gray-500 mt-1" id="d-target">-</p>
-        <p class="text-sm text-gray-500" id="d-jarak">-</p>
-        <p class="text-sm text-gray-500 hidden" id="d-laporan-wrap">📝 <span id="d-laporan"></span></p>
+        <div class="flex justify-between items-center mt-2"><p class="text-2xl font-extrabold" id="d-status">-</p><span class="text-xs font-bold text-gray-400 flex items-center gap-1" id="d-jam">-</span></div>
+        <p class="text-sm text-gray-500 mt-1 flex items-center gap-1" id="d-target">-</p>
+        <p class="text-sm text-gray-500 flex items-center gap-1" id="d-jarak">-</p>
+        <p class="text-sm text-gray-500 hidden flex items-center gap-1" id="d-laporan-wrap"><i data-lucide="file-text" class="w-3.5 h-3.5"></i><span id="d-laporan"></span></p>
         <div class="flex gap-3 mt-3 items-center">
           <img id="d-foto" loading="lazy" class="w-16 h-16 rounded-xl object-cover hidden">
           <div class="flex-1 flex flex-col gap-2">
@@ -63,15 +61,14 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
       </div>
     </div>
 
-    <!-- FORM ABSEN -->
     <div id="form-absen" class="space-y-4">
       <div class="bg-white rounded-2xl shadow-card p-4">
         <div class="flex justify-between items-start">
           <div><p class="font-extrabold" id="a-nama">-</p><p class="text-xs text-gray-500" id="a-info">-</p></div>
-          <span class="text-xs font-bold text-wine-700 bg-wine-100 px-2.5 py-1 rounded-full" id="a-time">-</span>
+          <span class="text-xs font-bold text-wine-700 bg-wine-100 px-2.5 py-1 rounded-full flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i><span id="a-time">-</span></span>
         </div>
         <div class="mt-2 bg-wine-50 rounded-xl p-3">
-          <p class="text-xs font-extrabold text-wine-700" id="tgt-nama">-</p>
+          <p class="text-xs font-extrabold text-wine-700 flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5" id="tgt-ic"></i><span id="tgt-nama">-</span></p>
           <p class="text-xs text-gray-500 mt-0.5" id="tgt-detail">-</p>
         </div>
         <div class="mt-2" id="preview-chip"></div>
@@ -79,7 +76,7 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
 
       <div class="bg-white rounded-2xl shadow-card p-4">
         <div class="flex items-center gap-2">
-          <span id="geo-st" class="flex-1 text-sm font-bold text-wine-700"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Mencari lokasi…</span>
+          <span id="geo-st" class="flex-1 text-sm font-bold text-wine-700 flex items-center gap-1"><i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Mencari lokasi…</span>
           <button onclick="ambilLokasi()" class="text-wine-700 text-xs font-bold flex items-center gap-1 bg-wine-50 px-2 py-1.5 rounded-lg"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Cek Ulang</button>
           <button onclick="toggleMap()" class="text-wine-700 text-xs font-bold flex items-center gap-1 bg-wine-50 px-2 py-1.5 rounded-lg"><i data-lucide="map" class="w-3.5 h-3.5"></i> <span id="map-toggle-label">Lihat Peta</span></button>
         </div>
@@ -94,17 +91,16 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
           <img id="foto-prev" class="hidden max-h-44 mx-auto rounded-xl">
           <div id="foto-ph" class="text-gray-400"><i data-lucide="camera" class="w-8 h-8 mx-auto mb-1"></i><p class="text-sm font-semibold">Ketuk untuk foto selfie</p><p class="text-xs">Otomatis dikompres ~50KB</p></div>
         </div>
-        <p id="foto-size" class="hidden text-xs text-emerald-600 font-bold mt-1">-</p>
-        <button id="btn-retake" onclick="retakeFoto()" class="hidden w-full mt-2 bg-gray-100 rounded-xl py-2 text-sm font-bold">Ambil Ulang</button>
+        <p id="foto-size" class="hidden text-xs text-emerald-600 font-bold mt-1 flex items-center gap-1"><i data-lucide="check" class="w-3 h-3"></i><span id="foto-size-t"></span></p>
+        <button id="btn-retake" onclick="retakeFoto()" class="hidden w-full mt-2 bg-gray-100 rounded-xl py-2 text-sm font-bold flex items-center justify-center gap-1"><i data-lucide="rotate-ccw" class="w-4 h-4"></i> Ambil Ulang</button>
       </div>
 
       <div class="bg-white rounded-2xl shadow-card p-4">
-        <button onclick="toggleCatatan()" class="w-full flex justify-between items-center text-sm font-bold"><span id="cat-label">＋ Tambah catatan kegiatan (opsional)</span><i data-lucide="chevron-down" class="w-4 h-4 text-gray-400" id="cat-icon"></i></button>
+        <button onclick="toggleCatatan()" class="w-full flex justify-between items-center text-sm font-bold"><span id="cat-label">Tambah catatan kegiatan (opsional)</span><i data-lucide="chevron-down" class="w-4 h-4 text-gray-400" id="cat-icon"></i></button>
         <div id="catatan-box" class="hidden mt-2"><textarea id="laporan" rows="2" oninput="renderCheck()" placeholder="Ringkasan singkat bila perlu…" class="w-full border border-gray-200 rounded-xl p-3"></textarea></div>
       </div>
     </div>
 
-    <!-- STICKY ACTION BAR -->
     <div id="action-bar" class="fixed bottom-0 inset-x-0 z-40 bg-white border-t border-gray-100 p-3 max-w-5xl mx-auto">
       <div class="flex gap-1.5 mb-2 flex-wrap" id="check-chips"></div>
       <button id="btn-kirim" onclick="kirimAbsen()" disabled class="w-full bg-wine-800 text-white font-extrabold rounded-xl p-3.5 flex items-center justify-center gap-2 disabled:opacity-40"><i data-lucide="send" class="w-4 h-4"></i> KIRIM PRESENSI</button>
@@ -118,7 +114,7 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
       <input id="iz-tanggal" type="date" class="w-full border border-gray-200 rounded-xl p-3 mb-2">
       <div class="flex flex-wrap gap-2 mb-2" id="iz-chips"></div>
       <textarea id="iz-alasan" rows="3" placeholder="Alasan lengkap…" class="w-full border border-gray-200 rounded-xl p-3 mb-3"></textarea>
-      <button onclick="kirimIzin()" class="w-full bg-wine-800 text-white font-bold rounded-xl p-3">Ajukan Izin</button>
+      <button onclick="kirimIzin()" class="w-full bg-wine-800 text-white font-bold rounded-xl p-3 flex items-center justify-center gap-2"><i data-lucide="send" class="w-4 h-4"></i> Ajukan Izin</button>
       <p class="text-[11px] text-gray-400 mt-2 text-center">Izin akan diproses oleh Kepala Sekolah Anda</p>
     </div>
     <div class="bg-white rounded-2xl shadow-card p-5"><p class="font-bold mb-2">Riwayat Izin</p><div id="iz-list" class="space-y-2 text-sm"></div></div>
@@ -131,18 +127,19 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
 
   <!-- ===== TAB MONITOR ===== -->
   <section id="tab-monitor" class="hidden space-y-4">
-    <div id="no-monitor" class="hidden bg-white rounded-2xl shadow-card p-8 text-center text-gray-400">Akses hanya untuk KS / Narasumber / Admin</div>
+    <div id="no-monitor" class="hidden bg-white rounded-2xl shadow-card p-8 text-center text-gray-400">Akses hanya untuk Kepala Sekolah / Admin</div>
     <div id="monitor-box" class="space-y-4">
       <div class="bg-white rounded-2xl shadow-card p-1 flex text-sm font-bold">
         <button onclick="monTab('harian')" id="mt-harian" class="flex-1 py-2.5 rounded-xl bg-wine-800 text-white">Harian</button>
-        <button onclick="monTab('rekap')" id="mt-rekap" class="flex-1 py-2.5 rounded-xl text-gray-500">Rekap Bulanan</button>
-        <button onclick="monTab('award')" id="mt-award" class="flex-1 py-2.5 rounded-xl text-gray-500">Nominasi Award</button>
+        <button onclick="monTab('rekap')" id="mt-rekap" class="flex-1 py-2.5 rounded-xl text-gray-500">Rekap</button>
+        <button onclick="monTab('izin')" id="mt-izin" class="flex-1 py-2.5 rounded-xl text-gray-500">Izin</button>
+        <button onclick="monTab('award')" id="mt-award" class="flex-1 py-2.5 rounded-xl text-gray-500">Award</button>
       </div>
       <div id="mon-harian" class="space-y-4">
         <div class="bg-white rounded-2xl shadow-card p-5">
           <div class="flex gap-2 items-end">
-            <div class="flex-1"><label class="text-xs font-bold text-gray-500">Tanggal</label><input id="m-tanggal" type="date" onchange="loadMonitor()" class="w-full border rounded-xl p-2.5"></div>
-            <select id="m-sekolah" onchange="loadMonitor()" class="border rounded-xl p-2.5 bg-white"></select>
+            <div class="flex-1"><label class="text-xs font-bold text-gray-500">Tanggal</label><input id="m-tanggal" type="date" onchange="onScopeChange()" class="w-full border rounded-xl p-2.5"></div>
+            <select id="m-sekolah" onchange="onScopeChange()" class="border rounded-xl p-2.5 bg-white"></select>
             <button onclick="exportCSV()" class="bg-wine-800 text-white rounded-xl p-2.5 text-sm font-bold flex items-center gap-1"><i data-lucide="download" class="w-4 h-4"></i> Excel</button>
           </div>
         </div>
@@ -171,10 +168,17 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
         <div class="bg-white rounded-2xl shadow-card p-5"><p class="font-bold mb-1">Tren Kehadiran Bulanan</p><p class="text-xs text-gray-400 mb-3">% hadir tepat per bulan (tahun terpilih)</p><div id="trend-box" class="flex items-end gap-1 h-32"></div><div id="trend-labels" class="flex gap-1 mt-1"></div></div>
         <div class="bg-white rounded-2xl shadow-card p-5 overflow-x-auto"><p class="font-bold mb-3">Rekap Grid (H•T•I•A)</p><table class="w-full text-sm"><thead><tr class="text-left text-gray-400 text-xs bg-gray-50"><th class="p-2">Nama Guru</th><th class="p-2 text-center">H</th><th class="p-2 text-center">T</th><th class="p-2 text-center">I</th><th class="p-2 text-center">A</th><th class="p-2 text-center">%</th></tr></thead><tbody id="r-tbody"></tbody></table></div>
       </div>
+      <div id="mon-izin" class="hidden space-y-4">
+        <div class="bg-white rounded-2xl shadow-card p-5">
+          <p class="font-bold mb-3 flex items-center gap-2"><i data-lucide="inbox" class="w-4 h-4 text-wine-700"></i> Permintaan Izin Menunggu</p>
+          <div id="izin-queue" class="space-y-3"></div>
+        </div>
+        <div class="bg-white rounded-2xl shadow-card p-5"><p class="font-bold mb-2 flex items-center gap-2"><i data-lucide="history" class="w-4 h-4 text-wine-700"></i> Riwayat Persetujuan</p><div id="izin-done" class="space-y-2 text-sm"></div></div>
+      </div>
       <div id="mon-award" class="hidden space-y-4">
         <div class="bg-white rounded-2xl shadow-card p-5">
-          <p class="font-bold mb-1 flex items-center gap-2"><i data-lucide="trophy" class="w-4 h-4 text-accent-500"></i> Nominasi Award Otomatis</p>
-          <p class="text-xs text-gray-400 mb-4">Dihitung dari rekap bulan terpilih. Peringkat berdasarkan % hadir tepat.</p>
+          <p class="font-bold mb-1 flex items-center gap-2"><i data-lucide="trophy" class="w-4 h-4 text-accent-500"></i> Nominasi Award Otomatis <span class="text-[9px] bg-wine-700 text-white px-1.5 py-0.5 rounded font-extrabold">KHUSUS ADMIN</span></p>
+          <p class="text-xs text-gray-400 mb-4">Dihitung dari rekap bulan terpilih (gunakan tab Rekap untuk memilih bulan/tahun/sekolah).</p>
           <p class="text-xs font-extrabold text-wine-700 mb-2">TOP 3 GURU</p><div id="award-guru" class="space-y-2 mb-4"></div>
           <p class="text-xs font-extrabold text-wine-700 mb-2">TOP SEKOLAH</p><div id="award-sekolah" class="space-y-2"></div>
         </div>
@@ -193,7 +197,7 @@ let auth=null,db=null;
 if(!DEMO){firebase.initializeApp(firebaseConfig);auth=firebase.auth();db=firebase.firestore();}
 const $=id=>document.getElementById(id);
 let ME=null,SCH=null,KOORD=null,FOTO_BLOB=null,LEVEL=4,SEKOLAHS=[],map=null,markerUser=null,markerTarget=null,REKAP=[],PY=[],TODAY_REC=null,geoDenied=false,catOpen=false,izJenis='Sakit';
-const IZ_JENIS=[['Sakit','🤒'],['Izin','📝'],['Dinas Luar','🚗'],['Cuti','🌴']];
+const IZ_JENIS=[['Sakit','thermometer'],['Izin','file-text'],['Dinas Luar','car'],['Cuti','umbrella']];
 function levelOf(u){const r=(u.role||'').toLowerCase(),j=(u.jabatan||'').toLowerCase();if(r.includes('admin'))return 1;if(r.includes('narasumber'))return 2;if(r.includes('kepala')||j.includes('kepala'))return 3;return 4;}
 function isGuru(u){return ((u.jabatan||'').includes('Guru')||(u.role||'').includes('guru'))&&(u.status||'active')==='active';}
 function showToast(m,t='success'){const ic={success:'check-circle-2',error:'x-circle',info:'info'};const bg={success:'bg-emerald-600',error:'bg-red-600',info:'bg-wine-800'};const e=document.createElement('div');e.className=`${bg[t]} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 fixed bottom-24 left-1/2 -translate-x-1/2 z-[60]`;e.innerHTML=`<i data-lucide="${ic[t]}" class="w-5 h-5"></i><span class="text-sm font-bold">${m}</span>`;document.body.appendChild(e);lucide.createIcons();setTimeout(()=>{e.style.opacity='0';e.style.transition='.4s';setTimeout(()=>e.remove(),400)},2600);}
@@ -202,9 +206,11 @@ function openM(id){$(id).classList.remove('hidden');$(id).classList.add('flex');
 function closeM(id){$(id).classList.add('hidden');$(id).classList.remove('flex');}
 function haversine(a,b,c,d){const R=6371e3,toR=x=>x*Math.PI/180;const φ1=toR(a),φ2=toR(c),dφ=toR(c-a),dλ=toR(d-b);const h=Math.sin(dφ/2)**2+Math.cos(φ1)*Math.cos(φ2)*Math.sin(dλ/2)**2;return 2*R*Math.asin(Math.sqrt(h));}
 function diffMin(hm){const p=(hm||'07:30').split(':').map(Number);const n=new Date();return (p[0]*60+p[1])-(n.getHours()*60+n.getMinutes());}
+function toISO(t){if(!t)return '';const s=String(t);if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);const m=s.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');return s;}
 
-const DEMO_P=[{nama:'Arvi Dwi Utami',jam:'07:12',status:'Hadir Tepat',jarak_meter:45,jenis:'absen',email:'g1@sd.id',unit_kerja:'SD Negeri 3 Krisak',foto_url:''},{nama:'Triyanti',jam:'07:55',status:'Terlambat',jarak_meter:120,jenis:'absen',email:'g2@sd.id',unit_kerja:'SD Negeri 3 Krisak',foto_url:''}];
+const DEMO_P=[{nama:'Arvi Dwi Utami',jam:'07:12',status:'Hadir Tepat',jarak_meter:45,jenis:'absen',email:'g1@sd.id',unit_kerja:'SD Negeri 3 Krisak',foto_url:'',dalam_radius:true},{nama:'Triyanti',jam:'07:55',status:'Terlambat',jarak_meter:120,jenis:'absen',email:'g2@sd.id',unit_kerja:'SD Negeri 3 Krisak',foto_url:'',dalam_radius:true}];
 const DEMO_GURU=[{nama:'Arvi Dwi Utami',email:'g1@sd.id',instansi:'SD Negeri 3 Krisak',jabatan:'Guru Kelas'},{nama:'Triyanti',email:'g2@sd.id',instansi:'SD Negeri 3 Krisak',jabatan:'Guru Kelas'},{nama:'Mukti Adi Abadi',email:'g3@sd.id',instansi:'SD Negeri 3 Krisak',jabatan:'Guru PJOK'}];
+const DEMO_IZIN=[{id:'i1',nama:'Mukti Adi Abadi',unit_kerja:'SD Negeri 3 Krisak',tanggal:'2026-01-12',jenis_izin:'Sakit',alasan:'Demam sejak malam.',status_approval:'menunggu'},{id:'i2',nama:'Triyanti',unit_kerja:'SD Negeri 3 Krisak',tanggal:'2026-01-05',jenis_izin:'Dinas Luar',alasan:'Mengikuti pelatihan kecamatan.',status_approval:'disetujui',approved_by:'admin'}];
 const DEMO_PY=[{tanggal:'2026-01-05',status:'Hadir Tepat',jenis:'absen',email:'g1@sd.id',unit_kerja:'SD Negeri 3 Krisak',tahun:2026},{tanggal:'2026-01-05',status:'Terlambat',jenis:'absen',email:'g2@sd.id',unit_kerja:'SD Negeri 3 Krisak',tahun:2026},{tanggal:'2026-01-12',status:'Hadir Tepat',jenis:'absen',email:'g1@sd.id',unit_kerja:'SD Negeri 3 Krisak',tahun:2026},{tanggal:'2026-02-09',status:'Hadir Tepat',jenis:'absen',email:'g1@sd.id',unit_kerja:'SD Negeri 3 Krisak',tahun:2026}];
 
 if(DEMO){
@@ -227,7 +233,6 @@ if(DEMO){
 }
 
 async function loadSekolahs(){if(DEMO)return;const s=await db.collection('sekolah').get();SEKOLAHS=s.docs.map(x=>({id:x.id,...x.data()}));}
-function toISO(t){if(!t)return '';const s=String(t);if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);const m=s.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');return s;}
 async function loadTarget(){
   if(DEMO)return;
   const t=new Date().toISOString().slice(0,10);
@@ -249,18 +254,20 @@ async function checkToday(){
 function initUI(){
   $('a-nama').textContent=ME.nama||ME.email;
   $('a-info').textContent=(ME.jabatan||'')+' • '+(ME.instansi||'');
-  $('tgt-nama').textContent=(SCH&&SCH.jenis==='kegiatan'?'🎯 Kegiatan: ':'🏫 Sekolah: ')+((SCH&&(SCH.lokasi||SCH.nama))||'-');
+  $('tgt-ic').setAttribute('data-lucide',SCH&&SCH.jenis==='kegiatan'?'map-pin':'school');
+  $('tgt-nama').textContent=(SCH&&SCH.jenis==='kegiatan'?'Kegiatan: ':'Sekolah: ')+((SCH&&(SCH.lokasi||SCH.nama))||'-');
   $('tgt-detail').textContent=SCH?`Radius ${SCH.radius||200} m • Jam ${SCH.jam_mulai||'-'}–${SCH.jam_selesai||'-'} • Batas tepat ${SCH.jam_batas||'-'}`:'-';
   tickJam();updatePreview();setInterval(()=>{tickJam();updatePreview();},30000);
   renderIzChips();$('iz-tanggal').value=new Date().toISOString().slice(0,10);
   $('m-tanggal').value=new Date().toISOString().slice(0,10);
-  const opts=(LEVEL<=2?'<option value="SEMUA">Semua Sekolah</option>':'')+SEKOLAHS.filter(s=>LEVEL<=2||s.nama===ME.instansi).map(s=>`<option>${s.nama}</option>`).join('')||(LEVEL>2?`<option>${ME.instansi}</option>`:'');
-  $('m-sekolah').innerHTML=opts;
+  // AKSES MONITOR: guru & narasumber tidak punya; KS = sekolahnya; admin = semua
+  if(LEVEL===4||LEVEL===2)$('t-monitor').classList.add('hidden');
+  if(LEVEL!==1)$('mt-award').classList.add('hidden');
+  const opts=LEVEL===1?'<option value="SEMUA">Semua Sekolah</option>'+SEKOLAHS.map(s=>`<option>${s.nama}</option>`).join(''):`<option>${ME.instansi}</option>`;
+  $('m-sekolah').innerHTML=opts;$('r-sekolah').innerHTML=opts;
   const BL=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
   $('r-bulan').innerHTML=BL.map((b,i)=>`<option value="${i+1}" ${i===new Date().getMonth()?'selected':''}>${b}</option>`).join('');
   const cy=new Date().getFullYear();$('r-tahun').innerHTML=[cy,cy-1,cy-2].map(y=>`<option>${y}</option>`).join('');
-  $('r-sekolah').innerHTML=opts;
-  if(LEVEL===4)$('t-monitor').classList.add('hidden');
   if(TODAY_REC){renderDone();}else{renderCheck();ambilLokasi();}
   lucide.createIcons();
 }
@@ -269,19 +276,21 @@ function updatePreview(){
   if(!SCH||TODAY_REC){$('preview-chip').innerHTML='';return;}
   const now=new Date();const jam=now.toTimeString().slice(0,5);
   const batas=SCH.jam_batas||'07:30',selesai=SCH.jam_selesai||'14:00';
-  if(jam<=batas){const m=diffMin(batas);$('preview-chip').innerHTML=`<span class="text-[11px] font-extrabold bg-emerald-100 text-emerald-700 px-2.5 py-1.5 rounded-full">Kirim sekarang = HADIR TEPAT • sisa ${m} mnt ke batas ${batas}</span>`;}
-  else if(jam<=selesai){$('preview-chip').innerHTML=`<span class="text-[11px] font-extrabold bg-amber-100 text-amber-700 px-2.5 py-1.5 rounded-full">Kirim sekarang = TERLAMBAT (lewat batas ${batas})</span>`;}
-  else{$('preview-chip').innerHTML=`<span class="text-[11px] font-extrabold bg-red-100 text-red-600 px-2.5 py-1.5 rounded-full">Lewat jam kegiatan (${selesai}) — akan ditandai 🕒</span>`;}
+  if(jam<=batas){$('preview-chip').innerHTML=`<span class="text-[11px] font-extrabold bg-emerald-100 text-emerald-700 px-2.5 py-1.5 rounded-full inline-flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i>Kirim sekarang = HADIR TEPAT • sisa ${diffMin(batas)} mnt ke batas ${batas}</span>`;}
+  else if(jam<=selesai){$('preview-chip').innerHTML=`<span class="text-[11px] font-extrabold bg-amber-100 text-amber-700 px-2.5 py-1.5 rounded-full inline-flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i>Kirim sekarang = TERLAMBAT (lewat batas ${batas})</span>`;}
+  else{$('preview-chip').innerHTML=`<span class="text-[11px] font-extrabold bg-red-100 text-red-600 px-2.5 py-1.5 rounded-full inline-flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i>Lewat jam kegiatan (${selesai}) — akan ditandai</span>`;}
+  lucide.createIcons();
 }
 function tickJam(){$('a-time').textContent=new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});}
-function toggleCatatan(){catOpen=!catOpen;$('catatan-box').classList.toggle('hidden',!catOpen);$('cat-label').textContent=catOpen?'− Catatan kegiatan (opsional)':'＋ Tambah catatan kegiatan (opsional)';}
+function toggleCatatan(){catOpen=!catOpen;$('catatan-box').classList.toggle('hidden',!catOpen);$('cat-label').textContent=catOpen?'Catatan kegiatan (opsional) — terbuka':'Tambah catatan kegiatan (opsional)';}
 
 function renderCheck(){
-  const lok=KOORD?['bg-emerald-100 text-emerald-700','📍 Lokasi ✓']:geoDenied?['bg-red-100 text-red-600','📍 GPS ditolak (tetap bisa kirim, ditandai)']:['bg-gray-100 text-gray-500','📍 Mencari lokasi…'];
-  const foto=FOTO_BLOB?['bg-emerald-100 text-emerald-700','📷 Foto ✓']:['bg-gray-100 text-gray-500','📷 Foto belum'];
-  const cat=$('laporan').value.trim()?['bg-emerald-100 text-emerald-700','📝 Catatan ✓']:['bg-gray-100 text-gray-400','📝 Catatan opsional'];
-  $('check-chips').innerHTML=[lok,foto,cat].map(c=>`<span class="text-[10px] font-extrabold px-2 py-1 rounded-full ${c[0]}">${c[1]}</span>`).join('');
+  const lok=KOORD?['bg-emerald-100 text-emerald-700','map-pin','Lokasi OK']:geoDenied?['bg-red-100 text-red-600','map-pin-off','GPS ditolak (tetap bisa kirim)']:['bg-gray-100 text-gray-500','loader-2','Mencari lokasi…'];
+  const foto=FOTO_BLOB?['bg-emerald-100 text-emerald-700','camera','Foto siap']:['bg-gray-100 text-gray-500','camera','Foto belum'];
+  const cat=$('laporan').value.trim()?['bg-emerald-100 text-emerald-700','file-text','Catatan diisi']:['bg-gray-100 text-gray-400','file-text','Catatan opsional'];
+  $('check-chips').innerHTML=[lok,foto,cat].map(c=>`<span class="text-[10px] font-extrabold px-2 py-1 rounded-full ${c[0]} inline-flex items-center gap-1"><i data-lucide="${c[1]}" class="w-3 h-3"></i>${c[2]}</span>`).join('');
   $('btn-kirim').disabled=!FOTO_BLOB;
+  lucide.createIcons();
 }
 
 function toggleMap(){const w=$('map-wrap');const hidden=w.classList.contains('hidden');
@@ -303,9 +312,9 @@ function drawUser(){if(!map)return;if(markerUser)map.removeLayer(markerUser);mar
 
 function ambilLokasi(){
   geoDenied=false;
-  if(DEMO){KOORD={lat:-7.7,lng:110.4};$('geo-st').innerHTML='<i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600"></i> Dalam radius (demo)';$('geo-detail').textContent=`${SCH.nama} • jarak disimulasikan < radius`;renderCheck();lucide.createIcons();return;}
+  if(DEMO){KOORD={lat:-7.7,lng:110.4};$('geo-st').innerHTML='<i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600"></i> Dalam radius (demo)';$('geo-detail').textContent=`${SCH.nama} • jarak disimulasikan < radius`;renderCheck();return;}
   $('geo-st').innerHTML='<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Mencari lokasi…';renderCheck();
-  if(!navigator.geolocation){geoDenied=true;$('geo-st').innerHTML='⚠️ Geolocation tidak didukung';renderCheck();return;}
+  if(!navigator.geolocation){geoDenied=true;$('geo-st').innerHTML='<i data-lucide="map-pin-off" class="w-3.5 h-3.5"></i> Geolocation tidak didukung';renderCheck();return;}
   navigator.geolocation.getCurrentPosition(p=>{
     KOORD={lat:p.coords.latitude,lng:p.coords.longitude};
     if(SCH&&SCH.lat&&SCH.lng){
@@ -313,8 +322,8 @@ function ambilLokasi(){
       $('geo-st').innerHTML=`<i data-lucide="${ok?'map-pin':'alert-triangle'}" class="w-3.5 h-3.5 ${ok?'text-emerald-600':'text-amber-500'}"></i> ${ok?'Dalam radius sekolah':'Di luar radius sekolah'}`;
       $('geo-detail').textContent=`${SCH.nama} • ${Math.round(d)} m dari target (radius ${SCH.radius||200} m)`;
     }else{$('geo-st').innerHTML='<i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-600"></i> Lokasi terdeteksi';$('geo-detail').textContent='Target belum diatur admin';}
-    drawUser();renderCheck();lucide.createIcons();
-  },()=>{geoDenied=true;KOORD=null;$('geo-st').innerHTML='⚠️ Izin lokasi ditolak';$('geo-detail').textContent='Ketuk "Cek Ulang" setelah aktifkan GPS. Presensi tetap bisa dikirim (ditandai).';renderCheck();lucide.createIcons();},{enableHighAccuracy:true,timeout:10000});
+    drawUser();renderCheck();
+  },()=>{geoDenied=true;KOORD=null;$('geo-st').innerHTML='<i data-lucide="map-pin-off" class="w-3.5 h-3.5"></i> Izin lokasi ditolak';$('geo-detail').textContent='Ketuk "Cek Ulang" setelah aktifkan GPS. Presensi tetap bisa dikirim (ditandai).';renderCheck();},{enableHighAccuracy:true,timeout:10000});
 }
 
 function handleFoto(inp){
@@ -330,7 +339,7 @@ function handleFoto(inp){
     FOTO_BLOB=blob;
     $('foto-prev').src=URL.createObjectURL(blob);$('foto-prev').classList.remove('hidden');
     $('foto-ph').classList.add('hidden');$('btn-retake').classList.remove('hidden');
-    $('foto-size').textContent=`✓ ${(blob.size/1024).toFixed(1)} KB — siap kirim`;$('foto-size').classList.remove('hidden');
+    $('foto-size-t').textContent=`${(blob.size/1024).toFixed(1)} KB — siap kirim`;$('foto-size').classList.remove('hidden');
     renderCheck();
   };
   img.src=URL.createObjectURL(f);
@@ -359,10 +368,10 @@ async function kirimAbsen(){
       luar_waktu:jam>(SCH?.jam_selesai||'23:59'),
       koordinat:KOORD?`${KOORD.lat},${KOORD.lng}`:'',link_maps:KOORD?`https://maps.google.com/?q=${KOORD.lat},${KOORD.lng}`:'',
       foto_url,laporan:$('laporan').value.trim(),tahun:now.getFullYear()};
-    if(DEMO){TODAY_REC=data;renderDone();showToast('(Demo) Presensi terkirim ✅');return;}
+    if(DEMO){TODAY_REC=data;renderDone();showToast('(Demo) Presensi terkirim');return;}
     const ref=await db.collection('presensi').add(data);
     TODAY_REC={id:ref.id,...data};
-    renderDone();showToast('Presensi terkirim ✅');
+    renderDone();showToast('Presensi terkirim');
   }catch(e){showToast('Gagal: '+e.message,'error');btn.disabled=false;btn.innerHTML='<i data-lucide="send" class="w-4 h-4"></i> KIRIM PRESENSI';lucide.createIcons();}
 }
 function renderDone(){
@@ -370,29 +379,29 @@ function renderDone(){
   const r=TODAY_REC;
   $('d-status').textContent=r.status||'-';
   $('d-status').className='text-2xl font-extrabold '+(r.status==='Hadir Tepat'?'text-emerald-600':'text-amber-500');
-  $('d-jam').textContent='Jam '+r.jam;
-  $('d-target').textContent='🎯 '+(r.lokasi||r.target_sekolah||'-');
-  $('d-jarak').textContent=`📍 ${r.jarak_meter||0} m ${r.dalam_radius?'(dalam radius)':'⚠️ LUAR RADIUS'}${r.luar_waktu?' 🕒 lewat jam kegiatan':''}`;
+  $('d-jam').innerHTML=`<i data-lucide="clock" class="w-3.5 h-3.5"></i> Jam ${r.jam}`;
+  $('d-target').innerHTML=`<i data-lucide="flag" class="w-3.5 h-3.5"></i> ${r.lokasi||r.target_sekolah||'-'}`;
+  $('d-jarak').innerHTML=`<i data-lucide="map-pin" class="w-3.5 h-3.5"></i> ${r.jarak_meter||0} m ${r.dalam_radius?'(dalam radius)':'LUAR RADIUS'}${r.dalam_radius===false?' <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-amber-500"></i>':''}${r.luar_waktu?' • lewat jam kegiatan':''}`;
   if(r.laporan){$('d-laporan').textContent=r.laporan;$('d-laporan-wrap').classList.remove('hidden');}
   if(r.foto_url){$('d-foto').src=r.foto_url;$('d-foto').classList.remove('hidden');}
   lucide.createIcons();
 }
-function copyRingkasan(){const r=TODAY_REC;const txt=`✅ Presensi ${r.nama} — ${r.tanggal} ${r.jam} — ${r.status} — ${r.jarak_meter||0} m — ${r.lokasi||r.target_sekolah||''}`;
-  if(navigator.clipboard){navigator.clipboard.writeText(txt).then(()=>showToast('Ringkasan disalin ✅'));}else{showToast('Clipboard tidak didukung','error');}}
+function copyRingkasan(){const r=TODAY_REC;const txt=`PRESENSI ${r.nama} - ${r.tanggal} ${r.jam} - ${r.status} - ${r.jarak_meter||0} m - ${r.lokasi||r.target_sekolah||''}`;
+  if(navigator.clipboard){navigator.clipboard.writeText(txt).then(()=>showToast('Ringkasan disalin'));}else{showToast('Clipboard tidak didukung','error');}}
 
-function renderIzChips(){$('iz-chips').innerHTML=IZ_JENIS.map(([j,e])=>`<button onclick="setIzJenis('${j}')" class="px-3 py-2 rounded-full text-xs font-extrabold ${j===izJenis?'bg-wine-800 text-white':'bg-gray-100 text-gray-500'}">${e} ${j}</button>`).join('');}
+function renderIzChips(){$('iz-chips').innerHTML=IZ_JENIS.map(([j,ic])=>`<button onclick="setIzJenis('${j}')" class="px-3 py-2 rounded-full text-xs font-extrabold inline-flex items-center gap-1 ${j===izJenis?'bg-wine-800 text-white':'bg-gray-100 text-gray-500'}"><i data-lucide="${ic}" class="w-3.5 h-3.5"></i>${j}</button>`).join('');lucide.createIcons();}
 function setIzJenis(j){izJenis=j;renderIzChips();}
 async function kirimIzin(){
   const tgl=$('iz-tanggal').value,als=$('iz-alasan').value.trim();
   if(!tgl||!als)return showToast('Tanggal & alasan wajib','error');
-  if(DEMO){showToast('(Demo) Izin diajukan ✅');$('iz-alasan').value='';return;}
+  if(DEMO){showToast('(Demo) Izin diajukan');$('iz-alasan').value='';return;}
   try{
     await db.collection('presensi').add({waktu_submit:new Date().toISOString(),tanggal:tgl,jam:'-',email:ME.email,nama:ME.nama||'',unit_kerja:ME.instansi||'',jabatan:ME.jabatan||'',jenis:'izin',status:'Izin',status_approval:'menunggu',jenis_izin:izJenis,alasan:als,foto_url:'',koordinat:'',link_maps:'',laporan:'',tahun:new Date().getFullYear()});
-    showToast('Izin diajukan ke KS ✅');$('iz-alasan').value='';loadIzin();
+    showToast('Izin diajukan ke KS');$('iz-alasan').value='';loadIzin();
   }catch(e){showToast('Gagal: '+e.message,'error');}
 }
 async function loadIzin(){
-  if(DEMO){$('iz-list').innerHTML='<p class="text-gray-400">Belum ada izin.</p>';return;}
+  if(DEMO){$('iz-list').innerHTML=DEMO_IZIN.filter(x=>x.email===ME.email||true).slice(0,3).map(x=>{const c={menunggu:['bg-amber-100 text-amber-700','MENUNGGU'],disetujui:['bg-emerald-100 text-emerald-700','DISETUJUI'],ditolak:['bg-red-100 text-red-600','DITOLAK']}[x.status_approval||'menunggu'];return `<div class="border-b border-gray-50 pb-2"><div class="flex justify-between"><p class="font-semibold">${x.jenis_izin} • ${x.tanggal}</p><span class="text-[10px] font-extrabold px-2 py-1 rounded-full ${c[0]}">${c[1]}</span></div><p class="text-xs text-gray-500 mt-1">${x.alasan}</p></div>`;}).join('');return;}
   const s=await db.collection('presensi').where('email','==',ME.email).get();
   const L=s.docs.map(x=>x.data()).filter(x=>x.jenis==='izin').sort((a,b)=>(b.waktu_submit||'').localeCompare(a.waktu_submit||'')).slice(0,10);
   $('iz-list').innerHTML=L.length?L.map(x=>{const c={menunggu:['bg-amber-100 text-amber-700','MENUNGGU'],disetujui:['bg-emerald-100 text-emerald-700','DISETUJUI'],ditolak:['bg-red-100 text-red-600','DITOLAK']}[x.status_approval||'menunggu']||['bg-gray-100',''];
@@ -403,18 +412,20 @@ async function loadRiwayat(){
   const s=await db.collection('presensi').where('email','==',ME.email).get();
   const L=s.docs.map(x=>({id:x.id,...x.data()})).filter(x=>x.jenis==='absen').sort((a,b)=>(b.waktu_submit||'').localeCompare(a.waktu_submit||'')).slice(0,30);
   $('hist-list').innerHTML=L.length?L.map(x=>{const c={'Hadir Tepat':['bg-emerald-100 text-emerald-700','HADIR TEPAT'],'Terlambat':['bg-amber-100 text-amber-700','TERLAMBAT'],'Izin':['bg-sky-100 text-sky-700','IZIN']}[x.status]||['bg-gray-100',x.status];
-    return `<div class="flex justify-between items-center border-b border-gray-50 pb-2"><div class="flex items-center gap-2">${x.foto_url?`<img loading="lazy" src="${x.foto_url}" onclick="showFoto('${x.foto_url}')" class="w-10 h-10 rounded-lg object-cover cursor-pointer">`:'<div class="w-10 h-10 rounded-lg bg-gray-100"></div>'}<div><p class="font-semibold">${x.tanggal}</p><p class="text-xs text-gray-400">${x.jam} • ${x.target_sekolah||'-'} • ${x.jarak_meter||0}m${x.dalam_radius===false?' ⚠️':''}</p></div></div><span class="text-[10px] font-extrabold px-2 py-1 rounded-full ${c[0]}">${c[1]}</span></div>`;}).join(''):'<p class="text-gray-400">Belum ada presensi.</p>';
+    return `<div class="flex justify-between items-center border-b border-gray-50 pb-2"><div class="flex items-center gap-2">${x.foto_url?`<img loading="lazy" src="${x.foto_url}" onclick="showFoto('${x.foto_url}')" class="w-10 h-10 rounded-lg object-cover cursor-pointer">`:'<div class="w-10 h-10 rounded-lg bg-gray-100"></div>'}<div><p class="font-semibold">${x.tanggal}</p><p class="text-xs text-gray-400 flex items-center gap-1">${x.jam} • ${x.target_sekolah||'-'} • ${x.jarak_meter||0}m${x.dalam_radius===false?' <i data-lucide="alert-triangle" class="w-3 h-3 text-amber-500"></i>':''}</p></div></div><span class="text-[10px] font-extrabold px-2 py-1 rounded-full ${c[0]}">${c[1]}</span></div>`;}).join(''):'<p class="text-gray-400">Belum ada presensi.</p>';
   lucide.createIcons();
 }
 function showFoto(u){$('mFoto-img').src=u;openM('mFoto');}
 
-function monTab(n){['harian','rekap','award'].forEach(x=>{$('mon-'+x).classList.toggle('hidden',x!==n);$('mt-'+x).classList.toggle('bg-wine-800',x===n);$('mt-'+x).classList.toggle('text-white',x===n);$('mt-'+x).classList.toggle('text-gray-500',x!==n);});if(n==='rekap')loadRekap();if(n==='award')loadRekap(true);lucide.createIcons();}
+function monTab(n){['harian','rekap','izin','award'].forEach(x=>{$('mon-'+x).classList.toggle('hidden',x!==n);$('mt-'+x).classList.toggle('bg-wine-800',x===n);$('mt-'+x).classList.toggle('text-white',x===n);$('mt-'+x).classList.toggle('text-gray-500',x!==n);});if(n==='harian')loadMonitor();if(n==='rekap')loadRekap();if(n==='izin')loadIzinQueue();if(n==='award'){loadRekap(true);}}
+function onScopeChange(){loadMonitor();if(!$('mon-izin').classList.contains('hidden'))loadIzinQueue();}
+
 async function loadMonitor(){
-  if(LEVEL===4){$('no-monitor').classList.remove('hidden');$('monitor-box').classList.add('hidden');return;}
+  if(LEVEL===4||LEVEL===2){$('no-monitor').classList.remove('hidden');$('monitor-box').classList.add('hidden');return;}
   $('no-monitor').classList.add('hidden');$('monitor-box').classList.remove('hidden');
   const tgl=$('m-tanggal').value;const sek=$('m-sekolah').value;
   if(!tgl||!sek)return;
-  const semua=sek==='SEMUA';
+  const semua=sek==='SEMUA'&&LEVEL===1;
   $('agg-box').classList.toggle('hidden',!semua);
   let P,G;
   if(DEMO){P=DEMO_P.filter(p=>semua||p.unit_kerja===sek);G=DEMO_GURU.filter(g=>semua||g.instansi===sek);}
@@ -432,20 +443,39 @@ async function loadMonitor(){
   const telat=P.filter(x=>x.status==='Terlambat').length;
   const izin=P.filter(x=>x.jenis==='izin').length;
   $('m-hadir').textContent=hadir;$('m-telat').textContent=telat;$('m-izin').textContent=Math.max(0,G.length-hadir-telat-izin);
-  const row=x=>{const b=({'Hadir Tepat':['bg-emerald-100 text-emerald-700','HADIR'],'Terlambat':['bg-amber-100 text-amber-700','TELAT'],'Izin':['bg-sky-100 text-sky-700','IZIN']}[x.status]||['bg-gray-100',x.status]);return [b[0],b[1]+(x.dalam_radius===false?' ⚠️':'')+(x.luar_waktu?' 🕒':'')];};
+  const row=x=>{const b=({'Hadir Tepat':['bg-emerald-100 text-emerald-700','HADIR'],'Terlambat':['bg-amber-100 text-amber-700','TELAT'],'Izin':['bg-sky-100 text-sky-700','IZIN']}[x.status]||['bg-gray-100',x.status]);return [b[0],b[1]+(x.dalam_radius===false?' <i data-lucide="alert-triangle" class="w-3 h-3 inline"></i>':'')+(x.luar_waktu?' <i data-lucide="clock" class="w-3 h-3 inline"></i>':'')];};
   $('m-tbody').innerHTML=P.map(x=>{const c=row(x);return `<tr class="border-t"><td class="p-2 font-semibold">${x.nama}${semua?` <span class="text-xs text-gray-400">• ${x.unit_kerja}</span>`:''}</td><td class="p-2">${x.jam}</td><td class="p-2"><span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full ${c[0]}">${c[1]}</span></td><td class="p-2">${x.jarak_meter||0}m</td><td class="p-2">${x.foto_url?`<img loading="lazy" src="${x.foto_url}" onclick="showFoto('${x.foto_url}')" class="w-8 h-8 rounded object-cover cursor-pointer">`:'-'}</td></tr>`;}).join('')||'<tr><td colspan="5" class="p-4 text-center text-gray-400">Belum ada data.</td></tr>';
   $('m-mcards').innerHTML=P.map(x=>{const c=row(x);return `<div class="flex justify-between items-center border-b pb-2"><div><p class="font-semibold">${x.nama}</p><p class="text-xs text-gray-400">${x.jam} • ${x.jarak_meter||0}m${semua?' • '+x.unit_kerja:''}</p></div><span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full ${c[0]}">${c[1]}</span></div>`;}).join('')||'<p class="text-gray-400">Belum ada data.</p>';
   const emailHadir=new Set(P.filter(x=>x.jenis==='absen').map(x=>x.email));
   const emailIzin=new Set(P.filter(x=>x.jenis==='izin').map(x=>x.email));
   const belum=G.filter(g=>!emailHadir.has(g.email)&&!emailIzin.has(g.email));
-  $('m-belum').innerHTML=belum.length?belum.map(g=>`<div class="py-1 border-b border-gray-50">${g.nama} <span class="text-xs text-gray-400">• ${g.instansi||'-'}</span></div>`).join(''):'<p class="text-gray-400">Semua guru sudah absen ✅</p>';
+  $('m-belum').innerHTML=belum.length?belum.map(g=>`<div class="py-1 border-b border-gray-50">${g.nama} <span class="text-xs text-gray-400">• ${g.jabatan||'-'}</span></div>`).join(''):'<p class="text-gray-400">Semua guru sudah absen</p>';
   lucide.createIcons();
 }
+
+async function loadIzinQueue(){
+  if(LEVEL===4||LEVEL===2)return;
+  const sek=$('m-sekolah').value;
+  let L;
+  if(DEMO){L=DEMO_IZIN;}
+  else if(sek==='SEMUA'&&LEVEL===1){const s=await db.collection('presensi').where('jenis','==','izin').get();L=s.docs.map(x=>({id:x.id,...x.data()}));}
+  else{const s=await db.collection('presensi').where('unit_kerja','==',sek).get();L=s.docs.map(x=>({id:x.id,...x.data()})).filter(p=>p.jenis==='izin');}
+  const pending=L.filter(x=>(x.status_approval||'menunggu')==='menunggu');
+  const done=L.filter(x=>(x.status_approval||'menunggu')!=='menunggu').slice(0,15);
+  $('izin-queue').innerHTML=pending.length?pending.map(x=>`<div class="border border-amber-200 bg-amber-50 rounded-2xl p-4"><div class="flex justify-between items-start"><div><p class="font-bold text-sm">${x.nama} <span class="text-xs text-gray-400 font-normal">• ${x.jabatan||'-'}</span></p><p class="text-xs text-gray-500 mt-0.5">${x.jenis_izin} • untuk tanggal ${x.tanggal}</p><p class="text-sm text-gray-600 mt-1">"${x.alasan}"</p></div></div><div class="flex gap-2 mt-3"><button onclick="approveIzin('${x.id}',true)" class="flex-1 bg-emerald-600 text-white rounded-xl py-2 text-xs font-extrabold flex items-center justify-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> Setujui</button><button onclick="approveIzin('${x.id}',false)" class="flex-1 bg-red-600 text-white rounded-xl py-2 text-xs font-extrabold flex items-center justify-center gap-1"><i data-lucide="x" class="w-3.5 h-3.5"></i> Tolak</button></div></div>`).join(''):'<p class="text-gray-400">Tidak ada permintaan izin menunggu.</p>';
+  $('izin-done').innerHTML=done.length?done.map(x=>{const ok=x.status_approval==='disetujui';return `<div class="flex justify-between items-center border-b border-gray-50 pb-2"><div><p class="font-semibold">${x.nama} <span class="text-xs text-gray-400">• ${x.jenis_izin} • ${x.tanggal}</span></p></div><span class="text-[10px] font-extrabold px-2 py-1 rounded-full ${ok?'bg-emerald-100 text-emerald-700':'bg-red-100 text-red-600'}">${ok?'DISETUJUI':'DITOLAK'}</span></div>`;}).join(''):'<p class="text-gray-400">Belum ada riwayat.</p>';
+  lucide.createIcons();
+}
+async function approveIzin(id,ok){
+  if(DEMO){showToast('(Demo) Izin diproses');return;}
+  try{await db.collection('presensi').doc(id).update({status_approval:ok?'disetujui':'ditolak',approved_by:ME.email,approved_at:new Date().toISOString()});showToast(ok?'Izin disetujui':'Izin ditolak');loadIzinQueue();}catch(e){showToast('Gagal: '+e.message,'error');}
+}
+
 function exportCSV(){
   if(DEMO)return showToast('Demo: export tidak tersedia');
   const tgl=$('m-tanggal').value;const sek=$('m-sekolah').value;
-  const run=P=>{let csv='Nama,Sekolah,Jam,Status,Jarak (m),Luar Radius,Laporan\n';P.forEach(x=>{csv+=`"${x.nama}","${x.unit_kerja}","${x.jam}","${x.status}",${x.jarak_meter||0},"${x.dalam_radius===false?'YA':'tidak'}","${(x.laporan||'').replace(/"/g,'""')}"\n`;});const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`presensi_${sek}_${tgl}.csv`;a.click();showToast('Export CSV berhasil ✅');};
-  if(sek==='SEMUA'){db.collection('presensi').where('tanggal','==',tgl).get().then(s=>run(s.docs.map(x=>x.data())));}
+  const run=P=>{let csv='Nama,Sekolah,Jam,Status,Jarak (m),Luar Radius,Laporan\n';P.forEach(x=>{csv+=`"${x.nama}","${x.unit_kerja}","${x.jam}","${x.status}",${x.jarak_meter||0},"${x.dalam_radius===false?'YA':'tidak'}","${(x.laporan||'').replace(/"/g,'""')}"\n`;});const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`presensi_${sek}_${tgl}.csv`;a.click();showToast('Export CSV berhasil');};
+  if(sek==='SEMUA'&&LEVEL===1){db.collection('presensi').where('tanggal','==',tgl).get().then(s=>run(s.docs.map(x=>x.data())));}
   else{db.collection('presensi').where('unit_kerja','==',sek).get().then(s=>run(s.docs.map(x=>x.data()).filter(p=>p.tanggal===tgl)));}
 }
 async function loadRekap(forAward){
@@ -453,7 +483,7 @@ async function loadRekap(forAward){
   const pref=th+'-'+String(bl).padStart(2,'0');
   let G;
   if(DEMO){PY=DEMO_PY;G=DEMO_GURU.filter(g=>sk==='SEMUA'||g.instansi===sk);}
-  else if(sk==='SEMUA'){const s=await db.collection('presensi').where('tahun','==',th).get();PY=s.docs.map(x=>x.data());const su=await db.collection('users').get();G=su.docs.map(x=>x.data()).filter(isGuru);}
+  else if(sk==='SEMUA'&&LEVEL===1){const s=await db.collection('presensi').where('tahun','==',th).get();PY=s.docs.map(x=>x.data());const su=await db.collection('users').get();G=su.docs.map(x=>x.data()).filter(isGuru);}
   else{const s=await db.collection('presensi').where('unit_kerja','==',sk).get();PY=s.docs.map(x=>x.data()).filter(p=>p.tahun===th);const gs=await db.collection('users').where('instansi','==',sk).get();G=gs.docs.map(x=>x.data()).filter(isGuru);}
   const P=PY.filter(p=>(p.tanggal||'').slice(0,7)===pref);
   const hari=[...new Set(P.filter(p=>p.jenis==='absen'||p.jenis==='izin').map(p=>p.tanggal))];
@@ -462,13 +492,13 @@ async function loadRekap(forAward){
 }
 function renderRekapGrid(){$('r-tbody').innerHTML=REKAP.map(r=>`<tr class="border-t border-gray-50"><td class="p-2 font-semibold">${r.nama}<span class="text-xs text-gray-400"> • ${r.sekolah}</span></td><td class="p-2 text-center text-emerald-600 font-bold">${r.H}</td><td class="p-2 text-center text-amber-500 font-bold">${r.T}</td><td class="p-2 text-center text-sky-600 font-bold">${r.I}</td><td class="p-2 text-center text-red-500 font-bold">${r.A}</td><td class="p-2 text-center font-extrabold text-wine-700">${r.pct}%</td></tr>`).join('')||'<tr><td colspan="6" class="p-4 text-center text-gray-400">Tidak ada data.</td></tr>';lucide.createIcons();}
 function renderTrend(){const th=parseInt($('r-tahun').value);const bars=[],labels=[];for(let m=1;m<=12;m++){const rec=PY.filter(p=>(p.tanggal||'').slice(0,7)===th+'-'+String(m).padStart(2,'0'));const H=rec.filter(p=>p.status==='Hadir Tepat').length;const T=rec.filter(p=>p.status==='Terlambat').length;const rate=(H+T)?Math.round(H/(H+T)*100):0;bars.push(`<div class="flex-1 flex flex-col items-center justify-end h-full"><span class="text-[9px] text-gray-400">${rate||''}</span><div class="w-full rounded-t-lg ${rate?'bg-wine-700':'bg-gray-100'}" style="height:${Math.max(2,rate)}%"></div></div>`);labels.push(`<span class="flex-1 text-center text-[9px] text-gray-400">${['J','F','M','A','M','J','J','A','S','O','N','D'][m-1]}</span>`);}$('trend-box').innerHTML=bars.join('');$('trend-labels').innerHTML=labels.join('');}
-function renderAward(){const act=REKAP.filter(r=>(r.H+r.T+r.I)>0);const med=['🥇','🥈',''];const top=act.slice(0,3);
-  $('award-guru').innerHTML=top.length?top.map((r,i)=>`<div class="flex justify-between items-center bg-white rounded-2xl shadow-card p-3"><p class="font-bold text-sm">${med[i]} ${r.nama} <span class="text-xs text-gray-400">• ${r.sekolah}</span></p><span class="text-sm font-extrabold text-wine-700">${r.pct}%</span></div>`).join(''):'<p class="text-gray-400">Belum ada data bulan ini.</p>';
+function renderAward(){const act=REKAP.filter(r=>(r.H+r.T+r.I)>0);const med=['trophy','medal','award'];const top=act.slice(0,3);
+  $('award-guru').innerHTML=top.length?top.map((r,i)=>`<div class="flex justify-between items-center bg-white rounded-2xl shadow-card p-3"><p class="font-bold text-sm flex items-center gap-2"><i data-lucide="${med[i]}" class="w-4 h-4 text-accent-500"></i>${r.nama} <span class="text-xs text-gray-400">• ${r.sekolah}</span></p><span class="text-sm font-extrabold text-wine-700">${r.pct}%</span></div>`).join(''):'<p class="text-gray-400">Belum ada data bulan ini.</p>';
   const by={};act.forEach(r=>{by[r.sekolah]=by[r.sekolah]||[];by[r.sekolah].push(r.pct);});
   const sch=Object.keys(by).map(k=>({k,avg:Math.round(by[k].reduce((a,b)=>a+b,0)/by[k].length)})).sort((a,b)=>b.avg-a.avg).slice(0,3);
-  $('award-sekolah').innerHTML=sch.length?sch.map((s,i)=>`<div class="flex justify-between items-center bg-white rounded-2xl shadow-card p-3"><p class="font-bold text-sm">${med[i]} ${s.k}</p><span class="text-sm font-extrabold text-wine-700">${s.avg}%</span></div>`).join(''):'<p class="text-gray-400">-</p>';
+  $('award-sekolah').innerHTML=sch.length?sch.map((s,i)=>`<div class="flex justify-between items-center bg-white rounded-2xl shadow-card p-3"><p class="font-bold text-sm flex items-center gap-2"><i data-lucide="${med[i]}" class="w-4 h-4 text-accent-500"></i>${s.k}</p><span class="text-sm font-extrabold text-wine-700">${s.avg}%</span></div>`).join(''):'<p class="text-gray-400">-</p>';
   lucide.createIcons();}
-function exportRekap(){let csv='Nama,Sekolah,H,T,I,A,Persen\n';REKAP.forEach(r=>{csv+=`"${r.nama}","${r.sekolah}",${r.H},${r.T},${r.I},${r.A},${r.pct}\n`;});const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`rekap_${$('r-bulan').value}_${$('r-tahun').value}_${$('r-sekolah').value}.csv`;a.click();showToast('Export rekap ✅');}
+function exportRekap(){let csv='Nama,Sekolah,H,T,I,A,Persen\n';REKAP.forEach(r=>{csv+=`"${r.nama}","${r.sekolah}",${r.H},${r.T},${r.I},${r.A},${r.pct}\n`;});const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`rekap_${$('r-bulan').value}_${$('r-tahun').value}_${$('r-sekolah').value}.csv`;a.click();showToast('Export rekap berhasil');}
 lucide.createIcons();
 </script>
 </body>
