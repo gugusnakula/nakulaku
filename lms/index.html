@@ -77,8 +77,11 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
       <p class="text-xs font-extrabold text-wine-700 mb-2 flex items-center gap-1"><i data-lucide="scale" class="w-3.5 h-3.5"></i> Rubrik Penilaian (targetkan grade A)</p>
       <div id="km-rubrik-list" class="text-xs space-y-1"></div>
     </div>
+    <label class="bg-gray-100 rounded-xl px-3 py-2.5 text-sm font-bold flex items-center justify-center gap-1 cursor-pointer mb-2"><i data-lucide="upload" class="w-4 h-4"></i> Upload File (max 5MB) — link terisi otomatis<input type="file" id="km-file" class="hidden" onchange="uploadFile(this)"></label>
+    <p id="km-file-info" class="hidden text-xs text-emerald-600 font-bold mb-2">-</p>
     <input id="km-link" placeholder="Link Drive (wajib)" class="w-full border rounded-xl p-3 mb-2">
-    <textarea id="km-desk" rows="3" placeholder="Deskripsi singkat karya/implementasi" class="w-full border rounded-xl p-3 mb-3"></textarea>
+    <div id="km-template" class="hidden space-y-2 mb-3"></div>
+    <div id="km-desk-wrap"><textarea id="km-desk" rows="3" placeholder="Deskripsi singkat karya/implementasi" class="w-full border rounded-xl p-3 mb-3"></textarea></div>
     <div class="flex gap-2">
       <button onclick="submitKarya()" class="flex-1 bg-wine-800 text-white rounded-xl py-2.5 font-bold flex items-center justify-center gap-1"><i data-lucide="send" class="w-4 h-4"></i> Kirim</button>
       <button onclick="closeM('mKirim')" class="flex-1 bg-gray-100 rounded-xl py-2.5 font-bold">Batal</button>
@@ -99,9 +102,14 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
     <p class="font-bold" id="v-judul">-</p>
     <p class="text-xs text-gray-400 mb-2" id="v-info">-</p>
     <div class="bg-gray-50 rounded-xl p-3 mb-3">
-      <p class="text-xs font-bold text-gray-500 mb-1">CATATAN PESERTA</p>
-      <p class="text-sm" id="v-desk">-</p>
+      <p class="text-xs font-bold text-gray-500 mb-1">ISI LAPORAN PESERTA</p>
+      <div id="v-isi" class="text-sm space-y-1 mb-1"></div>
+      <p class="text-sm hidden" id="v-desk">-</p>
       <a id="v-link" target="_blank" class="text-sm text-wine-700 font-bold inline-flex items-center gap-1 mt-2"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> Buka Link Karya</a>
+    </div>
+    <div id="v-versi-wrap" class="hidden bg-wine-50 rounded-xl p-3 mb-3">
+      <p class="text-xs font-extrabold text-wine-700 mb-1 flex items-center gap-1"><i data-lucide="history" class="w-3.5 h-3.5"></i> Riwayat Versi Revisi</p>
+      <div id="v-versi" class="text-xs space-y-1"></div>
     </div>
     <p class="text-xs font-bold text-gray-500 mb-2">STATUS KELULUSAN</p>
     <div class="grid grid-cols-2 gap-2 mb-3" id="v-grades"></div>
@@ -118,6 +126,7 @@ const DEMO=location.protocol==='file:'||location.hostname==='localhost'||locatio
 const firebaseConfig={apiKey:"AIzaSyDaTXg2_oaKNYjJ0HxSGa9qXPQQ7VK0uDs",authDomain:"nakulaku-ekosistem.firebaseapp.com",projectId:"nakulaku-ekosistem",storageBucket:"nakulaku-ekosistem.firebasestorage.app",messagingSenderId:"672296906494",appId:"1:672296906494:web:2e90334b9d3136a4917faf"};
 let auth=null,db=null;
 if(!DEMO){firebase.initializeApp(firebaseConfig);auth=firebase.auth();db=firebase.firestore();}
+const GAS_URL='https://script.google.com/macros/s/AKfycbyUYOMxIBfBOPTqn7W5r5Pj_Ee2SZ4jK6jnAYUtfc_vbk4Dc279wyL8H9GrUUd1b-mU8A/exec';
 const $=id=>document.getElementById(id);
 let ME=null,LEVEL=4,TUGAS=[],KARYA=[],NOTIF=[],curKirim=null,curVal=null,selGrade=null;
 function levelOf(u){const r=(u.role||'').toLowerCase(),j=(u.jabatan||'').toLowerCase();if(r.includes('admin'))return 1;if(r.includes('narasumber'))return 2;if(r.includes('kepala')||j.includes('kepala'))return 3;return 4;}
@@ -239,6 +248,11 @@ function openKirim(tid){
   }else rb.classList.add('hidden');
   const eks=KARYA.find(k=>k.tugas_id===tid);
   $('km-link').value=eks?.link||'';$('km-desk').value=eks?.deskripsi||'';
+  $('km-file-info').classList.add('hidden');$('km-file-info').textContent='-';if($('km-file'))$('km-file').value='';
+  const tf=(t.template_fields||[]);const tpl=$('km-template');const dw=$('km-desk-wrap');
+  if(tf.length){tpl.classList.remove('hidden');dw.classList.add('hidden');
+    tpl.innerHTML=tf.map(f=>`<div><label class="text-xs font-bold text-gray-500">${f}</label><textarea id="isi-${slugify(f)}" rows="2" class="w-full border rounded-xl p-2.5 mt-1 text-sm">${(eks&&eks.isi&&eks.isi[f])||''}</textarea></div>`).join('');
+  }else{tpl.classList.add('hidden');tpl.innerHTML='';dw.classList.remove('hidden');}
   openM('mKirim');lucide.createIcons();
 }
 
@@ -263,7 +277,7 @@ function renderRiwayat(){
       <div class="flex justify-between items-start">
         <div class="flex-1 min-w-0">
           <p class="font-bold text-sm truncate">${t?.judul||k.tugas_judul||'-'}</p>
-          <p class="text-xs text-gray-400 truncate">${(k.waktu_submit||'').slice(0,10)} • ${t?.jenis||'-'}</p>
+          <p class="text-xs text-gray-400 truncate">${(k.waktu_submit||'').slice(0,10)} • ${t?.jenis||'-'}${(k.versi||1)>1?` • v${k.versi} (${(k.revisions||[]).length}x revisi)`:''}</p>
         </div>
         <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full ${st[0]}">${st[1]}</span>
       </div>
@@ -295,7 +309,12 @@ function openValidasi(kid){
   const t=TUGAS.find(x=>x.id===k.tugas_id);curVal=k;selGrade=k.status==='diterima'||['A','B','C','D','E'].includes(k.status)?k.status:null;
   $('v-judul').textContent=t?.judul||'-';
   $('v-info').textContent=`${k.nama||k.email} • ${k.unit_kerja||'-'}`;
-  $('v-desk').textContent=k.deskripsi||'-';
+  const isi=k.isi;const visi=$('v-isi');const vdesk=$('v-desk');
+  if(isi&&Object.keys(isi).length){visi.innerHTML=Object.entries(isi).map(([kk,vv])=>`<div><span class="font-bold text-gray-500">${kk}:</span> ${vv||'-'}</div>`).join('');vdesk.classList.add('hidden');}
+  else{visi.innerHTML='';vdesk.classList.remove('hidden');vdesk.textContent=k.deskripsi||'-';}
+  const revs=k.revisions||[];const vw=$('v-versi-wrap');
+  if(revs.length){vw.classList.remove('hidden');$('v-versi').innerHTML=revs.map(r=>`<div class="flex justify-between"><span>v${r.v} • grade ${r.grade||'-'} • ${(r.waktu||'').slice(0,10)}</span><a href="${r.link||'#'}" target="_blank" class="text-wine-700 font-bold">link</a></div>`).join('')+`<div class="flex justify-between font-bold"><span>v${k.versi||revs.length+1} (current)</span><a href="${k.link||'#'}" target="_blank" class="text-wine-700">link</a></div>`;}
+  else vw.classList.add('hidden');
   $('v-link').href=k.link||'#';
   const grades=[['A','Sangat Baik','bg-emerald-100 text-emerald-700'],['B','Baik','bg-sky-100 text-sky-700'],['C','Cukup','bg-amber-100 text-amber-700'],['D','Revisi','bg-red-100 text-red-600'],['E','Belum Lengkap','bg-gray-200 text-gray-600']];
   $('v-grades').innerHTML=grades.map(([g,l,cls])=>`<button onclick="setGrade('${g}')" id="vg-${g}" class="${cls} rounded-xl py-2 text-xs font-bold inline-flex items-center justify-center gap-1 ${selGrade===g?'ring-2 ring-wine-700':''}"><span class="font-extrabold">${g}</span><span>${l}</span></button>`).join('');
