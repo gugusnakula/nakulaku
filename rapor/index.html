@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rapor Kinerja — Nakulaku Ekosistem</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+tailwind.config={theme:{extend:{
+colors:{wine:{50:'#FBF2F5',100:'#F7E1E8',200:'#EFC3D1',300:'#E19AB1',400:'#D06A8C',500:'#B9446C',600:'#A62C57',700:'#8C1D3C',800:'#771731',900:'#64142B',950:'#400A1B'},accent:{500:'#C9A227'},ink:'#202024'},
+fontFamily:{sans:['"Plus Jakarta Sans"','system-ui','sans-serif']},
+boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
+}}}
+</script>
+<style>@media print{.no-print{display:none!important}body{background:white!important}.shadow-card{box-shadow:none!important;border:1px solid #eee}}</style>
+</head>
+<body class="bg-[#F7F4F5] font-sans text-ink">
+
+<header class="bg-gradient-to-b from-wine-800 to-wine-700 rounded-b-[28px] px-4 md:px-6 pt-5 pb-6 relative overflow-hidden no-print">
+  <div class="relative max-w-4xl mx-auto flex items-center gap-3">
+    <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center"><i data-lucide="graduation-cap" class="w-5 h-5 text-white"></i></div>
+    <div class="flex-1"><h1 class="text-white font-extrabold text-lg">Rapor Kinerja</h1><p class="text-white/60 text-xs">Presensi + LMS + Portofolio + Pengamatan</p></div>
+    <span id="demo-badge" class="hidden bg-amber-400 text-amber-950 text-[9px] font-extrabold px-1.5 py-0.5 rounded">DEMO</span>
+    <a href="../home.html" class="text-white/80 text-xs font-bold flex items-center gap-1 bg-white/10 px-3 py-1.5 rounded-full"><i data-lucide="home" class="w-3.5 h-3.5"></i> Beranda</a>
+  </div>
+</header>
+
+<main class="max-w-4xl mx-auto p-4 md:p-6 space-y-5 pb-16">
+  <div class="bg-white rounded-2xl shadow-card p-4 no-print">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+      <div><label class="text-xs font-bold text-gray-500">Peserta Didik/Guru</label><select id="r-guru" onchange="loadRapor()" class="w-full border rounded-xl p-2.5 bg-white"></select></div>
+      <div><label class="text-xs font-bold text-gray-500">Tahun</label><select id="r-tahun" onchange="loadRapor()" class="w-full border rounded-xl p-2.5 bg-white"></select></div>
+    </div>
+    <button onclick="window.print()" class="mt-3 w-full bg-wine-800 text-white rounded-xl py-2.5 text-sm font-bold flex items-center justify-center gap-2"><i data-lucide="printer" class="w-4 h-4"></i> Cetak / Simpan PDF</button>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-card p-5">
+    <p class="text-xs text-gray-400">RAPOR KINERJA TAHUN <span id="h-tahun">-</span></p>
+    <p class="font-extrabold text-xl mt-1" id="h-nama">-</p>
+    <p class="text-sm text-gray-500" id="h-info">-</p>
+    <p class="text-[10px] text-gray-400 mt-1" id="h-print">-</p>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div class="bg-wine-800 text-white rounded-2xl shadow-card p-4"><p class="text-xs opacity-70">INDEKS KINERJA</p><p class="text-3xl font-extrabold" id="s-index">0</p><p class="text-[10px] opacity-70">dari 100</p></div>
+    <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Kehadiran Tepat</p><p class="text-2xl font-extrabold text-emerald-600" id="s-keh">0%</p></div>
+    <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Tagihan Wajib</p><p class="text-2xl font-extrabold text-wine-700" id="s-lms">0%</p></div>
+    <div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Portofolio</p><p class="text-2xl font-extrabold text-amber-500" id="s-porto">0</p></div>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-card p-5">
+    <p class="font-bold mb-3 flex items-center gap-2"><i data-lucide="clipboard-check" class="w-4 h-4 text-wine-700"></i> Kehadiran</p>
+    <div class="grid grid-cols-4 gap-2 text-center">
+      <div class="bg-emerald-50 rounded-xl p-3"><p class="text-xl font-extrabold text-emerald-600" id="k-h">0</p><p class="text-[10px] text-gray-500">Hadir Tepat</p></div>
+      <div class="bg-amber-50 rounded-xl p-3"><p class="text-xl font-extrabold text-amber-500" id="k-t">0</p><p class="text-[10px] text-gray-500">Terlambat</p></div>
+      <div class="bg-sky-50 rounded-xl p-3"><p class="text-xl font-extrabold text-sky-600" id="k-i">0</p><p class="text-[10px] text-gray-500">Izin</p></div>
+      <div class="bg-red-50 rounded-xl p-3"><p class="text-xl font-extrabold text-red-500" id="k-a">0</p><p class="text-[10px] text-gray-500">Alpha</p></div>
+    </div>
+    <p class="text-xs text-gray-400 mt-2" id="k-note">-</p>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-card p-5">
+    <p class="font-bold mb-3 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4 text-wine-700"></i> Tagihan LMS & Mutu Karya</p>
+    <p class="text-sm mb-2" id="l-ringkas">-</p>
+    <div id="l-list" class="space-y-1 text-sm"></div>
+    <p class="text-xs text-gray-500 mt-2" id="l-mutu">-</p>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-card p-5">
+    <p class="font-bold mb-3 flex items-center gap-2"><i data-lucide="trophy" class="w-4 h-4 text-wine-700"></i> Portofolio</p>
+    <div class="grid grid-cols-3 gap-2 text-center mb-3">
+      <div class="bg-amber-50 rounded-xl p-3"><p class="text-xl font-extrabold text-amber-600" id="p-prestasi">0</p><p class="text-[10px] text-gray-500">Prestasi</p></div>
+      <div class="bg-emerald-50 rounded-xl p-3"><p class="text-xl font-extrabold text-emerald-600" id="p-pembiasaan">0</p><p class="text-[10px] text-gray-500">Pembiasaan</p></div>
+      <div class="bg-sky-50 rounded-xl p-3"><p class="text-xl font-extrabold text-sky-600" id="p-event">0</p><p class="text-[10px] text-gray-500">Event</p></div>
+    </div>
+    <div id="p-list" class="space-y-1 text-sm"></div>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-card p-5">
+    <p class="font-bold mb-3 flex items-center gap-2"><i data-lucide="eye" class="w-4 h-4 text-wine-700"></i> Catatan Pengamat (Aktivitas Kegiatan)</p>
+    <div class="grid grid-cols-4 gap-2 text-center">
+      <div class="bg-sky-50 rounded-xl p-3"><p class="text-xl font-extrabold text-sky-600" id="o-b">0</p><p class="text-[10px] text-gray-500">Bertanya</p></div>
+      <div class="bg-emerald-50 rounded-xl p-3"><p class="text-xl font-extrabold text-emerald-600" id="o-m">0</p><p class="text-[10px] text-gray-500">Menjawab</p></div>
+      <div class="bg-violet-50 rounded-xl p-3"><p class="text-xl font-extrabold text-violet-600" id="o-p">0</p><p class="text-[10px] text-gray-500">Presentasi</p></div>
+      <div class="bg-amber-50 rounded-xl p-3"><p class="text-xl font-extrabold text-amber-600" id="o-ib">0</p><p class="text-[10px] text-gray-500">Ice Breaking</p></div>
+    </div>
+  </div>
+
+  <p class="text-[10px] text-gray-400 text-center">Indeks = 40% kehadiran tepat + 40% tagihan wajib + 20% portofolio • Dicetak dari Nakulaku Ekosistem</p>
+</main>
+
+<script>
+const DEMO=location.protocol==='file:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.search.includes('demo=1');
+const firebaseConfig={apiKey:"AIzaSyDaTXg2_oaKNYjJ0HxSGa9qXPQQ7VK0uDs",authDomain:"nakulaku-ekosistem.firebaseapp.com",projectId:"nakulaku-ekosistem",storageBucket:"nakulaku-ekosistem.firebasestorage.app",messagingSenderId:"672296906494",appId:"1:672296906494:web:2e90334b9d3136a4917faf"};
+let auth=null,db=null;
+if(!DEMO){firebase.initializeApp(firebaseConfig);auth=firebase.auth();db=firebase.firestore();}
+const $=id=>document.getElementById(id);
+let ME=null,LEVEL=4,GURU=[],TUGAS=[];
+function levelOf(u){const r=(u.role||'').toLowerCase(),j=(u.jabatan||'').toLowerCase();if(r.includes('admin'))return 1;if(r.includes('narasumber'))return 2;if(r.includes('kepala')||j.includes('kepala'))return 3;return 4;}
+function showToast(m,t='success'){const e=document.createElement('div');e.className=`${t==='error'?'bg-red-600':'bg-wine-800'} text-white px-4 py-3 rounded-xl shadow-lg fixed bottom-20 left-1/2 -translate-x-1/2 z-[60] text-sm font-bold`;e.textContent=m;document.body.appendChild(e);setTimeout(()=>{e.style.opacity='0';e.style.transition='.4s';setTimeout(()=>e.remove(),400)},2400);}
+
+const D_GURU=[{email:'g1@sd.id',nama:'Arvi Dwi Utami, S.Pd.',instansi:'SD Negeri 1 Krisak',jabatan:'Guru Kelas'},{email:'g2@sd.id',nama:'Triyanti, S.Pd.',instansi:'SD Negeri 1 Krisak',jabatan:'Guru Kelas'}];
+const D_PRES=[{tanggal:'2026-01-05',status:'Hadir Tepat',jenis:'absen',tahun:2026},{tanggal:'2026-01-12',status:'Terlambat',jenis:'absen',tahun:2026},{tanggal:'2026-01-19',status:'Hadir Tepat',jenis:'absen',tahun:2026}];
+const D_KARYA=[{tugas_id:'t1',status:'diterima',grade:'A'},{tugas_id:'t2',status:'diterima',grade:'B'}];
+const D_TUGAS=[{id:'t1',judul:'Materi 1',wajib:true,sasaran:'guru',sumber:'bank'},{id:'t2',judul:'Materi 2',wajib:true,sasaran:'guru',sumber:'bank'},{id:'t3',judul:'Inovasi',wajib:false,sasaran:'guru',sumber:'bank'}];
+const D_PORTO=[{kategori:'prestasi',judul:'Juara 2 Guru Berprestasi',field_a:'Juara 2',field_b:'Kecamatan'},{kategori:'pembiasaan',judul:'Literasi pagi',field_a:'Harian'}];
+const D_OBS=[{jenis:'Bertanya'},{jenis:'Bertanya'},{jenis:'Presentasi'}];
+
+if(DEMO){
+  $('demo-badge').classList.remove('hidden');
+  ME={email:'g1@sd.id',nama:'Arvi Dwi Utami, S.Pd.',jabatan:'Guru Kelas',instansi:'SD Negeri 1 Krisak',role:'guru',status:'active'};
+  LEVEL=4;GURU=D_GURU;TUGAS=D_TUGAS;
+  init();renderRapor(D_PRES,D_KARYA,D_PORTO,D_OBS);
+}else{
+  auth.onAuthStateChanged(async u=>{
+    if(!u){location.href='../index.html';return;}
+    const d=await db.collection('users').doc(u.email).get();
+    ME=d.exists?d.data():{email:u.email,nama:u.displayName};
+    LEVEL=levelOf(ME);
+    let s;
+    if(LEVEL===4)s=await db.collection('users').where('instansi','==',ME.instansi).get().then(x=>[({email:ME.email,...ME})]);
+    else if(LEVEL===3)s=await db.collection('users').where('instansi','==',ME.instansi).get();
+    else s=await db.collection('users').limit(300).get();
+    GURU=s.docs? s.docs.map(x=>({email:x.id,...x.data()})) : s;
+    const raw=(await db.collection('tugas').get()).docs.map(x=>({id:x.id,...x.data()}));
+    TUGAS=raw.filter(t=>!t.arsip&&(t.sumber==='bank'||t.sasaran));
+    init();await loadRapor();
+  });
+}
+
+function init(){
+  const cy=new Date().getFullYear();
+  $('r-tahun').innerHTML=[cy,cy-1,cy-2].map(y=>`<option>${y}</option>`).join('');
+  if(LEVEL===4){$('r-guru').outerHTML=`<input id="r-guru" class="w-full border rounded-xl p-2.5 bg-gray-50" value="${(ME.nama||ME.email).replace(/"/g,'')}" readonly data-email="${ME.email}">`;}
+  else{$('r-guru').innerHTML=GURU.filter(g=>(g.status||'active')==='active').sort((a,b)=>(a.instansi||'').localeCompare(b.instansi||'')||(a.nama||'').localeCompare(b.nama||'')).map(g=>`<option value="${g.email}">${g.nama||g.email} • ${g.instansi||'-'}</option>`).join('');}
+  lucide.createIcons();
+}
+function selEmail(){const el=$('r-guru');return el.dataset?el.dataset.email||el.value:el.value;}
+
+async function loadRapor(){
+  const E=selEmail(),Y=parseInt($('r-tahun').value);
+  if(DEMO){renderRapor(D_PRES,D_KARYA,D_PORTO,D_OBS);return;}
+  try{
+    const [pr,ky,pf,ob]=await Promise.all([
+      db.collection('presensi').where('email','==',E).get(),
+      db.collection('karya').where('email','==',E).get(),
+      db.collection('portofolio').where('email','==',E).get(),
+      db.collection('pengamatan').where('target_email','==',E).get()
+    ]);
+    renderRapor(pr.docs.map(x=>x.data()).filter(p=>p.tahun===Y),ky.docs.map(x=>x.data()),pf.docs.map(x=>x.data()).filter(p=>p.tahun===Y),ob.docs.map(x=>x.data()));
+  }catch(e){showToast('Gagal memuat: '+e.message,'error');}
+}
+
+function renderRapor(PRES,KARYA,PORTO,OBS){
+  const E=selEmail();const g=GURU.find(x=>x.email===E)||ME;const Y=$('r-tahun').value;
+  $('h-tahun').textContent=Y;$('h-nama').textContent=g.nama||E;$('h-info').textContent=(g.jabatan||'')+' • '+(g.instansi||'');
+  $('h-print').textContent='Dicetak oleh '+(ME.nama||ME.email)+' • '+new Date().toLocaleString('id-ID');
+  // Kehadiran
+  const abs=PRES.filter(p=>p.jenis==='absen');
+  const H=abs.filter(p=>p.status==='Hadir Tepat').length,T=abs.filter(p=>p.status==='Terlambat').length;
+  const I=PRES.filter(p=>p.jenis==='izin').length;
+  const hari=[...new Set(PRES.map(p=>p.tanggal))].length;
+  const A=Math.max(0,hari-(H+T+I));
+  const pctKeh=hari?Math.round(H/hari*100):0;
+  $('k-h').textContent=H;$('k-t').textContent=T;$('k-i').textContent=I;$('k-a').textContent=A;
+  $('k-note').textContent=`${hari} hari kegiatan tercatat • tingkat kehadiran tepat ${pctKeh}%`;
+  $('s-keh').textContent=pctKeh+'%';
+  // LMS
+  const wajib=TUGAS.filter(t=>t.wajib&&((t.sasaran||'guru')==='guru'||t.sasaran==='all'));
+  const done=wajib.filter(t=>KARYA.some(k=>k.tugas_id===t.id&&k.status==='diterima'));
+  const pctLms=wajib.length?Math.round(done.length/wajib.length*100):0;
+  $('s-lms').textContent=pctLms+'%';
+  $('l-ringkas').innerHTML=`Tagihan wajib selesai: <b>${done.length}/${wajib.length}</b>`;
+  $('l-list').innerHTML=wajib.map(t=>{const k=KARYA.find(x=>x.tugas_id===t.id);
+    const st=!k?['bg-gray-100 text-gray-500','BELUM']:k.status==='revisi'?['bg-amber-100 text-amber-700','REVISI']:k.status==='menunggu'?['bg-sky-100 text-sky-700','MENUNGGU']:['bg-emerald-100 text-emerald-700','DITERIMA '+(k.grade||'')];
+    return `<div class="flex justify-between items-center border-b border-gray-50 pb-1"><span>${t.judul}</span><span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full ${st[0]}">${st[1]}</span></div>`;}).join('')||'<p class="text-gray-400">Belum ada tagihan.</p>';
+  const gs=KARYA.filter(k=>['A','B','C','D','E'].includes(k.grade)).map(k=>({A:4,B:3,C:2,D:1,E:0}[k.grade]));
+  $('l-mutu').textContent=gs.length?('Mutu karya rata-rata: '+(gs.reduce((a,b)=>a+b,0)/gs.length).toFixed(1)+' / 4.0'):'Belum ada karya dinilai.';
+  // Portofolio
+  const cp=k=>PORTO.filter(p=>p.kategori===k).length;
+  $('p-prestasi').textContent=cp('prestasi');$('p-pembiasaan').textContent=cp('pembiasaan');$('p-event').textContent=cp('event');
+  $('s-porto').textContent=PORTO.length;
+  $('p-list').innerHTML=PORTO.length?PORTO.map(p=>`<div class="flex justify-between border-b border-gray-50 pb-1"><span>${p.judul} <span class="text-xs text-gray-400">• ${(p.kategori||'').toUpperCase()}${p.field_a?' • '+p.field_a:''}${p.field_b?' • '+p.field_b:''}</span></span></div>`).join(''):'<p class="text-gray-400">Belum ada portofolio.</p>';
+  // Pengamatan
+  const cj=j=>OBS.filter(o=>o.jenis===j).length;
+  $('o-b').textContent=cj('Bertanya');$('o-m').textContent=cj('Menjawab');$('o-p').textContent=cj('Presentasi');$('o-ib').textContent=cj('Ice Breaking');
+  // Indeks
+  const pctPorto=Math.min(100,PORTO.length*20);
+  const idx=Math.round(0.4*pctKeh+0.4*pctLms+0.2*pctPorto);
+  $('s-index').textContent=idx;
+  lucide.createIcons();
+}
+lucide.createIcons();
+</script>
+</body>
+</html>
