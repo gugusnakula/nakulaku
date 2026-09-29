@@ -44,12 +44,17 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
       <div class="text-right"><p class="text-xs text-gray-400">Capaian</p><p class="text-xl font-extrabold text-wine-700" id="u-pct">0%</p></div>
     </div>
     <div class="mt-3 bg-gray-100 rounded-full h-2 overflow-hidden"><div id="u-bar" class="h-full bg-wine-700 transition-all" style="width:0%"></div></div>
+    <div class="flex gap-2 mt-3">
+      <button id="btn-sertifikat" onclick="unduhSertifikat()" class="hidden flex-1 bg-accent-500 text-white rounded-xl py-2 text-xs font-extrabold items-center justify-center gap-1"><i data-lucide="award" class="w-3.5 h-3.5"></i> Unduh Sertifikat</button>
+      <a href="../rapor/" class="flex-1 bg-wine-50 text-wine-700 rounded-xl py-2 text-xs font-extrabold flex items-center justify-center gap-1"><i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i> Rapor Kinerja</a>
+    </div>
   </div>
 
   <div class="bg-white rounded-2xl shadow-card p-1 flex text-sm font-bold">
     <button onclick="showTab('tagihan')" id="t-tagihan" class="flex-1 py-2.5 rounded-xl bg-wine-800 text-white flex items-center justify-center gap-1"><i data-lucide="book-open" class="w-3.5 h-3.5"></i> Tagihan Saya</button>
     <button onclick="showTab('riwayat')" id="t-riwayat" class="flex-1 py-2.5 rounded-xl text-gray-500 flex items-center justify-center gap-1"><i data-lucide="history" class="w-3.5 h-3.5"></i> Riwayat</button>
     <button onclick="showTab('validasi')" id="t-validasi" class="flex-1 py-2.5 rounded-xl text-gray-500 flex items-center justify-center gap-1"><i data-lucide="check-square" class="w-3.5 h-3.5"></i> Validasi</button>
+    <button onclick="showTab('portofolio')" id="t-portofolio" class="flex-1 py-2.5 rounded-xl text-gray-500 flex items-center justify-center gap-1"><i data-lucide="trophy" class="w-3.5 h-3.5"></i> Portofolio</button>
   </div>
 
   <section id="tab-tagihan" class="space-y-4">
@@ -65,6 +70,27 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
     <div id="validasi-box" class="space-y-3">
       <select id="v-tugas" onchange="loadValidasi()" class="w-full border rounded-xl p-3 bg-white"></select>
       <div id="v-list" class="space-y-3"></div>
+    </div>
+  </section>
+
+  <section id="tab-portofolio" class="hidden space-y-4">
+    <div class="bg-white rounded-2xl shadow-card p-4">
+      <p class="font-bold mb-2 flex items-center gap-2"><i data-lucide="trophy" class="w-4 h-4 text-wine-700"></i> Tambah Portofolio</p>
+      <select id="pf-kategori" onchange="renderPfForm()" class="w-full border rounded-xl p-3 bg-white mb-2">
+        <option value="prestasi">Prestasi (Juara Lomba)</option>
+        <option value="pembiasaan">Pembiasaan (Budaya Sekolah)</option>
+        <option value="event">Event (Kegiatan)</option>
+      </select>
+      <div id="pf-dyn" class="grid grid-cols-2 gap-2 mb-2"></div>
+      <input id="pf-judul" placeholder="Judul / nama kegiatan" class="w-full border rounded-xl p-3 mb-2">
+      <label class="bg-gray-100 rounded-xl px-3 py-2.5 text-sm font-bold flex items-center justify-center gap-1 cursor-pointer mb-2"><i data-lucide="upload" class="w-4 h-4"></i> Upload Bukti (max 5MB)<input type="file" id="pf-file" class="hidden" onchange="uploadPfFile(this)"></label>
+      <p id="pf-file-info" class="hidden text-xs text-emerald-600 font-bold mb-2">-</p>
+      <input id="pf-link" placeholder="Link bukti (Drive/piagam)" class="w-full border rounded-xl p-3 mb-3">
+      <button onclick="submitPorto()" class="w-full bg-wine-800 text-white rounded-xl py-2.5 font-bold flex items-center justify-center gap-2"><i data-lucide="save" class="w-4 h-4"></i> Simpan Portofolio</button>
+    </div>
+    <div class="bg-white rounded-2xl shadow-card p-4">
+      <p class="font-bold mb-2 flex items-center gap-2"><i data-lucide="folder" class="w-4 h-4 text-wine-700"></i> Portofolio Saya</p>
+      <div id="pf-list" class="space-y-2 text-sm"></div>
     </div>
   </section>
 </main>
@@ -128,12 +154,14 @@ let auth=null,db=null;
 if(!DEMO){firebase.initializeApp(firebaseConfig);auth=firebase.auth();db=firebase.firestore();}
 const GAS_URL='https://script.google.com/macros/s/AKfycbyUYOMxIBfBOPTqn7W5r5Pj_Ee2SZ4jK6jnAYUtfc_vbk4Dc279wyL8H9GrUUd1b-mU8A/exec';
 const $=id=>document.getElementById(id);
-let ME=null,LEVEL=4,TUGAS=[],KARYA=[],NOTIF=[],curKirim=null,curVal=null,selGrade=null;
+let ME=null,LEVEL=4,TUGAS=[],KARYA=[],NOTIF=[],PORTO=[],curKirim=null,curVal=null,selGrade=null;
+const D_PORTO=[{id:'p1',kategori:'prestasi',judul:'Juara 2 Lomba Guru Berprestasi',field_a:'Juara 2',field_b:'Kecamatan',link:'https://drive.google.com/',waktu:'2026-08-17T08:00:00Z',tahun:2026}];
+const PF_META={prestasi:['trophy','bg-amber-100 text-amber-700','Prestasi'],pembiasaan:['repeat','bg-emerald-100 text-emerald-700','Pembiasaan'],event:['calendar-days','bg-sky-100 text-sky-700','Event']};
 function levelOf(u){const r=(u.role||'').toLowerCase(),j=(u.jabatan||'').toLowerCase();if(r.includes('admin'))return 1;if(r.includes('narasumber'))return 2;if(r.includes('kepala')||j.includes('kepala'))return 3;return 4;}
 function showToast(m,t='success'){const ic={success:'check-circle-2',error:'x-circle',info:'info'};const bg={success:'bg-emerald-600',error:'bg-red-600',info:'bg-wine-800'};const e=document.createElement('div');e.className=`${bg[t]} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 fixed bottom-20 left-1/2 -translate-x-1/2 z-[60]`;e.innerHTML=`<i data-lucide="${ic[t]}" class="w-5 h-5"></i><span class="text-sm font-bold">${m}</span>`;document.body.appendChild(e);lucide.createIcons();setTimeout(()=>{e.style.opacity='0';e.style.transition='.4s';setTimeout(()=>e.remove(),400)},2600);}
 function openM(id){$(id).classList.remove('hidden');$(id).classList.add('flex');}
 function closeM(id){$(id).classList.add('hidden');$(id).classList.remove('flex');}
-function showTab(n){['tagihan','riwayat','validasi'].forEach(x=>{$('tab-'+x).classList.toggle('hidden',x!==n);$('t-'+x).classList.toggle('bg-wine-800',x===n);$('t-'+x).classList.toggle('text-white',x===n);$('t-'+x).classList.toggle('text-gray-500',x!==n);});if(n==='riwayat')renderRiwayat();if(n==='validasi')loadValidasiOpts();lucide.createIcons();}
+function showTab(n){['tagihan','riwayat','validasi','portofolio'].forEach(x=>{$('tab-'+x).classList.toggle('hidden',x!==n);$('t-'+x).classList.toggle('bg-wine-800',x===n);$('t-'+x).classList.toggle('text-white',x===n);$('t-'+x).classList.toggle('text-gray-500',x!==n);});if(n==='riwayat')renderRiwayat();if(n==='validasi')loadValidasiOpts();lucide.createIcons();}
 function daysUntil(tgl){if(!tgl)return null;const d=new Date(tgl);const t=new Date();t.setHours(0,0,0,0);d.setHours(0,0,0,0);return Math.round((d-t)/86400000);}
 
 const D_TUGAS=[{id:'t1',judul:'Implementasi Kurikulum Merdeka',jenis:'Materi KKG',sasaran:'guru',wajib:true,urutan:1,blind:true,deadline:'2026-10-15',rubrik:{A:'Implementasi di kelas + foto + refleksi tertulis',B:'Implementasi di kelas + foto',C:'Belum implementasi, rencana tertulis',D:'Belum layak',E:'Belum lengkap'},status:'ON'}];
@@ -143,7 +171,7 @@ const D_NOTIF=[{id:'n1',jenis:'karya_dinilai',judul:'Karya Anda dinilai A',pesan
 if(DEMO){
   $('demo-badge').classList.remove('hidden');
   ME={email:'guru@sd.id',nama:'Arvi Dwi Utami, S.Pd.',jabatan:'Guru Kelas',instansi:'SD Negeri 1 Krisak',role:'guru',status:'active'};
-  LEVEL=4;TUGAS=D_TUGAS;KARYA=D_KARYA;NOTIF=D_NOTIF;
+  LEVEL=4;TUGAS=D_TUGAS;KARYA=D_KARYA;NOTIF=D_NOTIF;PORTO=D_PORTO;
   initUI();
 }else{
   auth.onAuthStateChanged(async u=>{
@@ -152,7 +180,7 @@ if(DEMO){
     ME=d.exists?d.data():{email:u.email,nama:u.displayName};
     LEVEL=levelOf(ME);
     if((ME.status||'active')!=='active')$('gate').classList.remove('hidden');
-    await loadTugas();await loadKarya();await loadNotif();
+    await loadTugas();await loadKarya();await loadNotif();await loadPorto();
     initUI();
   });
 }
@@ -175,7 +203,7 @@ async function loadNotif(){
 function initUI(){
   $('u-nama').textContent=ME.nama||ME.email;
   $('u-info').textContent=(ME.jabatan||'')+' • '+(ME.instansi||'');
-  renderCapaian();renderTagihan();renderBell();renderReminder();lucide.createIcons();
+  renderCapaian();renderTagihan();renderBell();renderReminder();renderPfForm();renderPorto();lucide.createIcons();
 }
 
 function renderCapaian(){
@@ -183,6 +211,8 @@ function renderCapaian(){
   const selesai=KARYA.filter(k=>{const t=TUGAS.find(x=>x.id===k.tugas_id);return t&&t.wajib&&(k.status==='diterima'||k.status==='A'||k.status==='B'||k.status==='C');}).length;
   const pct=wajib.length?Math.round(selesai/wajib.length*100):0;
   $('u-pct').textContent=pct+'%';$('u-bar').style.width=pct+'%';
+  $('btn-sertifikat').classList.toggle('hidden',pct<100);
+  if(pct>=100)$('btn-sertifikat').classList.replace('hidden','flex');
 }
 
 function renderTagihan(){
@@ -341,6 +371,50 @@ function openNotif(){
   const unread=NOTIF.filter(n=>!n.dibaca);
   if(!DEMO&&unread.length){unread.forEach(n=>{try{db.collection('notifikasi').doc(n.id).update({dibaca:true});}catch(e){}});}
   openM('mNotif');lucide.createIcons();
+}
+// ===== PORTOFOLIO =====
+async function loadPorto(){if(DEMO)return;try{const s=await db.collection('portofolio').where('email','==',ME.email).get();PORTO=s.docs.map(x=>({id:x.id,...x.data()}));}catch(e){PORTO=[];}}
+function renderPfForm(){const k=$('pf-kategori').value;
+ if(k==='prest'){}
+ if(k==='prestasi')$('pf-dyn').innerHTML=`<select id="pf-a" class="border rounded-xl p-3 bg-white"><option>Juara 1</option><option>Juara 2</option><option>Juara 3</option><option>Harapan</option></select><select id="pf-b" class="border rounded-xl p-3 bg-white"><option>Kecamatan</option><option>Kabupaten</option><option>Provinsi</option><option>Nasional</option></select>`;
+ else if(k==='pembiasaan')$('pf-dyn').innerHTML=`<select id="pf-a" class="border rounded-xl p-3 bg-white col-span-2"><option>Harian</option><option>Mingguan</option><option>Bulanan</option></select>`;
+ else $('pf-dyn').innerHTML=`<select id="pf-a" class="border rounded-xl p-3 bg-white col-span-2"><option>Internal</option><option>Orang Tua</option><option>Umum</option></select>`;
+ lucide.createIcons();}
+async function uploadPfFile(inp){const f=inp.files[0];if(!f)return;if(f.size>5*1024*1024){showToast('Maksimal 5MB','error');inp.value='';return;}showToast('Mengupload…','info');
+ const b64=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result.split(',')[1]);fr.readAsDataURL(f);});
+ try{const res=await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({base64:b64,mime:f.type||'application/octet-stream',filename:f.name,tahun:new Date().getFullYear(),root:'NAKULAKU_PORTOFOLIO'})});const j=await res.json();if(!j.ok)throw new Error(j.error||'Gagal');$('pf-link').value=j.url;$('pf-file-info').textContent='Terupload: '+f.name;$('pf-file-info').classList.remove('hidden');showToast('Bukti terupload');}catch(e){showToast('Gagal upload: '+e.message,'error');}inp.value='';}
+async function submitPorto(){const j=$('pf-judul').value.trim(),l=$('pf-link').value.trim();if(!j||!l)return showToast('Judul & link bukti wajib','error');
+ const k=$('pf-kategori').value;const data={kategori:k,judul:j,link:l,field_a:($('pf-a')||{}).value||'',field_b:($('pf-b')||{}).value||'',email:ME.email,nama:ME.nama||'',unit_kerja:ME.instansi||'',waktu:new Date().toISOString(),tahun:new Date().getFullYear()};
+ if(DEMO){PORTO.unshift({id:'p'+Date.now(),...data});renderPorto();showToast('Portofolio tersimpan (demo)');return;}
+ try{await db.collection('portofolio').add(data);PORTO.unshift(data);renderPorto();showToast('Portofolio tersimpan');}catch(e){showToast('Gagal: '+e.message,'error');}
+ $('pf-judul').value='';$('pf-link').value='';$('pf-file-info').classList.add('hidden');}
+function renderPorto(){$('pf-list').innerHTML=PORTO.length?PORTO.map(p=>{const m=PF_META[p.kategori]||['folder','bg-gray-100','Lain'];
+ return `<div class="flex justify-between items-center border-b border-gray-50 pb-2"><div class="flex items-center gap-2 min-w-0"><span class="w-9 h-9 rounded-xl ${m[1]} flex items-center justify-center shrink-0"><i data-lucide="${m[0]}" class="w-4 h-4"></i></span><div class="min-w-0"><p class="font-semibold truncate">${p.judul}</p><p class="text-xs text-gray-400 truncate">${m[2]}${p.field_a?' • '+p.field_a:''}${p.field_b?' • '+p.field_b:''} • ${(p.waktu||'').slice(0,10)}</p></div></div><div class="flex gap-2 shrink-0"><a href="${p.link||'#'}" target="_blank" class="text-wine-700"><i data-lucide="external-link" class="w-4 h-4"></i></a>${LEVEL===1?`<button onclick="delPorto('${p.id}')" class="text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`:''}</div></div>`;}).join(''):'<p class="text-gray-400">Belum ada portofolio.</p>';lucide.createIcons();}
+async function delPorto(id){if(!confirm('Hapus portofolio ini?'))return;try{await db.collection('portofolio').doc(id).delete();PORTO=PORTO.filter(p=>p.id!==id);renderPorto();showToast('Dihapus');}catch(e){showToast('Gagal: '+e.message,'error');}}
+// ===== SERTIFIKAT =====
+function sertId(){let h=0;const s=(ME.email||'')+'-'+new Date().getFullYear();for(let i=0;i<s.length;i++){h=((h<<5)-h+s.charCodeAt(i))|0;}return 'NK-'+new Date().getFullYear()+'-'+Math.abs(h).toString(36).toUpperCase().slice(0,6);}
+function unduhSertifikat(){
+  const cv=document.createElement('canvas');cv.width=1200;cv.height=850;const x=cv.getContext('2d');
+  x.fillStyle='#FBF2F5';x.fillRect(0,0,1200,850);
+  x.strokeStyle='#8C1D3C';x.lineWidth=14;x.strokeRect(28,28,1144,794);
+  x.strokeStyle='#C9A227';x.lineWidth=3;x.strokeRect(52,52,1096,746);
+  x.textAlign='center';
+  x.fillStyle='#8C1D3C';x.beginPath();x.arc(600,140,42,0,7);x.fill();
+  x.fillStyle='#fff';x.font='bold 40px sans-serif';x.fillText('N',600,155);
+  x.fillStyle='#8C1D3C';x.font='bold 46px sans-serif';x.fillText('SERTIFIKAT',600,240);
+  x.font='bold 26px sans-serif';x.fillStyle='#C9A227';x.fillText('PROGRAM KKG GUGUS NAKULA',600,278);
+  x.font='20px sans-serif';x.fillStyle='#555';x.fillText('Diberikan kepada:',600,360);
+  x.font='bold 42px sans-serif';x.fillStyle='#202024';x.fillText(ME.nama||'-',600,415);
+  x.font='22px sans-serif';x.fillStyle='#555';x.fillText(ME.instansi||'',600,452);
+  x.font='22px sans-serif';x.fillStyle='#202024';
+  x.fillText('Telah menyelesaikan SELURUH tagihan wajib Materi KKG',600,520);
+  x.fillText('dengan capaian 100% pada tahun '+new Date().getFullYear(),600,552);
+  x.strokeStyle='#202024';x.lineWidth=1;x.beginPath();x.moveTo(450,690);x.lineTo(750,690);x.stroke();
+  x.font='bold 20px sans-serif';x.fillStyle='#8C1D3C';x.fillText('Ketua Gugus Nakula',600,720);
+  x.font='14px sans-serif';x.fillStyle='#999';
+  x.fillText('Diterbitkan: '+new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})+' • ID: '+sertId(),600,780);
+  const a=document.createElement('a');a.download='sertifikat_'+(ME.nama||'guru').replace(/[^a-z0-9]/gi,'_')+'.png';a.href=cv.toDataURL('image/png');a.click();
+  showToast('Sertifikat diunduh');
 }
 lucide.createIcons();
 </script>
