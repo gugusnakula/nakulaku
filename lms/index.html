@@ -22,102 +22,94 @@ boxShadow:{card:'0 1px 2px rgba(32,32,36,.05),0 8px 24px rgba(32,32,36,.06)'}
 <header class="bg-gradient-to-b from-wine-800 to-wine-700 rounded-b-[28px] px-4 md:px-6 pt-5 pb-6 relative overflow-hidden">
   <svg class="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 400 300" fill="none"><path d="M-20 220 C120 140,260 260,420 120" stroke="white" stroke-width="1.5"/></svg>
   <div class="relative max-w-5xl mx-auto flex items-center gap-3">
-    <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center"><i data-lucide="book-open" class="w-5 h-5 text-white"></i></div>
-    <div class="flex-1"><h1 class="text-white font-extrabold text-lg">LMS</h1><p class="text-white/60 text-xs" id="h-sub">Materi • Tagihan • Validasi • Progres</p></div>
+    <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center"><i data-lucide="graduation-cap" class="w-5 h-5 text-white"></i></div>
+    <div class="flex-1"><h1 class="text-white font-extrabold text-lg">LMS KKG</h1><p class="text-white/60 text-xs">Nakulaku Ekosistem</p></div>
+    <button onclick="openNotif()" class="relative text-white/80 bg-white/10 rounded-full w-10 h-10 flex items-center justify-center"><i data-lucide="bell" class="w-5 h-5"></i><span id="bell-count" class="hidden absolute -top-1 -right-1 bg-amber-400 text-amber-950 text-[9px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center">0</span></button>
     <span id="demo-badge" class="hidden bg-amber-400 text-amber-950 text-[9px] font-extrabold px-1.5 py-0.5 rounded">DEMO</span>
     <a href="../home.html" class="text-white/80 text-xs font-bold flex items-center gap-1 bg-white/10 px-3 py-1.5 rounded-full"><i data-lucide="home" class="w-3.5 h-3.5"></i> Beranda</a>
   </div>
 </header>
 
 <main class="max-w-5xl mx-auto p-4 md:p-6 space-y-5 pb-24">
-  <div id="gate" class="hidden bg-amber-50 border border-amber-200 text-amber-700 rounded-2xl p-4 text-sm font-semibold">Akun Anda belum aktif.</div>
+  <div id="gate" class="hidden bg-amber-50 border border-amber-200 text-amber-700 rounded-2xl p-4 text-sm font-semibold flex items-start gap-2"><i data-lucide="shield-alert" class="w-4 h-4 mt-0.5"></i><span>Akun Anda belum aktif.</span></div>
 
-  <div class="bg-white rounded-2xl shadow-card p-1 flex text-sm font-bold overflow-x-auto">
-    <button onclick="showTab('materi')" id="t-materi" class="flex-1 py-2.5 rounded-xl bg-wine-800 text-white whitespace-nowrap">Materi</button>
-    <button onclick="showTab('tugas')" id="t-tugas" class="flex-1 py-2.5 rounded-xl text-gray-500 whitespace-nowrap">Tagihan Saya</button>
-    <button onclick="showTab('validasi')" id="t-validasi" class="flex-1 py-2.5 rounded-xl text-gray-500 whitespace-nowrap">Validasi</button>
-    <button onclick="showTab('progres')" id="t-progres" class="flex-1 py-2.5 rounded-xl text-gray-500 whitespace-nowrap">Progres</button>
+  <div id="reminder-banner" class="hidden bg-gradient-to-r from-amber-500 to-red-500 text-white rounded-2xl shadow-card p-4 flex items-center gap-3">
+    <i data-lucide="alert-triangle" class="w-5 h-5 shrink-0"></i>
+    <div class="flex-1"><p class="font-extrabold text-sm">Deadline Mendekat</p><p class="text-xs opacity-90" id="reminder-text">-</p></div>
   </div>
 
-  <!-- MATERI -->
-  <section id="tab-materi" class="space-y-4">
-    <div class="flex gap-2">
-      <button onclick="setMF('all')" id="mf-all" class="px-3 py-1.5 rounded-full text-xs font-bold bg-wine-800 text-white">Semua</button>
-      <button onclick="setMF('coming')" id="mf-coming" class="px-3 py-1.5 rounded-full text-xs font-bold bg-white text-gray-500">Akan Datang</button>
-      <button onclick="setMF('done')" id="mf-done" class="px-3 py-1.5 rounded-full text-xs font-bold bg-white text-gray-500">Selesai</button>
+  <div class="bg-white rounded-2xl shadow-card p-4">
+    <div class="flex items-center justify-between">
+      <div><p class="font-extrabold" id="u-nama">-</p><p class="text-xs text-gray-400" id="u-info">-</p></div>
+      <div class="text-right"><p class="text-xs text-gray-400">Capaian</p><p class="text-xl font-extrabold text-wine-700" id="u-pct">0%</p></div>
     </div>
-    <div id="materi-list" class="space-y-3"></div>
+    <div class="mt-3 bg-gray-100 rounded-full h-2 overflow-hidden"><div id="u-bar" class="h-full bg-wine-700 transition-all" style="width:0%"></div></div>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-card p-1 flex text-sm font-bold">
+    <button onclick="showTab('tagihan')" id="t-tagihan" class="flex-1 py-2.5 rounded-xl bg-wine-800 text-white flex items-center justify-center gap-1"><i data-lucide="book-open" class="w-3.5 h-3.5"></i> Tagihan Saya</button>
+    <button onclick="showTab('riwayat')" id="t-riwayat" class="flex-1 py-2.5 rounded-xl text-gray-500 flex items-center justify-center gap-1"><i data-lucide="history" class="w-3.5 h-3.5"></i> Riwayat</button>
+    <button onclick="showTab('validasi')" id="t-validasi" class="flex-1 py-2.5 rounded-xl text-gray-500 flex items-center justify-center gap-1"><i data-lucide="check-square" class="w-3.5 h-3.5"></i> Validasi</button>
+  </div>
+
+  <section id="tab-tagihan" class="space-y-4">
+    <div id="tagihan-list" class="space-y-3"></div>
   </section>
 
-  <!-- TAGIHAN -->
-  <section id="tab-tugas" class="hidden space-y-4">
-    <div class="bg-white rounded-2xl shadow-card p-5">
-      <div class="flex items-center justify-between">
-        <div><p class="text-xs text-gray-400" id="cap-title">Capaian Kinerja Saya</p><p class="text-3xl font-extrabold text-wine-700" id="cap-pct">0%</p></div>
-        <div class="text-right text-xs text-gray-500"><p id="cap-frac">0/0</p><p class="mt-1" id="cap-cat">-</p></div>
-      </div>
-      <div class="h-2 bg-gray-100 rounded-full mt-3"><div id="cap-bar" class="h-2 bg-wine-700 rounded-full" style="width:0%"></div></div>
-      <p class="text-[11px] text-gray-400 mt-2" id="cap-note">-</p>
-    </div>
-    <div id="tugas-list" class="space-y-3"></div>
+  <section id="tab-riwayat" class="hidden space-y-3">
+    <div id="riwayat-list" class="space-y-3"></div>
   </section>
 
-  <!-- VALIDASI -->
-  <section id="tab-validasi" class="hidden space-y-4">
-    <div id="no-val" class="hidden bg-white rounded-2xl shadow-card p-8 text-center text-gray-400">Akses hanya Narasumber / Admin</div>
-    <div id="val-box" class="space-y-4">
-      <label class="flex items-center justify-between bg-white rounded-2xl shadow-card p-4"><span class="text-sm font-bold flex items-center gap-2"><i data-lucide="eye-off" class="w-4 h-4 text-wine-700"></i> Blind Review (identitas disembunyikan)</span><input id="blind-toggle" type="checkbox" checked onchange="renderQueue()" class="w-5 h-5 accent-wine-700"></label>
-      <p class="font-bold">Antrean Menunggu <span id="q-count" class="text-wine-700">0</span></p>
-      <div id="queue-list" class="space-y-3"></div>
-      <p class="font-bold mt-4">Riwayat Penilaian Saya</p>
-      <div id="val-hist" class="space-y-2 text-sm"></div>
-    </div>
-  </section>
-
-  <!-- PROGRES -->
-  <section id="tab-progres" class="hidden space-y-4">
-    <div id="no-prog" class="hidden bg-white rounded-2xl shadow-card p-8 text-center text-gray-400">Akses hanya KS / Narasumber / Admin</div>
-    <div id="prog-box" class="space-y-4">
-      <div id="prog-stats" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></div>
-      <div id="prog-top" class="bg-white rounded-2xl shadow-card p-5 hidden"><p class="font-bold mb-3">Keaktifan Sekolah (Top 10)</p><div id="top-list" class="space-y-2"></div></div>
-      <div class="bg-white rounded-2xl shadow-card p-5">
-        <div class="flex justify-between items-center mb-3"><p class="font-bold" id="prog-title">Progres</p><button onclick="exportCSV()" class="bg-wine-800 text-white rounded-xl px-3 py-2 text-xs font-bold flex items-center gap-1"><i data-lucide="download" class="w-3.5 h-3.5"></i> Excel</button></div>
-        <div id="prog-list" class="space-y-2 text-sm"></div>
-      </div>
+  <section id="tab-validasi" class="hidden space-y-3">
+    <div id="no-validasi" class="hidden bg-white rounded-2xl shadow-card p-8 text-center text-gray-400"><i data-lucide="shield-x" class="w-8 h-8 mx-auto mb-2"></i>Hanya untuk Narasumber / Admin</div>
+    <div id="validasi-box" class="space-y-3">
+      <select id="v-tugas" onchange="loadValidasi()" class="w-full border rounded-xl p-3 bg-white"></select>
+      <div id="v-list" class="space-y-3"></div>
     </div>
   </section>
 </main>
 
-<!-- MODAL KIRIM KARYA -->
-<div id="mKarya" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
-  <div class="bg-white rounded-3xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-    <p class="font-extrabold mb-1">📤 Kirim Karya</p>
-    <p id="ky-tugas" class="text-xs text-gray-400 mb-3">-</p>
-    <input id="ky-judul" placeholder="Judul karya / laporan" class="w-full border rounded-xl p-3 mb-2">
-    <textarea id="ky-catatan" rows="3" placeholder="Catatan untuk penilai…" class="w-full border rounded-xl p-3 mb-2"></textarea>
-    <input id="ky-link" placeholder="Link Google Drive (wajib)" class="w-full border rounded-xl p-3 mb-4">
-    <div class="flex gap-2"><button onclick="saveKarya()" class="flex-1 bg-wine-800 text-white rounded-xl py-2.5 font-bold">Kirim</button><button onclick="closeM('mKarya')" class="flex-1 bg-gray-100 rounded-xl py-2.5 font-bold">Batal</button></div>
+<div id="mKirim" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-3xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <p class="font-extrabold mb-1" id="km-judul">-</p>
+    <p class="text-xs text-gray-400 mb-3" id="km-info">-</p>
+    <div id="km-rubrik" class="hidden bg-wine-50 rounded-xl p-3 mb-3">
+      <p class="text-xs font-extrabold text-wine-700 mb-2 flex items-center gap-1"><i data-lucide="scale" class="w-3.5 h-3.5"></i> Rubrik Penilaian (targetkan grade A)</p>
+      <div id="km-rubrik-list" class="text-xs space-y-1"></div>
+    </div>
+    <input id="km-link" placeholder="Link Drive (wajib)" class="w-full border rounded-xl p-3 mb-2">
+    <textarea id="km-desk" rows="3" placeholder="Deskripsi singkat karya/implementasi" class="w-full border rounded-xl p-3 mb-3"></textarea>
+    <div class="flex gap-2">
+      <button onclick="submitKarya()" class="flex-1 bg-wine-800 text-white rounded-xl py-2.5 font-bold flex items-center justify-center gap-1"><i data-lucide="send" class="w-4 h-4"></i> Kirim</button>
+      <button onclick="closeM('mKirim')" class="flex-1 bg-gray-100 rounded-xl py-2.5 font-bold">Batal</button>
+    </div>
   </div>
 </div>
 
-<!-- MODAL VALIDASI -->
-<div id="mVal" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
-  <div class="bg-white rounded-3xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-    <p class="font-extrabold mb-1">🧾 Penilaian (Blind Review)</p>
-    <p id="v-blind" class="text-xs font-bold text-wine-700 mb-2">-</p>
-    <p id="v-judul" class="font-bold mb-1">-</p>
-    <p id="v-catatan" class="text-sm text-gray-500 mb-2">-</p>
-    <a id="v-link" target="_blank" class="inline-flex items-center gap-1 text-sm font-bold text-wine-700 mb-3"><i data-lucide="external-link" class="w-4 h-4"></i> Lihat Bukti Karya</a>
-    <select id="v-grade" class="w-full border rounded-xl p-3 mb-2 bg-white">
-      <option value="">-- Pilih Grade --</option>
-      <option value="A">A - Sangat Baik (Inovatif)</option>
-      <option value="B">B - Baik (Sesuai Standar)</option>
-      <option value="C">C - Cukup (Perlu Peningkatan)</option>
-      <option value="D">D - Revisi (Belum Layak)</option>
-      <option value="E">E - Belum Lengkap</option>
-    </select>
-    <textarea id="v-fb" rows="3" placeholder="Umpan balik (wajib)…" class="w-full border rounded-xl p-3 mb-4"></textarea>
-    <div class="flex gap-2"><button onclick="saveVal()" class="flex-1 bg-wine-800 text-white rounded-xl py-2.5 font-bold">Kirim Validasi</button><button onclick="closeM('mVal')" class="flex-1 bg-gray-100 rounded-xl py-2.5 font-bold">Batal</button></div>
+<div id="mNotif" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-3xl p-6 w-full max-w-md max-h-[80vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-3"><p class="font-extrabold flex items-center gap-2"><i data-lucide="bell" class="w-4 h-4 text-wine-700"></i> Notifikasi</p><button onclick="closeM('mNotif')"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+    <div id="notif-list" class="space-y-2"></div>
+  </div>
+</div>
+
+<div id="mValidasi" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-3xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <p class="font-extrabold mb-3 flex items-center gap-2"><i data-lucide="check-square" class="w-4 h-4 text-wine-700"></i> Validasi Karya</p>
+    <p class="font-bold" id="v-judul">-</p>
+    <p class="text-xs text-gray-400 mb-2" id="v-info">-</p>
+    <div class="bg-gray-50 rounded-xl p-3 mb-3">
+      <p class="text-xs font-bold text-gray-500 mb-1">CATATAN PESERTA</p>
+      <p class="text-sm" id="v-desk">-</p>
+      <a id="v-link" target="_blank" class="text-sm text-wine-700 font-bold inline-flex items-center gap-1 mt-2"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> Buka Link Karya</a>
+    </div>
+    <p class="text-xs font-bold text-gray-500 mb-2">STATUS KELULUSAN</p>
+    <div class="grid grid-cols-2 gap-2 mb-3" id="v-grades"></div>
+    <textarea id="v-fb" rows="3" placeholder="Umpan balik (wajib jika D/E — memicu revisi)" class="w-full border rounded-xl p-3 mb-3"></textarea>
+    <div class="flex gap-2">
+      <button onclick="saveValidasi()" class="flex-1 bg-wine-800 text-white rounded-xl py-2.5 font-bold flex items-center justify-center gap-1"><i data-lucide="save" class="w-4 h-4"></i> Simpan</button>
+      <button onclick="closeM('mValidasi')" class="flex-1 bg-gray-100 rounded-xl py-2.5 font-bold">Batal</button>
+    </div>
   </div>
 </div>
 
@@ -127,37 +119,23 @@ const firebaseConfig={apiKey:"AIzaSyDaTXg2_oaKNYjJ0HxSGa9qXPQQ7VK0uDs",authDomai
 let auth=null,db=null;
 if(!DEMO){firebase.initializeApp(firebaseConfig);auth=firebase.auth();db=firebase.firestore();}
 const $=id=>document.getElementById(id);
-let ME=null,LEVEL=4,TUGAS=[],KARYA_MINE=[],KARYA_QUEUE=[],KARYA_SCOPE=[],AGENDA=[],mFilter='all',curTugas=null,curKarya=null;
+let ME=null,LEVEL=4,TUGAS=[],KARYA=[],NOTIF=[],curKirim=null,curVal=null,selGrade=null;
 function levelOf(u){const r=(u.role||'').toLowerCase(),j=(u.jabatan||'').toLowerCase();if(r.includes('admin'))return 1;if(r.includes('narasumber'))return 2;if(r.includes('kepala')||j.includes('kepala'))return 3;return 4;}
-function mySasaran(){const r=(ME.role||'').toLowerCase(),j=(ME.jabatan||'').toLowerCase();if(r.includes('kepala')||j.includes('kepala'))return 'kepala_sekolah';if(r.includes('guru')||j.includes('guru'))return 'guru';return null;}
 function showToast(m,t='success'){const ic={success:'check-circle-2',error:'x-circle',info:'info'};const bg={success:'bg-emerald-600',error:'bg-red-600',info:'bg-wine-800'};const e=document.createElement('div');e.className=`${bg[t]} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 fixed bottom-20 left-1/2 -translate-x-1/2 z-[60]`;e.innerHTML=`<i data-lucide="${ic[t]}" class="w-5 h-5"></i><span class="text-sm font-bold">${m}</span>`;document.body.appendChild(e);lucide.createIcons();setTimeout(()=>{e.style.opacity='0';e.style.transition='.4s';setTimeout(()=>e.remove(),400)},2600);}
-function showTab(n){['materi','tugas','validasi','progres'].forEach(x=>{$('tab-'+x).classList.toggle('hidden',x!==n);$('t-'+x).classList.toggle('bg-wine-800',x===n);$('t-'+x).classList.toggle('text-white',x===n);$('t-'+x).classList.toggle('text-gray-500',x!==n);});if(n==='validasi')renderQueue();if(n==='progres')renderProgres();}
 function openM(id){$(id).classList.remove('hidden');$(id).classList.add('flex');}
 function closeM(id){$(id).classList.add('hidden');$(id).classList.remove('flex');}
-function toISO(t){if(!t)return '';const s=String(t);if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);const m=s.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');return s;}
-function today(){return new Date().toISOString().slice(0,10);}
-function mapTugas(d,id){const j=d.jenis||d.kategori||d.type||'Materi KKG';return{id:id||d.id,judul:d.judul||d.nama||d.title||'',jenis:j,sasaran:d.sasaran||'guru',wajib:(d.wajib===true||d.wajib==='true'||d.wajib==='TRUE'),urutan:parseInt(d.urutan||d.posisi)||999,topik:d.topik||d.folder||d.kegiatan||'',link:d.link||d.url||d.link_materi||'',deadline:d.deadline||d.tanggal||d.batas||'',deskripsi:d.deskripsi||d.desc||'',status:d.status||'ON'};}
-function getCached(k,ttl,fn){const r=localStorage.getItem('nk_'+k);if(r){const c=JSON.parse(r);if(Date.now()-c.t<ttl)return Promise.resolve(c.data);}return fn().then(d=>{localStorage.setItem('nk_'+k,JSON.stringify({t:Date.now(),data:d}));return d;});}
+function showTab(n){['tagihan','riwayat','validasi'].forEach(x=>{$('tab-'+x).classList.toggle('hidden',x!==n);$('t-'+x).classList.toggle('bg-wine-800',x===n);$('t-'+x).classList.toggle('text-white',x===n);$('t-'+x).classList.toggle('text-gray-500',x!==n);});if(n==='riwayat')renderRiwayat();if(n==='validasi')loadValidasiOpts();lucide.createIcons();}
+function daysUntil(tgl){if(!tgl)return null;const d=new Date(tgl);const t=new Date();t.setHours(0,0,0,0);d.setHours(0,0,0,0);return Math.round((d-t)/86400000);}
 
-const D_TUGAS=[
- {id:'t1',judul:'Materi 1: Kurikulum & Capaian Pembelajaran',jenis:'Materi KKG',sasaran:'guru',wajib:true,urutan:1,topik:'KKG Semester 1',deadline:'2026-10-01',link:'https://drive.google.com/',status:'ON'},
- {id:'t2',judul:'Materi 2: Metode Pembelajaran Diferensiasi',jenis:'Materi KKG',sasaran:'guru',wajib:true,urutan:2,topik:'KKG Semester 1',deadline:'2026-10-15',link:'https://drive.google.com/',status:'ON'},
- {id:'t3',judul:'Karya Inovasi Pembelajaran',jenis:'Karya Inovasi',sasaran:'guru',wajib:false,urutan:9,topik:'KKG Semester 1',deadline:'2026-11-01',link:'',status:'ON'},
- {id:'t4',judul:'Prestasi Siswa / Sekolah',jenis:'Prestasi Sekolah',sasaran:'kepala_sekolah',wajib:false,urutan:1,topik:'Portofolio',deadline:'2026-12-01',link:'',status:'ON'},
- {id:'t5',judul:'Praktik Baik / Pembiasaan Sekolah',jenis:'Praktik Baik',sasaran:'kepala_sekolah',wajib:false,urutan:2,topik:'Portofolio',deadline:'2026-12-01',link:'',status:'ON'}
-];
-const D_KARYA=[
- {id:'k1',tugas_id:'t4',tugas_judul:'Prestasi Siswa / Sekolah',kategori:'Prestasi Sekolah',email:'iwan4943@gmail.com',nama:'Ekwan Nugroho',unit_kerja:'SD Negeri 3 Krisak',judul:'Juara 1 Lomba Sekolah Sehat',link:'https://drive.google.com/',status:'diterima',grade:'A',feedback:'Luar biasa.',blind_id:'#ID-8F2K',waktu_submit:'2026-09-20T08:00:00Z'},
- {id:'k2',tugas_id:'t1',tugas_judul:'Materi 1: Kurikulum & Capaian Pembelajaran',kategori:'Materi KKG',email:'arvipermana1409@gmail.com',nama:'Arvi Dwi Utami',unit_kerja:'SD Negeri 1 Krisak',judul:'Rangkuman & implementasi CP',link:'https://drive.google.com/',status:'menunggu',grade:'',feedback:'',blind_id:'#ID-2P9Q',waktu_submit:'2026-09-26T08:00:00Z'}
-];
+const D_TUGAS=[{id:'t1',judul:'Implementasi Kurikulum Merdeka',jenis:'Materi KKG',sasaran:'guru',wajib:true,urutan:1,blind:true,deadline:'2026-10-15',rubrik:{A:'Implementasi di kelas + foto + refleksi tertulis',B:'Implementasi di kelas + foto',C:'Belum implementasi, rencana tertulis',D:'Belum layak',E:'Belum lengkap'},status:'ON'}];
+const D_KARYA=[{id:'k1',tugas_id:'t1',email:'guru@sd.id',link:'https://drive.google.com/...',deskripsi:'Implementasi di kelas 5.',status:'menunggu'}];
+const D_NOTIF=[{id:'n1',jenis:'karya_dinilai',judul:'Karya Anda dinilai A',pesan:'Implementasi Kurikulum Merdeka',waktu:new Date().toISOString(),unread:true}];
 
 if(DEMO){
   $('demo-badge').classList.remove('hidden');
-  ME={email:'iwan4943@gmail.com',nama:'Ekwan Nugroho, S.Pd.I.',jabatan:'Kepala Sekolah',instansi:'SD Negeri 3 Krisak',role:'admin,narasumber',status:'active'};
-  LEVEL=1;
-  TUGAS=D_TUGAS;KARYA_MINE=D_KARYA.filter(k=>k.email===ME.email);KARYA_QUEUE=D_KARYA.filter(k=>k.status==='menunggu');KARYA_SCOPE=D_KARYA;
-  AGENDA=[{nama_kegiatan:'KKG Gugus Nakula',tanggal:today(),waktu:'08.00',narsum:'Ekwan Nugroho',link_materi:'https://drive.google.com/'},{nama_kegiatan:'Diklat Kurikulum',tanggal:'2026-09-10',waktu:'08.00',narsum:'Narsum Luar',link_materi:'https://drive.google.com/'}];
-  initTabs();renderMateri();renderTugas();lucide.createIcons();
+  ME={email:'guru@sd.id',nama:'Arvi Dwi Utami, S.Pd.',jabatan:'Guru Kelas',instansi:'SD Negeri 1 Krisak',role:'guru',status:'active'};
+  LEVEL=4;TUGAS=D_TUGAS;KARYA=D_KARYA;NOTIF=D_NOTIF;
+  initUI();
 }else{
   auth.onAuthStateChanged(async u=>{
     if(!u){location.href='../index.html';return;}
@@ -165,176 +143,185 @@ if(DEMO){
     ME=d.exists?d.data():{email:u.email,nama:u.displayName};
     LEVEL=levelOf(ME);
     if((ME.status||'active')!=='active')$('gate').classList.remove('hidden');
-    if(LEVEL>2)$('t-validasi').classList.add('hidden');
-    if(LEVEL>3)$('t-progres').classList.add('hidden');
-    await loadAll();
+    await loadTugas();await loadKarya();await loadNotif();
+    initUI();
   });
 }
 
-function initTabs(){
-  const s=mySasaran();
-  if(!s)$('t-tugas').classList.add('hidden');
-  $('h-sub').textContent=s==='kepala_sekolah'?'Portofolio Sekolah • Validasi • Progres':s==='guru'?'Tagihan Materi KKG • Inovasi • Validasi':'Materi • Validasi • Progres';
+async function loadTugas(){
+  if(DEMO)return;
+  const raw=(await db.collection('tugas').get()).docs.map(x=>({id:x.id,...x.data()}));
+  TUGAS=raw.filter(d=>!d.arsip&&(d.sumber==='bank'||d.sasaran)).filter(t=>(t.status||'ON')==='ON');
+}
+async function loadKarya(){
+  if(DEMO)return;
+  const s=await db.collection('karya').where('email','==',ME.email).get();
+  KARYA=s.docs.map(x=>({id:x.id,...x.data()}));
+}
+async function loadNotif(){
+  if(DEMO)return;
+  try{const s=await db.collection('notifikasi').where('email','==',ME.email).orderBy('waktu','desc').limit(30).get();NOTIF=s.docs.map(x=>({id:x.id,...x.data()}));}catch(e){NOTIF=[];}
 }
 
-async function loadAll(){
-  TUGAS=(await getCached('tugas',10*60*1000,()=>db.collection('tugas').get().then(s=>s.docs.map(x=>mapTugas(x.data(),x.id))))).filter(t=>(t.status||'ON')==='ON');
-  AGENDA=await getCached('pengaturan',10*60*1000,()=>db.collection('pengaturan').get().then(s=>s.docs.map(x=>x.data())));
-  const km=await db.collection('karya').where('email','==',ME.email).get();
-  KARYA_MINE=km.docs.map(x=>({id:x.id,...x.data()}));
-  if(LEVEL<=2){const q=await db.collection('karya').where('status','==','menunggu').get();KARYA_QUEUE=q.docs.map(x=>({id:x.id,...x.data()}));}
-  initTabs();renderMateri();renderTugas();lucide.createIcons();
+function initUI(){
+  $('u-nama').textContent=ME.nama||ME.email;
+  $('u-info').textContent=(ME.jabatan||'')+' • '+(ME.instansi||'');
+  renderCapaian();renderTagihan();renderBell();renderReminder();lucide.createIcons();
 }
 
-// ===== MATERI =====
-function setMF(f){mFilter=f;['all','coming','done'].forEach(x=>{const b=$('mf-'+x);b.classList.toggle('bg-wine-800',x===f);b.classList.toggle('text-white',x===f);b.classList.toggle('bg-white',x!==f);b.classList.toggle('text-gray-500',x!==f);});renderMateri();}
-function renderMateri(){
-  const t=today();
-  let A=(AGENDA||[]).map(a=>({...a,iso:toISO(a.tanggal)}));
-  if(mFilter==='coming')A=A.filter(a=>a.iso>t);
-  if(mFilter==='done')A=A.filter(a=>a.iso<=t);
-  A.sort((a,b)=>(b.iso||'').localeCompare(a.iso||''));
-  $('materi-list').innerHTML=A.length?A.map(a=>{
-    const st=a.iso>t?'AKAN DATANG':a.iso===t?'HARI INI':'SELESAI';
-    const c=st==='HARI INI'?'bg-wine-100 text-wine-700':st==='AKAN DATANG'?'bg-sky-100 text-sky-700':'bg-gray-200 text-gray-500';
-    return `<div class="bg-white rounded-2xl shadow-card p-4"><div class="flex justify-between items-start"><div><p class="font-bold text-sm">${a.nama_kegiatan||'-'}</p><p class="text-xs text-gray-400 mt-0.5">${a.iso||'-'} • ${a.waktu||'-'} • ${a.narsum||'-'}</p></div><span class="text-[9px] font-extrabold px-2 py-1 rounded-full ${c}">${st}</span></div>${a.link_materi?`<a href="${a.link_materi}" target="_blank" class="mt-3 inline-flex items-center gap-1 bg-wine-800 text-white text-xs font-bold rounded-xl px-3 py-2"><i data-lucide="book-open" class="w-3.5 h-3.5"></i> Buka Materi</a>`:'<p class="text-xs text-gray-400 mt-2">Materi belum diunggah</p>'}</div>`;
-  }).join(''):'<p class="text-gray-400">Tidak ada materi.</p>';
+function renderCapaian(){
+  const wajib=TUGAS.filter(t=>t.wajib);
+  const selesai=KARYA.filter(k=>{const t=TUGAS.find(x=>x.id===k.tugas_id);return t&&t.wajib&&(k.status==='diterima'||k.status==='A'||k.status==='B'||k.status==='C');}).length;
+  const pct=wajib.length?Math.round(selesai/wajib.length*100):0;
+  $('u-pct').textContent=pct+'%';$('u-bar').style.width=pct+'%';
+}
+
+function renderTagihan(){
+  const myTugas=TUGAS.filter(t=>(t.sasaran||'guru')==='guru'||t.sasaran==='all').sort((a,b)=>(a.urutan||99)-(b.urutan||99));
+  $('tagihan-list').innerHTML=myTugas.length?myTugas.map(t=>{
+    const k=KARYA.find(x=>x.tugas_id===t.id);
+    let status='BELUM DIKERJAKAN',cls='bg-gray-100 text-gray-500',ic='circle';
+    if(k){
+      if(k.status==='revisi'){status='PERLU REVISI';cls='bg-amber-100 text-amber-700';ic='alert-circle';}
+      else if(k.status==='menunggu'){status='MENUNGGU VALIDASI';cls='bg-sky-100 text-sky-700';ic='clock';}
+      else{status='DITERIMA ('+k.status+')';cls='bg-emerald-100 text-emerald-700';ic='check-circle-2';}
+    }
+    const dd=daysUntil(t.deadline);
+    let deadlineChip='';
+    if(dd!==null){
+      if(dd<0)deadlineChip=`<span class="text-[10px] font-extrabold bg-red-100 text-red-600 px-2 py-0.5 rounded-full inline-flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i>Terlambat ${-dd} hari</span>`;
+      else if(dd<=3)deadlineChip=`<span class="text-[10px] font-extrabold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full inline-flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i>Sisa ${dd} hari</span>`;
+      else deadlineChip=`<span class="text-[10px] font-extrabold bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full inline-flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i>Sisa ${dd} hari</span>`;
+    }
+    const lock=t.urutan>1&&!KARYA.some(x=>{const tt=TUGAS.find(z=>z.id===x.tugas_id);return tt&&tt.urutan<t.urutan&&(x.status==='diterima'||x.status==='A'||x.status==='B'||x.status==='C');});
+    const rubrikBadge=t.rubrik?.A?'<span class="text-[9px] font-extrabold bg-wine-100 text-wine-700 px-1.5 py-0.5 rounded inline-flex items-center gap-0.5"><i data-lucide="scale" class="w-2.5 h-2.5"></i>RUBRIK</span>':'';
+    return `<div class="bg-white rounded-2xl shadow-card p-4 ${lock?'opacity-60':''}">
+      <div class="flex justify-between items-start mb-2">
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-sm truncate">${t.judul} <span class="text-[9px] font-extrabold ${t.wajib?'bg-red-100 text-red-600':'bg-gray-100 text-gray-500'} px-1.5 py-0.5 rounded">${t.wajib?'WAJIB':'OPSIONAL'}</span> ${rubrikBadge}</p>
+          <p class="text-xs text-gray-400 truncate">${t.jenis||'-'} • urutan #${t.urutan||'-'} • ${t.blind?'BLIND':'NON-BLIND'}</p>
+        </div>
+        <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full ${cls}">${status}</span>
+      </div>
+      ${deadlineChip?'<div class="mb-2">'+deadlineChip+'</div>':''}
+      <div class="flex gap-2">
+        ${k&&k.status==='revisi'?`<button onclick="openKirim('${t.id}')" class="flex-1 bg-amber-500 text-white rounded-xl py-2 text-xs font-bold inline-flex items-center justify-center gap-1"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Kirim Revisi</button>`
+        :lock?'<button disabled class="flex-1 bg-gray-100 text-gray-400 rounded-xl py-2 text-xs font-bold inline-flex items-center justify-center gap-1"><i data-lucide="lock" class="w-3.5 h-3.5"></i> Terkunci (selesaikan urutan sebelumnya)</button>'
+        :!k?`<button onclick="openKirim('${t.id}')" class="flex-1 bg-wine-800 text-white rounded-xl py-2 text-xs font-bold inline-flex items-center justify-center gap-1"><i data-lucide="upload" class="w-3.5 h-3.5"></i> Kirim Karya</button>`
+        :`<button disabled class="flex-1 bg-gray-100 text-gray-500 rounded-xl py-2 text-xs font-bold inline-flex items-center justify-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5"></i> Sudah Dikirim</button>`}
+      </div>
+    </div>`;
+  }).join(''):'<div class="bg-white rounded-2xl shadow-card p-8 text-center text-gray-400"><i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2"></i><p>Belum ada tagihan.</p></div>';
   lucide.createIcons();
 }
 
-// ===== TAGIHAN (SEQUENTIAL LOCK) =====
-function wajibChain(){return TUGAS.filter(t=>t.sasaran==='guru'&&t.wajib).sort((a,b)=>a.urutan-b.urutan);}
-function isLocked(t){
-  if(mySasaran()!=='guru'||!t.wajib)return false;
-  const chain=wajibChain();const i=chain.findIndex(x=>x.id===t.id);
-  if(i<=0)return false;
-  const prev=chain[i-1];const my=KARYA_MINE.find(k=>k.tugas_id===prev.id);
-  return !(my&&my.status==='diterima');
+function renderBell(){
+  const unread=NOTIF.filter(n=>!n.dibaca).length;
+  $('bell-count').textContent=unread;
+  $('bell-count').classList.toggle('hidden',unread===0);$('bell-count').classList.toggle('flex',unread>0);
 }
-function renderTugas(){
-  const s=mySasaran();if(!s)return;
-  const mine=TUGAS.filter(t=>t.sasaran===s||t.sasaran==='all').sort((a,b)=>(a.wajib===b.wajib?a.urutan-b.urutan:(a.wajib?-1:1)));
-  if(s==='guru'){
-    const chain=wajibChain();
-    const done=chain.filter(t=>{const k=KARYA_MINE.find(x=>x.tugas_id===t.id);return k&&k.status==='diterima';}).length;
-    const pct=chain.length?Math.round(done/chain.length*100):0;
-    const inov=KARYA_MINE.filter(k=>k.status==='diterima'&&(k.kategori||'').includes('Inovasi')).length;
-    $('cap-title').textContent='Capaian Tagihan Wajib (Materi KKG)';
-    $('cap-pct').textContent=pct+'%';$('cap-frac').textContent=done+'/'+chain.length+' materi selesai';
-    $('cap-cat').textContent='Inovasi diterima: '+inov+' (penambah nilai)';
-    $('cap-bar').style.width=pct+'%';
-    $('cap-note').textContent='🔒 Materi berikutnya terbuka setelah materi sebelumnya DITERIMA.';
-  }else{
-    const acc=KARYA_MINE.filter(k=>k.status==='diterima');
-    const by={};acc.forEach(k=>by[k.kategori||'Lain']=(by[k.kategori||'Lain']||0)+1);
-    $('cap-title').textContent='Portofolio Sekolah (Opsional)';
-    $('cap-pct').textContent=acc.length+' karya';$('cap-frac').textContent='diterima narasumber';
-    $('cap-cat').textContent=Object.keys(by).map(k=>k+': '+by[k]).join(' • ')||'Belum ada';
-    $('cap-bar').style.width=Math.min(100,acc.length*20)+'%';
-    $('cap-note').textContent='Semua tagihan KS bersifat opsional (penambah nilai sekolah).';
-  }
-  $('tugas-list').innerHTML=mine.map(t=>{
-    const my=KARYA_MINE.find(k=>k.tugas_id===t.id);
-    const lock=isLocked(t);
-    const st=my?{menunggu:['bg-amber-100 text-amber-700','MENUNGGU'],diterima:['bg-emerald-100 text-emerald-700','DITERIMA '+(my.grade||'')],revisi:['bg-red-100 text-red-600','REVISI']}[my.status]:['bg-gray-100 text-gray-500','BELUM'];
-    const wbadge=t.wajib?'<span class="text-[9px] font-extrabold bg-wine-700 text-white px-1.5 py-0.5 rounded">WAJIB</span>':'<span class="text-[9px] font-extrabold bg-gray-200 text-gray-500 px-1.5 py-0.5 rounded">OPSIONAL</span>';
-    const btn=lock?`<span class="text-xs text-gray-400 flex items-center gap-1"><i data-lucide="lock" class="w-3.5 h-3.5"></i> Terkunci</span>`
-      :(!my||my.status==='revisi')?`<button onclick="openKarya('${t.id}')" class="bg-wine-800 text-white rounded-xl px-3 py-2 text-xs font-bold">${my?'Kirim Revisi':'Kirim Karya'}</button>`
-      :`<span class="text-xs text-gray-400">Terkirim</span>`;
-    return `<div class="bg-white rounded-2xl shadow-card p-4 ${lock?'opacity-60':''}"><div class="flex justify-between items-start gap-2"><div class="flex-1"><p class="font-bold text-sm">${t.wajib?'#'+t.urutan+' ':''}${t.judul} ${wbadge}</p><p class="text-xs text-gray-400 mt-0.5">${t.jenis} • ${t.topik||'-'} • Deadline ${t.deadline||'-'}</p>${t.link?`<a href="${t.link}" target="_blank" class="text-xs font-bold text-wine-700">📖 Buka Materi</a>`:''}${my&&my.feedback?`<p class="text-xs text-wine-700 mt-1 italic">"${my.feedback}"</p>`:''}${lock?`<p class="text-xs text-amber-600 mt-1">Selesaikan materi sebelumnya terlebih dahulu.</p>`:''}</div><div class="text-right"><span class="text-[9px] font-extrabold px-2 py-1 rounded-full ${st[0]}">${st[1]}</span><div class="mt-2">${btn}</div></div></div></div>`;
-  }).join('')||'<p class="text-gray-400">Belum ada tagihan untuk role Anda.</p>';
-  lucide.createIcons();
+
+function renderReminder(){
+  const dekat=TUGAS.filter(t=>{const d=daysUntil(t.deadline);return d!==null&&d>=0&&d<=3&&!KARYA.some(k=>k.tugas_id===t.id);});
+  if(dekat.length){$('reminder-banner').classList.remove('hidden');$('reminder-text').textContent=dekat.length+' tugas mendekati deadline (3 hari ke depan).';}
 }
-function openKarya(id){
-  curTugas=TUGAS.find(t=>t.id===id);
-  if(isLocked(curTugas))return showToast('Selesaikan tugas sebelumnya dulu','error');
-  const my=KARYA_MINE.find(k=>k.tugas_id===id);
-  $('ky-tugas').textContent=curTugas.judul;
-  $('ky-judul').value=my?my.judul||'':'';$('ky-catatan').value=my?my.catatan||'':'';$('ky-link').value=my?my.link||'':'';
-  openM('mKarya');
+
+function openKirim(tid){
+  const t=TUGAS.find(x=>x.id===tid);if(!t)return;
+  curKirim=t;
+  $('km-judul').textContent=t.judul;
+  $('km-info').textContent=`${t.jenis||'-'} • deadline ${t.deadline||'-'}`;
+  const rb=$('km-rubrik');const rl=$('km-rubrik-list');
+  if(t.rubrik&&(t.rubrik.A||t.rubrik.B||t.rubrik.C||t.rubrik.D||t.rubrik.E)){
+    rb.classList.remove('hidden');
+    const items=[['A','bg-emerald-100 text-emerald-700'],['B','bg-sky-100 text-sky-700'],['C','bg-amber-100 text-amber-700'],['D','bg-red-100 text-red-600'],['E','bg-gray-200 text-gray-600']];
+    rl.innerHTML=items.map(([g,cls])=>t.rubrik[g]?`<div class="flex gap-2 ${cls} rounded-lg px-2 py-1"><span class="font-extrabold w-4">${g}</span><span>${t.rubrik[g]}</span></div>`:'').join('');
+  }else rb.classList.add('hidden');
+  const eks=KARYA.find(k=>k.tugas_id===tid);
+  $('km-link').value=eks?.link||'';$('km-desk').value=eks?.deskripsi||'';
+  openM('mKirim');lucide.createIcons();
 }
-async function saveKarya(){
-  const j=$('ky-judul').value.trim(),l=$('ky-link').value.trim();
-  if(!j||!l)return showToast('Judul & link Drive wajib','error');
-  const my=KARYA_MINE.find(k=>k.tugas_id===curTugas.id);
-  const data={tugas_id:curTugas.id,tugas_judul:curTugas.judul,kategori:curTugas.jenis,judul:j,catatan:$('ky-catatan').value,link:l,status:'menunggu',grade:'',feedback:''};
-  if(DEMO){showToast('(Demo) Karya terkirim ✅');closeM('mKarya');return;}
+
+async function submitKarya(){
+  if(!curKirim)return;
+  const link=$('km-link').value.trim();if(!link)return showToast('Link Drive wajib','error');
+  const data={tugas_id:curKirim.id,tugas_judul:curKirim.judul,email:ME.email,nama:ME.nama||'',unit_kerja:ME.instansi||'',link,deskripsi:$('km-desk').value.trim(),status:'menunggu',waktu_submit:new Date().toISOString(),validator:curKirim.validator||''};
+  if(DEMO){const eks=KARYA.find(k=>k.tugas_id===curKirim.id);if(eks){eks.link=link;eks.deskripsi=data.deskripsi;eks.status='menunggu';}else KARYA.push({id:'k'+Date.now(),...data});closeM('mKirim');renderCapaian();renderTagihan();showToast('Karya terkirim (demo)');return;}
   try{
-    if(my&&my.status==='revisi'){await db.collection('karya').doc(my.id).update({...data,waktu_submit:new Date().toISOString()});}
-    else if(my){return showToast('Sudah dikirim sebelumnya','error');}
-    else{await db.collection('karya').add({...data,email:ME.email,nama:ME.nama||'',unit_kerja:ME.instansi||'',jabatan:ME.jabatan||'',blind_id:'#ID-'+Math.random().toString(36).slice(2,6).toUpperCase(),waktu_submit:new Date().toISOString(),tahun:new Date().getFullYear()});}
-    closeM('mKarya');showToast('Karya terkirim ✅');
-    const km=await db.collection('karya').where('email','==',ME.email).get();KARYA_MINE=km.docs.map(x=>({id:x.id,...x.data()}));renderTugas();
+    const eks=KARYA.find(k=>k.tugas_id===curKirim.id);
+    if(eks)await db.collection('karya').doc(eks.id).update(data);
+    else await db.collection('karya').add(data);
+    closeM('mKirim');await loadKarya();renderCapaian();renderTagihan();showToast('Karya terkirim');
   }catch(e){showToast('Gagal: '+e.message,'error');}
 }
 
-// ===== VALIDASI =====
-function renderQueue(){
-  if(LEVEL>2){$('no-val').classList.remove('hidden');$('val-box').classList.add('hidden');return;}
-  $('no-val').classList.add('hidden');$('val-box').classList.remove('hidden');
-  const blind=$('blind-toggle').checked;
-  $('q-count').textContent=KARYA_QUEUE.length;
-  $('queue-list').innerHTML=KARYA_QUEUE.length?KARYA_QUEUE.map(k=>`<div class="bg-white rounded-2xl shadow-card p-4"><div class="flex justify-between items-start"><div><p class="text-xs font-extrabold text-wine-700">${blind?(k.blind_id||'#ID-????'):((k.nama||'')+' • '+(k.unit_kerja||''))}</p><p class="font-bold text-sm mt-1">${k.judul}</p><p class="text-xs text-gray-400">${k.kategori||'-'} • ${k.tugas_judul||'-'}</p></div><button onclick="openVal('${k.id}')" class="bg-wine-800 text-white rounded-xl px-3 py-2 text-xs font-bold">Nilai</button></div>${!blind?`<p class="text-xs text-gray-500 mt-2">${k.catatan||''}</p>`:''}</div>`).join(''):'<p class="text-gray-400">Tidak ada antrean. 🎉</p>';
-  const hist=KARYA_SCOPE.filter(k=>k.validator===ME.email).slice(0,10);
-  $('val-hist').innerHTML=hist.length?hist.map(k=>`<div class="flex justify-between border-b border-gray-50 pb-2"><p>${k.judul} <span class="text-gray-400">• ${k.nama||''}</span></p><span class="font-extrabold text-wine-700">${k.grade||'-'}</span></div>`).join(''):'<p class="text-gray-400">Belum ada penilaian.</p>';
+function renderRiwayat(){
+  const list=KARYA.slice().sort((a,b)=>(b.waktu_submit||'').localeCompare(a.waktu_submit||''));
+  $('riwayat-list').innerHTML=list.length?list.map(k=>{const t=TUGAS.find(x=>x.id===k.tugas_id);
+    const st={diterima:['bg-emerald-100 text-emerald-700','DITERIMA'],menunggu:['bg-sky-100 text-sky-700','MENUNGGU'],revisi:['bg-amber-100 text-amber-700','REVISI']}[k.status]||['bg-gray-100 text-gray-500',k.status||'-'];
+    return `<div class="bg-white rounded-2xl shadow-card p-4">
+      <div class="flex justify-between items-start">
+        <div class="flex-1 min-w-0">
+          <p class="font-bold text-sm truncate">${t?.judul||k.tugas_judul||'-'}</p>
+          <p class="text-xs text-gray-400 truncate">${(k.waktu_submit||'').slice(0,10)} • ${t?.jenis||'-'}</p>
+        </div>
+        <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full ${st[0]}">${st[1]}</span>
+      </div>
+      ${k.feedback?`<div class="mt-2 bg-gray-50 rounded-xl p-2 text-xs"><p class="font-bold text-gray-500 mb-0.5">UMPN BALIK VALIDATOR</p><p>${k.feedback}</p></div>`:''}
+    </div>`;
+  }).join(''):'<div class="bg-white rounded-2xl shadow-card p-8 text-center text-gray-400"><i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2"></i><p>Belum ada riwayat karya.</p></div>';
   lucide.createIcons();
 }
-function openVal(id){curKarya=KARYA_QUEUE.find(k=>k.id===id);$('v-blind').textContent=curKarya.blind_id||'#ID-????';$('v-judul').textContent=curKarya.judul;$('v-catatan').textContent=curKarya.catatan||'-';$('v-link').href=curKarya.link||'#';$('v-grade').value='';$('v-fb').value='';openM('mVal');}
-async function saveVal(){
-  const g=$('v-grade').value,fb=$('v-fb').value.trim();
-  if(!g)return showToast('Pilih grade','error');
-  if(!fb)return showToast('Umpan balik wajib','error');
-  if(DEMO){showToast('(Demo) Validasi terkirim ✅');closeM('mVal');return;}
-  const st=(g==='D'||g==='E')?'revisi':'diterima';
+
+async function loadValidasiOpts(){
+  if(LEVEL>2){$('no-validasi').classList.remove('hidden');$('validasi-box').classList.add('hidden');return;}
+  $('no-validasi').classList.add('hidden');$('validasi-box').classList.remove('hidden');
+  const list=TUGAS.filter(t=>!t.validator||t.validator===ME.email||(t.validator||'').split(/[,;]/).includes(ME.email));
+  $('v-tugas').innerHTML=list.length?list.map(t=>`<option value="${t.id}">${t.judul} (${t.jenis||'-'})</option>`).join(''):'<option>Belum ada tugas untuk divalidasi</option>';
+  loadValidasi();
+}
+async function loadValidasi(){
+  const tid=$('v-tugas').value;if(!tid||tid.includes('Belum'))return;
+  let list;
+  if(DEMO){list=D_KARYA.filter(k=>k.tugas_id===tid);}
+  else{const s=await db.collection('karya').where('tugas_id','==',tid).get();list=s.docs.map(x=>({id:x.id,...x.data()}));}
+  $('v-list').innerHTML=list.length?list.map(k=>{const st={menunggu:['bg-sky-100 text-sky-700','MENUNGGU'],revisi:['bg-amber-100 text-amber-700','REVISI'],diterima:['bg-emerald-100 text-emerald-700','DITERIMA']}[k.status]||['bg-gray-100',k.status||'-'];
+    return `<div class="bg-white rounded-2xl shadow-card p-4 flex justify-between items-center"><div class="min-w-0 flex-1"><p class="font-bold text-sm truncate">${k.nama||k.email}</p><p class="text-xs text-gray-400 truncate">${k.unit_kerja||'-'} • ${(k.waktu_submit||'').slice(0,10)}</p></div><span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full ${st[0]} mr-2">${st[1]}</span><button onclick="openValidasi('${k.id}')" class="bg-wine-800 text-white rounded-xl px-3 py-1.5 text-xs font-bold inline-flex items-center gap-1"><i data-lucide="pen-line" class="w-3.5 h-3.5"></i> Nilai</button></div>`;
+  }).join(''):'<div class="bg-white rounded-2xl shadow-card p-8 text-center text-gray-400">Belum ada karya menunggu untuk tugas ini.</div>';
+  lucide.createIcons();
+}
+function openValidasi(kid){
+  const k=KARYA.concat(DEMO?D_KARYA:[]).find(x=>x.id===kid);if(!k)return;
+  const t=TUGAS.find(x=>x.id===k.tugas_id);curVal=k;selGrade=k.status==='diterima'||['A','B','C','D','E'].includes(k.status)?k.status:null;
+  $('v-judul').textContent=t?.judul||'-';
+  $('v-info').textContent=`${k.nama||k.email} • ${k.unit_kerja||'-'}`;
+  $('v-desk').textContent=k.deskripsi||'-';
+  $('v-link').href=k.link||'#';
+  const grades=[['A','Sangat Baik','bg-emerald-100 text-emerald-700'],['B','Baik','bg-sky-100 text-sky-700'],['C','Cukup','bg-amber-100 text-amber-700'],['D','Revisi','bg-red-100 text-red-600'],['E','Belum Lengkap','bg-gray-200 text-gray-600']];
+  $('v-grades').innerHTML=grades.map(([g,l,cls])=>`<button onclick="setGrade('${g}')" id="vg-${g}" class="${cls} rounded-xl py-2 text-xs font-bold inline-flex items-center justify-center gap-1 ${selGrade===g?'ring-2 ring-wine-700':''}"><span class="font-extrabold">${g}</span><span>${l}</span></button>`).join('');
+  $('v-fb').value=k.feedback||'';
+  openM('mValidasi');lucide.createIcons();
+}
+function setGrade(g){selGrade=g;['A','B','C','D','E'].forEach(x=>{$('vg-'+x).classList.toggle('ring-2',x===g);$('vg-'+x).classList.toggle('ring-wine-700',x===g);});}
+async function saveValidasi(){
+  if(!curVal)return;
+  if(!selGrade)return showToast('Pilih grade dulu','error');
+  const fb=$('v-fb').value.trim();
+  if((selGrade==='D'||selGrade==='E')&&!fb)return showToast('Umpan balik wajib untuk D/E','error');
+  const data={status:selGrade==='diterima'?'diterima':(selGrade==='D'||selGrade==='E'?'revisi':'diterima'),grade:selGrade,feedback:fb,validator:ME.email,waktu_validasi:new Date().toISOString()};
+  if(DEMO){curVal.status=data.status;curVal.grade=selGrade;curVal.feedback=fb;closeM('mValidasi');loadValidasi();showToast('Validasi disimpan (demo)');return;}
   try{
-    await db.collection('karya').doc(curKarya.id).update({status:st,grade:g,feedback:fb,validator:ME.email,waktu_validasi:new Date().toISOString()});
-    closeM('mVal');showToast('Validasi terkirim ✅');
-    const q=await db.collection('karya').where('status','==','menunggu').get();KARYA_QUEUE=q.docs.map(x=>({id:x.id,...x.data()}));
-    renderQueue();
+    await db.collection('karya').doc(curVal.id).update(data);
+    await db.collection('notifikasi').add({email:curVal.email,jenis:'karya_dinilai',judul:`Karya Anda dinilai ${selGrade}`,pesan:curVal.tugas_judul||'Tugas LMS',waktu:new Date().toISOString(),dibaca:false});
+    closeM('mValidasi');showToast('Validasi disimpan');loadValidasi();
   }catch(e){showToast('Gagal: '+e.message,'error');}
 }
 
-// ===== PROGRES =====
-async function renderProgres(){
-  if(LEVEL>3){$('no-prog').classList.remove('hidden');$('prog-box').classList.add('hidden');return;}
-  $('no-prog').classList.add('hidden');$('prog-box').classList.remove('hidden');
-  let K=[];
-  if(DEMO){K=KARYA_SCOPE;}
-  else if(LEVEL<=2){const s=await db.collection('karya').limit(300).get();K=s.docs.map(x=>x.data());}
-  else{const s=await db.collection('karya').where('unit_kerja','==',ME.instansi).get();K=s.docs.map(x=>x.data());}
-  KARYA_SCOPE=K;
-  const menunggu=K.filter(k=>k.status==='menunggu').length,diterima=K.filter(k=>k.status==='diterima').length,revisi=K.filter(k=>k.status==='revisi').length;
-  $('prog-stats').innerHTML=`<div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Total Laporan</p><p class="text-2xl font-extrabold text-wine-700">${K.length}</p></div><div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Menunggu</p><p class="text-2xl font-extrabold text-amber-500">${menunggu}</p></div><div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Diterima</p><p class="text-2xl font-extrabold text-emerald-600">${diterima}</p></div><div class="bg-white rounded-2xl shadow-card p-4"><p class="text-xs text-gray-400">Revisi</p><p class="text-2xl font-extrabold text-red-500">${revisi}</p></div>`;
-  if(LEVEL<=2){
-    $('prog-top').classList.remove('hidden');
-    const by={};K.forEach(k=>by[k.unit_kerja||'-']=(by[k.unit_kerja||'-']||0)+1);
-    const top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,10);
-    const max=top.length?top[0][1]:1;
-    $('top-list').innerHTML=top.map(([n,c])=>`<div><div class="flex justify-between text-xs font-bold"><span>${n}</span><span>${c}</span></div><div class="h-2 bg-gray-100 rounded-full mt-1"><div class="h-2 bg-wine-700 rounded-full" style="width:${Math.round(c/max*100)}%"></div></div></div>`).join('')||'-';
-    $('prog-title').textContent='Database Laporan';
-    $('prog-list').innerHTML=K.slice(0,50).map(k=>`<div class="flex justify-between items-center border-b border-gray-50 pb-2"><div><p class="font-semibold">${k.nama||'-'} <span class="text-xs text-gray-400">• ${k.unit_kerja||'-'}</span></p><p class="text-xs text-gray-400">${k.judul||'-'} • ${k.kategori||'-'}</p></div><div class="text-right"><span class="text-[9px] font-extrabold px-2 py-1 rounded-full ${k.status==='diterima'?'bg-emerald-100 text-emerald-700':k.status==='revisi'?'bg-red-100 text-red-600':'bg-amber-100 text-amber-700'}">${(k.status||'').toUpperCase()}</span><p class="text-xs font-extrabold text-wine-700 mt-1">${k.grade||'-'}</p></div></div>`).join('')||'<p class="text-gray-400">Belum ada data.</p>';
-  }else{
-    $('prog-top').classList.add('hidden');
-    $('prog-title').textContent='Progres Guru '+ME.instansi+' (Tagihan Wajib)';
-    db.collection('users').where('instansi','==',ME.instansi).get().then(s=>{
-      const G=s.docs.map(x=>x.data()).filter(g=>(g.jabatan||'').includes('Guru')||(g.role||'').includes('guru'));
-      const chain=wajibChain();
-      $('prog-list').innerHTML=G.map(g=>{
-        const dk=chain.filter(t=>{const k=K.find(x=>x.email===g.email&&x.tugas_id===t.id);return k&&k.status==='diterima';}).length;
-        const pct=chain.length?Math.round(dk/chain.length*100):0;
-        return `<div><div class="flex justify-between text-sm"><span class="font-semibold">${g.nama||g.email}</span><span class="font-extrabold text-wine-700">${pct}%</span></div><div class="h-2 bg-gray-100 rounded-full mt-1"><div class="h-2 bg-wine-700 rounded-full" style="width:${pct}%"></div></div></div>`;
-      }).join('')||'<p class="text-gray-400">Belum ada guru.</p>';
-      lucide.createIcons();
-    });
-  }
-  lucide.createIcons();
-}
-function exportCSV(){
-  let csv='Waktu,Nama,Sekolah,Kategori,Judul,Status,Grade,Penilai\n';
-  KARYA_SCOPE.forEach(k=>{csv+=`"${k.waktu_submit||''}","${k.nama||''}","${k.unit_kerja||''}","${k.kategori||''}","${(k.judul||'').replace(/"/g,'""')}","${k.status||''}","${k.grade||''}","${k.validator||''}"\n`;});
-  const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download='lms_laporan_'+today()+'.csv';a.click();
-  showToast('Export CSV berhasil ✅');
+function openNotif(){
+  $('notif-list').innerHTML=NOTIF.length?NOTIF.map(n=>`<div class="border-b border-gray-50 pb-2 ${!n.dibaca?'bg-wine-50 -mx-2 px-2 rounded-lg':''}"><div class="flex justify-between items-start"><div class="flex-1"><p class="font-bold text-sm">${n.judul||'-'}</p><p class="text-xs text-gray-500">${n.pesan||''}</p><p class="text-[10px] text-gray-400 mt-0.5">${(n.waktu||'').slice(0,16).replace('T',' ')}</p></div>${!n.dibaca?'<span class="w-2 h-2 bg-wine-700 rounded-full shrink-0 mt-2"></span>':''}</div></div>`).join(''):'<p class="text-gray-400 text-sm text-center py-4">Tidak ada notifikasi.</p>';
+  const unread=NOTIF.filter(n=>!n.dibaca);
+  if(!DEMO&&unread.length){unread.forEach(n=>{try{db.collection('notifikasi').doc(n.id).update({dibaca:true});}catch(e){}});}
+  openM('mNotif');lucide.createIcons();
 }
 lucide.createIcons();
 </script>
