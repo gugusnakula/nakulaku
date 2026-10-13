@@ -2,174 +2,187 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
 <title>Masuk — NAKULAKU EKOSISTEM</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          primary: '#0D9488',
-          'primary-dark': '#0F766E',
-          'primary-soft': '#CCFBF1',
-        },
-        fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
-      }
-    }
-  }
-</script>
-<style>
-  body {
-    background: linear-gradient(135deg, #0D9488 0%, #0891B2 100%);
-    min-height: 100vh;
-  }
-  .card { backdrop-filter: blur(8px); }
-</style>
+
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="apple-touch-icon" href="assets/img/favicon.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="assets/css/nakula.css" />
 </head>
-<body class="font-sans flex items-center justify-center p-4">
+<body class="login-page">
 
-  <div class="card w-full max-w-md bg-white rounded-3xl shadow-2xl p-8">
+  <div class="login-box">
 
-    <!-- Header -->
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary-soft text-primary-dark mb-4">
-        <i data-lucide="graduation-cap" class="w-8 h-8"></i>
-      </div>
-      <h1 class="text-2xl font-extrabold text-gray-800">NAKULAKU</h1>
-      <p class="text-sm text-gray-500 mt-1">Ekosistem KKG Gugus Nakula</p>
+    <!-- Logo -->
+    <div class="login-logo-wrap">
+      <img src="assets/img/logo.svg" alt="Logo KKG Gugus Nakula" />
     </div>
 
-    <!-- Form -->
-    <form id="formLogin" class="space-y-5" autocomplete="off">
+    <!-- Judul -->
+    <h1 class="login-title">NAKULAKU</h1>
+    <p class="login-subtitle">Ekosistem KKG Gugus Nakula</p>
 
-      <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Email</label>
-        <div class="relative">
-          <i data-lucide="mail" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+    <!-- Form -->
+    <form id="formLogin" class="login-form" autocomplete="off" novalidate>
+
+      <div class="field">
+        <label class="label" for="email">Email</label>
+        <div class="input-wrap">
+          <span data-icon="mail"></span>
           <input
             type="email"
             id="email"
-            required
+            class="input with-icon"
             placeholder="nama@email.com"
-            class="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary"
+            autocomplete="email"
+            required
           />
         </div>
       </div>
 
-      <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-1.5">PIN</label>
-        <div class="relative">
-          <i data-lucide="lock" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+      <div class="field">
+        <label class="label" for="pin">PIN</label>
+        <div class="input-wrap">
+          <span data-icon="lock"></span>
           <input
             type="password"
             id="pin"
-            required
+            class="input with-icon"
+            placeholder="•••••"
             inputmode="numeric"
             maxlength="6"
-            placeholder="•••••"
-            class="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary tracking-widest"
+            autocomplete="current-password"
+            required
           />
-          <button type="button" id="togglePin" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-            <i data-lucide="eye" class="w-4 h-4"></i>
+          <button type="button" id="togglePin" class="input-suffix" aria-label="Tampilkan PIN">
+            <span data-icon="eye"></span>
           </button>
         </div>
       </div>
 
-      <div id="alert" class="hidden text-sm rounded-xl px-3 py-2.5"></div>
+      <div id="alert" class="alert alert-error"></div>
 
-      <button
-        type="submit"
-        id="btnMasuk"
-        class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2"
-      >
-        <i data-lucide="log-in" class="w-4 h-4"></i>
+      <button type="submit" id="btnMasuk" class="btn btn-primary btn-full" style="margin-top:8px;">
+        <span data-icon="logIn"></span>
         <span>Masuk</span>
       </button>
 
     </form>
 
-    <p class="text-center text-xs text-gray-500 mt-6">
-      Lupa PIN? Hubungi admin KKG untuk reset.
+    <p class="login-footer">
+      Lupa PIN? Hubungi <strong>admin KKG</strong> untuk reset.
     </p>
+
+    <div class="divider">GUGUS NAKULA</div>
 
   </div>
 
+  <script src="assets/js/icons.js"></script>
   <script src="assets/js/api.js"></script>
+  <script src="assets/js/ui.js"></script>
   <script>
-    // Ikon Lucide
-    lucide.createIcons();
-
-    // Toggle show/hide PIN
-    const pinEl = document.getElementById('pin');
-    document.getElementById('togglePin').addEventListener('click', () => {
-      pinEl.type = pinEl.type === 'password' ? 'text' : 'password';
+    // ---------- Pasang ikon ke elemen [data-icon] ----------
+    document.querySelectorAll('[data-icon]').forEach(el => {
+      el.innerHTML = Icons.get(el.dataset.icon);
+      el.style.display = 'contents';
     });
 
-    // Kalau sudah ada token valid, langsung ke beranda
+    // ---------- Auto-redirect kalau sudah login ----------
     (async () => {
-      const token = NakulaApi.getToken();
+      const token = Api.getToken();
       if (!token) return;
-      const v = await NakulaApi.verify(token);
+      const v = await Api.verify(token);
       if (v.valid) {
-        NakulaApi.setSession(token, v.profile);
-        window.location.href = 'beranda.html';
+        Api.setSession(token, v.profile);
+        window.location.replace('beranda.html');
       } else {
-        NakulaApi.clearSession();
+        Api.clearSession();
       }
     })();
 
-    // Submit form
+    // ---------- Toggle show/hide PIN ----------
+    const pinEl = document.getElementById('pin');
+    const toggleBtn = document.getElementById('togglePin');
+    let pinVisible = false;
+
+    toggleBtn.addEventListener('click', () => {
+      pinVisible = !pinVisible;
+      pinEl.type = pinVisible ? 'text' : 'password';
+      toggleBtn.innerHTML = Icons.get(pinVisible ? 'eyeOff' : 'eye');
+    });
+
+    // ---------- Submit form ----------
     const form = document.getElementById('formLogin');
     const alertBox = document.getElementById('alert');
     const btnMasuk = document.getElementById('btnMasuk');
 
     function showAlert(pesan, tipe = 'error') {
       alertBox.textContent = pesan;
-      alertBox.className = 'text-sm rounded-xl px-3 py-2.5 ' +
-        (tipe === 'error'
-          ? 'bg-red-50 text-red-700 border border-red-100'
-          : 'bg-green-50 text-green-700 border border-green-100');
+      alertBox.className = 'alert alert-' + tipe + ' show';
+    }
+    function hideAlert() {
+      alertBox.className = 'alert';
     }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      alertBox.classList.add('hidden');
-      btnMasuk.disabled = true;
-      btnMasuk.innerHTML = '<span class="animate-pulse">Memproses…</span>';
+      hideAlert();
+
+      const email = document.getElementById('email').value.trim();
+      const pin = pinEl.value.trim();
+
+      if (!email || !pin) {
+        showAlert('Email dan PIN wajib diisi.');
+        return;
+      }
+
+      UI.btnLoading(btnMasuk, 'Memeriksa…');
 
       try {
-        const email = document.getElementById('email').value.trim();
-        const pin = pinEl.value.trim();
+        const res = await Api.login(email, pin);
 
-        const res = await NakulaApi.login(email, pin);
-
-        if (res.error) {
-          showAlert(res.error, 'error');
+        if (!res || res.error) {
+          showAlert(res?.error || 'Login gagal.');
           return;
         }
+
         if (!res.token) {
-          showAlert('Login gagal. Coba lagi.', 'error');
+          showAlert('Login gagal: server tidak mengirim token.');
           return;
         }
 
-        NakulaApi.setSession(res.token, res.profile);
-        showAlert('Login berhasil! Mengalihkan…', 'success');
-        setTimeout(() => window.location.href = 'beranda.html', 600);
+        Api.setSession(res.token, res.profile);
+        showAlert('Berhasil! Mengalihkan…', 'success');
+        setTimeout(() => window.location.replace('beranda.html'), 500);
 
       } catch (err) {
         console.error(err);
-        showAlert('Tidak bisa terhubung ke server. Cek koneksi.', 'error');
+        showAlert('Tidak bisa terhubung ke server. Cek koneksi internet.');
       } finally {
-        btnMasuk.disabled = false;
-        btnMasuk.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i><span>Masuk</span>';
-        lucide.createIcons();
+        UI.btnReset(btnMasuk);
       }
     });
+
+    // Enter di field PIN → submit
+    pinEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        form.requestSubmit();
+      }
+    });
+
+    // Fokus otomatis
+    window.addEventListener('load', () => {
+      const emailEl = document.getElementById('email');
+      if (emailEl && !emailEl.value) emailEl.focus();
+    });
   </script>
+
 </body>
 </html>
