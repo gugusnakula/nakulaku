@@ -2,211 +2,286 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
 <title>Beranda — NAKULAKU EKOSISTEM</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          primary: '#0D9488',
-          'primary-dark': '#0F766E',
-          'primary-soft': '#CCFBF1',
-        },
-        fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
-      }
-    }
-  }
-</script>
+
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="apple-touch-icon" href="assets/img/favicon.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="assets/css/nakula.css" />
 </head>
-<body class="font-sans bg-gray-50 min-h-screen">
+<body>
 
-  <!-- Header -->
-  <header class="bg-white border-b border-gray-100 sticky top-0 z-10">
-    <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <div class="w-9 h-9 rounded-xl bg-primary-soft text-primary-dark flex items-center justify-center">
-          <i data-lucide="graduation-cap" class="w-5 h-5"></i>
-        </div>
-        <div class="leading-tight">
-          <div class="font-extrabold text-gray-800">NAKULAKU</div>
-          <div class="text-xs text-gray-500">Ekosistem KKG Nakula</div>
-        </div>
-      </div>
-      <button id="btnLogout" class="text-sm text-gray-500 hover:text-red-600 flex items-center gap-1">
-        <i data-lucide="log-out" class="w-4 h-4"></i>
-        <span class="hidden sm:inline">Keluar</span>
-      </button>
+<!-- ============================ MOBILE HEADER ============================ -->
+<header class="app-header">
+  <div class="app-header-brand">
+    <div class="app-header-logo">
+      <img src="assets/img/logo-mark.svg" alt="Nakula" />
     </div>
-  </header>
+    <div class="app-header-text">
+      <div class="app-header-title">NAKULAKU</div>
+      <div class="app-header-sub">KKG Gugus Nakula</div>
+    </div>
+  </div>
+  <button class="header-btn" data-act="logout" aria-label="Keluar">
+    <span data-icon="logOut"></span>
+  </button>
+</header>
 
-  <main class="max-w-3xl mx-auto px-4 py-5 space-y-5">
+<!-- ============================ LAYOUT ============================ -->
+<div class="desktop-layout">
 
-    <!-- Kartu Profil -->
-    <section class="bg-white rounded-2xl border border-gray-100 p-5 flex items-center gap-4">
-      <div id="fotoProfil" class="w-14 h-14 rounded-2xl bg-primary-soft text-primary-dark flex items-center justify-center font-extrabold text-xl overflow-hidden relative">
+  <!-- ============================ SIDEBAR DESKTOP ============================ -->
+  <aside class="desktop-sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-logo">
+        <img src="assets/img/logo-mark.svg" alt="Nakula" />
       </div>
-      <div class="flex-1 min-w-0">
-        <div id="namaProfil" class="font-bold text-gray-800 truncate">Memuat…</div>
-        <div id="sekolahProfil" class="text-sm text-gray-500 truncate">—</div>
-        <div id="peranProfil" class="mt-1 flex flex-wrap gap-1"></div>
+      <div class="sidebar-brand-text">
+        <div class="name">NAKULAKU</div>
+        <div class="sub">KKG Gugus Nakula</div>
       </div>
-    </section>
+    </div>
 
-    <!-- Pengumuman -->
-    <section>
-      <div class="flex items-center gap-2 mb-3">
-        <i data-lucide="megaphone" class="w-5 h-5 text-primary"></i>
-        <h2 class="font-bold text-gray-800">Pengumuman</h2>
-      </div>
-      <div id="listPengumuman" class="space-y-3">
-        <div class="text-sm text-gray-400">Memuat…</div>
-      </div>
-    </section>
+    <nav class="sidebar-menu">
+      <a class="sidebar-item active" data-nav="beranda" href="beranda.html">
+        <span data-icon="home"></span> Beranda
+      </a>
+      <a class="sidebar-item" data-nav="pertemuan" href="#">
+        <span data-icon="calendar"></span> Pertemuan
+      </a>
+      <a class="sidebar-item" data-nav="tugas" href="#">
+        <span data-icon="clipboard"></span> Tugas
+      </a>
+      <a class="sidebar-item" data-nav="presensi" href="#">
+        <span data-icon="mapPin"></span> Presensi
+      </a>
+      <a class="sidebar-item" data-nav="pengumuman" href="#">
+        <span data-icon="megaphone"></span> Pengumuman
+      </a>
+      <a class="sidebar-item" data-nav="profil" href="#">
+        <span data-icon="user"></span> Profil
+      </a>
+    </nav>
+  </aside>
 
-    <!-- Pertemuan -->
-    <section>
-      <div class="flex items-center gap-2 mb-3">
-        <i data-lucide="calendar-days" class="w-5 h-5 text-primary"></i>
-        <h2 class="font-bold text-gray-800">Pertemuan</h2>
-      </div>
-      <div id="listPertemuan" class="space-y-3">
-        <div class="text-sm text-gray-400">Memuat…</div>
-      </div>
-    </section>
+  <!-- ============================ MAIN CONTENT ============================ -->
+  <main class="desktop-main">
 
+    <!-- Topbar desktop -->
+    <div class="desktop-topbar">
+      <h2>Beranda</h2>
+      <div class="user-chip" id="userChip"></div>
+    </div>
+
+    <div class="container page" style="padding-top:20px;">
+
+      <!-- ============================ PROFIL CARD ============================ -->
+      <section id="profilCard" class="profile-card" style="margin-bottom:24px;">
+        <div class="profile-avatar" id="profilAvatar">?</div>
+        <div class="profile-info">
+          <div class="profile-name" id="profilNama">Memuat…</div>
+          <div class="profile-school" id="profilSekolah">—</div>
+          <div class="profile-badges" id="profilBadges"></div>
+        </div>
+      </section>
+
+      <!-- ============================ PENGUMUMAN ============================ -->
+      <section style="margin-bottom:24px;">
+        <div class="section-head">
+          <h3><span data-icon="megaphone"></span> Pengumuman</h3>
+          <a class="more" href="#">Lihat semua</a>
+        </div>
+        <div id="listPengumuman"></div>
+      </section>
+
+      <!-- ============================ PERTEMUAN ============================ -->
+      <section style="margin-bottom:24px;">
+        <div class="section-head">
+          <h3><span data-icon="calendar"></span> Pertemuan</h3>
+          <a class="more" href="#">Semua</a>
+        </div>
+        <div id="listPertemuan"></div>
+      </section>
+
+    </div>
   </main>
+</div>
 
-  <script src="assets/js/api.js"></script>
-  <script>
-    lucide.createIcons();
+<!-- ============================ BOTTOM NAV (MOBILE) ============================ -->
+<nav class="bottom-nav">
+  <a class="nav-item active" data-nav="beranda" href="beranda.html">
+    <span data-icon="home"></span>
+    Beranda
+  </a>
+  <a class="nav-item" data-nav="pertemuan" href="#">
+    <span data-icon="calendar"></span>
+    Pertemuan
+  </a>
+  <a class="nav-item" data-nav="tugas" href="#">
+    <span data-icon="clipboard"></span>
+    Tugas
+  </a>
+  <a class="nav-item" data-nav="presensi" href="#">
+    <span data-icon="mapPin"></span>
+    Presensi
+  </a>
+  <a class="nav-item" data-nav="profil" href="#">
+    <span data-icon="user"></span>
+    Profil
+  </a>
+</nav>
 
-    // ---------- Cek sesi ----------
-    (async () => {
-      const token = NakulaApi.getToken();
-      if (!token) return NakulaApi.logout();
+<!-- ============================ SCRIPTS ============================ -->
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+// ============================================================
+// INIT
+// ============================================================
 
-      const v = await NakulaApi.verify(token);
-      if (!v.valid) {
-        alert('Sesi habis: ' + (v.error || 'Silakan login ulang.'));
-        return NakulaApi.logout();
-      }
+// Pasang ikon ke [data-icon]
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
 
-      NakulaApi.setSession(token, v.profile);
-      renderProfil(v.profile);
-      loadPengumuman();
-      loadPertemuan();
-    })();
+// Bind tombol logout
+UI.bindLogout();
 
-    // ---------- Tombol logout ----------
-    document.getElementById('btnLogout').addEventListener('click', () => {
-      if (confirm('Keluar dari akun?')) NakulaApi.logout();
-    });
+// ============================================================
+// CEK SESI + LOAD DATA
+// ============================================================
+(async () => {
+  const profile = await Api.requireLogin();
+  if (!profile) return;
 
-    // ---------- Render profil ----------
-    function renderProfil(p) {
-      document.getElementById('namaProfil').textContent = p.nama || '-';
-      document.getElementById('sekolahProfil').textContent =
-        p.sekolah ? `${p.sekolah.nama} • ${p.jabatan || '-'}` : (p.jabatan || '-');
+  renderProfil(profile);
+  UI.renderUserHeader(profile);
 
-      // Foto
-      const wrap = document.getElementById('fotoProfil');
-      const url = NakulaApi.fotoUrl('t');
-      if (url) {
-        wrap.innerHTML = `<img src="${url}" class="w-full h-full object-cover" onerror="this.remove()">`;
-      } else {
-        wrap.textContent = NakulaApi.inisial(p.nama);
-      }
+  // Load paralel
+  loadPengumuman();
+  loadPertemuan();
+})();
 
-      // Peran
-      const peranEl = document.getElementById('peranProfil');
-      peranEl.innerHTML = (p.peran || []).map(r => {
-        const label = r.replace('_', ' ');
-        return `<span class="text-xs px-2 py-0.5 rounded-full bg-primary-soft text-primary-dark font-semibold">${label}</span>`;
-      }).join('');
-    }
+// ============================================================
+// RENDER PROFIL
+// ============================================================
+function renderProfil(p) {
+  // Avatar
+  const avatarEl = document.getElementById('profilAvatar');
+  const fotoUrl = Api.fotoSayaUrl('t');
+  if (fotoUrl) {
+    const img = new Image();
+    img.src = fotoUrl;
+    img.alt = p.nama;
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+    img.onerror = () => { avatarEl.textContent = (p.nama || 'G').charAt(0).toUpperCase(); };
+    avatarEl.innerHTML = '';
+    avatarEl.appendChild(img);
+  } else {
+    avatarEl.textContent = (p.nama || 'G').charAt(0).toUpperCase();
+  }
 
-    // ---------- Render pengumuman ----------
-    async function loadPengumuman() {
-      const el = document.getElementById('listPengumuman');
-      const res = await NakulaApi.call('pengumuman.list');
+  // Nama & sekolah
+  document.getElementById('profilNama').textContent = p.nama || '-';
+  document.getElementById('profilSekolah').textContent =
+    p.sekolah ? `${p.sekolah.nama} · ${p.jabatan || '-'}` : (p.jabatan || '-');
 
-      if (!res.ok || !res.data || res.data.length === 0) {
-        el.innerHTML = '<div class="text-sm text-gray-400">Belum ada pengumuman.</div>';
-        return;
-      }
+  // Badge peran
+  const badges = document.getElementById('profilBadges');
+  const peran = p.peran || [];
+  badges.innerHTML = peran.map(r => {
+    const label = r.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    return `<span class="badge">${UI.escapeHtml(label)}</span>`;
+  }).join('');
+}
 
-      el.innerHTML = res.data.map(u => `
-        <div class="bg-white rounded-2xl border ${u.penting ? 'border-amber-200 bg-amber-50/50' : 'border-gray-100'} p-4">
-          <div class="flex items-start gap-2">
-            ${u.penting ? '<i data-lucide="pin" class="w-4 h-4 text-amber-500 mt-0.5 shrink-0"></i>' : ''}
-            <div class="flex-1">
-              <div class="font-semibold text-gray-800">${escapeHtml(u.judul)}</div>
-              <div class="text-sm text-gray-600 mt-1 whitespace-pre-line">${escapeHtml(u.isi || '')}</div>
-              <div class="text-xs text-gray-400 mt-2">${formatTanggal(u.dibuat_pada)}</div>
-            </div>
-          </div>
+// ============================================================
+// PENGUMUMAN
+// ============================================================
+async function loadPengumuman() {
+  const el = document.getElementById('listPengumuman');
+  el.innerHTML = UI.skeletonList(2, 90);
+
+  const res = await Api.call('pengumuman.list');
+
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat pengumuman.');
+    return;
+  }
+  if (!res.data || res.data.length === 0) {
+    el.innerHTML = UI.emptyHtml('megaphone', 'Belum ada pengumuman');
+    return;
+  }
+
+  el.innerHTML = res.data.map(u => `
+    <div class="announce">
+      <div class="announce-head">
+        ${u.penting ? `<span style="color:var(--gold);">${Icons.get('sparkles', { class: 'icon-sm' })}</span>` : ''}
+        <div class="announce-title">${UI.escapeHtml(u.judul)}</div>
+      </div>
+      ${u.isi ? `<div class="announce-body">${UI.escapeHtml(u.isi)}</div>` : ''}
+      <div class="announce-date">${UI.timeAgo(u.dibuat_pada)}</div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// PERTEMUAN
+// ============================================================
+async function loadPertemuan() {
+  const el = document.getElementById('listPertemuan');
+  el.innerHTML = UI.skeletonList(2, 72);
+
+  const res = await Api.call('pertemuan.list');
+
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat pertemuan.');
+    return;
+  }
+  if (!res.data || res.data.length === 0) {
+    el.innerHTML = UI.emptyHtml('calendar', 'Belum ada pertemuan', 'Jadwal akan muncul di sini.');
+    return;
+  }
+
+  el.innerHTML = res.data.map(p => `
+    <div class="pertemuan-item" onclick="bukaPertemuan(${p.id})">
+      <div class="pertemuan-number">
+        <div class="num">${p.urutan}</div>
+        <div class="lbl">PERTEMUAN</div>
+      </div>
+      <div class="pertemuan-body">
+        <div class="pertemuan-title">${UI.escapeHtml(p.judul)}</div>
+        <div class="pertemuan-meta">
+          ${Icons.get('calendar', { class: 'icon-sm' })}
+          ${UI.formatTanggal(p.tanggal)}
         </div>
-      `).join('');
-      lucide.createIcons();
-    }
+        ${p.lokasi_nama ? `
+          <div class="pertemuan-meta">
+            ${Icons.get('mapPin', { class: 'icon-sm' })}
+            ${UI.escapeHtml(p.lokasi_nama)}
+          </div>` : ''}
+      </div>
+      <span class="chevron">${Icons.get('chevronRight', { class: 'icon' })}</span>
+    </div>
+  `).join('');
+}
 
-    // ---------- Render pertemuan ----------
-    async function loadPertemuan() {
-      const el = document.getElementById('listPertemuan');
-      const res = await NakulaApi.call('pertemuan.list');
+// ============================================================
+// NAVIGASI (sementara)
+// ============================================================
+function bukaPertemuan(id) {
+  // Halaman detail belum dibuat — sementara toast
+  UI.toast('Detail pertemuan #' + id + ' segera tersedia', 'info');
+}
+</script>
 
-      if (!res.ok || !res.data || res.data.length === 0) {
-        el.innerHTML = '<div class="text-sm text-gray-400">Belum ada pertemuan.</div>';
-        return;
-      }
-
-      el.innerHTML = res.data.map(p => `
-        <div class="bg-white rounded-2xl border border-gray-100 p-4 flex items-start gap-3 hover:border-primary/40 transition cursor-pointer"
-             onclick="bukaPertemuan(${p.id})">
-          <div class="w-12 h-12 rounded-xl bg-primary-soft text-primary-dark flex flex-col items-center justify-center font-bold">
-            <div class="text-lg leading-none">${p.urutan}</div>
-            <div class="text-[10px] font-semibold">PERTEMUAN</div>
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="font-semibold text-gray-800 truncate">${escapeHtml(p.judul)}</div>
-            <div class="text-sm text-gray-500 mt-0.5 flex items-center gap-1">
-              <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
-              ${formatTanggal(p.tanggal)}
-            </div>
-            ${p.lokasi_nama ? `
-              <div class="text-sm text-gray-500 mt-0.5 flex items-center gap-1">
-                <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
-                ${escapeHtml(p.lokasi_nama)}
-              </div>` : ''}
-          </div>
-          <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300 self-center"></i>
-        </div>
-      `).join('');
-      lucide.createIcons();
-    }
-
-    function bukaPertemuan(id) {
-      // halaman detail belum dibuat — sementara alert
-      alert('Detail pertemuan #' + id + ' akan tersedia di tahap berikutnya.');
-    }
-
-    // ---------- Helper ----------
-    function escapeHtml(s) {
-      return String(s ?? '').replace(/[&<>"']/g, c => ({
-        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-      }[c]));
-    }
-    function formatTanggal(s) {
-      if (!s) return '-';
-      const d = new Date(s);
-      return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-    }
-  </script>
 </body>
 </html>
