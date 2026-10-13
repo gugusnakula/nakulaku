@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>Profil — NAKULAKU</title>
+
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/nakula.css" />
+
+<style>
+  .profile-hero {
+    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon) 100%);
+    color: white;
+    border-radius: var(--r-xl);
+    padding: 28px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(125,29,58,.25);
+    margin-bottom: 20px;
+  }
+  .profile-hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.08;
+  }
+  .avatar-wrap {
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.18);
+    border: 3px solid var(--gold);
+    margin: 0 auto 14px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    font-weight: 800;
+    color: white;
+    cursor: pointer;
+    transition: transform .15s;
+  }
+  .avatar-wrap:hover { transform: scale(1.03); }
+  .avatar-wrap img {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .avatar-edit {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--maroon);
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--maroon);
+    z-index: 2;
+  }
+  .profile-hero .nama {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .profile-hero .sekolah {
+    font-size: 13px;
+    opacity: 0.85;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .profile-hero .badges {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .profile-hero .badges .badge {
+    background: rgba(255,255,255,.18);
+    color: white;
+    border: 1px solid rgba(201,169,97,.4);
+  }
+
+  .info-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .info-card-title {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--maroon);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    gap: 12px;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-row .lbl {
+    color: var(--muted);
+    font-weight: 600;
+    flex-shrink: 0;
+    min-width: 110px;
+  }
+  .info-row .val {
+    font-weight: 700;
+    text-align: right;
+    word-break: break-word;
+    flex: 1;
+  }
+
+  .file-input-hidden { display: none; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Profil</div>
+      <div class="app-header-sub">KKG Gugus Nakula</div>
+    </div>
+  </div>
+</header>
+
+<main class="container page" style="max-width:720px;padding-top:16px;">
+
+  <div id="loading">
+    <div class="skeleton" style="height:220px;border-radius:24px;margin-bottom:20px;"></div>
+    <div class="skeleton" style="height:180px;border-radius:16px;margin-bottom:14px;"></div>
+    <div class="skeleton" style="height:200px;border-radius:16px;"></div>
+  </div>
+
+  <div id="content" class="hidden">
+
+    <!-- Hero -->
+    <div class="profile-hero" id="hero"></div>
+
+    <!-- Info Diri -->
+    <div class="info-card">
+      <div class="info-card-title">
+        <span data-icon="user" class="icon-sm"></span>
+        Data Diri
+      </div>
+      <div id="infoDiri"></div>
+    </div>
+
+    <!-- Ganti PIN -->
+    <div class="info-card">
+      <div class="info-card-title">
+        <span data-icon="lock" class="icon-sm"></span>
+        Ganti PIN
+      </div>
+      <p class="text-sm text-muted" style="margin-bottom:14px;">
+        PIN digunakan untuk login. Setelah ganti PIN, Anda akan diminta login ulang.
+      </p>
+
+      <div class="field" style="margin-bottom:12px;">
+        <label class="label">PIN Lama</label>
+        <input type="password" id="pinLama" class="input" inputmode="numeric" maxlength="6" placeholder="•••••" />
+      </div>
+      <div class="field" style="margin-bottom:12px;">
+        <label class="label">PIN Baru</label>
+        <input type="password" id="pinBaru" class="input" inputmode="numeric" maxlength="6" placeholder="5–6 digit angka" />
+      </div>
+      <div class="field" style="margin-bottom:16px;">
+        <label class="label">Ulangi PIN Baru</label>
+        <input type="password" id="pinUlang" class="input" inputmode="numeric" maxlength="6" placeholder="Ulangi PIN baru" />
+      </div>
+
+      <div id="alertPin" class="alert alert-error" style="margin-bottom:12px;"></div>
+
+      <button class="btn btn-primary btn-full" id="btnGantiPin">
+        <span data-icon="check"></span>
+        Simpan PIN Baru
+      </button>
+    </div>
+
+    <!-- Info Sistem -->
+    <div class="info-card">
+      <div class="info-card-title">
+        <span data-icon="info" class="icon-sm"></span>
+        Tentang
+      </div>
+      <div class="text-sm text-muted" style="line-height:1.6;">
+        <strong>NAKULAKU EKOSISTEM</strong><br />
+        Sistem Informasi KKG Gugus Nakula, Kecamatan Selogiri.<br />
+        Versi 1.0
+      </div>
+      <button class="btn btn-secondary btn-full" id="btnLogout" style="margin-top:16px;">
+        <span data-icon="logOut"></span>
+        Keluar dari Akun
+      </button>
+    </div>
+
+  </div>
+
+  <input type="file" id="fileFoto" class="file-input-hidden" accept="image/*" />
+
+</main>
+
+<nav class="bottom-nav">
+  <a class="nav-item" data-nav="beranda" href="beranda.html"><span data-icon="home"></span> Beranda</a>
+  <a class="nav-item" data-nav="pertemuan" href="beranda.html"><span data-icon="calendar"></span> Pertemuan</a>
+  <a class="nav-item" data-nav="tugas" href="beranda.html"><span data-icon="clipboard"></span> Tugas</a>
+  <a class="nav-item" data-nav="presensi" href="beranda.html"><span data-icon="mapPin"></span> Presensi</a>
+  <a class="nav-item active" data-nav="profil" href="#"><span data-icon="user"></span> Profil</a>
+</nav>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+
+let profile;
+
+(async () => {
+  profile = await Api.requireLogin();
+  if (!profile) return;
+  await loadProfile();
+  render();
+})();
+
+async function loadProfile() {
+  const res = await Api.call('profile.saya');
+  if (res.ok && res.data) {
+    profile = res.data;
+    Api.updateProfile(profile);
+  }
+}
+
+function render() {
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('content').classList.remove('hidden');
+
+  // Hero
+  const init = (profile.nama || 'G').charAt(0).toUpperCase();
+  const fotoUrl = Api.fotoSayaUrl('t');
+
+  document.getElementById('hero').innerHTML = `
+    <div class="avatar-wrap" id="avatarWrap">
+      <span>${init}</span>
+      ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.remove()">` : ''}
+      <div class="avatar-edit">
+        ${Icons.get('camera', { class: 'icon-sm' })}
+      </div>
+    </div>
+    <div class="nama">${UI.escapeHtml(profile.nama || '-')}</div>
+    <div class="sekolah">${UI.escapeHtml(profile.sekolah?.nama || '-')}</div>
+    <div class="badges">
+      ${(profile.peran || []).map(r =>
+        `<span class="badge">${UI.escapeHtml(r.replace(/_/g, ' '))}</span>`
+      ).join('')}
+    </div>
+  `;
+
+  document.getElementById('avatarWrap').addEventListener('click', () => {
+    document.getElementById('fileFoto').click();
+  });
+
+  // Info Diri
+  document.getElementById('infoDiri').innerHTML = `
+    <div class="info-row">
+      <span class="lbl">Nama Lengkap</span>
+      <span class="val">${UI.escapeHtml(profile.nama || '-')}</span>
+    </div>
+    <div class="info-row">
+      <span class="lbl">Email</span>
+      <span class="val">${UI.escapeHtml(profile.email || '-')}</span>
+    </div>
+    <div class="info-row">
+      <span class="lbl">NIP</span>
+      <span class="val">${UI.escapeHtml(profile.nip || 'Non-ASN')}</span>
+    </div>
+    <div class="info-row">
+      <span class="lbl">Jabatan</span>
+      <span class="val">${UI.escapeHtml(profile.jabatan || '-')}</span>
+    </div>
+    <div class="info-row">
+      <span class="lbl">Jenis GTK</span>
+      <span class="val">${UI.escapeHtml(profile.jenis_gtk || '-')}</span>
+    </div>
+    <div class="info-row">
+      <span class="lbl">Sekolah</span>
+      <span class="val">${UI.escapeHtml(profile.sekolah?.nama || '-')}</span>
+    </div>
+    <div class="info-row">
+      <span class="lbl">NPSN</span>
+      <span class="val">${UI.escapeHtml(profile.sekolah?.npsn || '-')}</span>
+    </div>
+  `;
+
+  // Event handlers
+  document.getElementById('btnGantiPin').addEventListener('click', gantiPin);
+  document.getElementById('btnLogout').addEventListener('click', async () => {
+    const ok = await UI.konfirmasi('Keluar', 'Yakin ingin keluar dari akun?', { danger: true, okText: 'Keluar' });
+    if (ok) Api.logout();
+  });
+  document.getElementById('fileFoto').addEventListener('change', uploadFoto);
+}
+
+// ============================================================
+// GANTI PIN
+// ============================================================
+async function gantiPin() {
+  const pinLama = document.getElementById('pinLama').value.trim();
+  const pinBaru = document.getElementById('pinBaru').value.trim();
+  const pinUlang = document.getElementById('pinUlang').value.trim();
+  const alertEl = document.getElementById('alertPin');
+  const btn = document.getElementById('btnGantiPin');
+
+  alertEl.classList.remove('show');
+
+  if (!pinLama || !pinBaru || !pinUlang) {
+    alertEl.textContent = 'Semua field wajib diisi.';
+    alertEl.classList.add('show');
+    return;
+  }
+  if (!/^\d{5,6}$/.test(pinBaru)) {
+    alertEl.textContent = 'PIN baru harus 5–6 digit angka.';
+    alertEl.classList.add('show');
+    return;
+  }
+  if (pinBaru !== pinUlang) {
+    alertEl.textContent = 'PIN baru dan ulangi tidak sama.';
+    alertEl.classList.add('show');
+    return;
+  }
+
+  const ok = await UI.konfirmasi(
+    'Ganti PIN',
+    'Setelah PIN diubah, Anda akan otomatis keluar. Lanjutkan?',
+    { okText: 'Ya, Ganti' }
+  );
+  if (!ok) return;
+
+  UI.btnLoading(btn, 'Menyimpan…');
+
+  const res = await Api.call('profile.ganti_pin', {
+    pin_lama: pinLama,
+    pin_baru: pinBaru,
+  });
+
+  UI.btnReset(btn);
+
+  if (!res.ok) {
+    alertEl.textContent = res.error || 'Gagal ganti PIN.';
+    alertEl.classList.add('show');
+    return;
+  }
+
+  UI.sukses('PIN berhasil diubah. Login ulang…');
+  setTimeout(() => Api.logout(), 1500);
+}
+
+// ============================================================
+// UPLOAD FOTO
+// ============================================================
+async function uploadFoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  e.target.value = '';
+
+  if (!file.type.startsWith('image/')) {
+    UI.gagal('File harus berupa gambar.');
+    return;
+  }
+
+  UI.toast('Memproses foto…', 'info');
+
+  try {
+    const dataUrl = await kompresGambar(file, 480, 0.75);
+
+    // Cek ukuran
+    const sizeKb = Math.round((dataUrl.length * 3 / 4) / 1024);
+    if (sizeKb > 200) {
+      UI.gagal('Foto terlalu besar (' + sizeKb + ' KB). Coba foto lain.');
+      return;
+    }
+
+    const res = await Api.call('profile.upload_foto', { foto: dataUrl });
+
+    if (!res.ok) {
+      UI.gagal(res.error || 'Gagal upload foto.');
+      return;
+    }
+
+    UI.sukses('Foto berhasil diperbarui!');
+    Api.updateProfile({ foto_thumb_url: res.data.foto_url });
+
+    // Refresh tampilan
+    setTimeout(() => location.reload(), 800);
+
+  } catch (err) {
+    console.error(err);
+    UI.gagal('Gagal memproses foto.');
+  }
+}
+
+function kompresGambar(file, maxSize, quality) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width;
+        let h = img.height;
+        const ratio = Math.min(maxSize / w, maxSize / h, 1);
+        w = Math.round(w * ratio);
+        h = Math.round(h * ratio);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+
+        // Crop center ke 1:1
+        const size = Math.min(w, h);
+        const sx = (w - size) / 2;
+        const sy = (h - size) / 2;
+        ctx.drawImage(img, sx, sy, size, size, 0, 0, size, size);
+
+        const out = canvas.toDataURL('image/webp', quality);
+        resolve(out);
+      };
+      img.onerror = reject;
+      img.src = ev.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+</script>
+
+</body>
+</html>
