@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>Detail Tugas — NAKULAKU</title>
+
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/nakula.css" />
+
+<style>
+  .hero {
+    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon) 100%);
+    color: white;
+    border-radius: var(--r-xl);
+    padding: 22px 20px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(125,29,58,.25);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.08;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(201,169,97,.4);
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .hero-title {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    opacity: 0.9;
+    position: relative;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--maroon);
+    margin-bottom: 10px;
+    margin-top: 20px;
+  }
+
+  .desc-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 14px 16px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    white-space: pre-line;
+  }
+
+  .status-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .link-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .link-box a {
+    flex: 1;
+    font-weight: 600;
+    font-size: 13px;
+    word-break: break-all;
+    color: var(--maroon);
+  }
+
+  .comment-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .comment-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .comment-avatar img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .comment-body {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 10px 12px;
+    min-width: 0;
+  }
+  .comment-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .comment-name {
+    font-weight: 700;
+    font-size: 12.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .comment-role {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    flex-shrink: 0;
+  }
+  .comment-role.guru { background: var(--maroon-soft); color: var(--maroon); }
+  .comment-role.narasumber { background: var(--gold-soft); color: var(--gold-dark); }
+  .comment-role.pengurus { background: var(--info-soft); color: var(--info); }
+  .comment-text {
+    font-size: 13px;
+    line-height: 1.55;
+    white-space: pre-line;
+    word-break: break-word;
+  }
+  .comment-time {
+    font-size: 10.5px;
+    color: #B5A8AC;
+    font-weight: 600;
+    margin-top: 6px;
+  }
+
+  .compose {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    align-items: flex-end;
+  }
+  .compose textarea {
+    flex: 1;
+    resize: none;
+    min-height: 44px;
+    max-height: 120px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: var(--r-md);
+    font-family: inherit;
+    font-size: 13.5px;
+  }
+  .compose textarea:focus {
+    outline: none;
+    border-color: var(--maroon);
+    box-shadow: 0 0 0 4px rgba(125,29,58,.08);
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <button class="header-btn" onclick="history.back()" aria-label="Kembali">
+      <span data-icon="chevronLeft"></span>
+    </button>
+    <div class="app-header-text">
+      <div class="app-header-title">Detail Tugas</div>
+      <div class="app-header-sub">KKG Gugus Nakula</div>
+    </div>
+  </div>
+  <button class="header-btn" data-act="logout">
+    <span data-icon="logOut"></span>
+  </button>
+</header>
+
+<main class="container page" style="max-width:720px;padding-top:16px;">
+
+  <div id="loading">
+    <div class="skeleton" style="height:140px;border-radius:24px;margin-bottom:20px;"></div>
+    <div class="skeleton" style="height:100px;border-radius:16px;margin-bottom:12px;"></div>
+    <div class="skeleton" style="height:200px;border-radius:16px;"></div>
+  </div>
+
+  <div id="content" class="hidden">
+
+    <div class="hero" id="hero"></div>
+
+    <div class="section-title">
+      <span data-icon="fileText" class="icon-sm"></span>
+      Instruksi
+    </div>
+    <div class="desc-box" id="deskripsi">—</div>
+
+    <div id="pengumpulanSection"></div>
+
+    <div id="komentarSection" class="hidden">
+      <div class="section-title">
+        <span data-icon="messageCircle" class="icon-sm"></span>
+        Diskusi
+        <span id="jumlahKomentar" style="font-size:11px;font-weight:600;color:var(--muted);margin-left:auto;"></span>
+      </div>
+      <div id="daftarKomentar"></div>
+      <div class="compose">
+        <textarea id="inputKomentar" placeholder="Tulis komentar…"></textarea>
+        <button class="btn btn-primary btn-icon" id="btnKirimKomentar" style="width:44px;height:44px;">
+          <span data-icon="send" class="icon-sm"></span>
+        </button>
+      </div>
+    </div>
+
+    <div id="evaluatorPanel" class="hidden" style="margin-top:24px;">
+      <div class="section-title">
+        <span data-icon="award" class="icon-sm"></span>
+        Panel Evaluator
+      </div>
+      <div class="card">
+        <div class="field" style="margin-bottom:12px;">
+          <label class="label">Nilai (0–100)</label>
+          <input type="number" id="inputNilai" class="input" min="0" max="100" placeholder="—" />
+        </div>
+        <div class="field" style="margin-bottom:12px;">
+          <label class="label">Status</label>
+          <select id="inputStatus" class="input">
+            <option value="">— Pilih status —</option>
+            <option value="menunggu">Menunggu</option>
+            <option value="diterima">Diterima</option>
+            <option value="revisi">Perlu Revisi</option>
+            <option value="ditolak">Ditolak</option>
+          </select>
+        </div>
+        <button class="btn btn-primary btn-full" id="btnSimpanNilai">
+          <span data-icon="check"></span>
+          Simpan Penilaian
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="error" class="hidden"></div>
+
+</main>
+
+<nav class="bottom-nav">
+  <a class="nav-item" data-nav="beranda" href="beranda.html"><span data-icon="home"></span> Beranda</a>
+  <a class="nav-item" data-nav="pertemuan" href="beranda.html"><span data-icon="calendar"></span> Pertemuan</a>
+  <a class="nav-item active" data-nav="tugas" href="#"><span data-icon="clipboard"></span> Tugas</a>
+  <a class="nav-item" data-nav="presensi" href="#"><span data-icon="mapPin"></span> Presensi</a>
+  <a class="nav-item" data-nav="profil" href="#"><span data-icon="user"></span> Profil</a>
+</nav>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+UI.bindLogout();
+
+const params = new URLSearchParams(window.location.search);
+const tugasId = Number(params.get('id'));
+
+let state = {
+  tugas: null,
+  pertemuan: null,
+  pengumpulan: null,
+  komentar: [],
+  bisa_nilai: false,
+};
+
+(async () => {
+  const profile = await Api.requireLogin();
+  if (!profile) return;
+
+  if (!tugasId) {
+    showError('Tugas tidak ditentukan.');
+    return;
+  }
+
+  await load();
+})();
+
+async function load() {
+  const res = await Api.call('tugas.detail', { tugas_id: tugasId });
+  document.getElementById('loading').classList.add('hidden');
+
+  if (!res.ok || !res.data) {
+    showError(res.error || 'Gagal memuat tugas.');
+    return;
+  }
+
+  state.tugas = res.data.tugas;
+  state.pertemuan = res.data.pertemuan;
+  state.pengumpulan = res.data.pengumpulan_saya;
+  state.komentar = res.data.komentar || [];
+  state.bisa_nilai = res.data.bisa_nilai;
+
+  render();
+}
+
+function showError(pesan) {
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('error').classList.remove('hidden');
+  document.getElementById('error').innerHTML = UI.errorHtml(
+    pesan,
+    '<a href="beranda.html" class="btn btn-primary btn-sm" style="margin-top:12px;">Kembali</a>'
+  );
+}
+
+function render() {
+  const t = state.tugas;
+  const p = state.pertemuan;
+  document.title = t.judul + ' — NAKULAKU';
+  document.getElementById('content').classList.remove('hidden');
+
+  // Hero
+  document.getElementById('hero').innerHTML = `
+    <div class="hero-badge">
+      ${Icons.get('clipboard', { class: 'icon-sm' })}
+      TUGAS · PERTEMUAN #${p ? p.urutan : '?'}
+    </div>
+    <div class="hero-title">${UI.escapeHtml(t.judul)}</div>
+    ${t.deadline ? `
+      <div class="hero-meta">
+        ${Icons.get('clock', { class: 'icon-sm' })}
+        Deadline: ${UI.formatTanggalJam(t.deadline)}
+      </div>` : ''}
+  `;
+
+  // Deskripsi
+  document.getElementById('deskripsi').textContent = t.deskripsi || 'Tidak ada instruksi khusus.';
+
+  // Pengumpulan
+  renderPengumpulan();
+
+  // Komentar
+  renderKomentar();
+
+  // Panel evaluator
+  if (state.bisa_nilai && state.pengumpulan) {
+    document.getElementById('evaluatorPanel').classList.remove('hidden');
+    document.getElementById('inputNilai').value = state.pengumpulan.nilai ?? '';
+    document.getElementById('inputStatus').value = state.pengumpulan.status ?? '';
+    document.getElementById('btnSimpanNilai').addEventListener('click', simpanNilai);
+  }
+
+  // Event submit komentar
+  if (state.pengumpulan) {
+    document.getElementById('btnKirimKomentar').addEventListener('click', kirimKomentar);
+    document.getElementById('inputKomentar').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        kirimKomentar();
+      }
+    });
+  }
+}
+
+function renderPengumpulan() {
+  const el = document.getElementById('pengumpulanSection');
+  const p = state.pengumpulan;
+
+  if (!p) {
+    el.innerHTML = `
+      <div class="section-title">
+        <span data-icon="upload" class="icon-sm"></span>
+        Pengumpulan Anda
+      </div>
+      <div class="card">
+        <div class="field" style="margin-bottom:12px;">
+          <label class="label">Link Tugas</label>
+          <input type="url" id="inputLink" class="input" placeholder="https://drive.google.com/…" />
+          <div class="text-xs text-muted" style="margin-top:4px;">Google Drive, YouTube, blog, dsb.</div>
+        </div>
+        <div class="field" style="margin-bottom:14px;">
+          <label class="label">Catatan (opsional)</label>
+          <textarea id="inputCatatan" class="input" rows="2" placeholder="Catatan singkat…" style="resize:vertical;"></textarea>
+        </div>
+        <button class="btn btn-primary btn-full" id="btnKumpul">
+          <span data-icon="send"></span>
+          Kumpulkan Tugas
+        </button>
+      </div>
+    `;
+    document.getElementById('btnKumpul').addEventListener('click', submitKumpul);
+    document.getElementById('komentarSection').classList.add('hidden');
+    return;
+  }
+
+  const statusMap = {
+    menunggu: { label: 'Menunggu Dinilai', cls: 'badge-warning' },
+    diterima: { label: 'Diterima', cls: 'badge-success' },
+    revisi: { label: 'Perlu Revisi', cls: 'badge-info' },
+    ditolak: { label: 'Ditolak', cls: 'badge-danger' },
+  };
+  const st = statusMap[p.status] || statusMap.menunggu;
+
+  el.innerHTML = `
+    <div class="section-title">
+      <span data-icon="checkCircle" class="icon-sm"></span>
+      Pengumpulan Anda
+    </div>
+    <div class="card">
+      <div class="status-row">
+        <span class="badge ${st.cls}">${st.label}</span>
+        ${p.nilai !== null && p.nilai !== undefined
+          ? `<span class="badge badge-gold">Nilai: ${p.nilai}</span>` : ''}
+      </div>
+
+      <div class="link-box">
+        ${Icons.get('link', { class: 'icon-sm' })}
+        <a href="${UI.escapeHtml(p.link)}" target="_blank" rel="noopener">${UI.escapeHtml(p.link)}</a>
+        ${Icons.get('externalLink', { class: 'icon-sm' })}
+      </div>
+
+      ${p.catatan ? `<div class="text-sm text-muted" style="margin-top:10px;">${UI.escapeHtml(p.catatan)}</div>` : ''}
+
+      <div class="text-xs text-muted" style="margin-top:10px;">
+        Dikumpulkan ${UI.timeAgo(p.waktu_kumpul)}
+      </div>
+
+      <button class="btn btn-secondary btn-sm" id="btnEditLink" style="margin-top:12px;">
+        <span data-icon="edit"></span>
+        Perbarui Link
+      </button>
+
+      <div id="editForm" class="hidden" style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px;">
+        <div class="field" style="margin-bottom:10px;">
+          <label class="label">Link Baru</label>
+          <input type="url" id="inputLinkEdit" class="input" value="${UI.escapeHtml(p.link)}" />
+        </div>
+        <div class="field" style="margin-bottom:10px;">
+          <label class="label">Catatan</label>
+          <textarea id="inputCatatanEdit" class="input" rows="2" style="resize:vertical;">${UI.escapeHtml(p.catatan || '')}</textarea>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost btn-sm" id="btnBatalEdit" style="flex:1;">Batal</button>
+          <button class="btn btn-primary btn-sm" id="btnSimpanEdit" style="flex:2;">Simpan</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Event edit
+  document.getElementById('btnEditLink').addEventListener('click', () => {
+    document.getElementById('editForm').classList.toggle('hidden');
+  });
+  document.getElementById('btnBatalEdit').addEventListener('click', () => {
+    document.getElementById('editForm').classList.add('hidden');
+  });
+  document.getElementById('btnSimpanEdit').addEventListener('click', async () => {
+    const link = document.getElementById('inputLinkEdit').value.trim();
+    const catatan = document.getElementById('inputCatatanEdit').value.trim();
+    await doKumpul(link, catatan);
+  });
+
+  // Tampilkan section komentar
+  document.getElementById('komentarSection').classList.remove('hidden');
+}
+
+function renderKomentar() {
+  const el = document.getElementById('daftarKomentar');
+  const list = state.komentar || [];
+
+  document.getElementById('jumlahKomentar').textContent =
+    list.length > 0 ? `${list.length} pesan` : '';
+
+  if (list.length === 0) {
+    el.innerHTML = `<div class="text-sm text-muted" style="text-align:center;padding:16px;">Belum ada diskusi.</div>`;
+    return;
+  }
+
+  el.innerHTML = list.map(k => {
+    const init = (k.penulis?.nama_lengkap || '?').charAt(0).toUpperCase();
+    const fotoUrl = k.penulis?.foto_thumb_url || (k.penulis?.id ? Api.fotoUrl(k.penulis.id, 't') : null);
+    return `
+      <div class="comment-item">
+        <div class="comment-avatar">
+          <span>${init}</span>
+          ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.remove()">` : ''}
+        </div>
+        <div class="comment-body">
+          <div class="comment-head">
+            <div class="comment-name">${UI.escapeHtml(k.penulis?.nama_lengkap || 'Unknown')}</div>
+            <span class="comment-role ${k.peran_penulis}">${UI.escapeHtml(k.peran_penulis)}</span>
+          </div>
+          <div class="comment-text">${UI.escapeHtml(k.isi)}</div>
+          <div class="comment-time">${UI.timeAgo(k.dibuat_pada)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function submitKumpul() {
+  const link = document.getElementById('inputLink').value.trim();
+  const catatan = document.getElementById('inputCatatan').value.trim();
+  await doKumpul(link, catatan);
+}
+
+async function doKumpul(link, catatan) {
+  if (!link) { UI.gagal('Link wajib diisi.'); return; }
+  const btn = document.getElementById('btnKumpul') || document.getElementById('btnSimpanEdit');
+  UI.btnLoading(btn, 'Mengirim…');
+
+  const res = await Api.call('tugas.kumpul', {
+    tugas_id: tugasId,
+    link,
+    catatan,
+  });
+
+  UI.btnReset(btn);
+
+  if (!res.ok) { UI.gagal(res.error || 'Gagal mengumpulkan.'); return; }
+
+  if (res.data.lewat_deadline) {
+    UI.peringatan('Dikumpulkan lewat deadline.');
+  } else {
+    UI.sukses(res.data.updated ? 'Link diperbarui.' : 'Tugas berhasil dikumpulkan!');
+  }
+
+  await load();
+}
+
+async function kirimKomentar() {
+  const input = document.getElementById('inputKomentar');
+  const isi = input.value.trim();
+  if (!isi) return;
+
+  const btn = document.getElementById('btnKirimKomentar');
+  btn.disabled = true;
+
+  const res = await Api.call('tugas.komentar', {
+    pengumpulan_id: state.pengumpulan.id,
+    isi,
+  });
+
+  btn.disabled = false;
+
+  if (!res.ok) { UI.gagal(res.error || 'Gagal kirim komentar.'); return; }
+
+  input.value = '';
+  await load();
+}
+
+async function simpanNilai() {
+  const nilai = document.getElementById('inputNilai').value;
+  const status = document.getElementById('inputStatus').value;
+  const btn = document.getElementById('btnSimpanNilai');
+  UI.btnLoading(btn, 'Menyimpan…');
+
+  const res = await Api.call('tugas.nilai', {
+    pengumpulan_id: state.pengumpulan.id,
+    nilai: nilai !== '' ? Number(nilai) : undefined,
+    status: status || undefined,
+  });
+
+  UI.btnReset(btn);
+
+  if (!res.ok) { UI.gagal(res.error || 'Gagal menyimpan.'); return; }
+
+  UI.sukses('Penilaian tersimpan.');
+  await load();
+}
+</script>
+
+</body>
+</html>
