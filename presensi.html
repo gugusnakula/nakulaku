@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>Presensi — NAKULAKU</title>
+
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/nakula.css" />
+
+<style>
+  .presensi-stage {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px 16px 100px;
+  }
+  .stage-card {
+    background: var(--surface);
+    border-radius: var(--r-xl);
+    padding: 20px;
+    border: 1px solid var(--border);
+    box-shadow: var(--sh-md);
+    margin-bottom: 16px;
+  }
+  .stage-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--r-lg);
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+  }
+  .stage-title {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .stage-desc {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  /* Kamera */
+  .cam-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3/4;
+    max-height: 380px;
+    background: #000;
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .cam-wrap video, .cam-wrap img.preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .cam-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cam-circle {
+    width: 70%;
+    aspect-ratio: 1;
+    border: 3px dashed rgba(255,255,255,.5);
+    border-radius: 50%;
+  }
+  .cam-status {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(0,0,0,.6);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cam-status .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* GPS info */
+  .info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: var(--bg);
+    border-radius: var(--r-md);
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .info-row .lbl {
+    color: var(--muted);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .info-row .val {
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .info-row .val.ok { color: var(--success); }
+  .info-row .val.warn { color: var(--warning); }
+  .info-row .val.err { color: var(--danger); }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Presensi</div>
+      <div class="app-header-sub">KKG Gugus Nakula</div>
+    </div>
+  </div>
+  <button class="header-btn" data-act="logout">
+    <span data-icon="logOut"></span>
+  </button>
+</header>
+
+<main class="presensi-stage">
+
+  <!-- Stage 1: Loading / Inisialisasi -->
+  <section id="stageLoading">
+    <div class="stage-card">
+      <div class="stage-icon">
+        <span data-icon="mapPin" class="icon-lg"></span>
+      </div>
+      <div class="stage-title">Menyiapkan…</div>
+      <div class="stage-desc">Mengambil data pertemuan & lokasi GPS Anda.</div>
+    </div>
+  </section>
+
+  <!-- Stage 2: Kamera Selfie -->
+  <section id="stageKamera" class="hidden">
+    <div class="stage-card">
+      <div class="stage-title" id="judulPertemuan">Memuat…</div>
+      <div class="stage-desc" id="subPertemuan">—</div>
+
+      <!-- Info GPS -->
+      <div class="info-row">
+        <span class="lbl">
+          <span data-icon="mapPin" class="icon-sm"></span>
+          Lokasi Anda
+        </span>
+        <span class="val" id="infoLokasi">Mendeteksi…</span>
+      </div>
+      <div class="info-row">
+        <span class="lbl">
+          <span data-icon="target" class="icon-sm"></span>
+          Jarak ke Lokasi
+        </span>
+        <span class="val" id="infoJarak">—</span>
+      </div>
+      <div class="info-row">
+        <span class="lbl">
+          <span data-icon="clock" class="icon-sm"></span>
+          Waktu Sekarang
+        </span>
+        <span class="val" id="infoWaktu">—</span>
+      </div>
+
+      <!-- Kamera -->
+      <div class="cam-wrap" style="margin-top:16px;">
+        <video id="video" autoplay playsinline muted></video>
+        <div class="cam-overlay">
+          <div class="cam-circle"></div>
+        </div>
+        <div class="cam-status">
+          <span class="dot"></span>
+          <span>Kamera Aktif</span>
+        </div>
+      </div>
+
+      <div id="alertKamera" class="alert alert-error" style="margin-bottom:12px;"></div>
+
+      <button class="btn btn-primary btn-full" id="btnAmbilFoto">
+        <span data-icon="camera"></span>
+        <span>Ambil Foto &amp; Kirim</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Stage 3: Preview Foto -->
+  <section id="stagePreview" class="hidden">
+    <div class="stage-card">
+      <div class="stage-title">Periksa Foto Anda</div>
+      <div class="stage-desc">Pastikan wajah Anda terlihat jelas.</div>
+
+      <div class="cam-wrap">
+        <img id="previewImg" class="preview" alt="Preview" />
+      </div>
+
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-secondary" id="btnUlang" style="flex:1;">
+          <span data-icon="rotateCcw"></span>
+          Ulangi
+        </button>
+        <button class="btn btn-primary" id="btnKirim" style="flex:2;">
+          <span data-icon="send"></span>
+          Kirim Presensi
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stage 4: Sukses -->
+  <section id="stageSukses" class="hidden">
+    <div class="stage-card" style="text-align:center;">
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--success-soft);color:var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <span data-icon="checkCircle" class="icon-xl"></span>
+      </div>
+      <div class="stage-title">Presensi Berhasil!</div>
+      <div class="stage-desc" id="suksesDesc">—</div>
+
+      <div class="info-row">
+        <span class="lbl">Status</span>
+        <span class="val ok" id="suksesStatus">—</span>
+      </div>
+      <div class="info-row">
+        <span class="lbl">Poin</span>
+        <span class="val" id="suksesPoin">—</span>
+      </div>
+      <div class="info-row">
+        <span class="lbl">Jarak dari Lokasi</span>
+        <span class="val" id="suksesJarak">—</span>
+      </div>
+
+      <a href="beranda.html" class="btn btn-primary btn-full" style="margin-top:16px;">
+        Selesai
+      </a>
+    </div>
+  </section>
+
+  <!-- Stage 5: Error -->
+  <section id="stageError" class="hidden">
+    <div class="stage-card" style="text-align:center;">
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--danger-soft);color:var(--danger);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <span data-icon="alertCircle" class="icon-xl"></span>
+      </div>
+      <div class="stage-title">Tidak Bisa Presensi</div>
+      <div class="stage-desc" id="errorDesc">—</div>
+      <a href="beranda.html" class="btn btn-primary btn-full" style="margin-top:16px;">
+        Kembali
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<nav class="bottom-nav">
+  <a class="nav-item" data-nav="beranda" href="beranda.html">
+    <span data-icon="home"></span> Beranda
+  </a>
+  <a class="nav-item" data-nav="pertemuan" href="#">
+    <span data-icon="calendar"></span> Pertemuan
+  </a>
+  <a class="nav-item" data-nav="tugas" href="#">
+    <span data-icon="clipboard"></span> Tugas
+  </a>
+  <a class="nav-item active" data-nav="presensi" href="#">
+    <span data-icon="mapPin"></span> Presensi
+  </a>
+  <a class="nav-item" data-nav="profil" href="#">
+    <span data-icon="user"></span> Profil
+  </a>
+</nav>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+// ============================================================
+// INIT
+// ============================================================
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+UI.bindLogout();
+
+// ============================================================
+// STATE
+// ============================================================
+let profile;
+let pertemuanId = null;
+let pertemuanData = null;
+let gps = { lat: null, lng: null, accuracy: null };
+let stream = null;
+let fotoBase64 = null;
+
+const params = new URLSearchParams(window.location.search);
+pertemuanId = params.get('id');
+
+// ============================================================
+// STAGES
+// ============================================================
+function showStage(nama) {
+  ['stageLoading', 'stageKamera', 'stagePreview', 'stageSukses', 'stageError']
+    .forEach(id => document.getElementById(id).classList.toggle('hidden', id !== nama));
+}
+
+// ============================================================
+// MULAI
+// ============================================================
+(async () => {
+  profile = await Api.requireLogin();
+  if (!profile) return;
+
+  if (!pertemuanId) {
+    showStage('stageError');
+    document.getElementById('errorDesc').textContent = 'Pertemuan tidak ditentukan.';
+    return;
+  }
+
+  // Ambil data pertemuan
+  const res = await Api.call('pertemuan.detail', { pertemuan_id: Number(pertemuanId) });
+  if (!res.ok || !res.data) {
+    showStage('stageError');
+    document.getElementById('errorDesc').textContent = res.error || 'Gagal memuat pertemuan.';
+    return;
+  }
+
+  pertemuanData = res.data.pertemuan;
+
+  // Cek sudah presensi?
+  if (res.data.presensi_saya) {
+    showStage('stageError');
+    document.getElementById('errorDesc').textContent =
+      'Anda sudah presensi di pertemuan ini (' + res.data.presensi_saya.status + ').';
+    return;
+  }
+
+  // Isi info
+  document.getElementById('judulPertemuan').textContent = pertemuanData.judul;
+  document.getElementById('subPertemuan').textContent =
+    UI.formatTanggal(pertemuanData.tanggal) +
+    (pertemuanData.lokasi_nama ? ' · ' + pertemuanData.lokasi_nama : '');
+
+  document.getElementById('infoWaktu').textContent = new Date().toLocaleTimeString('id-ID', {
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
+  });
+
+  // Mulai GPS + kamera
+  mulaiGPS();
+  mulaiKamera();
+  showStage('stageKamera');
+})();
+
+// ============================================================
+// GPS
+// ============================================================
+function mulaiGPS() {
+  if (!navigator.geolocation) {
+    document.getElementById('infoLokasi').textContent = 'Tidak didukung';
+    document.getElementById('infoLokasi').className = 'val err';
+    return;
+  }
+
+  navigator.geolocation.watchPosition(
+    (pos) => {
+      gps.lat = pos.coords.latitude;
+      gps.lng = pos.coords.longitude;
+      gps.accuracy = Math.round(pos.coords.accuracy);
+
+      document.getElementById('infoLokasi').textContent =
+        gps.lat.toFixed(5) + ', ' + gps.lng.toFixed(5) + ' (±' + gps.accuracy + 'm)';
+      document.getElementById('infoLokasi').className = 'val ok';
+
+      updateJarak();
+    },
+    (e) => {
+      console.error('GPS error:', e);
+      let msg = 'Gagal akses GPS';
+      if (e.code === 1) msg = 'Izin lokasi ditolak';
+      else if (e.code === 2) msg = 'Lokasi tidak tersedia';
+      else if (e.code === 3) msg = 'Timeout GPS';
+      document.getElementById('infoLokasi').textContent = msg;
+      document.getElementById('infoLokasi').className = 'val err';
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+}
+
+function updateJarak() {
+  const el = document.getElementById('infoJarak');
+  if (!pertemuanData || !gps.lat) {
+    el.textContent = '—';
+    return;
+  }
+  const latP = Number(pertemuanData.latitude);
+  const lngP = Number(pertemuanData.longitude);
+  if (isNaN(latP) || isNaN(lngP)) {
+    el.textContent = 'Lokasi belum diatur';
+    el.className = 'val warn';
+    return;
+  }
+
+  const jarak = haversine(gps.lat, gps.lng, latP, lngP);
+  const radius = Number(pertemuanData.radius_meter) || 100;
+  const ok = jarak <= radius;
+
+  el.textContent = jarak + ' m (radius ' + radius + ' m)';
+  el.className = 'val ' + (ok ? 'ok' : 'warn');
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
+  return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+}
+
+// ============================================================
+// KAMERA
+// ============================================================
+async function mulaiKamera() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: 'user',
+        width: { ideal: 720 },
+        height: { ideal: 960 },
+      },
+      audio: false,
+    });
+    document.getElementById('video').srcObject = stream;
+  } catch (e) {
+    console.error('Kamera error:', e);
+    let msg = 'Tidak bisa akses kamera. ';
+    if (e.name === 'NotAllowedError') msg += 'Izin kamera ditolak.';
+    else if (e.name === 'NotFoundError') msg += 'Kamera tidak ditemukan.';
+    else msg += e.message;
+    const alertEl = document.getElementById('alertKamera');
+    alertEl.textContent = msg;
+    alertEl.classList.add('show');
+    document.getElementById('btnAmbilFoto').disabled = true;
+  }
+}
+
+function stopKamera() {
+  if (stream) {
+    stream.getTracks().forEach(t => t.stop());
+    stream = null;
+  }
+}
+
+// ============================================================
+// AMBIL FOTO
+// ============================================================
+document.getElementById('btnAmbilFoto').addEventListener('click', () => {
+  if (!gps.lat) {
+    UI.gagal('Tunggu GPS terdeteksi…');
+    return;
+  }
+  const video = document.getElementById('video');
+  const canvas = document.createElement('canvas');
+  canvas.width = 480;
+  canvas.height = 640;
+  const ctx = canvas.getContext('2d');
+
+  // Crop centered
+  const vw = video.videoWidth;
+  const vh = video.videoHeight;
+  const targetR = 480 / 640;
+  const srcR = vw / vh;
+  let sx = 0, sy = 0, sw = vw, sh = vh;
+  if (srcR > targetR) {
+    sw = vh * targetR;
+    sx = (vw - sw) / 2;
+  } else {
+    sh = vw / targetR;
+    sy = (vh - sh) / 2;
+  }
+
+  ctx.drawImage(video, sx, sy, sw, sh, 0, 0, 480, 640);
+
+  // Kompres ke webp kualitas 0.75 (~10-20 KB)
+  fotoBase64 = canvas.toDataURL('image/webp', 0.75);
+  document.getElementById('previewImg').src = fotoBase64;
+
+  stopKamera();
+  showStage('stagePreview');
+});
+
+// ============================================================
+// ULANGI
+// ============================================================
+document.getElementById('btnUlang').addEventListener('click', () => {
+  fotoBase64 = null;
+  mulaiKamera();
+  showStage('stageKamera');
+});
+
+// ============================================================
+// KIRIM
+// ============================================================
+document.getElementById('btnKirim').addEventListener('click', async () => {
+  const btn = document.getElementById('btnKirim');
+  if (!fotoBase64 || !gps.lat) {
+    UI.gagal('Data belum lengkap.');
+    return;
+  }
+
+  UI.btnLoading(btn, 'Mengirim…');
+
+  const res = await fetch(
+    NAKULA_CONFIG.SUPABASE_URL + '/functions/v1/nakula-presensi',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': NAKULA_CONFIG.ANON_KEY,
+      },
+      body: JSON.stringify({
+        token: Api.getToken(),
+        pertemuan_id: Number(pertemuanId),
+        latitude: gps.lat,
+        longitude: gps.lng,
+        akurasi: gps.accuracy,
+        foto: fotoBase64,
+      }),
+    }
+  ).then(r => r.json());
+
+  UI.btnReset(btn);
+
+  if (!res.ok) {
+    UI.gagal(res.error || 'Presensi gagal.');
+    return;
+  }
+
+  // Sukses
+  const d = res.data;
+  const statusLabel = {
+    tepat_waktu: 'Tepat Waktu',
+    terlambat: 'Terlambat',
+    luar_radius: 'Luar Radius (menunggu verifikasi KS)',
+  }[d.status] || d.status;
+
+  document.getElementById('suksesDesc').textContent =
+    'Presensi Anda telah tercatat.';
+  document.getElementById('suksesStatus').textContent = statusLabel;
+  document.getElementById('suksesPoin').textContent = '+' + d.poin;
+  document.getElementById('suksesJarak').textContent =
+    (d.jarak_meter !== null ? d.jarak_meter + ' m' : '—');
+
+  showStage('stageSukses');
+  UI.sukses('Presensi berhasil!');
+});
+</script>
+
+</body>
+</html>
