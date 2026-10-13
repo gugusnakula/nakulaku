@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#611329" />
+<title>Verifikasi Presensi — NAKULAKU</title>
+
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/nakula.css" />
+
+<style>
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .stat-mini {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-mini .n {
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--maroon);
+  }
+  .stat-mini .l {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-top: 4px;
+  }
+
+  .verif-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 14px;
+    margin-bottom: 12px;
+    transition: all .15s;
+  }
+  .verif-item:hover { box-shadow: var(--sh-md); }
+
+  .verif-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .verif-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .verif-avatar img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+
+  .verif-info { flex: 1; min-width: 0; }
+  .verif-name {
+    font-weight: 800;
+    font-size: 14px;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .verif-meta {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .verif-foto {
+    width: 100%;
+    aspect-ratio: 4/3;
+    border-radius: var(--r-md);
+    background: var(--bg);
+    object-fit: cover;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+
+  .verif-detail {
+    background: var(--bg);
+    border-radius: var(--r-md);
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    font-size: 12.5px;
+  }
+  .verif-detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+  }
+  .verif-detail-row .lbl { color: var(--muted); font-weight: 600; }
+  .verif-detail-row .val { font-weight: 700; text-align: right; }
+  .verif-detail-row .val.warn { color: var(--warning); }
+
+  .verif-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .verif-actions .btn { flex: 1; }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+  }
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: var(--r-md);
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="../beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Verifikasi Presensi</div>
+      <div class="app-header-sub">Panel Kepala Sekolah</div>
+    </div>
+  </div>
+  <button class="header-btn" data-act="logout">
+    <span data-icon="logOut"></span>
+  </button>
+</header>
+
+<main class="container page" style="max-width:720px;padding-top:16px;">
+
+  <div class="stat-row">
+    <div class="stat-mini">
+      <div class="n" id="statTotal">—</div>
+      <div class="l">Perlu Verifikasi</div>
+    </div>
+    <div class="stat-mini">
+      <div class="n" id="statSekolah">—</div>
+      <div class="l">Sekolah Dipantau</div>
+    </div>
+  </div>
+
+  <div id="listVerif">
+    <div class="skeleton" style="height:200px;border-radius:16px;margin-bottom:12px;"></div>
+    <div class="skeleton" style="height:200px;border-radius:16px;"></div>
+  </div>
+
+</main>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+UI.bindLogout();
+
+let profile;
+let daftarVerif = [];
+
+(async () => {
+  profile = await Api.requireLogin();
+  if (!profile) return;
+
+  if (!profile.peran.includes('ks') && !profile.peran.includes('pengurus') && !profile.peran.includes('super_admin')) {
+    document.querySelector('main').innerHTML = UI.errorHtml(
+      'Halaman ini hanya untuk Kepala Sekolah.',
+      '<a href="../beranda.html" class="btn btn-primary btn-sm" style="margin-top:12px;">Kembali</a>'
+    );
+    return;
+  }
+
+  // Statistik
+  if (profile.peran.includes('ks') && profile.ks_sekolah) {
+    document.getElementById('statSekolah').textContent = profile.ks_sekolah.length;
+  } else {
+    document.getElementById('statSekolah').textContent = 'All';
+  }
+
+  await loadData();
+})();
+
+async function loadData() {
+  const el = document.getElementById('listVerif');
+  el.innerHTML = `
+    <div class="skeleton" style="height:200px;border-radius:16px;margin-bottom:12px;"></div>
+    <div class="skeleton" style="height:200px;border-radius:16px;"></div>
+  `;
+
+  const res = await Api.call('presensi.menunggu_ks');
+
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat data.');
+    return;
+  }
+
+  daftarVerif = res.data || [];
+  document.getElementById('statTotal').textContent = daftarVerif.length;
+
+  if (daftarVerif.length === 0) {
+    el.innerHTML = UI.emptyHtml(
+      'checkCircle',
+      'Semua sudah diverifikasi',
+      'Tidak ada presensi yang menunggu verifikasi.'
+    );
+    return;
+  }
+
+  el.innerHTML = daftarVerif.map(v => renderItem(v)).join('');
+
+  // Event listener
+  daftarVerif.forEach(v => {
+    const el = document.getElementById('verif-' + v.id);
+    if (!el) return;
+
+    el.querySelector('[data-act="setuju"]').addEventListener('click', () => verifikasi(v.id, 'disetujui'));
+    el.querySelector('[data-act="tolak"]').addEventListener('click', () => verifikasi(v.id, 'ditolak'));
+    el.querySelector('[data-act="foto"]')?.addEventListener('click', () => showFoto(v.foto_thumb_url));
+  });
+}
+
+function renderItem(v) {
+  const init = (v.user?.nama_lengkap || '?').charAt(0).toUpperCase();
+  const fotoUrl = v.foto_thumb_url;
+
+  const waktu = UI.formatTanggalJam(v.waktu_submit);
+  const pertemuanInfo = v.pertemuan
+    ? `Pertemuan #${v.pertemuan.urutan} · ${UI.escapeHtml(v.pertemuan.judul)}`
+    : 'Pertemuan tidak diketahui';
+
+  return `
+    <div class="verif-item" id="verif-${v.id}">
+      <div class="verif-head">
+        <div class="verif-avatar">
+          <span>${init}</span>
+        </div>
+        <div class="verif-info">
+          <div class="verif-name">${UI.escapeHtml(v.user?.nama_lengkap || '-')}</div>
+          <div class="verif-meta">${UI.escapeHtml(v.user?.sekolah?.nama || '-')}</div>
+          <div class="verif-meta">${UI.escapeHtml(v.user?.jabatan || '-')}</div>
+        </div>
+      </div>
+
+      ${fotoUrl ? `
+        <img class="verif-foto" data-act="foto" src="${fotoUrl}" alt="Foto presensi" loading="lazy" />
+      ` : ''}
+
+      <div class="verif-detail">
+        <div class="verif-detail-row">
+          <span class="lbl">Pertemuan</span>
+          <span class="val">${pertemuanInfo}</span>
+        </div>
+        <div class="verif-detail-row">
+          <span class="lbl">Waktu Submit</span>
+          <span class="val">${waktu}</span>
+        </div>
+        <div class="verif-detail-row">
+          <span class="lbl">Jarak dari Lokasi</span>
+          <span class="val warn">${v.jarak_meter !== null ? v.jarak_meter + ' m' : '—'}</span>
+        </div>
+        <div class="verif-detail-row">
+          <span class="lbl">Status Awal</span>
+          <span class="val"><span class="badge badge-warning">Luar Radius</span></span>
+        </div>
+      </div>
+
+      <div class="verif-actions">
+        <button class="btn btn-secondary btn-sm" data-act="tolak">
+          ${Icons.get('x', { class: 'icon-sm' })}
+          Tolak
+        </button>
+        <button class="btn btn-primary btn-sm" data-act="setuju">
+          ${Icons.get('check', { class: 'icon-sm' })}
+          Setujui
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+async function verifikasi(presensiId, keputusan) {
+  const item = daftarVerif.find(v => v.id === presensiId);
+  const nama = item?.user?.nama_lengkap || 'guru';
+
+  const judul = keputusan === 'disetujui' ? 'Setujui Presensi' : 'Tolak Presensi';
+  const pesan = keputusan === 'disetujui'
+    ? `Setujui presensi ${nama}? Poin akan diubah menjadi 70.`
+    : `Tolak presensi ${nama}? Poin akan diubah menjadi 0 (alfa).`;
+
+  const konfirmasi = await UI.konfirmasi(judul, pesan, {
+    okText: keputusan === 'disetujui' ? 'Setujui' : 'Tolak',
+    danger: keputusan === 'ditolak',
+  });
+  if (!konfirmasi) return;
+
+  const res = await Api.call('presensi.verifikasi', {
+    presensi_id: presensiId,
+    keputusan,
+  });
+
+  if (!res.ok) {
+    UI.gagal(res.error || 'Gagal memverifikasi.');
+    return;
+  }
+
+  UI.sukses(keputusan === 'disetujui' ? 'Presensi disetujui.' : 'Presensi ditolak.');
+  await loadData();
+}
+
+function showFoto(url) {
+  const lb = document.createElement('div');
+  lb.className = 'lightbox';
+  lb.innerHTML = `<img src="${url}" alt="Foto presensi">`;
+  lb.addEventListener('click', () => lb.remove());
+  document.body.appendChild(lb);
+}
+</script>
+
+</body>
+</html>
