@@ -264,7 +264,6 @@ h1, h2, h3, h4 { font-weight: 800; line-height: 1.2; color: var(--ink); }
   height: 100%;
   object-fit: cover;
   transform: scale(1.3);
-  filter: brightness(0) invert(1);
 }
 .app-header-text { min-width: 0; }
 .app-header-title { font-size: 15px; font-weight: 800; letter-spacing: 0.5px; }
@@ -656,6 +655,17 @@ h1, h2, h3, h4 { font-weight: 800; line-height: 1.2; color: var(--ink); }
   background: var(--success-soft);
   color: var(--success);
   border: 1px solid rgba(21,128,61,.15);
+}
+
+/* ---------- DESKTOP LAYOUT (default tersembunyi di mobile) ---------- */
+.desktop-layout {
+  display: block; /* di mobile: block biasa */
+}
+.desktop-sidebar {
+  display: none; /* sembunyikan sidebar di mobile */
+}
+.desktop-topbar {
+  display: none; /* sembunyikan topbar desktop di mobile */
 }
 
 /* ============================================================
