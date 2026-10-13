@@ -889,7 +889,9 @@ function renderTugas(tugas, pengumpulanSaya) {
 
 // ---------- Aksi sementara (belum diimplementasikan) ----------
 function mulaiPresensi() {
-  UI.toast('Fitur presensi segera tersedia', 'info');
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  window.location.href = 'presensi.html?id=' + id;
 }
 function kumpulTugas(id) {
   UI.toast('Fitur kumpul tugas segera tersedia', 'info');
