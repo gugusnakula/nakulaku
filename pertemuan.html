@@ -449,4 +449,455 @@ function lihatTugas(id) {
 </script>
 
 </body>
+</html><!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>Detail Pertemuan — NAKULAKU</title>
+
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/nakula.css" />
+
+<style>
+  .hero-card {
+    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon) 100%);
+    color: white;
+    border-radius: var(--r-xl);
+    padding: 24px 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(125,29,58,.25);
+  }
+  .hero-card::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.08;
+  }
+  .hero-number {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(201,169,97,.4);
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    margin-bottom: 12px;
+  }
+  .hero-title {
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    opacity: 0.9;
+    margin-bottom: 6px;
+    position: relative;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    padding: 4px;
+    border-radius: var(--r-md);
+    margin: 20px 0 16px;
+    border: 1px solid var(--border);
+  }
+  .tab {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    transition: all .15s;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .tab.active {
+    background: var(--surface);
+    color: var(--maroon);
+    box-shadow: var(--sh-sm);
+  }
+  .tab-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    font-weight: 800;
+  }
+  .tab:not(.active) .tab-badge {
+    background: var(--border);
+    color: var(--muted);
+  }
+
+  /* Panels */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Presensi status card */
+  .status-card {
+    border-radius: var(--r-lg);
+    padding: 16px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .status-card.belum { border-left: 4px solid var(--warning); }
+  .status-card.sudah { border-left: 4px solid var(--success); }
+  .status-card.info { border-left: 4px solid var(--info); }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Detail Pertemuan</div>
+      <div class="app-header-sub">KKG Gugus Nakula</div>
+    </div>
+  </div>
+  <button class="header-btn" data-act="logout" aria-label="Keluar">
+    <span data-icon="logOut"></span>
+  </button>
+</header>
+
+<main class="container page" style="max-width:720px;padding-top:16px;">
+
+  <!-- Loading -->
+  <div id="loading">
+    <div class="skeleton" style="height:160px;border-radius:24px;margin-bottom:20px;"></div>
+    <div class="skeleton" style="height:44px;border-radius:12px;margin-bottom:20px;"></div>
+    <div class="skeleton" style="height:120px;border-radius:16px;"></div>
+  </div>
+
+  <!-- Content -->
+  <div id="content" class="hidden">
+
+    <!-- Hero -->
+    <div class="hero-card" id="hero"></div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="presensi">
+        <span data-icon="mapPin"></span> Presensi
+      </button>
+      <button class="tab" data-tab="materi">
+        <span data-icon="book"></span> Materi
+      </button>
+      <button class="tab" data-tab="tugas">
+        <span data-icon="clipboard"></span> Tugas
+      </button>
+    </div>
+
+    <!-- Panel: Presensi -->
+    <div class="panel active" data-panel="presensi" id="panelPresensi"></div>
+
+    <!-- Panel: Materi -->
+    <div class="panel" data-panel="materi" id="panelMateri"></div>
+
+    <!-- Panel: Tugas -->
+    <div class="panel" data-panel="tugas" id="panelTugas"></div>
+
+  </div>
+
+  <!-- Error -->
+  <div id="error" class="hidden"></div>
+
+</main>
+
+<!-- Bottom Nav -->
+<nav class="bottom-nav">
+  <a class="nav-item" data-nav="beranda" href="beranda.html">
+    <span data-icon="home"></span> Beranda
+  </a>
+  <a class="nav-item active" data-nav="pertemuan" href="#">
+    <span data-icon="calendar"></span> Pertemuan
+  </a>
+  <a class="nav-item" data-nav="tugas" href="#">
+    <span data-icon="clipboard"></span> Tugas
+  </a>
+  <a class="nav-item" data-nav="presensi" href="#">
+    <span data-icon="mapPin"></span> Presensi
+  </a>
+  <a class="nav-item" data-nav="profil" href="#">
+    <span data-icon="user"></span> Profil
+  </a>
+</nav>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+// ---------- Pasang ikon ----------
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+
+UI.bindLogout();
+
+// ---------- Ambil pertemuan_id dari URL ----------
+const params = new URLSearchParams(window.location.search);
+const pertemuanId = params.get('id');
+
+if (!pertemuanId) {
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('error').classList.remove('hidden');
+  document.getElementById('error').innerHTML = UI.errorHtml(
+    'Pertemuan tidak ditentukan.',
+    '<a href="beranda.html" class="btn btn-primary btn-sm" style="margin-top:12px;">Kembali</a>'
+  );
+}
+
+// ---------- Load data ----------
+(async () => {
+  const profile = await Api.requireLogin();
+  if (!profile || !pertemuanId) return;
+
+  const res = await Api.call('pertemuan.detail', { pertemuan_id: Number(pertemuanId) });
+
+  document.getElementById('loading').classList.add('hidden');
+
+  if (!res.ok || !res.data) {
+    document.getElementById('error').classList.remove('hidden');
+    document.getElementById('error').innerHTML = UI.errorHtml(
+      res.error || 'Gagal memuat data pertemuan.',
+      '<a href="beranda.html" class="btn btn-primary btn-sm" style="margin-top:12px;">Kembali</a>'
+    );
+    return;
+  }
+
+  render(res.data);
+})();
+
+// ---------- Render ----------
+function render(data) {
+  const p = data.pertemuan;
+  document.title = p.judul + ' — NAKULAKU';
+  document.getElementById('content').classList.remove('hidden');
+
+  // Hero
+  document.getElementById('hero').innerHTML = `
+    <div class="hero-number">
+      ${Icons.get('calendar', { class: 'icon-sm' })}
+      PERTEMUAN #${p.urutan}
+    </div>
+    <h1 class="hero-title">${UI.escapeHtml(p.judul)}</h1>
+    <div class="hero-meta">
+      ${Icons.get('calendar', { class: 'icon-sm' })}
+      ${UI.formatTanggal(p.tanggal)}${p.jam_mulai ? ' · ' + UI.formatJam(p.jam_mulai) : ''}
+    </div>
+    ${p.lokasi_nama ? `
+      <div class="hero-meta">
+        ${Icons.get('mapPin', { class: 'icon-sm' })}
+        ${UI.escapeHtml(p.lokasi_nama)}
+      </div>` : ''}
+    ${p.narasumber_nama ? `
+      <div class="hero-meta">
+        ${Icons.get('user', { class: 'icon-sm' })}
+        ${UI.escapeHtml(p.narasumber_nama)}
+      </div>` : ''}
+  `;
+
+  // Panels
+  renderPresensi(data.presensi_saya, p);
+  renderMateri(data.materi);
+  renderTugas(data.tugas, data.pengumpulan_saya);
+
+  // Tab listener
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const nama = tab.dataset.tab;
+      document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t === tab));
+      document.querySelectorAll('.panel').forEach(panel => {
+        panel.classList.toggle('active', panel.dataset.panel === nama);
+      });
+    });
+  });
+}
+
+// ---------- Panel Presensi ----------
+function renderPresensi(presensi, pertemuan) {
+  const el = document.getElementById('panelPresensi');
+
+  if (!presensi) {
+    el.innerHTML = `
+      <div class="status-card belum">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <span style="color:var(--warning);">${Icons.get('alertCircle', { class: 'icon-lg' })}</span>
+          <div style="font-weight:800;">Belum Presensi</div>
+        </div>
+        <p class="text-sm text-muted" style="margin-bottom:16px;">
+          Silakan isi presensi saat pertemuan berlangsung. Pastikan Anda berada di lokasi kegiatan.
+        </p>
+        <button class="btn btn-primary btn-full" onclick="mulaiPresensi()">
+          ${Icons.get('camera', { class: 'icon-sm' })}
+          Isi Presensi Sekarang
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  const statusMap = {
+    tepat_waktu: { label: 'Tepat Waktu', cls: 'badge-success', icon: 'checkCircle' },
+    terlambat: { label: 'Terlambat', cls: 'badge-warning', icon: 'clock' },
+    luar_radius: { label: 'Luar Radius', cls: 'badge-warning', icon: 'alertTriangle' },
+    ijin: { label: 'Ijin', cls: 'badge-info', icon: 'fileText' },
+    sakit: { label: 'Sakit', cls: 'badge-info', icon: 'fileText' },
+    cuti: { label: 'Cuti', cls: 'badge-info', icon: 'fileText' },
+    alfa: { label: 'Alfa', cls: 'badge-danger', icon: 'x' },
+  };
+  const s = statusMap[presensi.status] || statusMap.alfa;
+
+  el.innerHTML = `
+    <div class="status-card sudah">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <span style="color:var(--success);">${Icons.get(s.icon, { class: 'icon-lg' })}</span>
+        <div style="font-weight:800;">Presensi Tercatat</div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <span class="badge ${s.cls}">${s.label}</span>
+        <span class="text-xs text-muted">+${presensi.poin} poin</span>
+      </div>
+
+      <div class="text-xs text-muted" style="margin-top:12px;">
+        ${Icons.get('clock', { class: 'icon-sm' })} 
+        ${UI.formatTanggalJam(presensi.waktu_submit)}
+      </div>
+
+      ${presensi.verifikasi_ks && presensi.verifikasi_ks !== 'menunggu' ? `
+        <div class="text-xs ${presensi.verifikasi_ks === 'disetujui' ? '' : 'text-danger'}" style="margin-top:8px;">
+          ${presensi.verifikasi_ks === 'disetujui' 
+            ? '✓ Diverifikasi KS' 
+            : '✗ Ditolak KS'}
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+// ---------- Panel Materi ----------
+function renderMateri(materi) {
+  const el = document.getElementById('panelMateri');
+
+  if (!materi || materi.length === 0) {
+    el.innerHTML = UI.emptyHtml('book', 'Belum ada materi', 'Materi akan muncul di sini.');
+    return;
+  }
+
+  el.innerHTML = materi.map(m => `
+    <div class="card" style="margin-bottom:10px;">
+      <div style="display:flex;align-items:start;gap:10px;">
+        <div style="width:40px;height:40px;border-radius:12px;background:var(--maroon-soft);color:var(--maroon);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          ${Icons.get('book', { class: 'icon' })}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;margin-bottom:4px;">${UI.escapeHtml(m.judul)}</div>
+          ${m.deskripsi ? `<div class="text-sm text-muted" style="margin-bottom:8px;">${UI.escapeHtml(m.deskripsi)}</div>` : ''}
+          ${m.link_url ? `
+            <a href="${UI.escapeHtml(m.link_url)}" target="_blank" rel="noopener" class="text-sm" style="font-weight:700;display:inline-flex;align-items:center;gap:6px;">
+              ${Icons.get('externalLink', { class: 'icon-sm' })}
+              Buka Materi
+            </a>` : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ---------- Panel Tugas ----------
+function renderTugas(tugas, pengumpulanSaya) {
+  const el = document.getElementById('panelTugas');
+
+  if (!tugas || tugas.length === 0) {
+    el.innerHTML = UI.emptyHtml('clipboard', 'Belum ada tugas');
+    return;
+  }
+
+  const mapKumpul = {};
+  (pengumpulanSaya || []).forEach(p => mapKumpul[p.tugas_id] = p);
+
+  el.innerHTML = tugas.map(t => {
+    const kumpul = mapKumpul[t.id];
+    const statusBadge = kumpul ? {
+      menunggu: '<span class="badge badge-warning">Menunggu Dinilai</span>',
+      diterima: '<span class="badge badge-success">Diterima</span>',
+      revisi: '<span class="badge badge-info">Perlu Revisi</span>',
+      ditolak: '<span class="badge badge-danger">Ditolak</span>',
+    }[kumpul.status] : '<span class="badge badge-maroon">Belum Dikumpul</span>';
+
+    return `
+      <div class="card" style="margin-bottom:10px;">
+        <div style="display:flex;align-items:start;gap:10px;margin-bottom:12px;">
+          <div style="width:40px;height:40px;border-radius:12px;background:var(--maroon-soft);color:var(--maroon);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            ${Icons.get('clipboard', { class: 'icon' })}
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:700;margin-bottom:4px;">${UI.escapeHtml(t.judul)}</div>
+            ${t.deskripsi ? `<div class="text-sm text-muted" style="margin-bottom:6px;">${UI.escapeHtml(t.deskripsi)}</div>` : ''}
+            ${t.deadline ? `
+              <div class="text-xs text-muted">
+                ${Icons.get('clock', { class: 'icon-sm' })} Deadline: ${UI.formatTanggalJam(t.deadline)}
+              </div>` : ''}
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+          ${statusBadge}
+          ${kumpul 
+            ? `<button class="btn btn-secondary btn-sm" onclick="lihatTugas(${t.id})">Lihat</button>`
+            : `<button class="btn btn-primary btn-sm" onclick="kumpulTugas(${t.id})">Kumpul</button>`}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ---------- Aksi sementara (belum diimplementasikan) ----------
+function mulaiPresensi() {
+  UI.toast('Fitur presensi segera tersedia', 'info');
+}
+function kumpulTugas(id) {
+  UI.toast('Fitur kumpul tugas segera tersedia', 'info');
+}
+function lihatTugas(id) {
+  UI.toast('Detail tugas segera tersedia', 'info');
+}
+</script>
+
+</body>
 </html>
