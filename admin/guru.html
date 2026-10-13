@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#611329" />
+<title>Data Guru — NAKULAKU Admin</title>
+
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/nakula.css" />
+
+<style>
+  .admin-header {
+    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon) 100%);
+    color: white;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .admin-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .back-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--r-md);
+    background: rgba(255,255,255,.12);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .back-btn:hover { background: rgba(255,255,255,.2); }
+
+  /* Search + filter */
+  .toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .search-input {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+  }
+  .search-input input {
+    padding-left: 40px;
+  }
+  .search-input .icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+  }
+  .filter-select {
+    padding: 12px 14px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: var(--r-md);
+    background: var(--surface);
+    font-size: 13px;
+    font-weight: 600;
+    min-width: 160px;
+    cursor: pointer;
+  }
+  .filter-select:focus {
+    outline: none;
+    border-color: var(--maroon);
+    box-shadow: 0 0 0 4px rgba(125,29,58,.08);
+  }
+
+  /* Stat row */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .stat-mini {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 12px;
+    text-align: center;
+  }
+  .stat-mini .n {
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--maroon);
+  }
+  .stat-mini .l {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-top: 4px;
+  }
+
+  /* Guru list */
+  .guru-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .guru-item:hover {
+    border-color: var(--maroon);
+    transform: translateY(-1px);
+    box-shadow: var(--sh-md);
+  }
+  .guru-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 16px;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .guru-avatar img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .guru-info { flex: 1; min-width: 0; }
+  .guru-name {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .guru-meta {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .guru-role-badges {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+  .guru-role-badges .badge {
+    font-size: 9px;
+    padding: 2px 7px;
+  }
+  .guru-status {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    flex-shrink: 0;
+  }
+  .guru-status.aktif { background: var(--success-soft); color: var(--success); }
+  .guru-status.nonaktif { background: var(--danger-soft); color: var(--danger); }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(28,20,20,.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1000;
+  }
+  .modal-box {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    max-width: 520px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: var(--sh-xl);
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="admin-header">
+  <div class="admin-header-left">
+    <a href="../beranda.html" class="back-btn" aria-label="Kembali">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div>
+      <div style="font-weight:800;font-size:15px;letter-spacing:.5px;">DATA GURU</div>
+      <div style="font-size:10px;opacity:.75;font-weight:500;">KKG Gugus Nakula</div>
+    </div>
+  </div>
+</header>
+
+<main class="container page" style="max-width:900px;padding-top:16px;">
+
+  <!-- Statistik -->
+  <div class="stat-row">
+    <div class="stat-mini">
+      <div class="n" id="statTotal">—</div>
+      <div class="l">Total Guru</div>
+    </div>
+    <div class="stat-mini">
+      <div class="n" id="statSekolah">—</div>
+      <div class="l">Sekolah</div>
+    </div>
+    <div class="stat-mini">
+      <div class="n" id="statKS">—</div>
+      <div class="l">Kepala Sekolah</div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-input">
+      <span data-icon="search"></span>
+      <input
+        type="text"
+        id="inputCari"
+        class="input"
+        placeholder="Cari nama, email, atau NIP…"
+      />
+    </div>
+    <select class="filter-select" id="filterSekolah">
+      <option value="">Semua Sekolah</option>
+    </select>
+  </div>
+
+  <!-- Info hasil -->
+  <div id="infoHasil" style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">
+    Memuat…
+  </div>
+
+  <!-- List guru -->
+  <div id="listGuru">
+    <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
+    <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
+    <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
+  </div>
+
+</main>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+// ---------- Pasang ikon ----------
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+
+// ---------- State ----------
+let profile;
+let cacheSekolah = [];
+let debounceTimer;
+
+// ---------- Init ----------
+(async () => {
+  profile = await Api.requireLogin();
+  if (!profile) return;
+
+  if (!profile.peran.includes('super_admin') && !profile.peran.includes('pengurus') && !profile.peran.includes('ks')) {
+    document.querySelector('main').innerHTML = UI.errorHtml('Halaman ini hanya untuk pengurus/KS.');
+    return;
+  }
+
+  await loadSekolah();
+  await loadGuru();
+})();
+
+// ---------- Load daftar sekolah untuk filter ----------
+async function loadSekolah() {
+  const res = await Api.call('sekolah.list');
+  if (!res.ok) return;
+  cacheSekolah = res.data || [];
+
+  const sel = document.getElementById('filterSekolah');
+  sel.innerHTML = '<option value="">Semua Sekolah</option>' +
+    cacheSekolah.map(s => `<option value="${s.id}">${UI.escapeHtml(s.nama)}</option>`).join('');
+
+  document.getElementById('statSekolah').textContent = cacheSekolah.length;
+}
+
+// ---------- Load daftar guru ----------
+async function loadGuru() {
+  const q = document.getElementById('inputCari').value.trim();
+  const sekolahId = document.getElementById('filterSekolah').value;
+
+  const el = document.getElementById('listGuru');
+  el.innerHTML = `
+    <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
+    <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
+    <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
+  `;
+
+  const res = await Api.call('users.list', {
+    q,
+    sekolah_id: sekolahId ? Number(sekolahId) : undefined,
+    limit: 200,
+  });
+
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat data.');
+    document.getElementById('infoHasil').textContent = '';
+    return;
+  }
+
+  const list = res.data.hasil || [];
+  const total = res.data.total || 0;
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statKS').textContent =
+    list.filter(g => (g.jabatan || '').toLowerCase() === 'kepala sekolah').length;
+  document.getElementById('infoHasil').textContent =
+    `Menampilkan ${list.length} dari ${total} guru`;
+
+  if (list.length === 0) {
+    el.innerHTML = UI.emptyHtml('users', 'Tidak ada guru ditemukan', 'Coba ubah kata kunci pencarian.');
+    return;
+  }
+
+  el.innerHTML = list.map(g => renderGuruItem(g)).join('');
+}
+
+// ---------- Render item guru ----------
+function renderGuruItem(g) {
+  const init = (g.nama_lengkap || 'G').charAt(0).toUpperCase();
+  const fotoUrl = g.foto_thumb_url || Api.fotoUrl(g.id, 't');
+
+  const isKS = (g.jabatan || '').toLowerCase().includes('kepala sekolah');
+
+  return `
+    <div class="guru-item" onclick="bukaDetail(${g.id})">
+      <div class="guru-avatar">
+        <span>${init}</span>
+        <img src="${fotoUrl}" loading="lazy" onerror="this.remove()" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+      </div>
+      <div class="guru-info">
+        <div class="guru-name">${UI.escapeHtml(g.nama_lengkap || '-')}</div>
+        <div class="guru-meta">${UI.escapeHtml(g.sekolah?.nama || '-')}</div>
+        <div class="guru-meta">${UI.escapeHtml(g.jabatan || '-')}${g.nip ? ' · ' + UI.escapeHtml(g.nip) : ''}</div>
+        <div class="guru-role-badges">
+          ${isKS ? '<span class="badge badge-gold">KS</span>' : ''}
+        </div>
+      </div>
+      <span class="guru-status ${g.aktif ? 'aktif' : 'nonaktif'}">
+        ${g.aktif ? 'Aktif' : 'Non-Aktif'}
+      </span>
+    </div>
+  `;
+}
+
+// ---------- Event: pencarian dengan debounce ----------
+document.getElementById('inputCari').addEventListener('input', () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(loadGuru, 400);
+});
+document.getElementById('filterSekolah').addEventListener('change', loadGuru);
+
+// ---------- Buka detail ----------
+async function bukaDetail(id) {
+  const res = await Api.call('users.detail', { user_id: id });
+  if (!res.ok) {
+    UI.gagal(res.error || 'Gagal memuat detail.');
+    return;
+  }
+  showDetailModal(res.data);
+}
+
+// ---------- Modal detail ----------
+function showDetailModal(data) {
+  const u = data.user;
+  const init = (u.nama_lengkap || 'G').charAt(0).toUpperCase();
+  const fotoUrl = u.foto_thumb_url || Api.fotoUrl(u.id, 't');
+
+  const peranLabels = (data.peran || []).map(p => {
+    const l = p.peran.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    return `<span class="badge badge-maroon" style="margin:2px 4px 2px 0;">${UI.escapeHtml(l)}</span>`;
+  }).join('');
+
+  const ksInfo = (data.ks_sekolah || []).map(k =>
+    `<div class="text-sm" style="margin-top:4px;">
+      <span class="badge ${k.jenis === 'induk' ? 'badge-maroon' : 'badge-info'}" style="margin-right:6px;">
+        ${k.jenis === 'induk' ? 'INDUK' : 'PLT'}
+      </span>
+      ${UI.escapeHtml(k.sekolah?.nama || '-')}
+    </div>`
+  ).join('');
+
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal-box">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <h3 style="font-size:17px;color:var(--maroon);margin:0;">Detail Guru</h3>
+        <button class="btn-icon" data-close>${Icons.get('x')}</button>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+        <div style="width:64px;height:64px;border-radius:50%;background:var(--maroon-soft);color:var(--maroon);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:24px;overflow:hidden;position:relative;flex-shrink:0;">
+          <span>${init}</span>
+          <img src="${fotoUrl}" onerror="this.remove()" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
+        </div>
+        <div style="min-width:0;">
+          <div style="font-weight:800;font-size:16px;">${UI.escapeHtml(u.nama_lengkap)}</div>
+          <div class="text-sm text-muted">${UI.escapeHtml(u.sekolah?.nama || '-')}</div>
+          <div class="text-sm text-muted">${UI.escapeHtml(u.jabatan || '-')}</div>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:16px;display:flex;flex-direction:column;gap:12px;">
+        <div>
+          <div class="text-xs text-muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Email</div>
+          <div class="text-sm" style="font-weight:600;">${UI.escapeHtml(u.email)}</div>
+        </div>
+        <div>
+          <div class="text-xs text-muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">NIP</div>
+          <div class="text-sm" style="font-weight:600;">${UI.escapeHtml(u.nip || 'Non-ASN')}</div>
+        </div>
+        <div>
+          <div class="text-xs text-muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Peran</div>
+          <div>${peranLabels || '-'}</div>
+        </div>
+        ${ksInfo ? `
+          <div>
+            <div class="text-xs text-muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Penugasan KS</div>
+            ${ksInfo}
+          </div>` : ''}
+        <div>
+          <div class="text-xs text-muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Status Akun</div>
+          <div class="text-sm" style="font-weight:600;color:${u.aktif ? 'var(--success)' : 'var(--danger)'};">
+            ${u.aktif ? 'Aktif' : 'Non-Aktif'}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+  overlay.querySelector('[data-close]').addEventListener('click', close);
+}
+</script>
+
+</body>
+</html>
