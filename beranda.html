@@ -91,7 +91,14 @@
         </div>
       </section>
 
-      <!-- ============================ PENGUMUMAN ============================ -->
+      <!-- ============================ PANEL KHUSUS (KS/PENGURUS) ============================ -->
+      <section id="panelKhusus" class="hidden" style="margin-bottom:24px;">
+        <div class="section-head">
+          <h3><span data-icon="award"></span> Menu Khusus</h3>
+        </div>
+        <div id="listMenuKhusus"></div>
+      </section>
+
       <section style="margin-bottom:24px;">
         <div class="section-head">
           <h3><span data-icon="megaphone"></span> Pengumuman</h3>
@@ -162,12 +169,13 @@ UI.bindLogout();
   const profile = await Api.requireLogin();
   if (!profile) return;
 
-  renderProfil(profile);
-  UI.renderUserHeader(profile);
+      renderProfil(profile);
+      UI.renderUserHeader(profile);
+      renderMenuKhusus(profile);
 
-  // Load paralel
-  loadPengumuman();
-  loadPertemuan();
+      // Load paralel
+      loadPengumuman();
+      loadPertemuan();
 })();
 
 // ============================================================
@@ -272,6 +280,71 @@ async function loadPertemuan() {
       <span class="chevron">${Icons.get('chevronRight', { class: 'icon' })}</span>
     </div>
   `).join('');
+}
+// ============================================================
+// MENU KHUSUS (KS / PENGURUS)
+// ============================================================
+function renderMenuKhusus(p) {
+  const menu = [];
+
+  // KS → Verifikasi Presensi
+  if ((p.peran || []).includes('ks')) {
+    menu.push({
+      icon: 'mapPin',
+      title: 'Verifikasi Presensi',
+      desc: 'Periksa presensi guru di luar radius',
+      href: 'ks/verifikasi.html',
+      warna: 'maroon',
+    });
+  }
+
+  // Pengurus/Admin → Data Guru, Impor, Verifikasi
+  if ((p.peran || []).includes('pengurus') || (p.peran || []).includes('super_admin')) {
+    menu.push({
+      icon: 'users',
+      title: 'Data Guru',
+      desc: 'Lihat & kelola data seluruh guru',
+      href: 'admin/guru.html',
+      warna: 'maroon',
+    });
+    menu.push({
+      icon: 'upload',
+      title: 'Impor Data',
+      desc: 'Impor data guru dari file CSV',
+      href: 'admin/impor.html',
+      warna: 'gold',
+    });
+    if ((p.peran || []).includes('super_admin')) {
+      menu.push({
+        icon: 'checkCircle',
+        title: 'Verifikasi Presensi',
+        desc: 'Periksa presensi luar radius',
+        href: 'ks/verifikasi.html',
+        warna: 'maroon',
+      });
+    }
+  }
+
+  if (menu.length === 0) {
+    document.getElementById('panelKhusus').classList.add('hidden');
+    return;
+  }
+
+  const el = document.getElementById('listMenuKhusus');
+  el.innerHTML = menu.map(m => `
+    <a href="${m.href}" class="pertemuan-item" style="text-decoration:none;color:inherit;">
+      <div class="pertemuan-number" style="background:${m.warna === 'gold' ? 'var(--gold-soft)' : 'var(--maroon-soft)'};color:${m.warna === 'gold' ? 'var(--gold-dark)' : 'var(--maroon)'};">
+        ${Icons.get(m.icon, { class: 'icon' })}
+      </div>
+      <div class="pertemuan-body">
+        <div class="pertemuan-title">${UI.escapeHtml(m.title)}</div>
+        <div class="pertemuan-meta">${UI.escapeHtml(m.desc)}</div>
+      </div>
+      <span class="chevron">${Icons.get('chevronRight', { class: 'icon' })}</span>
+    </a>
+  `).join('');
+
+  document.getElementById('panelKhusus').classList.remove('hidden');
 }
 
 // ============================================================
