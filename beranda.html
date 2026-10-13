@@ -278,8 +278,7 @@ async function loadPertemuan() {
 // NAVIGASI (sementara)
 // ============================================================
 function bukaPertemuan(id) {
-  // Halaman detail belum dibuat — sementara toast
-  UI.toast('Detail pertemuan #' + id + ' segera tersedia', 'info');
+  window.location.href = 'pertemuan.html?id=' + id;
 }
 </script>
 
