@@ -250,13 +250,14 @@ h1, h2, h3, h4 { font-weight: 800; line-height: 1.2; color: var(--ink); }
   align-items: center;
   justify-content: center;
   border: 1px solid var(--gold);
-  padding: 4px;
   flex-shrink: 0;
+  overflow: hidden;      /* logo tidak keluar bingkai */
 }
 .app-header-logo img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
+  transform: scale(1.25); /* zoom 25% biar isi penuh */
   filter: brightness(0) invert(1);
 }
 .app-header-text { min-width: 0; }
