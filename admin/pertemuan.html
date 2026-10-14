@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#611329" />
+<title>Kelola Pertemuan — NAKULAKU Admin</title>
+
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/nakula.css" />
+
+<style>
+  .item-pertemuan {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 14px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .item-pertemuan:hover {
+    border-color: var(--maroon);
+    box-shadow: var(--sh-md);
+  }
+  .item-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .item-num {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--r-md);
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .item-num .n { font-size: 16px; line-height: 1; }
+  .item-num .l { font-size: 7px; letter-spacing: .5px; font-weight: 700; opacity: .7; }
+  .item-info { flex: 1; min-width: 0; }
+  .item-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .item-meta {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 600;
+    display: flex; align-items: center; gap: 4px;
+    margin-top: 2px;
+  }
+
+  .status-pill {
+    font-size: 9px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    white-space: nowrap;
+  }
+  .status-draft { background: var(--border); color: var(--muted); }
+  .status-aktif { background: var(--success-soft); color: var(--success); }
+  .status-selesai { background: var(--info-soft); color: var(--info); }
+
+  .fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--maroon);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(125,29,58,.35);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 30;
+  }
+  .fab:hover { background: var(--maroon-dark); }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="../beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Kelola Pertemuan</div>
+      <div class="app-header-sub">Admin NAKULAKU</div>
+    </div>
+  </div>
+</header>
+
+<main class="container page" style="max-width:900px;padding-top:16px;">
+
+  <div id="infoPeriode" style="margin-bottom:16px;font-size:12px;color:var(--muted);font-weight:600;"></div>
+
+  <div id="listPertemuan">
+    <div class="skeleton" style="height:88px;border-radius:16px;margin-bottom:10px;"></div>
+    <div class="skeleton" style="height:88px;border-radius:16px;margin-bottom:10px;"></div>
+  </div>
+
+</main>
+
+<button class="fab" id="btnTambah" aria-label="Tambah Pertemuan">
+  <span data-icon="plus"></span>
+</button>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+
+let profile;
+let periodeAktif = null;
+let daftarPertemuan = [];
+
+(async () => {
+  profile = await Api.requireLogin();
+  if (!profile) return;
+
+  if (!profile.peran.includes('pengurus') && !profile.peran.includes('super_admin')) {
+    document.querySelector('main').innerHTML = UI.errorHtml('Halaman ini hanya untuk pengurus.');
+    return;
+  }
+
+  await loadPeriode();
+  await loadPertemuan();
+
+  document.getElementById('btnTambah').addEventListener('click', () => bukaForm(null));
+})();
+
+async function loadPeriode() {
+  const res = await Api.call('periode.aktif');
+  if (res.ok && res.data) {
+    periodeAktif = res.data;
+    document.getElementById('infoPeriode').innerHTML =
+      `<span style="color:var(--maroon);">${Icons.get('calendar', { class: 'icon-sm' })}</span> Periode: <strong>${UI.escapeHtml(periodeAktif.nama)}</strong>`;
+  } else {
+    document.getElementById('infoPeriode').textContent = '⚠ Tidak ada periode aktif';
+  }
+}
+
+async function loadPertemuan() {
+  const el = document.getElementById('listPertemuan');
+  el.innerHTML = `
+    <div class="skeleton" style="height:88px;border-radius:16px;margin-bottom:10px;"></div>
+    <div class="skeleton" style="height:88px;border-radius:16px;margin-bottom:10px;"></div>
+  `;
+
+  const res = await Api.call('pertemuan.list', {
+    periode_id: periodeAktif?.id,
+  });
+
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat.');
+    return;
+  }
+
+  daftarPertemuan = res.data || [];
+
+  if (daftarPertemuan.length === 0) {
+    el.innerHTML = UI.emptyHtml('calendar', 'Belum ada pertemuan', 'Klik tombol + untuk menambah.');
+    return;
+  }
+
+  el.innerHTML = daftarPertemuan.map(p => `
+    <div class="item-pertemuan" data-id="${p.id}">
+      <div class="item-head">
+        <div class="item-num">
+          <div class="n">${p.urutan}</div>
+          <div class="l">PERT</div>
+        </div>
+        <div class="item-info">
+          <div class="item-title">${UI.escapeHtml(p.judul)}</div>
+          <div class="item-meta">
+            ${Icons.get('calendar', { class: 'icon-sm' })} ${UI.formatTanggal(p.tanggal)}
+          </div>
+          ${p.lokasi_nama ? `
+            <div class="item-meta">
+              ${Icons.get('mapPin', { class: 'icon-sm' })} ${UI.escapeHtml(p.lokasi_nama)}
+            </div>
+          ` : ''}
+        </div>
+        <span class="status-pill status-${p.status}">${p.status}</span>
+      </div>
+    </div>
+  `).join('');
+
+  el.querySelectorAll('.item-pertemuan').forEach(item => {
+    item.addEventListener('click', () => {
+      const id = Number(item.dataset.id);
+      window.location.href = 'pertemuan-detail.html?id=' + id;
+    });
+  });
+}
+
+function bukaForm(pertemuan) {
+  if (!periodeAktif) { UI.gagal('Belum ada periode aktif.'); return; }
+
+  const isEdit = !!pertemuan;
+  const p = pertemuan || {};
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position:fixed;inset:0;background:rgba(28,20,20,.5);
+    display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;
+  `;
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:24px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--sh-xl);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <h3 style="font-size:17px;color:var(--maroon);margin:0;">${isEdit ? 'Edit' : 'Tambah'} Pertemuan</h3>
+        <button data-close class="btn-icon">${Icons.get('x')}</button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="field">
+          <label class="label">Urutan *</label>
+          <input type="number" id="fUrutan" class="input" value="${p.urutan || (daftarPertemuan.length + 1)}" />
+        </div>
+        <div class="field">
+          <label class="label">Judul *</label>
+          <input type="text" id="fJudul" class="input" value="${UI.escapeHtml(p.judul || '')}" placeholder="Mis: Pembukaan & Materi Awal" />
+        </div>
+        <div class="field">
+          <label class="label">Deskripsi</label>
+          <textarea id="fDeskripsi" class="input" rows="2" style="resize:vertical;">${UI.escapeHtml(p.deskripsi || '')}</textarea>
+        </div>
+        <div class="field">
+          <label class="label">Tanggal *</label>
+          <input type="date" id="fTanggal" class="input" value="${p.tanggal || ''}" />
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <div class="field">
+            <label class="label">Jam Mulai</label>
+            <input type="time" id="fJamMulai" class="input" value="${p.jam_mulai || ''}" />
+          </div>
+          <div class="field">
+            <label class="label">Jam Selesai</label>
+            <input type="time" id="fJamSelesai" class="input" value="${p.jam_selesai || ''}" />
+          </div>
+          <div class="field">
+            <label class="label">Batas Tepat</label>
+            <input type="time" id="fBatas" class="input" value="${p.batas_tepat_waktu || ''}" />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Nama Lokasi</label>
+          <input type="text" id="fLokasi" class="input" value="${UI.escapeHtml(p.lokasi_nama || '')}" placeholder="Mis: SD Negeri 1 Krisak" />
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <div class="field">
+            <label class="label">Latitude</label>
+            <input type="text" id="fLat" class="input" value="${p.latitude || ''}" placeholder="-7.6895" />
+          </div>
+          <div class="field">
+            <label class="label">Longitude</label>
+            <input type="text" id="fLng" class="input" value="${p.longitude || ''}" placeholder="110.8290" />
+          </div>
+          <div class="field">
+            <label class="label">Radius (m)</label>
+            <input type="number" id="fRadius" class="input" value="${p.radius_meter || 100}" />
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Narasumber</label>
+          <input type="text" id="fNarsum" class="input" value="${UI.escapeHtml(p.narasumber_nama || '')}" placeholder="Nama narasumber (opsional)" />
+        </div>
+        <div class="field">
+          <label class="label">Status</label>
+          <select id="fStatus" class="input">
+            <option value="draft" ${p.status === 'draft' ? 'selected' : ''}>Draft</option>
+            <option value="aktif" ${p.status === 'aktif' ? 'selected' : ''}>Aktif</option>
+            <option value="selesai" ${p.status === 'selesai' ? 'selected' : ''}>Selesai</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="formAlert" class="alert alert-error" style="margin-top:14px;"></div>
+
+      <div style="display:flex;gap:8px;margin-top:20px;">
+        ${isEdit ? `<button class="btn btn-ghost" id="btnHapus" style="color:var(--danger);">${Icons.get('trash', { class: 'icon-sm' })} Hapus</button>` : ''}
+        <button class="btn btn-secondary" id="btnBatal" style="flex:1;">Batal</button>
+        <button class="btn btn-primary" id="btnSimpan" style="flex:2;">Simpan</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+  overlay.querySelector('[data-close]').addEventListener('click', close);
+  overlay.querySelector('#btnBatal').addEventListener('click', close);
+
+  overlay.querySelector('#btnSimpan').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnSimpan');
+    const alertBox = overlay.querySelector('#formAlert');
+    alertBox.classList.remove('show');
+
+    const payload = {
+      id: p.id || null,
+      periode_id: periodeAktif.id,
+      urutan: Number(overlay.querySelector('#fUrutan').value) || 1,
+      judul: overlay.querySelector('#fJudul').value.trim(),
+      deskripsi: overlay.querySelector('#fDeskripsi').value.trim(),
+      tanggal: overlay.querySelector('#fTanggal').value,
+      jam_mulai: overlay.querySelector('#fJamMulai').value || null,
+      jam_selesai: overlay.querySelector('#fJamSelesai').value || null,
+      batas_tepat_waktu: overlay.querySelector('#fBatas').value || null,
+      lokasi_nama: overlay.querySelector('#fLokasi').value.trim(),
+      latitude: overlay.querySelector('#fLat').value.trim(),
+      longitude: overlay.querySelector('#fLng').value.trim(),
+      radius_meter: Number(overlay.querySelector('#fRadius').value) || 100,
+      narasumber_nama: overlay.querySelector('#fNarsum').value.trim(),
+      status: overlay.querySelector('#fStatus').value,
+    };
+
+    if (!payload.judul) { alertBox.textContent = 'Judul wajib.'; alertBox.classList.add('show'); return; }
+    if (!payload.tanggal) { alertBox.textContent = 'Tanggal wajib.'; alertBox.classList.add('show'); return; }
+
+    UI.btnLoading(btn, 'Menyimpan…');
+    const res = await Api.call('admin.pertemuan.simpan', { pertemuan: payload });
+    UI.btnReset(btn);
+
+    if (!res.ok) {
+      alertBox.textContent = res.error || 'Gagal menyimpan.';
+      alertBox.classList.add('show');
+      return;
+    }
+
+    UI.sukses(isEdit ? 'Pertemuan diperbarui.' : 'Pertemuan ditambahkan.');
+    close();
+    loadPertemuan();
+  });
+
+  if (isEdit) {
+    overlay.querySelector('#btnHapus').addEventListener('click', async () => {
+      const ok = await UI.konfirmasi(
+        'Hapus Pertemuan',
+        `Hapus pertemuan "${p.judul}"? Semua materi, tugas, dan presensi terkait juga akan terhapus.`,
+        { danger: true, okText: 'Hapus' }
+      );
+      if (!ok) return;
+
+      const res = await Api.call('admin.pertemuan.hapus', { pertemuan_id: p.id });
+      if (!res.ok) { UI.gagal(res.error || 'Gagal hapus.'); return; }
+      UI.sukses('Pertemuan dihapus.');
+      close();
+      loadPertemuan();
+    });
+  }
+}
+</script>
+
+</body>
+</html>
