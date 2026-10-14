@@ -43,34 +43,75 @@
     position: relative;
     flex-shrink: 0;
   }
-  .row-avatar img {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    object-fit: cover;
-  }
   .row-info { flex: 1; min-width: 0; }
   .row-nama { font-weight: 700; font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .row-sub { font-size: 11.5px; color: var(--muted); font-weight: 600; }
   .row-actions { display: flex; gap: 6px; flex-shrink: 0; }
 
-  .search-bar {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
-    flex-wrap: wrap;
-  }
-  .search-bar input {
-    flex: 1;
-    min-width: 200px;
-  }
-  .search-bar select {
-    padding: 12px 14px;
-    border: 1.5px solid var(--border-strong);
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 600;
+  .drop-zone {
+    border: 2px dashed var(--border-strong);
+    border-radius: var(--r-xl);
+    padding: 30px 16px;
+    text-align: center;
     background: var(--surface);
+    transition: all .15s;
+    cursor: pointer;
   }
+  .drop-zone:hover, .drop-zone.drag {
+    border-color: var(--maroon);
+    background: var(--maroon-faint);
+  }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .stat-mini {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 12px;
+    text-align: center;
+  }
+  .stat-mini .n { font-size: 22px; font-weight: 800; line-height: 1; }
+  .stat-mini .l {
+    font-size: 10px; color: var(--muted); font-weight: 700;
+    text-transform: uppercase; letter-spacing: .5px; margin-top: 4px;
+  }
+  .stat-mini.valid .n { color: var(--success); }
+  .stat-mini.skip .n { color: var(--warning); }
+  .stat-mini.error .n { color: var(--danger); }
+
+  .tbl-preview {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  .tbl-preview th {
+    text-align: left; padding: 8px 10px;
+    background: var(--bg); font-weight: 700; font-size: 10.5px;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tbl-preview td {
+    padding: 8px 10px; border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .tbl-preview tr:last-child td { border-bottom: none; }
+  .status-pill {
+    font-size: 9px; font-weight: 800; padding: 2px 6px;
+    border-radius: 999px; text-transform: uppercase; white-space: nowrap;
+  }
+  .status-valid { background: var(--success-soft); color: var(--success); }
+  .status-skip { background: var(--warning-soft); color: var(--warning); }
+  .status-error { background: var(--danger-soft); color: var(--danger); }
+  .status-sukses { background: var(--success-soft); color: var(--success); }
 </style>
 </head>
 <body>
@@ -91,19 +132,119 @@
 
   <div id="infoPeriode" style="margin-bottom:16px;font-size:12px;color:var(--muted);font-weight:600;"></div>
 
-  <button class="btn btn-primary btn-full" id="btnTambah" style="margin-bottom:16px;">
-    <span data-icon="plus"></span>
-    Tambah Sertifikat
-  </button>
+  <!-- STEP 1: Pilihan aksi -->
+  <section id="stepAwal">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+      <button class="btn btn-primary" id="btnImpor" style="padding:16px;">
+        <span data-icon="upload"></span>
+        Impor CSV
+      </button>
+      <button class="btn btn-secondary" id="btnTambah" style="padding:16px;">
+        <span data-icon="plus"></span>
+        Tambah Manual
+      </button>
+    </div>
 
-  <div class="search-bar">
-    <input type="text" id="cari" class="input" placeholder="Cari nama atau nomor sertifikat…" />
-  </div>
+    <input type="text" id="cari" class="input" placeholder="Cari nama atau nomor sertifikat…" style="margin-bottom:12px;" />
 
-  <div id="listSertifikat">
-    <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
-    <div class="skeleton" style="height:72px;border-radius:16px;"></div>
-  </div>
+    <div id="listSertifikat">
+      <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
+      <div class="skeleton" style="height:72px;border-radius:16px;"></div>
+    </div>
+  </section>
+
+  <!-- STEP 2: Upload CSV -->
+  <section id="stepUpload" class="hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h2 style="font-size:18px;color:var(--maroon);margin:0;">Impor Sertifikat</h2>
+      <button class="btn btn-ghost btn-sm" id="btnBatal1">
+        <span data-icon="x"></span> Batal
+      </button>
+    </div>
+
+    <div class="card" style="margin-bottom:14px;font-size:12.5px;line-height:1.6;color:var(--muted);">
+      <div style="font-weight:800;color:var(--ink);margin-bottom:6px;">Format CSV yang dibutuhkan:</div>
+      <code style="font-size:11.5px;background:var(--bg);padding:6px 10px;border-radius:8px;display:block;word-break:break-all;">
+        email,nomor,url_pdf,tanggal_terbit,catatan
+      </code>
+      <div style="margin-top:8px;">
+        • <strong>email</strong> atau <strong>nip</strong> → untuk mencocokkan guru<br />
+        • <strong>url_pdf</strong> wajib, harus berawalan http:// atau https://<br />
+        • <strong>nomor</strong> dan <strong>tanggal_terbit</strong> opsional
+      </div>
+    </div>
+
+    <div class="drop-zone" id="dropZone">
+      <span data-icon="upload" class="icon-xl"></span>
+      <div style="font-weight:700;margin:10px 0 4px;">Drag &amp; drop file CSV</div>
+      <div class="text-sm text-muted">atau klik untuk pilih file</div>
+      <input type="file" id="fileInput" accept=".csv,text/csv" style="display:none;" />
+    </div>
+  </section>
+
+  <!-- STEP 3: Preview -->
+  <section id="stepPreview" class="hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <h2 style="font-size:18px;color:var(--maroon);margin:0;">Preview</h2>
+      <button class="btn btn-ghost btn-sm" id="btnBatal2">
+        <span data-icon="x"></span> Batal
+      </button>
+    </div>
+
+    <div class="card" style="margin-bottom:12px;">
+      <div style="font-weight:700;font-size:13px;" id="fileInfo">—</div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-mini valid"><div class="n" id="statValid">0</div><div class="l">Valid</div></div>
+      <div class="stat-mini skip"><div class="n" id="statSkip">0</div><div class="l">Skip</div></div>
+      <div class="stat-mini error"><div class="n" id="statError">0</div><div class="l">Error</div></div>
+    </div>
+
+    <div style="max-height:400px;overflow-y:auto;border-radius:16px;">
+      <table class="tbl-preview">
+        <thead>
+          <tr>
+            <th style="width:36px;">#</th>
+            <th>Nama</th>
+            <th>Email</th>
+            <th style="width:80px;">Status</th>
+          </tr>
+        </thead>
+        <tbody id="tblPreviewBody"></tbody>
+      </table>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <button class="btn btn-secondary" id="btnBatal3" style="flex:1;">Batal</button>
+      <button class="btn btn-primary" id="btnKonfirmasi" style="flex:2;">
+        <span data-icon="check"></span>
+        Konfirmasi Impor
+      </button>
+    </div>
+  </section>
+
+  <!-- STEP 4: Hasil -->
+  <section id="stepHasil" class="hidden">
+    <div class="card card-lg" style="text-align:center;margin-bottom:20px;">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--success-soft);color:var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <span data-icon="checkCircle" class="icon-xl"></span>
+      </div>
+      <h2 style="font-size:18px;color:var(--maroon);margin-bottom:8px;">Impor Selesai</h2>
+      <p class="text-sm text-muted" id="hasilRingkas">—</p>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-mini valid"><div class="n" id="hasilSukses">0</div><div class="l">Sukses</div></div>
+      <div class="stat-mini skip"><div class="n" id="hasilSkip">0</div><div class="l">Skip</div></div>
+      <div class="stat-mini error"><div class="n" id="hasilError">0</div><div class="l">Error</div></div>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <a class="btn btn-secondary" href="../beranda.html" style="flex:1;text-decoration:none;text-align:center;">Kembali</a>
+      <button class="btn btn-primary" id="btnLagi" style="flex:1;">Impor Lagi</button>
+    </div>
+  </section>
 
 </main>
 
@@ -119,7 +260,14 @@ document.querySelectorAll('[data-icon]').forEach(el => {
 let profile;
 let periodeAktif = null;
 let semuaSertifikat = [];
+let parsedRows = [];
+let namaFile = '';
 let debounceTimer;
+
+const stepAwal = document.getElementById('stepAwal');
+const stepUpload = document.getElementById('stepUpload');
+const stepPreview = document.getElementById('stepPreview');
+const stepHasil = document.getElementById('stepHasil');
 
 (async () => {
   profile = await Api.requireLogin();
@@ -135,25 +283,184 @@ let debounceTimer;
     periodeAktif = resP.data;
     document.getElementById('infoPeriode').innerHTML =
       `<span style="color:var(--maroon);">${Icons.get('award', { class: 'icon-sm' })}</span> Periode: <strong>${UI.escapeHtml(periodeAktif.nama)}</strong>`;
+  } else {
+    document.getElementById('infoPeriode').textContent = '⚠ Tidak ada periode aktif';
   }
 
   await loadSertifikat();
+
+  document.getElementById('btnImpor').addEventListener('click', () => showStep('upload'));
   document.getElementById('btnTambah').addEventListener('click', () => formSertifikat(null));
   document.getElementById('cari').addEventListener('input', () => {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(renderList, 300);
   });
+
+  // Batal
+  document.getElementById('btnBatal1').addEventListener('click', reset);
+  document.getElementById('btnBatal2').addEventListener('click', reset);
+  document.getElementById('btnBatal3').addEventListener('click', reset);
+  document.getElementById('btnLagi').addEventListener('click', reset);
 })();
 
+function showStep(nama) {
+  stepAwal.classList.toggle('hidden', nama !== 'awal');
+  stepUpload.classList.toggle('hidden', nama !== 'upload');
+  stepPreview.classList.toggle('hidden', nama !== 'preview');
+  stepHasil.classList.toggle('hidden', nama !== 'hasil');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function reset() {
+  parsedRows = [];
+  namaFile = '';
+  document.getElementById('fileInput').value = '';
+  showStep('awal');
+  loadSertifikat();
+}
+
+// ============================================================
+// DRAG & DROP
+// ============================================================
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', e => {
+  if (e.target.files[0]) handleFile(e.target.files[0]);
+});
+
+// ============================================================
+// PARSER CSV
+// ============================================================
+function parseCSV(text) {
+  const rows = []; let field = ''; const fields = [];
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else inQuotes = false;
+      } else field += c;
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ',') { fields.push(field); field = ''; }
+      else if (c === '\n') { fields.push(field); rows.push(fields.slice()); fields.length = 0; field = ''; }
+      else if (c !== '\r') field += c;
+    }
+  }
+  if (field || fields.length) { fields.push(field); rows.push(fields); }
+  return rows;
+}
+
+async function handleFile(file) {
+  if (!periodeAktif) { UI.gagal('Belum ada periode aktif.'); return; }
+
+  namaFile = file.name;
+  const text = await file.text();
+  const rows = parseCSV(text);
+
+  if (rows.length < 2) { UI.gagal('File kosong atau tidak valid.'); return; }
+
+  const header = rows.shift().map(h => h.trim().toLowerCase());
+  parsedRows = rows
+    .filter(r => r.some(c => (c || '').trim()))
+    .map(r => {
+      const o = {};
+      header.forEach((h, i) => o[h] = (r[i] || '').trim());
+      return o;
+    });
+
+  UI.toast('Memeriksa ' + parsedRows.length + ' baris…', 'info');
+
+  const res = await Api.call('sertifikat.import_preview', {
+    rows: parsedRows,
+    periode_id: periodeAktif.id,
+  });
+
+  if (!res.ok) { UI.gagal(res.error); return; }
+
+  renderPreview(res.data, file);
+}
+
+function renderPreview(data, file) {
+  document.getElementById('fileInfo').textContent =
+    file.name + ' · ' + data.ringkasan.valid + ' siap diimpor';
+
+  document.getElementById('statValid').textContent = data.ringkasan.valid;
+  document.getElementById('statSkip').textContent = data.ringkasan.skip;
+  document.getElementById('statError').textContent = data.ringkasan.error;
+
+  document.getElementById('tblPreviewBody').innerHTML = data.hasil.map((r, i) => {
+    const user = r._user || {};
+    const nama = user.nama_lengkap || '-';
+    const email = user.email || r.email || '-';
+    return `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${UI.escapeHtml(nama)}</td>
+        <td style="font-size:11px;">${UI.escapeHtml(email)}</td>
+        <td><span class="status-pill status-${r.status}">${r.status}</span></td>
+      </tr>
+    `;
+  }).join('');
+
+  showStep('preview');
+}
+
+// ============================================================
+// KONFIRMASI IMPOR
+// ============================================================
+document.getElementById('btnKonfirmasi').addEventListener('click', async () => {
+  const btn = document.getElementById('btnKonfirmasi');
+
+  const valid = document.getElementById('statValid').textContent;
+  const ok = await UI.konfirmasi(
+    'Konfirmasi Impor',
+    `Akan mengimpor ${valid} sertifikat. Lanjutkan?`,
+    { okText: 'Ya, Impor' }
+  );
+  if (!ok) return;
+
+  UI.btnLoading(btn, 'Mengimpor…');
+
+  const res = await Api.call('sertifikat.import_commit', {
+    rows: parsedRows,
+    periode_id: periodeAktif.id,
+    nama_file: namaFile,
+  });
+
+  UI.btnReset(btn);
+
+  if (!res.ok) { UI.gagal(res.error); return; }
+
+  document.getElementById('hasilRingkas').textContent =
+    `${res.data.total} baris diproses`;
+  document.getElementById('hasilSukses').textContent = res.data.sukses;
+  document.getElementById('hasilSkip').textContent = res.data.skip;
+  document.getElementById('hasilError').textContent = res.data.error;
+
+  showStep('hasil');
+  UI.sukses('Impor selesai!');
+});
+
+// ============================================================
+// LOAD DAFTAR
+// ============================================================
 async function loadSertifikat() {
   const el = document.getElementById('listSertifikat');
   el.innerHTML = '<div class="skeleton" style="height:72px;border-radius:16px;"></div>';
 
   const res = await Api.call('sertifikat.list', { periode_id: periodeAktif?.id });
-  if (!res.ok) {
-    el.innerHTML = UI.errorHtml(res.error);
-    return;
-  }
+  if (!res.ok) { el.innerHTML = UI.errorHtml(res.error); return; }
 
   semuaSertifikat = res.data || [];
   renderList();
@@ -166,12 +473,11 @@ function renderList() {
   const list = q
     ? semuaSertifikat.filter(s =>
         (s.user?.nama_lengkap || '').toLowerCase().includes(q) ||
-        (s.nomor || '').toLowerCase().includes(q)
-      )
+        (s.nomor || '').toLowerCase().includes(q))
     : semuaSertifikat;
 
   if (list.length === 0) {
-    el.innerHTML = UI.emptyHtml('fileText', 'Belum ada sertifikat', 'Klik tombol di atas untuk menambah.');
+    el.innerHTML = UI.emptyHtml('fileText', 'Belum ada sertifikat', 'Klik tombol Impor CSV di atas.');
     return;
   }
 
@@ -219,12 +525,14 @@ async function hapusSertifikat(id) {
   await loadSertifikat();
 }
 
+// ============================================================
+// FORM MANUAL (opsional)
+// ============================================================
 async function formSertifikat(sert) {
   const isEdit = !!sert;
   const s = sert || {};
   if (!periodeAktif) { UI.gagal('Belum ada periode aktif.'); return; }
 
-  // Ambil daftar guru untuk dropdown (kalau tambah baru)
   let guruList = [];
   if (!isEdit) {
     const resG = await Api.call('users.list', { limit: 500 });
@@ -241,14 +549,13 @@ async function formSertifikat(sert) {
       </div>
 
       <div style="display:flex;flex-direction:column;gap:12px;">
-
         ${!isEdit ? `
           <div class="field">
-            <label class="label">Pilih Guru *</label>
-            <input type="text" id="sCariGuru" class="input" placeholder="Cari nama guru…" style="margin-bottom:6px;" />
-            <select id="sUser" class="input" size="1">
+            <label class="label">Cari Guru</label>
+            <input type="text" id="sCariGuru" class="input" placeholder="Ketik untuk filter…" style="margin-bottom:6px;" />
+            <select id="sUser" class="input">
               <option value="">— Pilih Guru —</option>
-              ${guruList.map(g => `<option value="${g.id}">${UI.escapeHtml(g.nama_lengkap)} (${UI.escapeHtml(g.sekolah?.nama || '-')})</option>`).join('')}
+              ${guruList.map(g => `<option value="${g.id}">${UI.escapeHtml(g.nama_lengkap)} — ${UI.escapeHtml(g.sekolah?.nama || '-')}</option>`).join('')}
             </select>
           </div>
         ` : `
@@ -260,25 +567,20 @@ async function formSertifikat(sert) {
 
         <div class="field">
           <label class="label">Nomor Sertifikat</label>
-          <input type="text" id="sNomor" class="input" value="${UI.escapeHtml(s.nomor || '')}" placeholder="Mis: 001/KKG-NAKULA/2026" />
+          <input type="text" id="sNomor" class="input" value="${UI.escapeHtml(s.nomor || '')}" />
         </div>
-
         <div class="field">
           <label class="label">URL PDF *</label>
           <input type="url" id="sUrl" class="input" value="${UI.escapeHtml(s.url_pdf || '')}" placeholder="https://drive.google.com/…" />
-          <div style="font-size:11px;color:var(--muted);margin-top:4px;">Link ke file PDF sertifikat (Google Drive, dsb.)</div>
         </div>
-
         <div class="field">
           <label class="label">Tanggal Terbit</label>
           <input type="date" id="sTanggal" class="input" value="${s.tanggal_terbit || new Date().toISOString().slice(0, 10)}" />
         </div>
-
         <div class="field">
-          <label class="label">Catatan (opsional)</label>
+          <label class="label">Catatan</label>
           <textarea id="sCatatan" class="input" rows="2" style="resize:vertical;">${UI.escapeHtml(s.catatan || '')}</textarea>
         </div>
-
       </div>
 
       <div id="sAlert" class="alert alert-error" style="margin-top:14px;"></div>
@@ -291,7 +593,6 @@ async function formSertifikat(sert) {
   `;
   document.body.appendChild(overlay);
 
-  // Filter dropdown guru
   const cariGuru = overlay.querySelector('#sCariGuru');
   if (cariGuru) {
     cariGuru.addEventListener('input', () => {
@@ -299,7 +600,7 @@ async function formSertifikat(sert) {
       const sel = overlay.querySelector('#sUser');
       const filtered = guruList.filter(g => (g.nama_lengkap || '').toLowerCase().includes(q));
       sel.innerHTML = '<option value="">— Pilih Guru —</option>' +
-        filtered.slice(0, 100).map(g => `<option value="${g.id}">${UI.escapeHtml(g.nama_lengkap)} (${UI.escapeHtml(g.sekolah?.nama || '-')})</option>`).join('');
+        filtered.slice(0, 100).map(g => `<option value="${g.id}">${UI.escapeHtml(g.nama_lengkap)} — ${UI.escapeHtml(g.sekolah?.nama || '-')}</option>`).join('');
     });
   }
 
