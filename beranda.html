@@ -58,6 +58,9 @@
       <a class="sidebar-item" data-nav="pertemuan" href="#sectionPertemuan">
         <span data-icon="calendar"></span> Pertemuan
       </a>
+      <a class="sidebar-item" data-nav="award" href="award.html">
+        <span data-icon="award"></span> Papan Juara
+      </a>
       <a class="sidebar-item" data-nav="profil" href="profil.html">
         <span data-icon="user"></span> Profil
       </a>
@@ -130,9 +133,9 @@
     <span data-icon="calendar"></span>
     Pertemuan
   </a>
-  <a class="nav-item" data-nav="tugas" href="#">
-    <span data-icon="clipboard"></span>
-    Tugas
+  <a class="nav-item" data-nav="award" href="award.html">
+    <span data-icon="award"></span>
+    Award
   </a>
   <a class="nav-item" data-nav="presensi" href="#">
     <span data-icon="mapPin"></span>
@@ -158,7 +161,7 @@ document.querySelectorAll('[data-icon]').forEach(el => {
 });
 
 // ============================================================
-// BIND LOGOUT (semua tombol data-act="logout")
+// BIND LOGOUT
 // ============================================================
 UI.bindLogout();
 
@@ -174,12 +177,10 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     e.preventDefault();
     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    // Update active state sidebar
     document.querySelectorAll('.sidebar-item').forEach(x => x.classList.remove('active'));
     const parent = a.closest('.sidebar-item');
     if (parent) parent.classList.add('active');
 
-    // Update URL tanpa reload
     history.replaceState(null, '', targetId);
   });
 });
@@ -195,7 +196,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   UI.renderUserHeader(profile);
   renderMenuKhusus(profile);
 
-  // Load paralel
   loadPengumuman();
   loadPertemuan();
 })();
@@ -204,7 +204,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 // RENDER PROFIL
 // ============================================================
 function renderProfil(p) {
-  // Avatar
   const avatarEl = document.getElementById('profilAvatar');
   const fotoUrl = Api.fotoSayaUrl('t');
   if (fotoUrl) {
@@ -219,12 +218,10 @@ function renderProfil(p) {
     avatarEl.textContent = (p.nama || 'G').charAt(0).toUpperCase();
   }
 
-  // Nama & sekolah
   document.getElementById('profilNama').textContent = p.nama || '-';
   document.getElementById('profilSekolah').textContent =
     p.sekolah ? `${p.sekolah.nama} · ${p.jabatan || '-'}` : (p.jabatan || '-');
 
-  // Badge peran
   const badges = document.getElementById('profilBadges');
   const peran = p.peran || [];
   badges.innerHTML = peran.map(r => {
@@ -234,11 +231,20 @@ function renderProfil(p) {
 }
 
 // ============================================================
-// MENU KHUSUS (KS / PENGURUS / SUPER ADMIN)
+// MENU KHUSUS
 // ============================================================
 function renderMenuKhusus(p) {
   const menu = [];
   const peranList = p.peran || [];
+
+  // Papan Juara — untuk SEMUA user
+  menu.push({
+    icon: 'award',
+    title: 'Papan Juara',
+    desc: 'Hasil NAKULAKU AWARD',
+    href: 'award.html',
+    warna: 'gold',
+  });
 
   // KS → Verifikasi Presensi
   if (peranList.includes('ks')) {
@@ -251,7 +257,7 @@ function renderMenuKhusus(p) {
     });
   }
 
-  // Pengurus/Admin → Data Guru, Impor, Kelola Pertemuan
+  // Pengurus/Admin → Data Guru, Impor, Kelola Pertemuan, Kelola Award
   if (peranList.includes('pengurus') || peranList.includes('super_admin')) {
     menu.push({
       icon: 'users',
@@ -274,8 +280,14 @@ function renderMenuKhusus(p) {
       href: 'admin/pertemuan.html',
       warna: 'maroon',
     });
+    menu.push({
+      icon: 'award',
+      title: 'Kelola Award',
+      desc: 'Nominasi & juara NAKULAKU AWARD',
+      href: 'admin/award.html',
+      warna: 'gold',
+    });
 
-    // Super admin juga bisa akses Verifikasi Presensi (semua sekolah)
     if (peranList.includes('super_admin') && !peranList.includes('ks')) {
       menu.push({
         icon: 'checkCircle',
@@ -291,15 +303,9 @@ function renderMenuKhusus(p) {
   cekTugasPengamat();
 
   if (menu.length === 0) {
-    // Panel mungkin muncul nanti dari cekTugasPengamat
     const panel = document.getElementById('panelKhusus');
-    // Kalau tidak ada KS/pengurus, sembunyikan dulu
     if (!peranList.includes('ks') && !peranList.includes('pengurus') && !peranList.includes('super_admin')) {
       panel.classList.add('hidden');
-    }
-    // Kalau ada, tetap tampilkan
-    if (menu.length > 0) {
-      renderMenuList(menu);
     }
     return;
   }
@@ -348,14 +354,9 @@ async function cekTugasPengamat() {
     </a>
   `;
 
-  // Prepend ke list menu
   listEl.innerHTML = menuBaru + listEl.innerHTML;
 
-  // Kalau panel sebelumnya hidden, munculkan + tambah header
-  if (panel.classList.contains('hidden')) {
-    panel.classList.remove('hidden');
-  }
-  // Pastikan header ada
+  if (panel.classList.contains('hidden')) panel.classList.remove('hidden');
   if (!panel.querySelector('.section-head')) {
     const headerDiv = document.createElement('div');
     headerDiv.className = 'section-head';
