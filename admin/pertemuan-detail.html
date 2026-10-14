@@ -139,6 +139,7 @@
     <div class="tabs">
       <button class="tab active" data-tab="materi"><span data-icon="book"></span> Materi</button>
       <button class="tab" data-tab="tugas"><span data-icon="clipboard"></span> Tugas</button>
+      <button class="tab" data-tab="pengamat"><span data-icon="users"></span> Pengamat</button>
     </div>
 
     <div class="panel active" data-panel="materi">
@@ -153,6 +154,16 @@
         <span data-icon="plus"></span> Tambah Tugas
       </button>
       <div id="listTugas"></div>
+    </div>
+
+    <div class="panel" data-panel="pengamat">
+      <div class="card" style="margin-bottom:12px;font-size:12.5px;color:var(--muted);line-height:1.5;">
+        Pengamat adalah guru yang ditunjuk untuk mengamati jalannya pertemuan. Mereka akan mencatat keaktifan peserta dan kekompakan sekolah, yang nanti dipakai untuk penilaian NAKULAKU AWARD.
+      </div>
+      <button class="btn btn-primary btn-full" id="btnTunjukPengamat" style="margin-bottom:12px;">
+        <span data-icon="users"></span> Tunjuk Pengamat
+      </button>
+      <div id="listPengamat"></div>
     </div>
   </div>
 
@@ -238,6 +249,7 @@ function render() {
 
   renderMateri();
   renderTugas();
+  loadPengamat();
 }
 
 function renderMateri() {
@@ -485,6 +497,143 @@ async function hapusTugas(id) {
   UI.sukses('Tugas dihapus.');
   await load();
 }
+
+// ============================================================
+// PENGAMAT
+// ============================================================
+let daftarPengamatSaatIni = [];
+
+async function loadPengamat() {
+  const el = document.getElementById('listPengamat');
+  el.innerHTML = '<div class="skeleton" style="height:72px;border-radius:16px;"></div>';
+
+  const res = await Api.call('admin.pengamat.list', { pertemuan_id: pertemuanId });
+
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat.');
+    return;
+  }
+
+  daftarPengamatSaatIni = res.data || [];
+
+  if (daftarPengamatSaatIni.length === 0) {
+    el.innerHTML = UI.emptyHtml('users', 'Belum ada pengamat', 'Klik tombol di atas untuk menunjuk pengamat.');
+    return;
+  }
+
+  el.innerHTML = daftarPengamatSaatIni.map(p => {
+    const init = (p.user?.nama_lengkap || '?').charAt(0).toUpperCase();
+    const fotoUrl = p.user?.foto_thumb_url || (p.user?.id ? Api.fotoUrl(p.user.id, 't') : null);
+    return `
+      <div class="mini-item">
+        <div class="mini-item-head">
+          <div class="mini-icon" style="overflow:hidden;position:relative;">
+            <span>${init}</span>
+            ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.remove()" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">` : ''}
+          </div>
+          <div class="mini-body">
+            <div class="mini-title">${UI.escapeHtml(p.user?.nama_lengkap || '-')}</div>
+            <div class="mini-desc">${UI.escapeHtml(p.user?.sekolah?.nama || '-')}</div>
+            <div class="mini-meta">${UI.escapeHtml(p.user?.jabatan || '-')}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+document.getElementById('btnTunjukPengamat').addEventListener('click', formTunjukPengamat);
+
+async function formTunjukPengamat() {
+  // Ambil semua guru aktif
+  const res = await Api.call('users.list', { limit: 500 });
+  if (!res.ok) { UI.gagal(res.error); return; }
+
+  const semuaGuru = res.data.hasil || [];
+  const terpilih = new Set(daftarPengamatSaatIni.map(p => p.user_id));
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:24px;max-width:520px;width:100%;max-height:85vh;display:flex;flex-direction:column;box-shadow:var(--sh-xl);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h3 style="font-size:17px;color:var(--maroon);margin:0;">Tunjuk Pengamat</h3>
+        <button data-close class="btn-icon">${Icons.get('x')}</button>
+      </div>
+
+      <input type="text" id="cariGuru" class="input" placeholder="Cari nama guru…" style="margin-bottom:10px;" />
+
+      <div id="daftarGuru" style="flex:1;overflow-y:auto;border:1px solid var(--border);border-radius:12px;padding:6px;margin-bottom:14px;min-height:200px;">
+      </div>
+
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
+        <button class="btn btn-primary" id="btnSimpanPengamat" style="flex:2;">Simpan</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const daftarEl = overlay.querySelector('#daftarGuru');
+  const cariEl = overlay.querySelector('#cariGuru');
+
+  function renderGuru(filter = '') {
+    const f = filter.toLowerCase();
+    const list = semuaGuru.filter(g =>
+      !f || (g.nama_lengkap || '').toLowerCase().includes(f) || (g.sekolah?.nama || '').toLowerCase().includes(f)
+    );
+    if (list.length === 0) {
+      daftarEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">Tidak ada guru ditemukan.</div>';
+      return;
+    }
+    daftarEl.innerHTML = list.map(g => {
+      const checked = terpilih.has(g.id) ? 'checked' : '';
+      return `
+        <label style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">
+          <input type="checkbox" data-uid="${g.id}" ${checked} style="width:18px;height:18px;accent-color:var(--maroon);" />
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:700;font-size:13px;">${UI.escapeHtml(g.nama_lengkap)}</div>
+            <div style="font-size:11px;color:var(--muted);">${UI.escapeHtml(g.sekolah?.nama || '-')}</div>
+          </div>
+        </label>
+      `;
+    }).join('');
+
+    daftarEl.querySelectorAll('input[type=checkbox]').forEach(cb => {
+      cb.addEventListener('change', (e) => {
+        const uid = Number(e.target.dataset.uid);
+        if (e.target.checked) terpilih.add(uid);
+        else terpilih.delete(uid);
+      });
+    });
+  }
+
+  renderGuru();
+  cariEl.addEventListener('input', () => renderGuru(cariEl.value));
+
+  const close = () => overlay.remove();
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnSimpanPengamat').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnSimpanPengamat');
+    UI.btnLoading(btn, 'Menyimpan…');
+
+    const res = await Api.call('admin.pengamat.simpan', {
+      pertemuan_id: pertemuanId,
+      user_ids: Array.from(terpilih),
+    });
+
+    UI.btnReset(btn);
+
+    if (!res.ok) { UI.gagal(res.error); return; }
+
+    UI.sukses('Pengamat disimpan.');
+    close();
+    await loadPengamat();
+  });
+}
+
 </script>
 
 </body>
