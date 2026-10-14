@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#611329" />
+<title>Kelola Pengumuman — NAKULAKU Admin</title>
+
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/nakula.css" />
+
+<style>
+  .p-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    transition: all .15s;
+  }
+  .p-item:hover { box-shadow: var(--sh-md); }
+  .p-item-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .p-item-body { flex: 1; min-width: 0; }
+  .p-item-title {
+    font-weight: 800;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .p-item-isi {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.5;
+    white-space: pre-line;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .p-item-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+    flex-wrap: wrap;
+  }
+  .p-item-meta .dot {
+    width: 4px; height: 4px; border-radius: 50%; background: var(--border-strong);
+  }
+  .p-item-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .p-item-actions .btn { flex: 1; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="../beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Kelola Pengumuman</div>
+      <div class="app-header-sub">Admin NAKULAKU</div>
+    </div>
+  </div>
+</header>
+
+<main class="container page" style="max-width:720px;padding-top:16px;">
+
+  <button class="btn btn-primary btn-full" id="btnTambah" style="margin-bottom:16px;">
+    <span data-icon="plus"></span>
+    Buat Pengumuman
+  </button>
+
+  <div id="listPengumuman">
+    <div class="skeleton" style="height:100px;border-radius:16px;margin-bottom:10px;"></div>
+    <div class="skeleton" style="height:100px;border-radius:16px;"></div>
+  </div>
+
+</main>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+
+let profile;
+let listPengumuman = [];
+
+(async () => {
+  profile = await Api.requireLogin();
+  if (!profile) return;
+
+  if (!profile.peran.includes('pengurus') && !profile.peran.includes('super_admin')) {
+    document.querySelector('main').innerHTML = UI.errorHtml('Halaman ini hanya untuk pengurus.');
+    return;
+  }
+
+  await load();
+  document.getElementById('btnTambah').addEventListener('click', () => formPengumuman(null));
+})();
+
+async function load() {
+  const el = document.getElementById('listPengumuman');
+  el.innerHTML = '<div class="skeleton" style="height:100px;border-radius:16px;"></div>';
+
+  const res = await Api.call('admin.pengumuman.list');
+  if (!res.ok) { el.innerHTML = UI.errorHtml(res.error); return; }
+
+  listPengumuman = res.data || [];
+
+  if (listPengumuman.length === 0) {
+    el.innerHTML = UI.emptyHtml('megaphone', 'Belum ada pengumuman', 'Klik tombol di atas untuk membuat.');
+    return;
+  }
+
+  el.innerHTML = listPengumuman.map(p => renderItem(p)).join('');
+
+  listPengumuman.forEach(p => {
+    const item = document.getElementById('p-' + p.id);
+    if (!item) return;
+    item.querySelector('[data-act="edit"]').addEventListener('click', () => formPengumuman(p));
+    item.querySelector('[data-act="hapus"]').addEventListener('click', () => hapus(p.id));
+  });
+}
+
+function renderItem(p) {
+  const badges = [];
+  if (p.penting) badges.push('<span class="badge badge-gold">Penting</span>');
+  if (!p.aktif) badges.push('<span class="badge badge-danger">Non-aktif</span>');
+  else badges.push('<span class="badge badge-success">Aktif</span>');
+
+  return `
+    <div class="p-item" id="p-${p.id}">
+      <div class="p-item-head">
+        <div style="flex:1;min-width:0;">
+          <div class="p-item-title">${UI.escapeHtml(p.judul)}</div>
+          ${p.isi ? `<div class="p-item-isi">${UI.escapeHtml(p.isi)}</div>` : ''}
+        </div>
+      </div>
+      <div class="p-item-meta">
+        ${badges.join(' ')}
+        <span class="dot"></span>
+        <span>${UI.timeAgo(p.dibuat_pada)}</span>
+      </div>
+      <div class="p-item-actions">
+        <button class="btn btn-secondary btn-sm" data-act="edit">
+          ${Icons.get('edit', { class: 'icon-sm' })} Edit
+        </button>
+        <button class="btn btn-ghost btn-sm" data-act="hapus" style="color:var(--danger);">
+          ${Icons.get('trash', { class: 'icon-sm' })} Hapus
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+async function hapus(id) {
+  const ok = await UI.konfirmasi('Hapus Pengumuman', 'Hapus pengumuman ini?', { danger: true, okText: 'Hapus' });
+  if (!ok) return;
+  const res = await Api.call('admin.pengumuman.hapus', { pengumuman_id: id });
+  if (!res.ok) { UI.gagal(res.error); return; }
+  UI.sukses('Pengumuman dihapus.');
+  await load();
+}
+
+function formPengumuman(p) {
+  const isEdit = !!p;
+  const data = p || {};
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:24px;max-width:520px;width:100%;box-shadow:var(--sh-xl);max-height:90vh;overflow-y:auto;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <h3 style="font-size:17px;color:var(--maroon);margin:0;">${isEdit ? 'Edit' : 'Buat'} Pengumuman</h3>
+        <button data-close class="btn-icon">${Icons.get('x')}</button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="field">
+          <label class="label">Judul *</label>
+          <input type="text" id="pJudul" class="input" value="${UI.escapeHtml(data.judul || '')}" placeholder="Judul pengumuman…" />
+        </div>
+
+        <div class="field">
+          <label class="label">Isi</label>
+          <textarea id="pIsi" class="input" rows="5" style="resize:vertical;" placeholder="Isi pengumuman…">${UI.escapeHtml(data.isi || '')}</textarea>
+        </div>
+
+        <div class="field">
+          <label class="label">Link Lampiran (opsional)</label>
+          <input type="url" id="pLink" class="input" value="${UI.escapeHtml(data.lampiran_url || '')}" placeholder="https://drive.google.com/…" />
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px;border-radius:10px;border:1px solid var(--border);">
+            <input type="checkbox" id="pPenting" ${data.penting ? 'checked' : ''} style="width:18px;height:18px;accent-color:var(--maroon);" />
+            <div>
+              <div style="font-weight:700;font-size:13px;">Tandai Penting</div>
+              <div style="font-size:11px;color:var(--muted);">Muncul di atas & diberi tanda khusus</div>
+            </div>
+          </label>
+
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px;border-radius:10px;border:1px solid var(--border);">
+            <input type="checkbox" id="pAktif" ${data.aktif !== false ? 'checked' : ''} style="width:18px;height:18px;accent-color:var(--maroon);" />
+            <div>
+              <div style="font-weight:700;font-size:13px;">Aktif</div>
+              <div style="font-size:11px;color:var(--muted);">Tampil di beranda guru</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div id="pAlert" class="alert alert-error" style="margin-top:14px;"></div>
+
+      <div style="display:flex;gap:8px;margin-top:20px;">
+        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
+        <button class="btn btn-primary" id="btnSimpanP" style="flex:2;">${isEdit ? 'Simpan' : 'Terbitkan'}</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnSimpanP').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnSimpanP');
+    const alertBox = overlay.querySelector('#pAlert');
+    alertBox.classList.remove('show');
+
+    const payload = {
+      id: data.id || null,
+      judul: overlay.querySelector('#pJudul').value.trim(),
+      isi: overlay.querySelector('#pIsi').value.trim(),
+      lampiran_url: overlay.querySelector('#pLink').value.trim() || null,
+      penting: overlay.querySelector('#pPenting').checked,
+      aktif: overlay.querySelector('#pAktif').checked,
+    };
+
+    if (!payload.judul) { alertBox.textContent = 'Judul wajib.'; alertBox.classList.add('show'); return; }
+
+    UI.btnLoading(btn, 'Menyimpan…');
+    const res = await Api.call('admin.pengumuman.simpan', { pengumuman: payload });
+    UI.btnReset(btn);
+
+    if (!res.ok) { alertBox.textContent = res.error; alertBox.classList.add('show'); return; }
+
+    UI.sukses(isEdit ? 'Diperbarui.' : 'Diterbitkan.');
+    close();
+    await load();
+  });
+}
+</script>
+
+</body>
+</html>
