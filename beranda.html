@@ -314,6 +314,13 @@ function renderMenuKhusus(p) {
       href: 'admin/impor.html',
       warna: 'gold',
     });
+    menu.push({
+      icon: 'calendar',
+      title: 'Kelola Pertemuan',
+      desc: 'Tambah/edit pertemuan, materi, dan tugas',
+      href: 'admin/pertemuan.html',
+      warna: 'maroon',
+    });
     if ((p.peran || []).includes('super_admin')) {
       menu.push({
         icon: 'checkCircle',
