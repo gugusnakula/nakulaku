@@ -168,6 +168,9 @@
       <button class="tab" data-tab="tugas">
         <span data-icon="clipboard"></span> Tugas
       </button>
+      <button class="tab" data-tab="feedback" id="tabFeedback" class="hidden">
+        <span data-icon="star"></span> Feedback
+      </button>
     </div>
 
     <!-- Panel: Presensi -->
@@ -178,6 +181,9 @@
 
     <!-- Panel: Tugas -->
     <div class="panel" data-panel="tugas" id="panelTugas"></div>
+
+    <!-- Panel: Feedback -->
+    <div class="panel" data-panel="feedback" id="panelFeedback"></div>
 
   </div>
 
@@ -284,6 +290,7 @@ function render(data) {
   renderPresensi(data.presensi_saya, p);
   renderMateri(data.materi);
   renderTugas(data.tugas, data.pengumpulan_saya);
+  cekFeedback(p);
 
   // Tab listener
   document.querySelectorAll('.tab').forEach(tab => {
@@ -582,6 +589,226 @@ function ajukanIzin() {
     const resDetail = await Api.call('pertemuan.detail', { pertemuan_id: id });
     if (resDetail.ok) {
       renderPresensi(resDetail.data.presensi_saya, resDetail.data.pertemuan);
+    }
+  });
+}
+// ============================================================
+// FEEDBACK
+// ============================================================
+async function cekFeedback(pertemuan) {
+  const res = await Api.call('feedback.saya', { pertemuan_id: pertemuan.id });
+  if (!res.ok) return;
+
+  const sudahIsi = res.data;
+
+  // Tampilkan tab
+  const tabFeedback = document.getElementById('tabFeedback');
+  tabFeedback.classList.remove('hidden');
+
+  if (sudahIsi) {
+    // Sudah isi — tampilkan ringkasan
+    tabFeedback.innerHTML = `<span data-icon="star"></span> Feedback <span class="tab-badge">✓</span>`;
+    tabFeedback.querySelectorAll('[data-icon]').forEach(el => {
+      el.innerHTML = Icons.get(el.dataset.icon);
+      el.style.display = 'contents';
+    });
+
+    renderFeedbackSudah(sudahIsi);
+  } else {
+    renderFeedbackForm(pertemuan);
+  }
+}
+
+function renderFeedbackSudah(fb) {
+  const el = document.getElementById('panelFeedback');
+  el.innerHTML = `
+    <div class="status-card sudah">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <span style="color:var(--success);">${Icons.get('checkCircle', { class: 'icon-lg' })}</span>
+        <div style="font-weight:800;">Feedback Terkirim</div>
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <div class="text-xs text-muted" style="font-weight:700;">SKOR RATA-RATA</div>
+        <div style="font-size:32px;font-weight:800;color:var(--maroon);line-height:1;">${fb.skor_total}</div>
+        <div class="text-xs text-muted" style="margin-top:2px;">dari skala 5.0</div>
+      </div>
+
+      ${fb.saran ? `
+        <div style="padding:10px;background:var(--bg);border-radius:8px;margin-bottom:8px;">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">SARAN:</div>
+          <div style="font-size:13px;line-height:1.5;">${UI.escapeHtml(fb.saran)}</div>
+        </div>
+      ` : ''}
+
+      ${fb.kritik ? `
+        <div style="padding:10px;background:var(--bg);border-radius:8px;">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">KRITIK:</div>
+          <div style="font-size:13px;line-height:1.5;">${UI.escapeHtml(fb.kritik)}</div>
+        </div>
+      ` : ''}
+
+      <div class="text-xs text-muted" style="margin-top:12px;">
+        ${Icons.get('clock', { class: 'icon-sm' })} 
+        ${UI.timeAgo(fb.dibuat_pada)}
+      </div>
+    </div>
+  `;
+}
+
+async function renderFeedbackForm(pertemuan) {
+  const el = document.getElementById('panelFeedback');
+  el.innerHTML = '<div class="skeleton" style="height:200px;border-radius:16px;"></div>';
+
+  // Ambil aspek untuk periode pertemuan
+  const resAspek = await Api.call('feedback.aspek_list', { periode_id: pertemuan.periode_id });
+  if (!resAspek.ok || !resAspek.data || resAspek.data.length === 0) {
+    el.innerHTML = UI.emptyHtml('info', 'Belum ada aspek feedback');
+    return;
+  }
+
+  // Group by kategori
+  const grouped = {};
+  resAspek.data.forEach(a => {
+    if (!grouped[a.kategori]) grouped[a.kategori] = [];
+    grouped[a.kategori].push(a);
+  });
+
+  const kategoriLabel = {
+    sekolah: 'Sekolah Tuan Rumah',
+    penyelenggara: 'Penyelenggara',
+    narasumber: 'Narasumber',
+    materi: 'Materi',
+    umum: 'Umum',
+  };
+
+  const kategoriIcon = {
+    sekolah: 'home',
+    penyelenggara: 'users',
+    narasumber: 'user',
+    materi: 'book',
+    umum: 'info',
+  };
+
+  el.innerHTML = `
+    <div class="card" style="margin-bottom:12px;background:var(--maroon-soft);border:none;">
+      <div style="display:flex;align-items:flex-start;gap:10px;">
+        <span style="color:var(--maroon);">${Icons.get('info', { class: 'icon-lg' })}</span>
+        <div>
+          <div style="font-weight:800;font-size:13px;margin-bottom:4px;color:var(--maroon);">Bantu kami jadi lebih baik</div>
+          <div style="font-size:12.5px;color:var(--ink);line-height:1.5;">
+            Isi penilaian Anda terhadap penyelenggaraan pertemuan ini. Feedback bersifat anonim dan dipakai untuk evaluasi.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    ${Object.keys(grouped).map(kat => `
+      <div class="card" style="margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+          <div style="width:32px;height:32px;border-radius:8px;background:var(--maroon-soft);color:var(--maroon);display:flex;align-items:center;justify-content:center;">
+            ${Icons.get(kategoriIcon[kat] || 'star', { class: 'icon-sm' })}
+          </div>
+          <div style="font-weight:800;font-size:13.5px;">${kategoriLabel[kat] || kat}</div>
+        </div>
+
+        ${grouped[kat].map(a => `
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
+            <div style="flex:1;font-size:12.5px;font-weight:600;line-height:1.4;">${UI.escapeHtml(a.nama_aspek)}</div>
+            <div class="fb-rating" data-kat="${kat}" data-aspek="${a.id}">
+              ${[1,2,3,4,5].map(n =>
+                `<button type="button" data-skor="${n}" style="width:28px;height:28px;border:1.5px solid var(--border);background:var(--surface);border-radius:6px;font-weight:800;font-size:11px;color:var(--muted);cursor:pointer;padding:0;transition:all .12s;">${n}</button>`
+              ).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `).join('')}
+
+    <div class="card" style="margin-bottom:10px;">
+      <div class="field" style="margin-bottom:12px;">
+        <label class="label">Saran (opsional)</label>
+        <textarea id="fbSaran" class="input" rows="2" style="resize:vertical;" placeholder="Apa yang perlu dipertahankan?"></textarea>
+      </div>
+      <div class="field">
+        <label class="label">Kritik & Masukan (opsional)</label>
+        <textarea id="fbKritik" class="input" rows="2" style="resize:vertical;" placeholder="Apa yang perlu diperbaiki?"></textarea>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-full" id="btnKirimFeedback" style="margin-bottom:16px;">
+      ${Icons.get('send', { class: 'icon-sm' })}
+      Kirim Feedback
+    </button>
+  `;
+
+  // State rating
+  const ratingState = {};
+
+  el.querySelectorAll('.fb-rating').forEach(r => {
+    const kat = r.dataset.kat;
+    const aspekId = r.dataset.aspek;
+    r.querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', () => {
+        const skor = Number(b.dataset.skor);
+        r.querySelectorAll('button').forEach(x => {
+          const on = x === b;
+          x.style.background = on ? 'var(--maroon)' : 'var(--surface)';
+          x.style.color = on ? 'white' : 'var(--muted)';
+          x.style.borderColor = on ? 'var(--maroon)' : 'var(--border)';
+        });
+        if (!ratingState[kat]) ratingState[kat] = {};
+        ratingState[kat][aspekId] = skor;
+      });
+    });
+  });
+
+  // Submit
+  el.querySelector('#btnKirimFeedback').addEventListener('click', async () => {
+    const btn = el.querySelector('#btnKirimFeedback');
+
+    // Validasi: minimal 1 rating
+    const totalRating = Object.keys(ratingState).reduce((sum, k) => sum + Object.keys(ratingState[k]).length, 0);
+    if (totalRating === 0) {
+      UI.gagal('Isi minimal 1 penilaian.');
+      return;
+    }
+
+    const ok = await UI.konfirmasi(
+      'Kirim Feedback',
+      'Feedback tidak bisa diubah setelah dikirim. Lanjutkan?',
+      { okText: 'Kirim' }
+    );
+    if (!ok) return;
+
+    UI.btnLoading(btn, 'Mengirim…');
+
+    const res = await Api.call('feedback.isi', {
+      pertemuan_id: pertemuan.id,
+      aspek: ratingState,
+      saran: el.querySelector('#fbSaran').value.trim(),
+      kritik: el.querySelector('#fbKritik').value.trim(),
+    });
+
+    UI.btnReset(btn);
+
+    if (!res.ok) {
+      UI.gagal(res.error || 'Gagal mengirim feedback.');
+      return;
+    }
+
+    UI.sukses('Terima kasih atas feedback Anda!');
+
+    // Update tampilan
+    const resSaya = await Api.call('feedback.saya', { pertemuan_id: pertemuan.id });
+    if (resSaya.ok && resSaya.data) {
+      renderFeedbackSudah(resSaya.data);
+      const tabFeedback = document.getElementById('tabFeedback');
+      tabFeedback.innerHTML = `<span data-icon="star"></span> Feedback <span class="tab-badge">✓</span>`;
+      tabFeedback.querySelectorAll('[data-icon]').forEach(el => {
+        el.innerHTML = Icons.get(el.dataset.icon);
+        el.style.display = 'contents';
+      });
     }
   });
 }
