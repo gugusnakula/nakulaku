@@ -308,6 +308,13 @@ function renderMenuKhusus(p) {
       href: 'admin/pengumuman.html',
       warna: 'maroon',
     });
+    menu.push({
+      icon: 'messageSquare',
+      title: 'Rekap Feedback',
+      desc: 'Lihat penilaian peserta per pertemuan',
+      href: 'admin/feedback.html',
+      warna: 'maroon',
+    });
     if (peranList.includes('super_admin') && !peranList.includes('ks')) {
       menu.push({
         icon: 'checkCircle',
