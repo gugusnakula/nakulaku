@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>Pengamat — NAKULAKU</title>
+
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/nakula.css" />
+
+<style>
+  .tab-switch {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    padding: 4px;
+    border-radius: var(--r-md);
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+  }
+  .tsw {
+    flex: 1;
+    padding: 9px;
+    text-align: center;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--muted);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .tsw.active {
+    background: var(--surface);
+    color: var(--maroon);
+    box-shadow: var(--sh-sm);
+  }
+
+  .target-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .target-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .target-avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px;
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .target-avatar img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .target-avatar.sekolah {
+    border-radius: 12px;
+    background: var(--gold-soft);
+    color: var(--gold-dark);
+  }
+  .target-info { flex: 1; min-width: 0; }
+  .target-name { font-weight: 800; font-size: 13.5px; }
+  .target-sub { font-size: 11px; color: var(--muted); font-weight: 600; }
+
+  .aspek-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .aspek-row:last-child { border-bottom: none; }
+  .aspek-name {
+    flex: 1;
+    font-size: 12.5px;
+    font-weight: 600;
+    min-width: 0;
+  }
+  .rating {
+    display: flex;
+    gap: 3px;
+  }
+  .rating button {
+    width: 30px; height: 30px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 0;
+    transition: all .12s;
+  }
+  .rating button:hover { border-color: var(--maroon); }
+  .rating button.on {
+    background: var(--maroon);
+    color: white;
+    border-color: var(--maroon);
+  }
+
+  .catatan-input {
+    margin-top: 12px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 12.5px;
+    resize: vertical;
+    min-height: 40px;
+  }
+  .catatan-input:focus {
+    outline: none;
+    border-color: var(--maroon);
+  }
+
+  .save-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--surface);
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 16px rgba(125,29,58,.08);
+    z-index: 40;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+  }
+  .save-bar .btn { max-width: 500px; }
+  .save-bar-inner {
+    width: 100%;
+    max-width: 720px;
+    display: flex;
+    gap: 10px;
+    margin: 0 auto;
+  }
+  body { padding-bottom: 80px; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Pengamat</div>
+      <div class="app-header-sub" id="subHeader">Memuat…</div>
+    </div>
+  </div>
+</header>
+
+<main class="container page" style="max-width:720px;padding-top:16px;">
+
+  <!-- Step pilih pertemuan -->
+  <section id="stepPilih">
+    <div class="section-head">
+      <h3><span data-icon="calendar"></span> Pilih Pertemuan</h3>
+    </div>
+    <div id="listTugas">
+      <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
+    </div>
+  </section>
+
+  <!-- Step isi catatan -->
+  <section id="stepIsi" class="hidden">
+    <div class="card" style="margin-bottom:14px;">
+      <div style="font-weight:800;font-size:14px;" id="infoPertemuan">—</div>
+      <div class="text-sm text-muted" id="infoPertemuan2">—</div>
+    </div>
+
+    <div class="tab-switch">
+      <button class="tsw active" data-tipe="guru"><span data-icon="user" class="icon-sm"></span> Guru</button>
+      <button class="tsw" data-tipe="sekolah"><span data-icon="home" class="icon-sm"></span> Sekolah</button>
+    </div>
+
+    <div id="targetList"></div>
+  </section>
+
+</main>
+
+<!-- Save Bar -->
+<div class="save-bar hidden" id="saveBar">
+  <div class="save-bar-inner">
+    <button class="btn btn-secondary" id="btnBatal" style="flex:1;">Batal</button>
+    <button class="btn btn-primary" id="btnSimpan" style="flex:2;">
+      <span data-icon="check"></span>
+      Simpan Catatan
+    </button>
+  </div>
+</div>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+
+let profile;
+let tugasList = [];
+let pertemuanAktif = null;
+let dataSesi = null;
+let catatanState = {}; // key = `${tipe}-${target_id}-${aspek}` → {skor, catatan}
+let tipeAktif = 'guru';
+
+// Aspek penilaian
+const ASPEK_GURU = [
+  { key: 'bertanya',  label: 'Keaktifan bertanya' },
+  { key: 'menjawab',  label: 'Keaktifan menjawab' },
+  { key: 'diskusi',   label: 'Kontribusi diskusi' },
+  { key: 'presentasi',label: 'Presentasi di depan' },
+  { key: 'kerjasama', label: 'Kerjasama tim' },
+];
+const ASPEK_SEKOLAH = [
+  { key: 'kekompakan',  label: 'Kekompakan tim' },
+  { key: 'atribut',     label: 'Kelengkapan atribut' },
+  { key: 'kehadiran',   label: 'Kehadiran kolektif' },
+  { key: 'solidaritas', label: 'Solidaritas & kerjasama' },
+];
+
+(async () => {
+  profile = await Api.requireLogin();
+  if (!profile) return;
+
+  const res = await Api.call('pengamat.tugas_saya');
+  document.getElementById('listTugas').innerHTML = '';
+
+  if (!res.ok) {
+    document.getElementById('listTugas').innerHTML = UI.errorHtml(res.error);
+    return;
+  }
+
+  tugasList = res.data || [];
+
+  if (tugasList.length === 0) {
+    document.getElementById('listTugas').innerHTML = UI.emptyHtml(
+      'users', 'Belum ada tugas pengamatan',
+      'Anda belum ditunjuk sebagai pengamat di pertemuan manapun.'
+    );
+    return;
+  }
+
+  // Kalau cuma 1 tugas, langsung buka
+  if (tugasList.length === 1) {
+    bukaPertemuan(tugasList[0].id);
+    return;
+  }
+
+  renderListTugas();
+})();
+
+function renderListTugas() {
+  const el = document.getElementById('listTugas');
+  el.innerHTML = tugasList.map(t => `
+    <div class="pertemuan-item" data-id="${t.id}">
+      <div class="pertemuan-number">
+        <div class="num">${t.urutan}</div>
+        <div class="lbl">PERT</div>
+      </div>
+      <div class="pertemuan-body">
+        <div class="pertemuan-title">${UI.escapeHtml(t.judul)}</div>
+        <div class="pertemuan-meta">
+          ${Icons.get('calendar', { class: 'icon-sm' })}
+          ${UI.formatTanggal(t.tanggal)}
+        </div>
+        ${t.lokasi_nama ? `
+          <div class="pertemuan-meta">
+            ${Icons.get('mapPin', { class: 'icon-sm' })}
+            ${UI.escapeHtml(t.lokasi_nama)}
+          </div>` : ''}
+      </div>
+      <span class="chevron">${Icons.get('chevronRight', { class: 'icon' })}</span>
+    </div>
+  `).join('');
+
+  el.querySelectorAll('.pertemuan-item').forEach(item => {
+    item.addEventListener('click', () => bukaPertemuan(Number(item.dataset.id)));
+  });
+}
+
+async function bukaPertemuan(id) {
+  pertemuanAktif = id;
+  document.getElementById('stepPilih').classList.add('hidden');
+  document.getElementById('stepIsi').classList.remove('hidden');
+  document.getElementById('saveBar').classList.remove('hidden');
+  document.getElementById('subHeader').textContent = 'Isi Catatan';
+
+  const el = document.getElementById('targetList');
+  el.innerHTML = '<div class="skeleton" style="height:200px;border-radius:16px;"></div>';
+
+  const res = await Api.call('pengamat.sesi_info', { pertemuan_id: id });
+
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat.');
+    return;
+  }
+
+  dataSesi = res.data;
+  document.getElementById('infoPertemuan').textContent =
+    `Pertemuan #${dataSesi.pertemuan.urutan} · ${dataSesi.pertemuan.judul}`;
+  document.getElementById('infoPertemuan2').textContent =
+    `${UI.formatTanggal(dataSesi.pertemuan.tanggal)} · ${dataSesi.jumlah_peserta} peserta hadir`;
+
+  // Pre-fill catatan yang sudah ada
+  catatanState = {};
+  (dataSesi.catatan || []).forEach(c => {
+    const targetId = c.target_tipe === 'guru' ? c.target_user_id : c.target_sekolah_id;
+    const key = `${c.target_tipe}-${targetId}-${c.aspek}`;
+    catatanState[key] = { skor: c.skor, catatan: c.catatan || '' };
+  });
+
+  renderTargets();
+
+  // Tab switching
+  document.querySelectorAll('.tsw').forEach(t => {
+    t.addEventListener('click', () => {
+      tipeAktif = t.dataset.tipe;
+      document.querySelectorAll('.tsw').forEach(x => x.classList.toggle('active', x === t));
+      renderTargets();
+    });
+  });
+}
+
+function renderTargets() {
+  const el = document.getElementById('targetList');
+  const aspek = tipeAktif === 'guru' ? ASPEK_GURU : ASPEK_SEKOLAH;
+  const list = tipeAktif === 'guru' ? dataSesi.peserta : dataSesi.sekolah;
+
+  if (!list || list.length === 0) {
+    el.innerHTML = UI.emptyHtml('users', 'Belum ada ' + tipeAktif, 'Peserta akan muncul setelah mereka presensi.');
+    return;
+  }
+
+  el.innerHTML = list.map(t => {
+    const init = (t.nama_lengkap || t.nama || '?').charAt(0).toUpperCase();
+    const fotoUrl = t.foto_thumb_url || (t.id ? Api.fotoUrl(t.id, 't') : null);
+    const isSekolah = tipeAktif === 'sekolah';
+    const nama = isSekolah ? t.nama : t.nama_lengkap;
+    const sub = isSekolah ? (t.npsn || '') : (t.sekolah?.nama || t.jabatan || '');
+    const targetId = t.id;
+
+    return `
+      <div class="target-card">
+        <div class="target-head">
+          <div class="target-avatar ${isSekolah ? 'sekolah' : ''}">
+            <span>${init}</span>
+            ${fotoUrl && !isSekolah ? `<img src="${fotoUrl}" onerror="this.remove()">` : ''}
+          </div>
+          <div class="target-info">
+            <div class="target-name">${UI.escapeHtml(nama || '-')}</div>
+            <div class="target-sub">${UI.escapeHtml(sub)}</div>
+          </div>
+        </div>
+
+        <div>
+          ${aspek.map(a => {
+            const key = `${tipeAktif}-${targetId}-${a.key}`;
+            const cur = catatanState[key]?.skor || 0;
+            return `
+              <div class="aspek-row">
+                <div class="aspek-name">${a.label}</div>
+                <div class="rating" data-key="${key}">
+                  ${[1,2,3,4,5].map(n =>
+                    `<button type="button" data-skor="${n}" class="${cur === n ? 'on' : ''}">${n}</button>`
+                  ).join('')}
+                </div>
+              </div>
+            `;
+          }).join('')}
+
+          <textarea class="catatan-input" data-catatan-key="${tipeAktif}-${targetId}"
+            placeholder="Catatan tambahan (opsional)…">${UI.escapeHtml(catatanState[`${tipeAktif}-${targetId}-__note`]?.catatan || '')}</textarea>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Wire rating buttons
+  el.querySelectorAll('.rating').forEach(r => {
+    const key = r.dataset.key;
+    r.querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', () => {
+        const skor = Number(b.dataset.skor);
+        r.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+        if (!catatanState[key]) catatanState[key] = { skor: null, catatan: '' };
+        catatanState[key].skor = skor;
+      });
+    });
+  });
+
+  // Wire catatan textareas
+  el.querySelectorAll('[data-catatan-key]').forEach(ta => {
+    const key = ta.dataset.catatanKey + '-__note';
+    ta.addEventListener('input', () => {
+      if (!catatanState[key]) catatanState[key] = { skor: null, catatan: '' };
+      catatanState[key].catatan = ta.value;
+    });
+  });
+}
+
+// Batal
+document.getElementById('btnBatal').addEventListener('click', async () => {
+  const ok = await UI.konfirmasi('Batalkan', 'Catatan yang belum disimpan akan hilang. Lanjutkan?', { danger: true });
+  if (ok) window.location.href = 'beranda.html';
+});
+
+// Simpan
+document.getElementById('btnSimpan').addEventListener('click', async () => {
+  const btn = document.getElementById('btnSimpan');
+  UI.btnLoading(btn, 'Menyimpan…');
+
+  // Bangun items
+  const items = [];
+  Object.keys(catatanState).forEach(key => {
+    if (key.endsWith('-__note')) {
+      const base = key.replace('-__note', '');
+      const parts = base.split('-');
+      const tipe = parts[0];
+      const targetId = parts[1];
+      const catatanText = catatanState[key].catatan;
+      if (catatanText && catatanText.trim()) {
+        items.push({
+          target_tipe: tipe,
+          target_id: Number(targetId),
+          aspek: '__umum', // catatan umum
+          skor: 1, // placeholder supaya tersimpan (skor tidak ditampilkan)
+          catatan: catatanText.trim(),
+        });
+      }
+    } else {
+      const parts = key.split('-');
+      const tipe = parts[0];
+      const targetId = parts[1];
+      const aspek = parts[2];
+      const v = catatanState[key];
+      if (v.skor !== null && v.skor !== undefined) {
+        items.push({
+          target_tipe: tipe,
+          target_id: Number(targetId),
+          aspek,
+          skor: v.skor,
+          catatan: null,
+        });
+      }
+    }
+  });
+
+  const res = await Api.call('pengamat.simpan_catatan', {
+    pertemuan_id: pertemuanAktif,
+    items,
+  });
+
+  UI.btnReset(btn);
+
+  if (!res.ok) { UI.gagal(res.error || 'Gagal menyimpan.'); return; }
+
+  UI.sukses('Catatan tersimpan.');
+  setTimeout(() => window.location.href = 'beranda.html', 800);
+});
+</script>
+
+</body>
+</html>
