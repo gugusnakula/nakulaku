@@ -256,11 +256,11 @@ function renderMenuKhusus(p) {
   // KS → Verifikasi Presensi
   if (peranList.includes('ks')) {
     menu.push({
-      icon: 'mapPin',
-      title: 'Verifikasi Presensi',
-      desc: 'Periksa presensi guru di luar radius',
-      href: 'ks/verifikasi.html',
-      warna: 'maroon',
+      icon: 'shield',
+      title: 'Dashboard Admin',
+      desc: 'Menu verifikasi & kelola',
+      href: 'admin/index.html',
+      warna: 'gold',
     });
   }
 
@@ -314,6 +314,13 @@ function renderMenuKhusus(p) {
       desc: 'Lihat penilaian peserta per pertemuan',
       href: 'admin/feedback.html',
       warna: 'maroon',
+    });
+    menu.push({
+      icon: 'shield',
+      title: 'Dashboard Admin',
+      desc: 'Semua menu admin dalam satu tempat',
+      href: 'admin/index.html',
+      warna: 'gold',
     });
     if (peranList.includes('super_admin') && !peranList.includes('ks')) {
       menu.push({
