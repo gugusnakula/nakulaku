@@ -41,6 +41,29 @@
     margin-top: 4px;
   }
 
+  .tab-verif {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all .15s;
+  }
+  .tab-verif.active {
+    background: var(--surface);
+    color: var(--maroon);
+    box-shadow: var(--sh-sm);
+  }
+
   .verif-item {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -115,8 +138,9 @@
     display: flex;
     justify-content: space-between;
     padding: 3px 0;
+    gap: 8px;
   }
-  .verif-detail-row .lbl { color: var(--muted); font-weight: 600; }
+  .verif-detail-row .lbl { color: var(--muted); font-weight: 600; flex-shrink: 0; }
   .verif-detail-row .val { font-weight: 700; text-align: right; }
   .verif-detail-row .val.warn { color: var(--warning); }
 
@@ -151,7 +175,7 @@
       <span data-icon="chevronLeft"></span>
     </a>
     <div class="app-header-text">
-      <div class="app-header-title">Verifikasi Presensi</div>
+      <div class="app-header-title">Verifikasi</div>
       <div class="app-header-sub">Panel Kepala Sekolah</div>
     </div>
   </div>
@@ -165,12 +189,22 @@
   <div class="stat-row">
     <div class="stat-mini">
       <div class="n" id="statTotal">—</div>
-      <div class="l">Perlu Verifikasi</div>
+      <div class="l">Presensi Perlu Verifikasi</div>
     </div>
     <div class="stat-mini">
-      <div class="n" id="statSekolah">—</div>
-      <div class="l">Sekolah Dipantau</div>
+      <div class="n" id="statIzin">—</div>
+      <div class="l">Ajuan Izin</div>
     </div>
+  </div>
+
+  <!-- Tab switch -->
+  <div style="display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:12px;margin-bottom:16px;border:1px solid var(--border);">
+    <button class="tab-verif active" data-tipe="presensi">
+      <span data-icon="mapPin" class="icon-sm"></span> Presensi
+    </button>
+    <button class="tab-verif" data-tipe="izin">
+      <span data-icon="fileText" class="icon-sm"></span> Ajuan Izin
+    </button>
   </div>
 
   <div id="listVerif">
@@ -191,7 +225,9 @@ document.querySelectorAll('[data-icon]').forEach(el => {
 UI.bindLogout();
 
 let profile;
-let daftarVerif = [];
+let tabAktif = 'presensi';
+let daftarPresensi = [];
+let daftarIzin = [];
 
 (async () => {
   profile = await Api.requireLogin();
@@ -205,59 +241,71 @@ let daftarVerif = [];
     return;
   }
 
-  // Statistik
-  if (profile.peran.includes('ks') && profile.ks_sekolah) {
-    document.getElementById('statSekolah').textContent = profile.ks_sekolah.length;
-  } else {
-    document.getElementById('statSekolah').textContent = 'All';
-  }
+  await loadSemua();
 
-  await loadData();
+  document.querySelectorAll('.tab-verif').forEach(t => {
+    t.addEventListener('click', () => {
+      tabAktif = t.dataset.tipe;
+      document.querySelectorAll('.tab-verif').forEach(x => {
+        x.classList.toggle('active', x === t);
+      });
+      renderList();
+    });
+  });
 })();
 
-async function loadData() {
+async function loadSemua() {
   const el = document.getElementById('listVerif');
-  el.innerHTML = `
-    <div class="skeleton" style="height:200px;border-radius:16px;margin-bottom:12px;"></div>
-    <div class="skeleton" style="height:200px;border-radius:16px;"></div>
-  `;
+  el.innerHTML = '<div class="skeleton" style="height:200px;border-radius:16px;"></div>';
 
-  const res = await Api.call('presensi.menunggu_ks');
+  const [resPresensi, resIzin] = await Promise.all([
+    Api.call('presensi.menunggu_ks'),
+    Api.call('izin.menunggu_ks'),
+  ]);
 
-  if (!res.ok) {
-    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat data.');
-    return;
-  }
+  daftarPresensi = resPresensi.ok ? (resPresensi.data || []) : [];
+  daftarIzin = resIzin.ok ? (resIzin.data || []) : [];
 
-  daftarVerif = res.data || [];
-  document.getElementById('statTotal').textContent = daftarVerif.length;
+  document.getElementById('statTotal').textContent = daftarPresensi.length;
+  document.getElementById('statIzin').textContent = daftarIzin.length;
 
-  if (daftarVerif.length === 0) {
-    el.innerHTML = UI.emptyHtml(
-      'checkCircle',
-      'Semua sudah diverifikasi',
-      'Tidak ada presensi yang menunggu verifikasi.'
-    );
-    return;
-  }
-
-  el.innerHTML = daftarVerif.map(v => renderItem(v)).join('');
-
-  // Event listener
-  daftarVerif.forEach(v => {
-    const el = document.getElementById('verif-' + v.id);
-    if (!el) return;
-
-    el.querySelector('[data-act="setuju"]').addEventListener('click', () => verifikasi(v.id, 'disetujui'));
-    el.querySelector('[data-act="tolak"]').addEventListener('click', () => verifikasi(v.id, 'ditolak'));
-    el.querySelector('[data-act="foto"]')?.addEventListener('click', () => showFoto(v.foto_thumb_url));
-  });
+  renderList();
 }
 
-function renderItem(v) {
+function renderList() {
+  const el = document.getElementById('listVerif');
+
+  if (tabAktif === 'presensi') {
+    if (daftarPresensi.length === 0) {
+      el.innerHTML = UI.emptyHtml('checkCircle', 'Semua presensi sudah diverifikasi', 'Tidak ada yang menunggu.');
+      return;
+    }
+    el.innerHTML = daftarPresensi.map(v => renderPresensiItem(v)).join('');
+    daftarPresensi.forEach(v => {
+      const item = document.getElementById('verif-' + v.id);
+      if (!item) return;
+      item.querySelector('[data-act="setuju"]').addEventListener('click', () => verifikasiPresensi(v.id, 'disetujui'));
+      item.querySelector('[data-act="tolak"]').addEventListener('click', () => verifikasiPresensi(v.id, 'ditolak'));
+      item.querySelector('[data-act="foto"]')?.addEventListener('click', () => showFoto(v.foto_thumb_url));
+    });
+  } else {
+    if (daftarIzin.length === 0) {
+      el.innerHTML = UI.emptyHtml('checkCircle', 'Tidak ada ajuan izin', 'Semua ajuan sudah diproses.');
+      return;
+    }
+    el.innerHTML = daftarIzin.map(v => renderIzinItem(v)).join('');
+    daftarIzin.forEach(v => {
+      const item = document.getElementById('verif-' + v.id);
+      if (!item) return;
+      item.querySelector('[data-act="setuju"]').addEventListener('click', () => verifikasiIzin(v.id, 'disetujui'));
+      item.querySelector('[data-act="tolak"]').addEventListener('click', () => verifikasiIzin(v.id, 'ditolak'));
+    });
+  }
+}
+
+function renderPresensiItem(v) {
   const init = (v.user?.nama_lengkap || '?').charAt(0).toUpperCase();
   const fotoUrl = v.foto_thumb_url;
-
   const waktu = UI.formatTanggalJam(v.waktu_submit);
   const pertemuanInfo = v.pertemuan
     ? `Pertemuan #${v.pertemuan.urutan} · ${UI.escapeHtml(v.pertemuan.judul)}`
@@ -266,9 +314,7 @@ function renderItem(v) {
   return `
     <div class="verif-item" id="verif-${v.id}">
       <div class="verif-head">
-        <div class="verif-avatar">
-          <span>${init}</span>
-        </div>
+        <div class="verif-avatar"><span>${init}</span></div>
         <div class="verif-info">
           <div class="verif-name">${UI.escapeHtml(v.user?.nama_lengkap || '-')}</div>
           <div class="verif-meta">${UI.escapeHtml(v.user?.sekolah?.nama || '-')}</div>
@@ -276,14 +322,12 @@ function renderItem(v) {
         </div>
       </div>
 
-      ${fotoUrl ? `
-        <img class="verif-foto" data-act="foto" src="${fotoUrl}" alt="Foto presensi" loading="lazy" />
-      ` : ''}
+      ${fotoUrl ? `<img class="verif-foto" data-act="foto" src="${fotoUrl}" alt="Foto presensi" loading="lazy" />` : ''}
 
       <div class="verif-detail">
         <div class="verif-detail-row">
           <span class="lbl">Pertemuan</span>
-          <span class="val">${pertemuanInfo}</span>
+          <span class="val" style="font-size:11.5px;">${pertemuanInfo}</span>
         </div>
         <div class="verif-detail-row">
           <span class="lbl">Waktu Submit</span>
@@ -301,45 +345,110 @@ function renderItem(v) {
 
       <div class="verif-actions">
         <button class="btn btn-secondary btn-sm" data-act="tolak">
-          ${Icons.get('x', { class: 'icon-sm' })}
-          Tolak
+          ${Icons.get('x', { class: 'icon-sm' })} Tolak
         </button>
         <button class="btn btn-primary btn-sm" data-act="setuju">
-          ${Icons.get('check', { class: 'icon-sm' })}
-          Setujui
+          ${Icons.get('check', { class: 'icon-sm' })} Setujui
         </button>
       </div>
     </div>
   `;
 }
 
-async function verifikasi(presensiId, keputusan) {
-  const item = daftarVerif.find(v => v.id === presensiId);
-  const nama = item?.user?.nama_lengkap || 'guru';
+function renderIzinItem(v) {
+  const init = (v.user?.nama_lengkap || '?').charAt(0).toUpperCase();
+  const waktu = UI.formatTanggalJam(v.waktu);
+  const jenisLabel = { ijin: 'Ijin', sakit: 'Sakit', cuti: 'Cuti' }[v.jenis] || v.jenis;
+  const jenisColor = { ijin: 'badge-info', sakit: 'badge-warning', cuti: 'badge-maroon' }[v.jenis] || 'badge-maroon';
+  const pertemuanInfo = v.pertemuan
+    ? `Pertemuan #${v.pertemuan.urutan} · ${UI.escapeHtml(v.pertemuan.judul)}`
+    : '-';
 
-  const judul = keputusan === 'disetujui' ? 'Setujui Presensi' : 'Tolak Presensi';
+  return `
+    <div class="verif-item" id="verif-${v.id}">
+      <div class="verif-head">
+        <div class="verif-avatar"><span>${init}</span></div>
+        <div class="verif-info">
+          <div class="verif-name">${UI.escapeHtml(v.user?.nama_lengkap || '-')}</div>
+          <div class="verif-meta">${UI.escapeHtml(v.user?.sekolah?.nama || '-')}</div>
+          <div class="verif-meta">${UI.escapeHtml(v.user?.jabatan || '-')}</div>
+        </div>
+      </div>
+
+      <div class="verif-detail">
+        <div class="verif-detail-row">
+          <span class="lbl">Jenis</span>
+          <span class="val"><span class="badge ${jenisColor}">${jenisLabel}</span></span>
+        </div>
+        <div class="verif-detail-row">
+          <span class="lbl">Pertemuan</span>
+          <span class="val" style="font-size:11.5px;">${pertemuanInfo}</span>
+        </div>
+        <div class="verif-detail-row">
+          <span class="lbl">Diajukan</span>
+          <span class="val">${waktu}</span>
+        </div>
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">
+          <div style="font-size:11px;color:var(--muted);font-weight:700;margin-bottom:4px;">ALASAN:</div>
+          <div style="font-size:13px;line-height:1.5;">${UI.escapeHtml(v.alasan || '-')}</div>
+          ${v.lampiran_url ? `
+            <a href="${UI.escapeHtml(v.lampiran_url)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;font-weight:700;">
+              ${Icons.get('externalLink', { class: 'icon-sm' })} Lihat Lampiran
+            </a>
+          ` : ''}
+        </div>
+      </div>
+
+      <div class="verif-actions">
+        <button class="btn btn-secondary btn-sm" data-act="tolak">
+          ${Icons.get('x', { class: 'icon-sm' })} Tolak
+        </button>
+        <button class="btn btn-primary btn-sm" data-act="setuju">
+          ${Icons.get('check', { class: 'icon-sm' })} Setujui
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+async function verifikasiPresensi(presensiId, keputusan) {
+  const item = daftarPresensi.find(v => v.id === presensiId);
+  const nama = item?.user?.nama_lengkap || 'guru';
   const pesan = keputusan === 'disetujui'
     ? `Setujui presensi ${nama}? Poin akan diubah menjadi 70.`
     : `Tolak presensi ${nama}? Poin akan diubah menjadi 0 (alfa).`;
 
-  const konfirmasi = await UI.konfirmasi(judul, pesan, {
-    okText: keputusan === 'disetujui' ? 'Setujui' : 'Tolak',
-    danger: keputusan === 'ditolak',
-  });
-  if (!konfirmasi) return;
+  const ok = await UI.konfirmasi(
+    keputusan === 'disetujui' ? 'Setujui Presensi' : 'Tolak Presensi',
+    pesan,
+    { okText: keputusan === 'disetujui' ? 'Setujui' : 'Tolak', danger: keputusan === 'ditolak' }
+  );
+  if (!ok) return;
 
-  const res = await Api.call('presensi.verifikasi', {
-    presensi_id: presensiId,
-    keputusan,
-  });
-
-  if (!res.ok) {
-    UI.gagal(res.error || 'Gagal memverifikasi.');
-    return;
-  }
-
+  const res = await Api.call('presensi.verifikasi', { presensi_id: presensiId, keputusan });
+  if (!res.ok) { UI.gagal(res.error); return; }
   UI.sukses(keputusan === 'disetujui' ? 'Presensi disetujui.' : 'Presensi ditolak.');
-  await loadData();
+  await loadSemua();
+}
+
+async function verifikasiIzin(pengajuanId, keputusan) {
+  const item = daftarIzin.find(v => v.id === pengajuanId);
+  const nama = item?.user?.nama_lengkap || 'guru';
+  const pesan = keputusan === 'disetujui'
+    ? `Setujui ajuan ${item?.jenis} dari ${nama}? Poin presensi akan menjadi 50.`
+    : `Tolak ajuan ${item?.jenis} dari ${nama}?`;
+
+  const ok = await UI.konfirmasi(
+    keputusan === 'disetujui' ? 'Setujui Ajuan' : 'Tolak Ajuan',
+    pesan,
+    { okText: keputusan === 'disetujui' ? 'Setujui' : 'Tolak', danger: keputusan === 'ditolak' }
+  );
+  if (!ok) return;
+
+  const res = await Api.call('izin.verifikasi', { pengajuan_id: pengajuanId, keputusan });
+  if (!res.ok) { UI.gagal(res.error); return; }
+  UI.sukses(keputusan === 'disetujui' ? 'Ajuan disetujui.' : 'Ajuan ditolak.');
+  await loadSemua();
 }
 
 function showFoto(url) {
