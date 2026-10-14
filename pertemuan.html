@@ -62,6 +62,8 @@
     margin-bottom: 6px;
     position: relative;
   }
+
+  /* Tabs */
   .tabs {
     display: flex;
     gap: 4px;
@@ -93,8 +95,24 @@
     color: var(--maroon);
     box-shadow: var(--sh-sm);
   }
+  .tab-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    font-weight: 800;
+  }
+  .tab:not(.active) .tab-badge {
+    background: var(--border);
+    color: var(--muted);
+  }
+
+  /* Panels */
   .panel { display: none; }
   .panel.active { display: block; }
+
+  /* Presensi status card */
   .status-card {
     border-radius: var(--r-lg);
     padding: 16px;
@@ -108,6 +126,7 @@
 </head>
 <body>
 
+<!-- Header -->
 <header class="app-header">
   <div class="app-header-brand">
     <a href="beranda.html" class="header-btn" style="text-decoration:none;">
@@ -125,15 +144,20 @@
 
 <main class="container page" style="max-width:720px;padding-top:16px;">
 
+  <!-- Loading -->
   <div id="loading">
     <div class="skeleton" style="height:160px;border-radius:24px;margin-bottom:20px;"></div>
     <div class="skeleton" style="height:44px;border-radius:12px;margin-bottom:20px;"></div>
     <div class="skeleton" style="height:120px;border-radius:16px;"></div>
   </div>
 
+  <!-- Content -->
   <div id="content" class="hidden">
+
+    <!-- Hero -->
     <div class="hero-card" id="hero"></div>
 
+    <!-- Tabs -->
     <div class="tabs">
       <button class="tab active" data-tab="presensi">
         <span data-icon="mapPin"></span> Presensi
@@ -146,15 +170,23 @@
       </button>
     </div>
 
+    <!-- Panel: Presensi -->
     <div class="panel active" data-panel="presensi" id="panelPresensi"></div>
+
+    <!-- Panel: Materi -->
     <div class="panel" data-panel="materi" id="panelMateri"></div>
+
+    <!-- Panel: Tugas -->
     <div class="panel" data-panel="tugas" id="panelTugas"></div>
+
   </div>
 
+  <!-- Error -->
   <div id="error" class="hidden"></div>
 
 </main>
 
+<!-- Bottom Nav -->
 <nav class="bottom-nav">
   <a class="nav-item" data-nav="beranda" href="beranda.html">
     <span data-icon="home"></span> Beranda
@@ -177,6 +209,7 @@
 <script src="assets/js/api.js"></script>
 <script src="assets/js/ui.js"></script>
 <script>
+// ---------- Pasang ikon ----------
 document.querySelectorAll('[data-icon]').forEach(el => {
   el.innerHTML = Icons.get(el.dataset.icon);
   el.style.display = 'contents';
@@ -184,6 +217,7 @@ document.querySelectorAll('[data-icon]').forEach(el => {
 
 UI.bindLogout();
 
+// ---------- Ambil pertemuan_id dari URL ----------
 const params = new URLSearchParams(window.location.search);
 const pertemuanId = params.get('id');
 
@@ -196,6 +230,7 @@ if (!pertemuanId) {
   );
 }
 
+// ---------- Load data ----------
 (async () => {
   const profile = await Api.requireLogin();
   if (!profile || !pertemuanId) return;
@@ -216,11 +251,13 @@ if (!pertemuanId) {
   render(res.data);
 })();
 
+// ---------- Render ----------
 function render(data) {
   const p = data.pertemuan;
   document.title = p.judul + ' — NAKULAKU';
   document.getElementById('content').classList.remove('hidden');
 
+  // Hero
   document.getElementById('hero').innerHTML = `
     <div class="hero-number">
       ${Icons.get('calendar', { class: 'icon-sm' })}
@@ -243,10 +280,12 @@ function render(data) {
       </div>` : ''}
   `;
 
+  // Panels
   renderPresensi(data.presensi_saya, p);
   renderMateri(data.materi);
   renderTugas(data.tugas, data.pengumpulan_saya);
 
+  // Tab listener
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
       const nama = tab.dataset.tab;
@@ -258,10 +297,55 @@ function render(data) {
   });
 }
 
-function renderPresensi(presensi, pertemuan) {
+// ---------- Panel Presensi ----------
+async function renderPresensi(presensi, pertemuan) {
   const el = document.getElementById('panelPresensi');
 
   if (!presensi) {
+    // Cek apakah ada ajuan izin yang sedang menunggu
+    const res = await Api.call('izin.saya', { pertemuan_id: pertemuan.id });
+    const izin = res.ok ? res.data : null;
+
+    if (izin) {
+      const jenisLabel = { ijin: 'Ijin', sakit: 'Sakit', cuti: 'Cuti' }[izin.jenis] || izin.jenis;
+      const statusInfo = izin.status_ks === 'menunggu'
+        ? { cls: 'badge-warning', text: 'Menunggu Verifikasi KS' }
+        : izin.status_ks === 'disetujui'
+          ? { cls: 'badge-success', text: 'Disetujui KS' }
+          : { cls: 'badge-danger', text: 'Ditolak KS' };
+
+      el.innerHTML = `
+        <div class="status-card info">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            <span style="color:var(--info);">${Icons.get('fileText', { class: 'icon-lg' })}</span>
+            <div style="font-weight:800;">Ajuan ${jenisLabel}</div>
+          </div>
+
+          <div style="margin-bottom:8px;">
+            <span class="badge ${statusInfo.cls}">${statusInfo.text}</span>
+          </div>
+
+          <div class="text-sm text-muted" style="margin-bottom:12px;">
+            <strong>Alasan:</strong> ${UI.escapeHtml(izin.alasan)}
+          </div>
+
+          ${izin.catatan_ks ? `
+            <div class="text-sm" style="padding:10px;background:var(--bg);border-radius:8px;margin-bottom:12px;">
+              <strong>Catatan KS:</strong><br />
+              ${UI.escapeHtml(izin.catatan_ks)}
+            </div>
+          ` : ''}
+
+          ${izin.status_ks === 'menunggu' ? `
+            <button class="btn btn-secondary btn-full" onclick="batalkanIzin()">
+              Ubah Ajuan
+            </button>
+          ` : ''}
+        </div>
+      `;
+      return;
+    }
+
     el.innerHTML = `
       <div class="status-card belum">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
@@ -271,15 +355,20 @@ function renderPresensi(presensi, pertemuan) {
         <p class="text-sm text-muted" style="margin-bottom:16px;">
           Silakan isi presensi saat pertemuan berlangsung. Pastikan Anda berada di lokasi kegiatan.
         </p>
-        <button class="btn btn-primary btn-full" onclick="mulaiPresensi()">
+        <button class="btn btn-primary btn-full" onclick="mulaiPresensi()" style="margin-bottom:8px;">
           ${Icons.get('camera', { class: 'icon-sm' })}
-          Isi Presensi Sekarang
+          Isi Presensi (Selfie + GPS)
+        </button>
+        <button class="btn btn-secondary btn-full" onclick="ajukanIzin()">
+          ${Icons.get('fileText', { class: 'icon-sm' })}
+          Ajukan Ijin/Sakit/Cuti
         </button>
       </div>
     `;
     return;
   }
 
+  // Sudah presensi — tampilkan status
   const statusMap = {
     tepat_waktu: { label: 'Tepat Waktu', cls: 'badge-success', icon: 'checkCircle' },
     terlambat: { label: 'Terlambat', cls: 'badge-warning', icon: 'clock' },
@@ -317,6 +406,7 @@ function renderPresensi(presensi, pertemuan) {
   `;
 }
 
+// ---------- Panel Materi ----------
 function renderMateri(materi) {
   const el = document.getElementById('panelMateri');
 
@@ -345,6 +435,7 @@ function renderMateri(materi) {
   `).join('');
 }
 
+// ---------- Panel Tugas ----------
 function renderTugas(tugas, pengumpulanSaya) {
   const el = document.getElementById('panelTugas');
 
@@ -392,16 +483,115 @@ function renderTugas(tugas, pengumpulanSaya) {
   }).join('');
 }
 
+// ---------- Aksi: Presensi ----------
 function mulaiPresensi() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
   window.location.href = 'presensi.html?id=' + id;
 }
+
+// ---------- Aksi: Tugas ----------
 function kumpulTugas(id) {
   window.location.href = 'tugas.html?id=' + id;
 }
+
 function lihatTugas(id) {
   window.location.href = 'tugas.html?id=' + id;
+}
+
+// ---------- Aksi: Ajukan Izin ----------
+function ajukanIzin() {
+  const params = new URLSearchParams(window.location.search);
+  const id = Number(params.get('id'));
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:24px;max-width:480px;width:100%;box-shadow:var(--sh-xl);max-height:90vh;overflow-y:auto;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <h3 style="font-size:17px;color:var(--maroon);margin:0;">Ajukan Ijin / Sakit / Cuti</h3>
+        <button data-close class="btn-icon">${Icons.get('x')}</button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="field">
+          <label class="label">Jenis *</label>
+          <select id="izinJenis" class="input">
+            <option value="">— Pilih —</option>
+            <option value="ijin">Ijin</option>
+            <option value="sakit">Sakit</option>
+            <option value="cuti">Cuti</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="label">Alasan *</label>
+          <textarea id="izinAlasan" class="input" rows="3" style="resize:vertical;" placeholder="Jelaskan alasan Anda…"></textarea>
+        </div>
+        <div class="field">
+          <label class="label">Lampiran (opsional)</label>
+          <input type="url" id="izinLampiran" class="input" placeholder="https://drive.google.com/…" />
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">Link ke surat/foto bukti (Google Drive, dsb.)</div>
+        </div>
+      </div>
+
+      <div id="izinAlert" class="alert alert-error" style="margin-top:14px;"></div>
+
+      <div style="display:flex;gap:8px;margin-top:20px;">
+        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
+        <button class="btn btn-primary" id="btnKirimIzin" style="flex:2;">Kirim Ajuan</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnKirimIzin').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnKirimIzin');
+    const alertBox = overlay.querySelector('#izinAlert');
+    alertBox.classList.remove('show');
+
+    const jenis = overlay.querySelector('#izinJenis').value;
+    const alasan = overlay.querySelector('#izinAlasan').value.trim();
+    const lampiran = overlay.querySelector('#izinLampiran').value.trim();
+
+    if (!jenis) { alertBox.textContent = 'Pilih jenis ajuan.'; alertBox.classList.add('show'); return; }
+    if (!alasan) { alertBox.textContent = 'Alasan wajib diisi.'; alertBox.classList.add('show'); return; }
+
+    UI.btnLoading(btn, 'Mengirim…');
+    const res = await Api.call('izin.ajukan', {
+      pertemuan_id: id,
+      jenis,
+      alasan,
+      lampiran_url: lampiran,
+    });
+    UI.btnReset(btn);
+
+    if (!res.ok) {
+      alertBox.textContent = res.error || 'Gagal mengirim.';
+      alertBox.classList.add('show');
+      return;
+    }
+
+    UI.sukses('Ajuan terkirim. Menunggu verifikasi KS.');
+    close();
+
+    // Reload panel presensi
+    const resDetail = await Api.call('pertemuan.detail', { pertemuan_id: id });
+    if (resDetail.ok) {
+      renderPresensi(resDetail.data.presensi_saya, resDetail.data.pertemuan);
+    }
+  });
+}
+
+function batalkanIzin() {
+  UI.konfirmasi(
+    'Ubah Ajuan',
+    'Ajuan lama akan diganti. Anda bisa memilih jenis dan alasan baru.',
+    { okText: 'Lanjut' }
+  ).then(ok => { if (ok) ajukanIzin(); });
 }
 </script>
 
