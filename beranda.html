@@ -245,7 +245,14 @@ function renderMenuKhusus(p) {
     href: 'award.html',
     warna: 'gold',
   });
-
+  // Sertifikat Saya — untuk SEMUA user
+  menu.push({
+    icon: 'fileText',
+    title: 'Sertifikat Saya',
+    desc: 'Lihat & unduh sertifikat periode',
+    href: 'sertifikat.html',
+    warna: 'maroon',
+  });
   // KS → Verifikasi Presensi
   if (peranList.includes('ks')) {
     menu.push({
@@ -287,7 +294,13 @@ function renderMenuKhusus(p) {
       href: 'admin/award.html',
       warna: 'gold',
     });
-
+    menu.push({
+      icon: 'fileText',
+      title: 'Kelola Sertifikat',
+      desc: 'Kelola sertifikat peserta',
+      href: 'admin/sertifikat.html',
+      warna: 'maroon',
+    });
     if (peranList.includes('super_admin') && !peranList.includes('ks')) {
       menu.push({
         icon: 'checkCircle',
