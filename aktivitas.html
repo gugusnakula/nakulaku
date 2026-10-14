@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>Aktivitas Saya — NAKULAKU</title>
+
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/nakula.css" />
+
+<style>
+  .hero-rapor {
+    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon-mid) 100%);
+    color: white;
+    border-radius: var(--r-xl);
+    padding: 24px 20px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(125,29,58,.3);
+  }
+  .hero-rapor::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.12;
+  }
+  .hero-rapor::after {
+    content: '';
+    position: absolute;
+    bottom: -50px; left: -50px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.08;
+  }
+  .hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(201,169,97,.5);
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 14px;
+    position: relative;
+  }
+  .hero-poin {
+    font-size: 44px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .hero-poin-label {
+    font-size: 12px;
+    opacity: 0.85;
+    font-weight: 600;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,.15);
+    position: relative;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat .n {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .hero-stat .l {
+    font-size: 9px;
+    opacity: 0.75;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  .tab-switch {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    padding: 4px;
+    border-radius: var(--r-md);
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+  }
+  .tsw {
+    flex: 1;
+    padding: 10px 6px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all .15s;
+  }
+  .tsw.active {
+    background: var(--surface);
+    color: var(--maroon);
+    box-shadow: var(--sh-sm);
+  }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .item-aktivitas {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .item-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .item-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .item-num .n { font-size: 15px; line-height: 1; }
+  .item-num .l { font-size: 7px; letter-spacing: 0.5px; font-weight: 700; opacity: 0.7; }
+  .item-info { flex: 1; min-width: 0; }
+  .item-title { font-weight: 700; font-size: 13.5px; margin-bottom: 2px; }
+  .item-sub { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  .item-status {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+  }
+  .st-tepat { background: var(--success-soft); color: var(--success); }
+  .st-terlambat { background: var(--warning-soft); color: var(--warning); }
+  .st-luar { background: var(--warning-soft); color: var(--warning); }
+  .st-izin { background: var(--info-soft); color: var(--info); }
+  .st-alfa { background: var(--danger-soft); color: var(--danger); }
+  .st-belum { background: var(--border); color: var(--muted); }
+  .st-diterima { background: var(--success-soft); color: var(--success); }
+  .st-revisi { background: var(--info-soft); color: var(--info); }
+  .st-ditolak { background: var(--danger-soft); color: var(--danger); }
+  .st-menunggu { background: var(--warning-soft); color: var(--warning); }
+
+  .stat-baris {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-top: 1px solid var(--border);
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+  .stat-baris .lbl { flex: 1; color: var(--muted); }
+  .stat-baris .val { font-weight: 800; }
+  .stat-baris .val.pos { color: var(--success); }
+  .stat-baris .val.neg { color: var(--danger); }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Aktivitas Saya</div>
+      <div class="app-header-sub">KKG Gugus Nakula</div>
+    </div>
+  </div>
+  <button class="header-btn" data-act="logout">
+    <span data-icon="logOut"></span>
+  </button>
+</header>
+
+<main class="container page" style="max-width:720px;padding-top:16px;">
+
+  <div id="loading">
+    <div class="skeleton" style="height:200px;border-radius:24px;margin-bottom:20px;"></div>
+    <div class="skeleton" style="height:60px;border-radius:12px;margin-bottom:16px;"></div>
+    <div class="skeleton" style="height:200px;border-radius:16px;"></div>
+  </div>
+
+  <div id="content" class="hidden">
+
+    <!-- Hero -->
+    <div class="hero-rapor">
+      <div class="hero-label">
+        ${''}
+        <span data-icon="activity" class="icon-sm"></span>
+        RAPOR DIGITAL
+      </div>
+      <div class="hero-poin" id="heroPoin">—</div>
+      <div class="hero-poin-label">Total Poin Kehadiran</div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="n" id="statHadir">—</div>
+          <div class="l">Hadir</div>
+        </div>
+        <div class="hero-stat">
+          <div class="n" id="statIzin">—</div>
+          <div class="l">Izin</div>
+        </div>
+        <div class="hero-stat">
+          <div class="n" id="statAlfa">—</div>
+          <div class="l">Alfa</div>
+        </div>
+        <div class="hero-stat">
+          <div class="n" id="statSert">—</div>
+          <div class="l">Sertifikat</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-switch">
+      <button class="tsw active" data-tab="presensi">
+        <span data-icon="mapPin" class="icon-sm"></span> Presensi
+      </button>
+      <button class="tsw" data-tab="tugas">
+        <span data-icon="clipboard" class="icon-sm"></span> Tugas
+      </button>
+      <button class="tsw" data-tab="sertifikat">
+        <span data-icon="fileText" class="icon-sm"></span> Sertifikat
+      </button>
+    </div>
+
+    <div class="panel active" data-panel="presensi" id="panelPresensi"></div>
+    <div class="panel" data-panel="tugas" id="panelTugas"></div>
+    <div class="panel" data-panel="sertifikat" id="panelSertifikat"></div>
+
+  </div>
+
+</main>
+
+<nav class="bottom-nav">
+  <a class="nav-item" data-nav="beranda" href="beranda.html"><span data-icon="home"></span> Beranda</a>
+  <a class="nav-item" data-nav="pertemuan" href="beranda.html"><span data-icon="calendar"></span> Pertemuan</a>
+  <a class="nav-item" data-nav="award" href="award.html"><span data-icon="award"></span> Award</a>
+  <a class="nav-item active" data-nav="aktivitas" href="#"><span data-icon="activity"></span> Aktivitas</a>
+  <a class="nav-item" data-nav="profil" href="profil.html"><span data-icon="user"></span> Profil</a>
+</nav>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+UI.bindLogout();
+
+let data = null;
+
+(async () => {
+  const profile = await Api.requireLogin();
+  if (!profile) return;
+
+  const res = await Api.call('aktivitas.saya');
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('content').classList.remove('hidden');
+
+  if (!res.ok) {
+    document.getElementById('content').innerHTML = UI.errorHtml(res.error || 'Gagal memuat.');
+    return;
+  }
+
+  data = res.data;
+  renderAll();
+
+  document.querySelectorAll('.tsw').forEach(t => {
+    t.addEventListener('click', () => {
+      const nama = t.dataset.tab;
+      document.querySelectorAll('.tsw').forEach(x => x.classList.toggle('active', x === t));
+      document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.dataset.panel === nama));
+    });
+  });
+})();
+
+function renderAll() {
+  const r = data.ringkasan;
+
+  document.getElementById('heroPoin').textContent = r.total_poin;
+  document.getElementById('statHadir').textContent = r.jml_hadir;
+  document.getElementById('statIzin').textContent = r.jml_izin;
+  document.getElementById('statAlfa').textContent = r.jml_alfa;
+  document.getElementById('statSert').textContent = r.jml_sertifikat;
+
+  renderPresensi();
+  renderTugas();
+  renderSertifikat();
+}
+
+function renderPresensi() {
+  const el = document.getElementById('panelPresensi');
+  const list = data.per_pertemuan || [];
+
+  if (list.length === 0) {
+    el.innerHTML = UI.emptyHtml('calendar', 'Belum ada pertemuan');
+    return;
+  }
+
+  const statusMap = {
+    tepat_waktu: { label: 'Tepat Waktu', cls: 'st-tepat' },
+    terlambat: { label: 'Terlambat', cls: 'st-terlambat' },
+    luar_radius: { label: 'Luar Radius', cls: 'st-luar' },
+    ijin: { label: 'Ijin', cls: 'st-izin' },
+    sakit: { label: 'Sakit', cls: 'st-izin' },
+    cuti: { label: 'Cuti', cls: 'st-izin' },
+    alfa: { label: 'Alfa', cls: 'st-alfa' },
+  };
+
+  el.innerHTML = list.map(item => {
+    const p = item.pertemuan;
+    const pres = item.presensi;
+    const izin = item.izin;
+
+    let statusHtml = '<span class="item-status st-belum">Belum</span>';
+    let poinText = '';
+
+    if (pres) {
+      const sm = statusMap[pres.status] || statusMap.alfa;
+      statusHtml = `<span class="item-status ${sm.cls}">${sm.label}</span>`;
+      poinText = `<div class="stat-baris"><span class="lbl">Poin</span><span class="val ${pres.poin > 0 ? 'pos' : 'neg'}">+${pres.poin}</span></div>`;
+    } else if (izin && izin.status_ks === 'menunggu') {
+      statusHtml = `<span class="item-status st-menunggu">Menunggu KS</span>`;
+    } else if (izin && izin.status_ks === 'ditolak') {
+      statusHtml = `<span class="item-status st-ditolak">Ditolak</span>`;
+    }
+
+    return `
+      <div class="item-aktivitas">
+        <div class="item-head">
+          <div class="item-num">
+            <div class="n">${p.urutan}</div>
+            <div class="l">PERT</div>
+          </div>
+          <div class="item-info">
+            <div class="item-title">${UI.escapeHtml(p.judul)}</div>
+            <div class="item-sub">${UI.formatTanggal(p.tanggal)}${p.lokasi_nama ? ' · ' + UI.escapeHtml(p.lokasi_nama) : ''}</div>
+          </div>
+          ${statusHtml}
+        </div>
+        ${poinText}
+        ${pres?.waktu_submit ? `
+          <div class="stat-baris">
+            <span class="lbl">Waktu Submit</span>
+            <span class="val">${UI.formatTanggalJam(pres.waktu_submit)}</span>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function renderTugas() {
+  const el = document.getElementById('panelTugas');
+  const list = data.per_pertemuan || [];
+
+  // Kumpulkan semua tugas
+  const semuaTugas = [];
+  list.forEach(item => {
+    (item.tugas || []).forEach(t => {
+      semuaTugas.push({
+        ...t,
+        pertemuan_urutan: item.pertemuan.urutan,
+        pertemuan_judul: item.pertemuan.judul,
+      });
+    });
+  });
+
+  if (semuaTugas.length === 0) {
+    el.innerHTML = UI.emptyHtml('clipboard', 'Belum ada tugas');
+    return;
+  }
+
+  const statusMap = {
+    belum: { label: 'Belum Kumpul', cls: 'st-belum' },
+    menunggu: { label: 'Menunggu Dinilai', cls: 'st-menunggu' },
+    diterima: { label: 'Diterima', cls: 'st-diterima' },
+    revisi: { label: 'Perlu Revisi', cls: 'st-revisi' },
+    ditolak: { label: 'Ditolak', cls: 'st-ditolak' },
+  };
+
+  el.innerHTML = semuaTugas.map(t => {
+    const sm = statusMap[t.status] || statusMap.belum;
+    return `
+      <div class="item-aktivitas">
+        <div class="item-head">
+          <div class="item-num">
+            <div class="n">${t.pertemuan_urutan}</div>
+            <div class="l">PERT</div>
+          </div>
+          <div class="item-info">
+            <div class="item-title">${UI.escapeHtml(t.judul)}</div>
+            <div class="item-sub">Pertemuan #${t.pertemuan_urutan}</div>
+          </div>
+          <span class="item-status ${sm.cls}">${sm.label}</span>
+        </div>
+        ${t.nilai !== null ? `
+          <div class="stat-baris">
+            <span class="lbl">Nilai</span>
+            <span class="val pos">${t.nilai}</span>
+          </div>
+        ` : ''}
+        ${t.waktu_kumpul ? `
+          <div class="stat-baris">
+            <span class="lbl">Dikumpulkan</span>
+            <span class="val">${UI.formatTanggalJam(t.waktu_kumpul)}</span>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function renderSertifikat() {
+  const el = document.getElementById('panelSertifikat');
+  const list = data.sertifikat || [];
+
+  if (list.length === 0) {
+    el.innerHTML = UI.emptyHtml('fileText', 'Belum ada sertifikat', 'Sertifikat akan muncul di sini.');
+    return;
+  }
+
+  el.innerHTML = list.map(s => `
+    <div class="item-aktivitas">
+      <div class="item-head">
+        <div class="item-num" style="background:var(--gold-soft);color:var(--gold-dark);">
+          ${Icons.get('award', { class: 'icon' })}
+        </div>
+        <div class="item-info">
+          <div class="item-title">${s.nomor ? UI.escapeHtml(s.nomor) : 'Sertifikat'}</div>
+          <div class="item-sub">${UI.formatTanggal(s.tanggal_terbit)}</div>
+        </div>
+      </div>
+      <a href="${UI.escapeHtml(s.url_pdf)}" target="_blank" rel="noopener" class="btn btn-primary btn-full" style="text-decoration:none;margin-top:10px;">
+        ${Icons.get('download', { class: 'icon-sm' })}
+        Buka / Unduh PDF
+      </a>
+    </div>
+  `).join('');
+}
+</script>
+
+</body>
+</html>
