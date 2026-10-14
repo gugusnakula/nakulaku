@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>Dashboard Admin — NAKULAKU</title>
+
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/nakula.css" />
+
+<style>
+  .admin-hero {
+    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon-mid) 100%);
+    color: white;
+    border-radius: var(--r-xl);
+    padding: 24px 20px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(125,29,58,.3);
+  }
+  .admin-hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.12;
+  }
+  .admin-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.08;
+  }
+  .admin-hero-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .admin-hero-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.15);
+    border: 1.5px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .admin-hero-info { flex: 1; min-width: 0; }
+  .admin-hero-info .h1 {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 2px;
+  }
+  .admin-hero-info .h2 {
+    font-size: 12px;
+    opacity: 0.85;
+    font-weight: 600;
+  }
+  .admin-hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    position: relative;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,.15);
+  }
+  .hero-stat {
+    text-align: center;
+  }
+  .hero-stat .n {
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .hero-stat .l {
+    font-size: 9.5px;
+    opacity: 0.75;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--maroon);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    margin-top: 24px;
+  }
+  .section-title:first-of-type { margin-top: 0; }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin-left: 8px;
+  }
+
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .menu-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 16px 14px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: all .15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .menu-card:hover {
+    border-color: var(--maroon);
+    box-shadow: var(--sh-md);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .menu-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .menu-icon.maroon { background: var(--maroon-soft); color: var(--maroon); }
+  .menu-icon.gold { background: var(--gold-soft); color: var(--gold-dark); }
+  .menu-icon.green { background: var(--success-soft); color: var(--success); }
+  .menu-icon.blue { background: var(--info-soft); color: var(--info); }
+  .menu-title {
+    font-weight: 800;
+    font-size: 13.5px;
+    line-height: 1.3;
+  }
+  .menu-desc {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .menu-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--danger);
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .quick-list {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  .quick-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: inherit;
+    border-bottom: 1px solid var(--border);
+    transition: background .15s;
+  }
+  .quick-row:last-child { border-bottom: none; }
+  .quick-row:hover { background: var(--bg); text-decoration: none; }
+  .quick-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .quick-info { flex: 1; min-width: 0; }
+  .quick-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .quick-sub {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="../beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="home"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Dashboard Admin</div>
+      <div class="app-header-sub">NAKULAKU</div>
+    </div>
+  </div>
+  <button class="header-btn" data-act="logout">
+    <span data-icon="logOut"></span>
+  </button>
+</header>
+
+<main class="container page" style="max-width:720px;padding-top:16px;">
+
+  <!-- Hero Profil -->
+  <div class="admin-hero">
+    <div class="admin-hero-top">
+      <div class="admin-hero-icon">
+        <span data-icon="shield" class="icon-lg"></span>
+      </div>
+      <div class="admin-hero-info">
+        <div class="h1" id="heroNama">Memuat…</div>
+        <div class="h2" id="heroSekolah">—</div>
+        <div class="h2" id="heroPeran" style="margin-top:4px;">—</div>
+      </div>
+    </div>
+    <div class="admin-hero-stats">
+      <div class="hero-stat">
+        <div class="n" id="statGuru">—</div>
+        <div class="l">Guru</div>
+      </div>
+      <div class="hero-stat">
+        <div class="n" id="statPertemuan">—</div>
+        <div class="l">Pertemuan</div>
+      </div>
+      <div class="hero-stat">
+        <div class="n" id="statPending">—</div>
+        <div class="l">Perlu Verifikasi</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manajemen Data -->
+  <div class="section-title">
+    <span data-icon="database" class="icon-sm"></span>
+    Manajemen Data
+  </div>
+  <div class="menu-grid">
+    <a href="guru.html" class="menu-card">
+      <div class="menu-icon maroon"><span data-icon="users" class="icon-lg"></span></div>
+      <div class="menu-title">Data Guru</div>
+      <div class="menu-desc">Lihat & kelola profil guru</div>
+    </a>
+    <a href="impor.html" class="menu-card">
+      <div class="menu-icon gold"><span data-icon="upload" class="icon-lg"></span></div>
+      <div class="menu-title">Impor CSV</div>
+      <div class="menu-desc">Tambah guru massal</div>
+    </a>
+  </div>
+
+  <!-- Kegiatan -->
+  <div class="section-title">
+    <span data-icon="calendar" class="icon-sm"></span>
+    Kegiatan
+  </div>
+  <div class="menu-grid">
+    <a href="pertemuan.html" class="menu-card">
+      <div class="menu-icon maroon"><span data-icon="calendar" class="icon-lg"></span></div>
+      <div class="menu-title">Kelola Pertemuan</div>
+      <div class="menu-desc">Jadwal, materi & tugas</div>
+    </a>
+    <a href="pengumuman.html" class="menu-card">
+      <div class="menu-icon green"><span data-icon="megaphone" class="icon-lg"></span></div>
+      <div class="menu-title">Pengumuman</div>
+      <div class="menu-desc">Broadcast ke semua guru</div>
+    </a>
+  </div>
+
+  <!-- Evaluasi & Penghargaan -->
+  <div class="section-title">
+    <span data-icon="award" class="icon-sm"></span>
+    Evaluasi & Penghargaan
+  </div>
+  <div class="menu-grid">
+    <a href="award.html" class="menu-card">
+      <div class="menu-icon gold"><span data-icon="award" class="icon-lg"></span></div>
+      <div class="menu-title">Kelola Award</div>
+      <div class="menu-desc">Nominasi & juara</div>
+    </a>
+    <a href="feedback.html" class="menu-card">
+      <div class="menu-icon blue"><span data-icon="messageSquare" class="icon-lg"></span></div>
+      <div class="menu-title">Rekap Feedback</div>
+      <div class="menu-desc">Penilaian peserta</div>
+    </a>
+    <a href="sertifikat.html" class="menu-card">
+      <div class="menu-icon gold"><span data-icon="fileText" class="icon-lg"></span></div>
+      <div class="menu-title">Sertifikat</div>
+      <div class="menu-desc">Impor & kelola sertifikat</div>
+    </a>
+    <a href="../ks/verifikasi.html" class="menu-card" id="menuVerifikasi">
+      <div class="menu-icon maroon"><span data-icon="checkCircle" class="icon-lg"></span></div>
+      <div class="menu-title">Verifikasi</div>
+      <div class="menu-desc">Presensi & izin</div>
+    </a>
+  </div>
+
+  <!-- Aktivitas Terbaru -->
+  <div class="section-title">
+    <span data-icon="activity" class="icon-sm"></span>
+    Informasi Sistem
+  </div>
+  <div class="quick-list">
+    <a href="../beranda.html" class="quick-row">
+      <div class="quick-icon"><span data-icon="home" class="icon-sm"></span></div>
+      <div class="quick-info">
+        <div class="quick-title">Beranda Guru</div>
+        <div class="quick-sub">Tampilan sebagai peserta</div>
+      </div>
+      <span class="chevron">${''}</span>
+    </a>
+    <a href="../award.html" class="quick-row">
+      <div class="quick-icon"><span data-icon="award" class="icon-sm"></span></div>
+      <div class="quick-info">
+        <div class="quick-title">Papan Juara</div>
+        <div class="quick-sub">Hasil NAKULAKU AWARD</div>
+      </div>
+    </a>
+    <a href="../profil.html" class="quick-row">
+      <div class="quick-icon"><span data-icon="user" class="icon-sm"></span></div>
+      <div class="quick-info">
+        <div class="quick-title">Profil Saya</div>
+        <div class="quick-sub">Ganti PIN & foto</div>
+      </div>
+    </a>
+  </div>
+
+  <div style="height:40px;"></div>
+
+</main>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+UI.bindLogout();
+
+let profile;
+
+(async () => {
+  profile = await Api.requireLogin();
+  if (!profile) return;
+
+  // Cek peran
+  const peran = profile.peran || [];
+  if (!peran.includes('pengurus') && !peran.includes('super_admin') && !peran.includes('ks')) {
+    document.querySelector('main').innerHTML = UI.errorHtml(
+      'Halaman ini hanya untuk pengurus/KS.',
+      '<a href="../beranda.html" class="btn btn-primary btn-sm" style="margin-top:12px;">Kembali</a>'
+    );
+    return;
+  }
+
+  // Sembunyikan menu verifikasi kalau tidak berhak
+  if (!peran.includes('ks') && !peran.includes('pengurus') && !peran.includes('super_admin')) {
+    document.getElementById('menuVerifikasi')?.remove();
+  }
+
+  // Render hero
+  document.getElementById('heroNama').textContent = profile.nama || '-';
+  document.getElementById('heroSekolah').textContent = profile.sekolah?.nama || '-';
+  document.getElementById('heroPeran').innerHTML = peran.map(r =>
+    `<span style="display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(201,169,97,.4);color:white;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;margin-right:4px;">${UI.escapeHtml(r.replace(/_/g,' '))}</span>`
+  ).join('');
+
+  // Load statistik paralel
+  loadStatistik();
+})();
+
+async function loadStatistik() {
+  // Total guru
+  try {
+    const resG = await Api.call('users.list', { limit: 1 });
+    if (resG.ok) {
+      document.getElementById('statGuru').textContent = resG.data.total || 0;
+    }
+  } catch {}
+
+  // Total pertemuan
+  try {
+    const resP = await Api.call('pertemuan.list');
+    if (resP.ok) {
+      document.getElementById('statPertemuan').textContent = (resP.data || []).length;
+    }
+  } catch {}
+
+  // Pending verifikasi (presensi + izin)
+  try {
+    let total = 0;
+
+    if (profile.peran.includes('ks') || profile.peran.includes('pengurus') || profile.peran.includes('super_admin')) {
+      const resA = await Api.call('presensi.menunggu_ks');
+      if (resA.ok) total += (resA.data || []).length;
+
+      const resB = await Api.call('izin.menunggu_ks');
+      if (resB.ok) total += (resB.data || []).length;
+    }
+
+    document.getElementById('statPending').textContent = total;
+
+    // Badge di menu verifikasi
+    if (total > 0) {
+      const el = document.getElementById('menuVerifikasi');
+      if (el && !el.querySelector('.menu-badge')) {
+        const badge = document.createElement('div');
+        badge.className = 'menu-badge';
+        badge.textContent = total;
+        el.appendChild(badge);
+      }
+    }
+  } catch {}
+}
+</script>
+
+</body>
+</html>
