@@ -61,6 +61,9 @@
       <a class="sidebar-item" data-nav="award" href="award.html">
         <span data-icon="award"></span> Papan Juara
       </a>
+      <a class="sidebar-item" data-nav="aktivitas" href="aktivitas.html">
+        <span data-icon="activity"></span> Aktivitas Saya
+      </a>
       <a class="sidebar-item" data-nav="profil" href="profil.html">
         <span data-icon="user"></span> Profil
       </a>
@@ -137,9 +140,9 @@
     <span data-icon="award"></span>
     Award
   </a>
-  <a class="nav-item" data-nav="presensi" href="#">
-    <span data-icon="mapPin"></span>
-    Presensi
+  <a class="nav-item" data-nav="aktivitas" href="aktivitas.html">
+    <span data-icon="activity"></span>
+    Aktivitas
   </a>
   <a class="nav-item" data-nav="profil" href="profil.html">
     <span data-icon="user"></span>
@@ -245,12 +248,12 @@ function renderMenuKhusus(p) {
     href: 'award.html',
     warna: 'gold',
   });
-  // Sertifikat Saya — untuk SEMUA user
+  // Aktivitas Saya — untuk SEMUA user
   menu.push({
-    icon: 'fileText',
-    title: 'Sertifikat Saya',
-    desc: 'Lihat & unduh sertifikat periode',
-    href: 'sertifikat.html',
+    icon: 'activity',
+    title: 'Aktivitas Saya',
+    desc: 'Rapor digital: presensi, tugas, sertifikat',
+    href: 'aktivitas.html',
     warna: 'maroon',
   });
   // KS → Verifikasi Presensi
