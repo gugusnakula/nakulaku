@@ -301,6 +301,13 @@ function renderMenuKhusus(p) {
       href: 'admin/sertifikat.html',
       warna: 'maroon',
     });
+    menu.push({
+      icon: 'megaphone',
+      title: 'Kelola Pengumuman',
+      desc: 'Buat & kelola pengumuman',
+      href: 'admin/pengumuman.html',
+      warna: 'maroon',
+    });
     if (peranList.includes('super_admin') && !peranList.includes('ks')) {
       menu.push({
         icon: 'checkCircle',
