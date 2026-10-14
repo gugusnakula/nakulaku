@@ -52,19 +52,13 @@
       <a class="sidebar-item active" data-nav="beranda" href="beranda.html">
         <span data-icon="home"></span> Beranda
       </a>
-      <a class="sidebar-item" data-nav="pertemuan" href="#">
-        <span data-icon="calendar"></span> Pertemuan
-      </a>
-      <a class="sidebar-item" data-nav="tugas" href="#">
-        <span data-icon="clipboard"></span> Tugas
-      </a>
-      <a class="sidebar-item" data-nav="presensi" href="#">
-        <span data-icon="mapPin"></span> Presensi
-      </a>
-      <a class="sidebar-item" data-nav="pengumuman" href="#">
+      <a class="sidebar-item" data-nav="pengumuman" href="#sectionPengumuman">
         <span data-icon="megaphone"></span> Pengumuman
       </a>
-      <a class="sidebar-item" data-nav="profil" href="#">
+      <a class="sidebar-item" data-nav="pertemuan" href="#sectionPertemuan">
+        <span data-icon="calendar"></span> Pertemuan
+      </a>
+      <a class="sidebar-item" data-nav="profil" href="profil.html">
         <span data-icon="user"></span> Profil
       </a>
     </nav>
@@ -76,7 +70,12 @@
     <!-- Topbar desktop -->
     <div class="desktop-topbar">
       <h2>Beranda</h2>
-      <div class="user-chip" id="userChip"></div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="user-chip" id="userChip"></div>
+        <button class="btn-icon" data-act="logout" aria-label="Keluar" title="Keluar">
+          <span data-icon="logOut"></span>
+        </button>
+      </div>
     </div>
 
     <div class="container page" style="padding-top:20px;">
@@ -91,15 +90,16 @@
         </div>
       </section>
 
-      <!-- ============================ PANEL KHUSUS (KS/PENGURUS) ============================ -->
-      <section id="panelKhusus" class="hidden" style="margin-bottom:24px;">
+      <!-- ============================ MENU KHUSUS (KS/PENGURUS/ADMIN) ============================ -->
+      <section id="panelKhusus" class="hidden" style="margin-bottom:24px;scroll-margin-top:80px;">
         <div class="section-head">
           <h3><span data-icon="award"></span> Menu Khusus</h3>
         </div>
         <div id="listMenuKhusus"></div>
       </section>
 
-      <section style="margin-bottom:24px;">
+      <!-- ============================ PENGUMUMAN ============================ -->
+      <section id="sectionPengumuman" style="margin-bottom:24px;scroll-margin-top:80px;">
         <div class="section-head">
           <h3><span data-icon="megaphone"></span> Pengumuman</h3>
           <a class="more" href="#">Lihat semua</a>
@@ -108,7 +108,7 @@
       </section>
 
       <!-- ============================ PERTEMUAN ============================ -->
-      <section style="margin-bottom:24px;">
+      <section id="sectionPertemuan" style="margin-bottom:24px;scroll-margin-top:80px;">
         <div class="section-head">
           <h3><span data-icon="calendar"></span> Pertemuan</h3>
           <a class="more" href="#">Semua</a>
@@ -126,7 +126,7 @@
     <span data-icon="home"></span>
     Beranda
   </a>
-  <a class="nav-item" data-nav="pertemuan" href="#">
+  <a class="nav-item" data-nav="pertemuan" href="#sectionPertemuan">
     <span data-icon="calendar"></span>
     Pertemuan
   </a>
@@ -150,32 +150,54 @@
 <script src="assets/js/ui.js"></script>
 <script>
 // ============================================================
-// INIT
+// PASANG IKON
 // ============================================================
-
-// Pasang ikon ke [data-icon]
 document.querySelectorAll('[data-icon]').forEach(el => {
   el.innerHTML = Icons.get(el.dataset.icon);
   el.style.display = 'contents';
 });
 
-// Bind tombol logout
+// ============================================================
+// BIND LOGOUT (semua tombol data-act="logout")
+// ============================================================
 UI.bindLogout();
 
 // ============================================================
-// CEK SESI + LOAD DATA
+// SMOOTH SCROLL untuk anchor internal (#sectionXxx)
+// ============================================================
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', (e) => {
+    const targetId = a.getAttribute('href');
+    if (targetId === '#') return;
+    const target = document.querySelector(targetId);
+    if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Update active state sidebar
+    document.querySelectorAll('.sidebar-item').forEach(x => x.classList.remove('active'));
+    const parent = a.closest('.sidebar-item');
+    if (parent) parent.classList.add('active');
+
+    // Update URL tanpa reload
+    history.replaceState(null, '', targetId);
+  });
+});
+
+// ============================================================
+// INIT — CEK SESI + LOAD DATA
 // ============================================================
 (async () => {
   const profile = await Api.requireLogin();
   if (!profile) return;
 
-      renderProfil(profile);
-      UI.renderUserHeader(profile);
-      renderMenuKhusus(profile);
+  renderProfil(profile);
+  UI.renderUserHeader(profile);
+  renderMenuKhusus(profile);
 
-      // Load paralel
-      loadPengumuman();
-      loadPertemuan();
+  // Load paralel
+  loadPengumuman();
+  loadPertemuan();
 })();
 
 // ============================================================
@@ -209,6 +231,141 @@ function renderProfil(p) {
     const label = r.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     return `<span class="badge">${UI.escapeHtml(label)}</span>`;
   }).join('');
+}
+
+// ============================================================
+// MENU KHUSUS (KS / PENGURUS / SUPER ADMIN)
+// ============================================================
+function renderMenuKhusus(p) {
+  const menu = [];
+  const peranList = p.peran || [];
+
+  // KS → Verifikasi Presensi
+  if (peranList.includes('ks')) {
+    menu.push({
+      icon: 'mapPin',
+      title: 'Verifikasi Presensi',
+      desc: 'Periksa presensi guru di luar radius',
+      href: 'ks/verifikasi.html',
+      warna: 'maroon',
+    });
+  }
+
+  // Pengurus/Admin → Data Guru, Impor, Kelola Pertemuan
+  if (peranList.includes('pengurus') || peranList.includes('super_admin')) {
+    menu.push({
+      icon: 'users',
+      title: 'Data Guru',
+      desc: 'Lihat & kelola data seluruh guru',
+      href: 'admin/guru.html',
+      warna: 'maroon',
+    });
+    menu.push({
+      icon: 'upload',
+      title: 'Impor Data',
+      desc: 'Impor data guru dari file CSV',
+      href: 'admin/impor.html',
+      warna: 'gold',
+    });
+    menu.push({
+      icon: 'calendar',
+      title: 'Kelola Pertemuan',
+      desc: 'Tambah/edit pertemuan, materi, dan tugas',
+      href: 'admin/pertemuan.html',
+      warna: 'maroon',
+    });
+
+    // Super admin juga bisa akses Verifikasi Presensi (semua sekolah)
+    if (peranList.includes('super_admin') && !peranList.includes('ks')) {
+      menu.push({
+        icon: 'checkCircle',
+        title: 'Verifikasi Presensi',
+        desc: 'Periksa presensi luar radius (semua sekolah)',
+        href: 'ks/verifikasi.html',
+        warna: 'maroon',
+      });
+    }
+  }
+
+  // Cek tugas pengamat (async)
+  cekTugasPengamat();
+
+  if (menu.length === 0) {
+    // Panel mungkin muncul nanti dari cekTugasPengamat
+    const panel = document.getElementById('panelKhusus');
+    // Kalau tidak ada KS/pengurus, sembunyikan dulu
+    if (!peranList.includes('ks') && !peranList.includes('pengurus') && !peranList.includes('super_admin')) {
+      panel.classList.add('hidden');
+    }
+    // Kalau ada, tetap tampilkan
+    if (menu.length > 0) {
+      renderMenuList(menu);
+    }
+    return;
+  }
+
+  renderMenuList(menu);
+}
+
+function renderMenuList(menu) {
+  const el = document.getElementById('listMenuKhusus');
+  el.innerHTML = menu.map(m => `
+    <a href="${m.href}" class="pertemuan-item" style="text-decoration:none;color:inherit;">
+      <div class="pertemuan-number" style="background:${m.warna === 'gold' ? 'var(--gold-soft)' : 'var(--maroon-soft)'};color:${m.warna === 'gold' ? 'var(--gold-dark)' : 'var(--maroon)'};">
+        ${Icons.get(m.icon, { class: 'icon' })}
+      </div>
+      <div class="pertemuan-body">
+        <div class="pertemuan-title">${UI.escapeHtml(m.title)}</div>
+        <div class="pertemuan-meta">${UI.escapeHtml(m.desc)}</div>
+      </div>
+      <span class="chevron">${Icons.get('chevronRight', { class: 'icon' })}</span>
+    </a>
+  `).join('');
+
+  document.getElementById('panelKhusus').classList.remove('hidden');
+}
+
+// ============================================================
+// CEK TUGAS PENGAMAT
+// ============================================================
+async function cekTugasPengamat() {
+  const res = await Api.call('pengamat.tugas_saya');
+  if (!res.ok || !res.data || res.data.length === 0) return;
+
+  const panel = document.getElementById('panelKhusus');
+  const listEl = document.getElementById('listMenuKhusus');
+
+  const menuBaru = `
+    <a href="pengamat.html" class="pertemuan-item" style="text-decoration:none;color:inherit;">
+      <div class="pertemuan-number" style="background:var(--gold-soft);color:var(--gold-dark);">
+        ${Icons.get('users', { class: 'icon' })}
+      </div>
+      <div class="pertemuan-body">
+        <div class="pertemuan-title">Tugas Pengamat</div>
+        <div class="pertemuan-meta">${res.data.length} pertemuan ditugaskan</div>
+      </div>
+      <span class="chevron">${Icons.get('chevronRight', { class: 'icon' })}</span>
+    </a>
+  `;
+
+  // Prepend ke list menu
+  listEl.innerHTML = menuBaru + listEl.innerHTML;
+
+  // Kalau panel sebelumnya hidden, munculkan + tambah header
+  if (panel.classList.contains('hidden')) {
+    panel.classList.remove('hidden');
+  }
+  // Pastikan header ada
+  if (!panel.querySelector('.section-head')) {
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'section-head';
+    headerDiv.innerHTML = '<h3><span data-icon="award"></span> Menu Khusus</h3>';
+    panel.insertBefore(headerDiv, listEl);
+    headerDiv.querySelectorAll('[data-icon]').forEach(el => {
+      el.innerHTML = Icons.get(el.dataset.icon);
+      el.style.display = 'contents';
+    });
+  }
 }
 
 // ============================================================
@@ -281,121 +438,9 @@ async function loadPertemuan() {
     </div>
   `).join('');
 }
+
 // ============================================================
-// MENU KHUSUS (KS / PENGURUS)
-// ============================================================
-function renderMenuKhusus(p) {
-  const menu = [];
-
-  // KS → Verifikasi Presensi
-  if ((p.peran || []).includes('ks')) {
-    menu.push({
-      icon: 'mapPin',
-      title: 'Verifikasi Presensi',
-      desc: 'Periksa presensi guru di luar radius',
-      href: 'ks/verifikasi.html',
-      warna: 'maroon',
-    });
-  }
-
-  // Pengurus/Admin → Data Guru, Impor, Verifikasi
-  if ((p.peran || []).includes('pengurus') || (p.peran || []).includes('super_admin')) {
-    menu.push({
-      icon: 'users',
-      title: 'Data Guru',
-      desc: 'Lihat & kelola data seluruh guru',
-      href: 'admin/guru.html',
-      warna: 'maroon',
-    });
-    menu.push({
-      icon: 'upload',
-      title: 'Impor Data',
-      desc: 'Impor data guru dari file CSV',
-      href: 'admin/impor.html',
-      warna: 'gold',
-    });
-    menu.push({
-      icon: 'calendar',
-      title: 'Kelola Pertemuan',
-      desc: 'Tambah/edit pertemuan, materi, dan tugas',
-      href: 'admin/pertemuan.html',
-      warna: 'maroon',
-    });
-    if ((p.peran || []).includes('super_admin')) {
-      menu.push({
-        icon: 'checkCircle',
-        title: 'Verifikasi Presensi',
-        desc: 'Periksa presensi luar radius',
-        href: 'ks/verifikasi.html',
-        warna: 'maroon',
-      });
-    }
-  }
-
-  // Semua guru: cek apakah saya punya tugas pengamatan
-  // (dilakukan async setelah renderMenuKhusus selesai)
-  cekTugasPengamat();
-
-  if (menu.length === 0) {
-    document.getElementById('panelKhusus').classList.add('hidden');
-    return;
-  }
-
-  const el = document.getElementById('listMenuKhusus');
-  el.innerHTML = menu.map(m => `
-    <a href="${m.href}" class="pertemuan-item" style="text-decoration:none;color:inherit;">
-      <div class="pertemuan-number" style="background:${m.warna === 'gold' ? 'var(--gold-soft)' : 'var(--maroon-soft)'};color:${m.warna === 'gold' ? 'var(--gold-dark)' : 'var(--maroon)'};">
-        ${Icons.get(m.icon, { class: 'icon' })}
-      </div>
-      <div class="pertemuan-body">
-        <div class="pertemuan-title">${UI.escapeHtml(m.title)}</div>
-        <div class="pertemuan-meta">${UI.escapeHtml(m.desc)}</div>
-      </div>
-      <span class="chevron">${Icons.get('chevronRight', { class: 'icon' })}</span>
-    </a>
-  `).join('');
-
-  document.getElementById('panelKhusus').classList.remove('hidden');
-}
-// ============================================================
-// CEK TUGAS PENGAMAT
-// ============================================================
-async function cekTugasPengamat() {
-  const res = await Api.call('pengamat.tugas_saya');
-  if (!res.ok || !res.data || res.data.length === 0) return;
-
-  // Ada tugas pengamatan → pastikan panel khusus muncul + tambahkan menu
-  const panel = document.getElementById('panelKhusus');
-  const listEl = document.getElementById('listMenuKhusus');
-
-  const menuBaru = `
-    <a href="pengamat.html" class="pertemuan-item" style="text-decoration:none;color:inherit;">
-      <div class="pertemuan-number" style="background:var(--gold-soft);color:var(--gold-dark);">
-        ${Icons.get('users', { class: 'icon' })}
-      </div>
-      <div class="pertemuan-body">
-        <div class="pertemuan-title">Tugas Pengamat</div>
-        <div class="pertemuan-meta">${res.data.length} pertemuan ditugaskan</div>
-      </div>
-      <span class="chevron">${Icons.get('chevronRight', { class: 'icon' })}</span>
-    </a>
-  `;
-
-  // Prepend ke list menu
-  listEl.innerHTML = menuBaru + listEl.innerHTML;
-
-  // Kalau sebelumnya hidden (karena menu.length === 0), munculkan
-  panel.classList.remove('hidden');
-  if (!document.querySelector('#panelKhusus .section-head')) {
-    panel.querySelector('div').innerHTML = '<h3 style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;color:var(--maroon);"><span data-icon="award"></span> Menu Khusus</h3>';
-    document.querySelectorAll('#panelKhusus [data-icon]').forEach(el => {
-      el.innerHTML = Icons.get(el.dataset.icon);
-      el.style.display = 'contents';
-    });
-  }
-}
-// ============================================================
-// NAVIGASI (sementara)
+// NAVIGASI
 // ============================================================
 function bukaPertemuan(id) {
   window.location.href = 'pertemuan.html?id=' + id;
