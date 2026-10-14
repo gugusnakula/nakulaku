@@ -332,6 +332,10 @@ function renderMenuKhusus(p) {
     }
   }
 
+  // Semua guru: cek apakah saya punya tugas pengamatan
+  // (dilakukan async setelah renderMenuKhusus selesai)
+  cekTugasPengamat();
+
   if (menu.length === 0) {
     document.getElementById('panelKhusus').classList.add('hidden');
     return;
@@ -353,7 +357,43 @@ function renderMenuKhusus(p) {
 
   document.getElementById('panelKhusus').classList.remove('hidden');
 }
+// ============================================================
+// CEK TUGAS PENGAMAT
+// ============================================================
+async function cekTugasPengamat() {
+  const res = await Api.call('pengamat.tugas_saya');
+  if (!res.ok || !res.data || res.data.length === 0) return;
 
+  // Ada tugas pengamatan → pastikan panel khusus muncul + tambahkan menu
+  const panel = document.getElementById('panelKhusus');
+  const listEl = document.getElementById('listMenuKhusus');
+
+  const menuBaru = `
+    <a href="pengamat.html" class="pertemuan-item" style="text-decoration:none;color:inherit;">
+      <div class="pertemuan-number" style="background:var(--gold-soft);color:var(--gold-dark);">
+        ${Icons.get('users', { class: 'icon' })}
+      </div>
+      <div class="pertemuan-body">
+        <div class="pertemuan-title">Tugas Pengamat</div>
+        <div class="pertemuan-meta">${res.data.length} pertemuan ditugaskan</div>
+      </div>
+      <span class="chevron">${Icons.get('chevronRight', { class: 'icon' })}</span>
+    </a>
+  `;
+
+  // Prepend ke list menu
+  listEl.innerHTML = menuBaru + listEl.innerHTML;
+
+  // Kalau sebelumnya hidden (karena menu.length === 0), munculkan
+  panel.classList.remove('hidden');
+  if (!document.querySelector('#panelKhusus .section-head')) {
+    panel.querySelector('div').innerHTML = '<h3 style="display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;color:var(--maroon);"><span data-icon="award"></span> Menu Khusus</h3>';
+    document.querySelectorAll('#panelKhusus [data-icon]').forEach(el => {
+      el.innerHTML = Icons.get(el.dataset.icon);
+      el.style.display = 'contents';
+    });
+  }
+}
 // ============================================================
 // NAVIGASI (sementara)
 // ============================================================
