@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#611329" />
+<title>Kelola Award — NAKULAKU Admin</title>
+
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/nakula.css" />
+
+<style>
+  .award-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .award-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .award-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--gold-soft);
+    color: var(--gold-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .award-info { flex: 1; min-width: 0; }
+  .award-name { font-weight: 800; font-size: 15px; margin-bottom: 2px; }
+  .award-meta { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  .award-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .nominasi-list {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .nom-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .nom-row:last-child { border-bottom: none; }
+  .nom-rank {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--bg);
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .nom-rank.top1 { background: var(--gold); color: white; }
+  .nom-rank.top2 { background: #C0C0C0; color: white; }
+  .nom-rank.top3 { background: #CD7F32; color: white; }
+  .nom-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .nom-avatar img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .nom-info { flex: 1; min-width: 0; }
+  .nom-name { font-weight: 700; font-size: 13.5px; }
+  .nom-sub { font-size: 11px; color: var(--muted); font-weight: 600; }
+  .nom-skor {
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--maroon);
+    flex-shrink: 0;
+  }
+  .juara-buttons {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .juara-buttons button {
+    width: 28px;
+    height: 28px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 0;
+  }
+  .juara-buttons button.on {
+    background: var(--gold);
+    color: white;
+    border-color: var(--gold);
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="../beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Kelola Award</div>
+      <div class="app-header-sub">Admin NAKULAKU</div>
+    </div>
+  </div>
+</header>
+
+<main class="container page" style="max-width:820px;padding-top:16px;">
+
+  <div id="infoPeriode" style="margin-bottom:16px;font-size:12px;color:var(--muted);font-weight:600;"></div>
+
+  <button class="btn btn-primary btn-full" id="btnTambah" style="margin-bottom:16px;">
+    <span data-icon="plus"></span>
+    Tambah Kategori Award
+  </button>
+
+  <div id="listAward">
+    <div class="skeleton" style="height:140px;border-radius:16px;margin-bottom:14px;"></div>
+    <div class="skeleton" style="height:140px;border-radius:16px;"></div>
+  </div>
+
+</main>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+
+let profile;
+let periodeAktif = null;
+let awards = [];
+let nominasiMap = {};
+
+(async () => {
+  profile = await Api.requireLogin();
+  if (!profile) return;
+
+  if (!profile.peran.includes('pengurus') && !profile.peran.includes('super_admin')) {
+    document.querySelector('main').innerHTML = UI.errorHtml('Halaman ini hanya untuk pengurus.');
+    return;
+  }
+
+  const resP = await Api.call('periode.aktif');
+  if (resP.ok && resP.data) {
+    periodeAktif = resP.data;
+    document.getElementById('infoPeriode').innerHTML =
+      `<span style="color:var(--maroon);">${Icons.get('award', { class: 'icon-sm' })}</span> Periode: <strong>${UI.escapeHtml(periodeAktif.nama)}</strong>`;
+  }
+
+  await loadAwards();
+  document.getElementById('btnTambah').addEventListener('click', () => formAward(null));
+})();
+
+async function loadAwards() {
+  const el = document.getElementById('listAward');
+  el.innerHTML = '<div class="skeleton" style="height:140px;border-radius:16px;"></div>';
+
+  const res = await Api.call('award.list', { periode_id: periodeAktif?.id });
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error);
+    return;
+  }
+
+  awards = res.data.awards || [];
+  const nominasi = res.data.nominasi || [];
+
+  // Group nominasi by award_id
+  nominasiMap = {};
+  nominasi.forEach(n => {
+    if (!nominasiMap[n.award_id]) nominasiMap[n.award_id] = [];
+    nominasiMap[n.award_id].push(n);
+  });
+
+  if (awards.length === 0) {
+    el.innerHTML = UI.emptyHtml('award', 'Belum ada award', 'Klik tombol di atas untuk menambah.');
+    return;
+  }
+
+  el.innerHTML = awards.map(a => renderAward(a)).join('');
+  awards.forEach(a => {
+    const el = document.getElementById('award-' + a.id);
+    if (!el) return;
+    el.querySelector('[data-act="edit"]').addEventListener('click', () => formAward(a));
+    el.querySelector('[data-act="hapus"]').addEventListener('click', () => hapusAward(a.id));
+    el.querySelector('[data-act="hitung"]').addEventListener('click', () => hitungAward(a.id));
+
+    // Juara buttons
+    el.querySelectorAll('[data-nom-id]').forEach(row => {
+      const nomId = Number(row.dataset.nomId);
+      row.querySelectorAll('[data-juara]').forEach(b => {
+        b.addEventListener('click', () => setJuara(nomId, Number(b.dataset.juara), el));
+      });
+      // Clear button
+      const clearBtn = row.querySelector('[data-juara="clear"]');
+      if (clearBtn) clearBtn.addEventListener('click', () => setJuara(nomId, null, el));
+    });
+  });
+}
+
+function renderAward(a) {
+  const nominasi = nominasiMap[a.id] || [];
+  const kategoriLabel = {
+    sekolah: 'Sekolah', guru: 'Guru', narsum: 'Narasumber',
+    pengamat: 'Pengamat', penyelenggara: 'Penyelenggara',
+  }[a.kategori] || a.kategori;
+
+  return `
+    <div class="award-card" id="award-${a.id}">
+      <div class="award-head">
+        <div class="award-icon">${Icons.get('award', { class: 'icon-lg' })}</div>
+        <div class="award-info">
+          <div class="award-name">${UI.escapeHtml(a.nama)}</div>
+          <div class="award-meta">Kategori: ${kategoriLabel} · ${nominasi.length} nominasi</div>
+          ${a.deskripsi ? `<div class="award-meta" style="margin-top:4px;">${UI.escapeHtml(a.deskripsi)}</div>` : ''}
+        </div>
+      </div>
+
+      <div class="award-actions">
+        <button class="btn btn-ghost btn-sm" data-act="edit">${Icons.get('edit', { class: 'icon-sm' })} Edit</button>
+        <button class="btn btn-ghost btn-sm" data-act="hitung" style="color:var(--maroon);font-weight:800;">${Icons.get('refreshCw', { class: 'icon-sm' })} Hitung</button>
+        <button class="btn btn-ghost btn-sm" data-act="hapus" style="color:var(--danger);margin-left:auto;">${Icons.get('trash', { class: 'icon-sm' })} Hapus</button>
+      </div>
+
+      ${nominasi.length > 0 ? `
+        <div class="nominasi-list">
+          ${nominasi.map(n => {
+            const nama = n.user?.nama_lengkap || n.sekolah?.nama || '-';
+            const sub = n.user?.sekolah?.nama || (n.rincian_skor?.pertemuan_id ? 'Pertemuan #' + n.rincian_skor.pertemuan_id : '');
+            const init = (nama || '?').charAt(0).toUpperCase();
+            const fotoUrl = n.user?.foto_thumb_url;
+            const rankCls = n.peringkat === 1 ? 'top1' : n.peringkat === 2 ? 'top2' : n.peringkat === 3 ? 'top3' : '';
+
+            return `
+              <div class="nom-row" data-nom-id="${n.id}">
+                <div class="nom-rank ${rankCls}">${n.peringkat}</div>
+                <div class="nom-avatar">
+                  <span>${init}</span>
+                  ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.remove()">` : ''}
+                </div>
+                <div class="nom-info">
+                  <div class="nom-name">${UI.escapeHtml(nama)}</div>
+                  <div class="nom-sub">${UI.escapeHtml(sub || '')}</div>
+                </div>
+                <div class="nom-skor">${n.skor_total}</div>
+                <div class="juara-buttons">
+                  <button data-juara="1" class="${n.juara === 1 ? 'on' : ''}" title="Juara 1">1</button>
+                  <button data-juara="2" class="${n.juara === 2 ? 'on' : ''}" title="Juara 2">2</button>
+                  <button data-juara="3" class="${n.juara === 3 ? 'on' : ''}" title="Juara 3">3</button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      ` : `
+        <div style="padding:16px;text-align:center;color:var(--muted);font-size:12.5px;">
+          Belum ada nominasi. Klik <strong>Hitung</strong> untuk generate.
+        </div>
+      `}
+    </div>
+  `;
+}
+
+async function setJuara(nominasiId, juara, awardEl) {
+  const res = await Api.call('award.set_juara', { nominasi_id: nominasiId, juara });
+  if (!res.ok) { UI.gagal(res.error); return; }
+  UI.sukses(juara ? `Juara ${juara} ditetapkan.` : 'Juara dibatalkan.');
+  await loadAwards();
+}
+
+async function hitungAward(awardId) {
+  const ok = await UI.konfirmasi(
+    'Hitung Nominasi',
+    'Sistem akan menghitung ulang semua nominasi untuk award ini. Data nominasi lama akan diganti. Lanjutkan?',
+    { okText: 'Hitung' }
+  );
+  if (!ok) return;
+
+  UI.toast('Menghitung…', 'info');
+  const res = await Api.call('award.hitung', { award_id: awardId });
+  if (!res.ok) { UI.gagal(res.error); return; }
+  UI.sukses(`${res.data.jumlah_nominasi} nominasi dihitung.`);
+  await loadAwards();
+}
+
+async function hapusAward(awardId) {
+  const ok = await UI.konfirmasi('Hapus Award', 'Hapus award ini beserta semua nominasinya?', { danger: true, okText: 'Hapus' });
+  if (!ok) return;
+  const res = await Api.call('award.hapus', { award_id: awardId });
+  if (!res.ok) { UI.gagal(res.error); return; }
+  UI.sukses('Award dihapus.');
+  await loadAwards();
+}
+
+function formAward(award) {
+  const isEdit = !!award;
+  const a = award || {};
+  if (!periodeAktif) { UI.gagal('Belum ada periode aktif.'); return; }
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:24px;max-width:480px;width:100%;box-shadow:var(--sh-xl);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <h3 style="font-size:17px;color:var(--maroon);margin:0;">${isEdit ? 'Edit' : 'Tambah'} Award</h3>
+        <button data-close class="btn-icon">${Icons.get('x')}</button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="field">
+          <label class="label">Nama Award *</label>
+          <input type="text" id="aNama" class="input" value="${UI.escapeHtml(a.nama || '')}" placeholder="Mis: Sekolah Teraktif" />
+        </div>
+        <div class="field">
+          <label class="label">Kategori *</label>
+          <select id="aKategori" class="input" ${isEdit ? 'disabled' : ''}>
+            <option value="sekolah" ${a.kategori === 'sekolah' ? 'selected' : ''}>Sekolah</option>
+            <option value="guru" ${a.kategori === 'guru' ? 'selected' : ''}>Guru</option>
+            <option value="narsum" ${a.kategori === 'narsum' ? 'selected' : ''}>Narasumber</option>
+            <option value="pengamat" ${a.kategori === 'pengamat' ? 'selected' : ''}>Pengamat</option>
+            <option value="penyelenggara" ${a.kategori === 'penyelenggara' ? 'selected' : ''}>Penyelenggara</option>
+          </select>
+          ${isEdit ? '<div style="font-size:11px;color:var(--muted);margin-top:4px;">Kategori tidak bisa diubah setelah dibuat.</div>' : ''}
+        </div>
+        <div class="field">
+          <label class="label">Deskripsi (opsional)</label>
+          <textarea id="aDeskripsi" class="input" rows="2" style="resize:vertical;">${UI.escapeHtml(a.deskripsi || '')}</textarea>
+        </div>
+      </div>
+
+      <div id="aAlert" class="alert alert-error" style="margin-top:14px;"></div>
+
+      <div style="display:flex;gap:8px;margin-top:20px;">
+        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
+        <button class="btn btn-primary" id="btnSimpanAward" style="flex:2;">Simpan</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnSimpanAward').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnSimpanAward');
+    const alertBox = overlay.querySelector('#aAlert');
+    alertBox.classList.remove('show');
+
+    const payload = {
+      id: a.id || null,
+      periode_id: periodeAktif.id,
+      nama: overlay.querySelector('#aNama').value.trim(),
+      kategori: overlay.querySelector('#aKategori').value,
+      deskripsi: overlay.querySelector('#aDeskripsi').value.trim(),
+      metode: 'otomatis',
+    };
+
+    if (!payload.nama) { alertBox.textContent = 'Nama wajib.'; alertBox.classList.add('show'); return; }
+
+    UI.btnLoading(btn, 'Menyimpan…');
+    const res = await Api.call('award.simpan', { award: payload });
+    UI.btnReset(btn);
+
+    if (!res.ok) { alertBox.textContent = res.error; alertBox.classList.add('show'); return; }
+
+    UI.sukses('Tersimpan.');
+    close();
+    await loadAwards();
+  });
+}
+</script>
+
+</body>
+</html>
