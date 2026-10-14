@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#611329" />
+<title>Kelola Sertifikat — NAKULAKU Admin</title>
+
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/nakula.css" />
+
+<style>
+  .tbl-sertifikat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    margin-top: 16px;
+  }
+  .row-sertifikat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .row-sertifikat:last-child { border-bottom: none; }
+  .row-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 15px;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .row-avatar img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .row-info { flex: 1; min-width: 0; }
+  .row-nama { font-weight: 700; font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row-sub { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  .row-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+  .search-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .search-bar input {
+    flex: 1;
+    min-width: 200px;
+  }
+  .search-bar select {
+    padding: 12px 14px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--surface);
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="../beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Kelola Sertifikat</div>
+      <div class="app-header-sub">Admin NAKULAKU</div>
+    </div>
+  </div>
+</header>
+
+<main class="container page" style="max-width:900px;padding-top:16px;">
+
+  <div id="infoPeriode" style="margin-bottom:16px;font-size:12px;color:var(--muted);font-weight:600;"></div>
+
+  <button class="btn btn-primary btn-full" id="btnTambah" style="margin-bottom:16px;">
+    <span data-icon="plus"></span>
+    Tambah Sertifikat
+  </button>
+
+  <div class="search-bar">
+    <input type="text" id="cari" class="input" placeholder="Cari nama atau nomor sertifikat…" />
+  </div>
+
+  <div id="listSertifikat">
+    <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
+    <div class="skeleton" style="height:72px;border-radius:16px;"></div>
+  </div>
+
+</main>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+
+let profile;
+let periodeAktif = null;
+let semuaSertifikat = [];
+let debounceTimer;
+
+(async () => {
+  profile = await Api.requireLogin();
+  if (!profile) return;
+
+  if (!profile.peran.includes('pengurus') && !profile.peran.includes('super_admin')) {
+    document.querySelector('main').innerHTML = UI.errorHtml('Halaman ini hanya untuk pengurus.');
+    return;
+  }
+
+  const resP = await Api.call('periode.aktif');
+  if (resP.ok && resP.data) {
+    periodeAktif = resP.data;
+    document.getElementById('infoPeriode').innerHTML =
+      `<span style="color:var(--maroon);">${Icons.get('award', { class: 'icon-sm' })}</span> Periode: <strong>${UI.escapeHtml(periodeAktif.nama)}</strong>`;
+  }
+
+  await loadSertifikat();
+  document.getElementById('btnTambah').addEventListener('click', () => formSertifikat(null));
+  document.getElementById('cari').addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(renderList, 300);
+  });
+})();
+
+async function loadSertifikat() {
+  const el = document.getElementById('listSertifikat');
+  el.innerHTML = '<div class="skeleton" style="height:72px;border-radius:16px;"></div>';
+
+  const res = await Api.call('sertifikat.list', { periode_id: periodeAktif?.id });
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error);
+    return;
+  }
+
+  semuaSertifikat = res.data || [];
+  renderList();
+}
+
+function renderList() {
+  const el = document.getElementById('listSertifikat');
+  const q = document.getElementById('cari').value.trim().toLowerCase();
+
+  const list = q
+    ? semuaSertifikat.filter(s =>
+        (s.user?.nama_lengkap || '').toLowerCase().includes(q) ||
+        (s.nomor || '').toLowerCase().includes(q)
+      )
+    : semuaSertifikat;
+
+  if (list.length === 0) {
+    el.innerHTML = UI.emptyHtml('fileText', 'Belum ada sertifikat', 'Klik tombol di atas untuk menambah.');
+    return;
+  }
+
+  el.innerHTML = `
+    <div class="tbl-sertifikat">
+      ${list.map(s => {
+        const init = (s.user?.nama_lengkap || '?').charAt(0).toUpperCase();
+        return `
+          <div class="row-sertifikat">
+            <div class="row-avatar"><span>${init}</span></div>
+            <div class="row-info">
+              <div class="row-nama">${UI.escapeHtml(s.user?.nama_lengkap || '-')}</div>
+              <div class="row-sub">${UI.escapeHtml(s.user?.sekolah?.nama || '-')}</div>
+              ${s.nomor ? `<div class="row-sub">No: ${UI.escapeHtml(s.nomor)}</div>` : ''}
+            </div>
+            <div class="row-actions">
+              <a href="${UI.escapeHtml(s.url_pdf)}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">
+                ${Icons.get('externalLink', { class: 'icon-sm' })}
+              </a>
+              <button class="btn btn-ghost btn-sm" data-edit="${s.id}">${Icons.get('edit', { class: 'icon-sm' })}</button>
+              <button class="btn btn-ghost btn-sm" data-del="${s.id}" style="color:var(--danger);">${Icons.get('trash', { class: 'icon-sm' })}</button>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+
+  el.querySelectorAll('[data-edit]').forEach(b => {
+    const id = Number(b.dataset.edit);
+    b.addEventListener('click', () => formSertifikat(semuaSertifikat.find(x => x.id === id)));
+  });
+  el.querySelectorAll('[data-del]').forEach(b => {
+    const id = Number(b.dataset.del);
+    b.addEventListener('click', () => hapusSertifikat(id));
+  });
+}
+
+async function hapusSertifikat(id) {
+  const ok = await UI.konfirmasi('Hapus Sertifikat', 'Hapus data sertifikat ini?', { danger: true, okText: 'Hapus' });
+  if (!ok) return;
+  const res = await Api.call('sertifikat.hapus', { sertifikat_id: id });
+  if (!res.ok) { UI.gagal(res.error); return; }
+  UI.sukses('Sertifikat dihapus.');
+  await loadSertifikat();
+}
+
+async function formSertifikat(sert) {
+  const isEdit = !!sert;
+  const s = sert || {};
+  if (!periodeAktif) { UI.gagal('Belum ada periode aktif.'); return; }
+
+  // Ambil daftar guru untuk dropdown (kalau tambah baru)
+  let guruList = [];
+  if (!isEdit) {
+    const resG = await Api.call('users.list', { limit: 500 });
+    if (resG.ok) guruList = resG.data.hasil || [];
+  }
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:24px;max-width:520px;width:100%;box-shadow:var(--sh-xl);max-height:90vh;overflow-y:auto;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <h3 style="font-size:17px;color:var(--maroon);margin:0;">${isEdit ? 'Edit' : 'Tambah'} Sertifikat</h3>
+        <button data-close class="btn-icon">${Icons.get('x')}</button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+
+        ${!isEdit ? `
+          <div class="field">
+            <label class="label">Pilih Guru *</label>
+            <input type="text" id="sCariGuru" class="input" placeholder="Cari nama guru…" style="margin-bottom:6px;" />
+            <select id="sUser" class="input" size="1">
+              <option value="">— Pilih Guru —</option>
+              ${guruList.map(g => `<option value="${g.id}">${UI.escapeHtml(g.nama_lengkap)} (${UI.escapeHtml(g.sekolah?.nama || '-')})</option>`).join('')}
+            </select>
+          </div>
+        ` : `
+          <div class="field">
+            <label class="label">Guru</label>
+            <input type="text" class="input" value="${UI.escapeHtml(s.user?.nama_lengkap || '-')}" disabled />
+          </div>
+        `}
+
+        <div class="field">
+          <label class="label">Nomor Sertifikat</label>
+          <input type="text" id="sNomor" class="input" value="${UI.escapeHtml(s.nomor || '')}" placeholder="Mis: 001/KKG-NAKULA/2026" />
+        </div>
+
+        <div class="field">
+          <label class="label">URL PDF *</label>
+          <input type="url" id="sUrl" class="input" value="${UI.escapeHtml(s.url_pdf || '')}" placeholder="https://drive.google.com/…" />
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">Link ke file PDF sertifikat (Google Drive, dsb.)</div>
+        </div>
+
+        <div class="field">
+          <label class="label">Tanggal Terbit</label>
+          <input type="date" id="sTanggal" class="input" value="${s.tanggal_terbit || new Date().toISOString().slice(0, 10)}" />
+        </div>
+
+        <div class="field">
+          <label class="label">Catatan (opsional)</label>
+          <textarea id="sCatatan" class="input" rows="2" style="resize:vertical;">${UI.escapeHtml(s.catatan || '')}</textarea>
+        </div>
+
+      </div>
+
+      <div id="sAlert" class="alert alert-error" style="margin-top:14px;"></div>
+
+      <div style="display:flex;gap:8px;margin-top:20px;">
+        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
+        <button class="btn btn-primary" id="btnSimpanSert" style="flex:2;">Simpan</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  // Filter dropdown guru
+  const cariGuru = overlay.querySelector('#sCariGuru');
+  if (cariGuru) {
+    cariGuru.addEventListener('input', () => {
+      const q = cariGuru.value.toLowerCase();
+      const sel = overlay.querySelector('#sUser');
+      const filtered = guruList.filter(g => (g.nama_lengkap || '').toLowerCase().includes(q));
+      sel.innerHTML = '<option value="">— Pilih Guru —</option>' +
+        filtered.slice(0, 100).map(g => `<option value="${g.id}">${UI.escapeHtml(g.nama_lengkap)} (${UI.escapeHtml(g.sekolah?.nama || '-')})</option>`).join('');
+    });
+  }
+
+  const close = () => overlay.remove();
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnSimpanSert').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnSimpanSert');
+    const alertBox = overlay.querySelector('#sAlert');
+    alertBox.classList.remove('show');
+
+    const userId = isEdit ? s.user_id : Number(overlay.querySelector('#sUser').value);
+    const urlPdf = overlay.querySelector('#sUrl').value.trim();
+
+    if (!userId) { alertBox.textContent = 'Pilih guru.'; alertBox.classList.add('show'); return; }
+    if (!urlPdf) { alertBox.textContent = 'URL PDF wajib.'; alertBox.classList.add('show'); return; }
+
+    const payload = {
+      id: s.id || null,
+      user_id: userId,
+      periode_id: periodeAktif.id,
+      nomor: overlay.querySelector('#sNomor').value.trim() || null,
+      url_pdf: urlPdf,
+      tanggal_terbit: overlay.querySelector('#sTanggal').value || new Date().toISOString().slice(0, 10),
+      catatan: overlay.querySelector('#sCatatan').value.trim() || null,
+    };
+
+    UI.btnLoading(btn, 'Menyimpan…');
+    const res = await Api.call('sertifikat.simpan', { sertifikat: payload });
+    UI.btnReset(btn);
+
+    if (!res.ok) { alertBox.textContent = res.error; alertBox.classList.add('show'); return; }
+
+    UI.sukses('Tersimpan.');
+    close();
+    await loadSertifikat();
+  });
+}
+</script>
+
+</body>
+</html>
