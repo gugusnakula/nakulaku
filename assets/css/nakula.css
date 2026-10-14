@@ -673,6 +673,9 @@ h1, h2, h3, h4 { font-weight: 800; line-height: 1.2; color: var(--ink); }
    DESKTOP (≥ 900px)
    ============================================================ */
 @media (min-width: 900px) {
+  /* Smooth scroll offset */
+  html { scroll-behavior: smooth; }
+  [id^="section"] { scroll-margin-top: 80px; }
 
   .bottom-nav { display: none; }
   .page { padding-bottom: 32px; }
