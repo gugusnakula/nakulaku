@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>NAKULAKU AWARD — Papan Juara</title>
+
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/nakula.css" />
+
+<style>
+  /* Hero Award */
+  .award-hero {
+    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon-mid) 100%);
+    color: white;
+    border-radius: var(--r-xl);
+    padding: 28px 20px 22px;
+    text-align: center;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(125,29,58,.3);
+  }
+  .award-hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.12;
+  }
+  .award-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.08;
+  }
+  .award-hero .trophy-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    position: relative;
+  }
+  .award-hero h1 {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .award-hero p {
+    font-size: 12.5px;
+    opacity: 0.85;
+    position: relative;
+  }
+
+  /* Kartu Award */
+  .award-section {
+    background: var(--surface);
+    border-radius: var(--r-xl);
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--sh-sm);
+    position: relative;
+    overflow: hidden;
+  }
+  .award-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--maroon), var(--gold));
+  }
+  .award-section-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .award-section-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--gold-soft), #F5E8C8);
+    color: var(--gold-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .award-section-title {
+    flex: 1;
+    min-width: 0;
+  }
+  .award-section-title h2 {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--maroon);
+    margin-bottom: 2px;
+  }
+  .award-section-title p {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* Podium Juara */
+  .podium {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    align-items: end;
+    margin-bottom: 20px;
+  }
+  .podium-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 12px 6px;
+    border-radius: var(--r-lg);
+    background: var(--bg);
+    position: relative;
+  }
+  .podium-item.rank-1 {
+    background: linear-gradient(180deg, #FFF9E6, #FBF3D0);
+    padding-top: 16px;
+    padding-bottom: 20px;
+    border: 1.5px solid var(--gold);
+    transform: scale(1.02);
+  }
+  .podium-item.rank-2 {
+    background: linear-gradient(180deg, #F5F5F5, #EAEAEA);
+    border: 1.5px solid #C0C0C0;
+  }
+  .podium-item.rank-3 {
+    background: linear-gradient(180deg, #FAEFE5, #F1DFCA);
+    border: 1.5px solid #CD7F32;
+  }
+  .podium-crown {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 22px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.15));
+  }
+  .podium-rank-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--maroon);
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .podium-item.rank-1 .podium-rank-badge { background: var(--gold); }
+  .podium-item.rank-2 .podium-rank-badge { background: #999; }
+  .podium-item.rank-3 .podium-rank-badge { background: #CD7F32; }
+
+  .podium-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 22px;
+    overflow: hidden;
+    position: relative;
+    border: 2px solid var(--surface);
+    box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    margin-bottom: 8px;
+  }
+  .podium-item.rank-1 .podium-avatar {
+    width: 68px;
+    height: 68px;
+    font-size: 26px;
+    border-color: var(--gold);
+    box-shadow: 0 4px 12px rgba(201,169,97,.4);
+  }
+  .podium-avatar img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .podium-name {
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 4px;
+    color: var(--ink);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    padding: 0 4px;
+  }
+  .podium-item.rank-1 .podium-name {
+    font-size: 13px;
+    color: var(--maroon);
+  }
+  .podium-sub {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 6px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .podium-skor {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--maroon);
+    background: var(--surface);
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+  }
+  .podium-item.rank-1 .podium-skor {
+    background: var(--gold);
+    color: white;
+    border-color: var(--gold);
+    font-size: 14px;
+  }
+
+  /* Daftar nominasi lain */
+  .nominasi-rest {
+    padding-top: 16px;
+    border-top: 1px dashed var(--border);
+  }
+  .nominasi-rest-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .nom-mini {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .nom-mini:last-child { border-bottom: none; }
+  .nom-mini-rank {
+    width: 24px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--muted);
+    flex-shrink: 0;
+    text-align: center;
+  }
+  .nom-mini-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .nom-mini-avatar img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .nom-mini-info { flex: 1; min-width: 0; }
+  .nom-mini-name {
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .nom-mini-sub {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .nom-mini-skor {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--maroon);
+    flex-shrink: 0;
+  }
+
+  /* Empty */
+  .award-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">NAKULAKU AWARD</div>
+      <div class="app-header-sub">Papan Juara</div>
+    </div>
+  </div>
+  <button class="header-btn" data-act="logout">
+    <span data-icon="logOut"></span>
+  </button>
+</header>
+
+<main class="container page" style="max-width:720px;padding-top:16px;">
+
+  <div class="award-hero">
+    <div class="trophy-icon">
+      <span data-icon="award" class="icon-xl"></span>
+    </div>
+    <h1>NAKULAKU AWARD</h1>
+    <p id="subHero">Memuat…</p>
+  </div>
+
+  <div id="listAward">
+    <div class="skeleton" style="height:280px;border-radius:24px;margin-bottom:16px;"></div>
+    <div class="skeleton" style="height:280px;border-radius:24px;"></div>
+  </div>
+
+</main>
+
+<nav class="bottom-nav">
+  <a class="nav-item" data-nav="beranda" href="beranda.html"><span data-icon="home"></span> Beranda</a>
+  <a class="nav-item" data-nav="pertemuan" href="beranda.html"><span data-icon="calendar"></span> Pertemuan</a>
+  <a class="nav-item" data-nav="tugas" href="beranda.html"><span data-icon="clipboard"></span> Tugas</a>
+  <a class="nav-item" data-nav="presensi" href="beranda.html"><span data-icon="mapPin"></span> Presensi</a>
+  <a class="nav-item" data-nav="profil" href="profil.html"><span data-icon="user"></span> Profil</a>
+</nav>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+UI.bindLogout();
+
+(async () => {
+  const profile = await Api.requireLogin();
+  if (!profile) return;
+
+  const res = await Api.call('award.list');
+  const el = document.getElementById('listAward');
+
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat data.');
+    return;
+  }
+
+  const awards = res.data.awards || [];
+  const nominasi = res.data.nominasi || [];
+
+  // Group nominasi
+  const nomMap = {};
+  nominasi.forEach(n => {
+    if (!nomMap[n.award_id]) nomMap[n.award_id] = [];
+    nomMap[n.award_id].push(n);
+  });
+
+  document.getElementById('subHero').textContent =
+    awards.length > 0
+      ? `${awards.length} kategori · Diumumkan akhir periode`
+      : 'Belum ada kategori award';
+
+  if (awards.length === 0) {
+    el.innerHTML = `
+      <div class="award-empty">
+        ${Icons.get('award', { class: 'icon-xl' })}
+        <div style="font-weight:700;margin-top:12px;color:var(--ink);">Belum ada nominasi</div>
+        <div style="font-size:12.5px;margin-top:4px;">Nominasi akan diumumkan menjelang akhir periode.</div>
+      </div>
+    `;
+    return;
+  }
+
+  // Filter: hanya award yang punya nominasi (yang sudah dihitung)
+  const awardDenganNominasi = awards.filter(a => (nomMap[a.id] || []).length > 0);
+  const awardKosong = awards.filter(a => (nomMap[a.id] || []).length === 0);
+
+  let html = '';
+
+  if (awardDenganNominasi.length === 0) {
+    html = `
+      <div class="award-empty">
+        ${Icons.get('award', { class: 'icon-xl' })}
+        <div style="font-weight:700;margin-top:12px;color:var(--ink);">Nominasi belum dihitung</div>
+        <div style="font-size:12.5px;margin-top:4px;">Tunggu pengumuman dari pengurus.</div>
+      </div>
+    `;
+  } else {
+    html = awardDenganNominasi.map(a => renderAwardSection(a, nomMap[a.id] || [])).join('');
+  }
+
+  el.innerHTML = html;
+})();
+
+function renderAwardSection(a, nominasi) {
+  const kategoriLabel = {
+    sekolah: 'Sekolah', guru: 'Guru', narsum: 'Narasumber',
+    pengamat: 'Pengamat', penyelenggara: 'Penyelenggara',
+  }[a.kategori] || a.kategori;
+
+  // Urutkan by peringkat
+  const sorted = [...nominasi].sort((x, y) => x.peringkat - y.peringkat);
+  const top3 = sorted.slice(0, 3);
+  const rest = sorted.slice(3);
+
+  // Podium urutan: 2, 1, 3
+  const podium = [];
+  if (top3[1]) podium.push({ rank: 2, data: top3[1] });
+  if (top3[0]) podium.push({ rank: 1, data: top3[0] });
+  if (top3[2]) podium.push({ rank: 3, data: top3[2] });
+
+  const juaraDitetapkan = top3.some(n => n.juara);
+
+  return `
+    <div class="award-section">
+      <div class="award-section-head">
+        <div class="award-section-icon">${Icons.get('award', { class: 'icon-lg' })}</div>
+        <div class="award-section-title">
+          <h2>${UI.escapeHtml(a.nama)}</h2>
+          <p>Kategori ${kategoriLabel} · ${nominasi.length} nominasi</p>
+        </div>
+      </div>
+
+      ${top3.length > 0 ? `
+        <div class="podium">
+          ${podium.map(p => renderPodiumItem(p.rank, p.data)).join('')}
+        </div>
+      ` : ''}
+
+      ${rest.length > 0 ? `
+        <div class="nominasi-rest">
+          <div class="nominasi-rest-title">Nominasi Lainnya</div>
+          ${rest.map(n => renderNomMini(n)).join('')}
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function renderPodiumItem(rank, n) {
+  const nama = n.user?.nama_lengkap || n.sekolah?.nama || '-';
+  const sub = n.user?.sekolah?.nama || (n.rincian_skor?.pertemuan_id ? 'Pertemuan #' + n.rincian_skor.pertemuan_id : '');
+  const init = (nama || '?').charAt(0).toUpperCase();
+  const fotoUrl = n.user?.foto_thumb_url;
+
+  const crown = rank === 1 ? '👑' : '';
+
+  return `
+    <div class="podium-item rank-${rank}">
+      ${crown ? `<div class="podium-crown">${crown}</div>` : ''}
+      <div class="podium-rank-badge">${rank}</div>
+      <div class="podium-avatar">
+        <span>${init}</span>
+        ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.remove()">` : ''}
+      </div>
+      <div class="podium-name">${UI.escapeHtml(nama)}</div>
+      <div class="podium-sub">${UI.escapeHtml(sub || '')}</div>
+      <div class="podium-skor">${n.skor_total}</div>
+    </div>
+  `;
+}
+
+function renderNomMini(n) {
+  const nama = n.user?.nama_lengkap || n.sekolah?.nama || '-';
+  const sub = n.user?.sekolah?.nama || (n.rincian_skor?.pertemuan_id ? 'Pertemuan #' + n.rincian_skor.pertemuan_id : '');
+  const init = (nama || '?').charAt(0).toUpperCase();
+  const fotoUrl = n.user?.foto_thumb_url;
+
+  return `
+    <div class="nom-mini">
+      <div class="nom-mini-rank">#${n.peringkat}</div>
+      <div class="nom-mini-avatar">
+        <span>${init}</span>
+        ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.remove()">` : ''}
+      </div>
+      <div class="nom-mini-info">
+        <div class="nom-mini-name">${UI.escapeHtml(nama)}</div>
+        <div class="nom-mini-sub">${UI.escapeHtml(sub || '')}</div>
+      </div>
+      <div class="nom-mini-skor">${n.skor_total}</div>
+    </div>
+  `;
+}
+</script>
+
+</body>
+</html>
