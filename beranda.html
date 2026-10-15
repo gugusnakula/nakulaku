@@ -14,6 +14,150 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
 <link rel="stylesheet" href="assets/css/nakula.css" />
+
+<style>
+  /* Kartu Progres */
+  .progress-card {
+    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon-mid) 100%);
+    color: white;
+    border-radius: var(--r-xl);
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(125,29,58,.28);
+  }
+  .progress-card::before {
+    content: '';
+    position: absolute;
+    top: -50px; right: -50px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.1;
+    pointer-events: none;
+  }
+  .progress-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    position: relative;
+  }
+  .progress-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    opacity: 0.95;
+  }
+  .progress-card-count {
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0.85;
+  }
+  .progress-card-bar {
+    height: 10px;
+    background: rgba(255,255,255,.2);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .progress-card-bar > div {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-light) 0%, var(--gold) 100%);
+    border-radius: 999px;
+    transition: width .6s var(--ease-out);
+    position: relative;
+  }
+  .progress-card-percent {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    font-weight: 800;
+  }
+  .progress-card-info {
+    font-size: 12.5px;
+    opacity: 0.9;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+  }
+  .progress-card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(201,169,97,.5);
+    border-radius: var(--r-full);
+    padding: 8px 14px 8px 12px;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-decoration: none;
+    color: white;
+    margin-top: 12px;
+    position: relative;
+    transition: all .15s;
+  }
+  .progress-card-cta:hover {
+    background: rgba(255,255,255,.25);
+    transform: translateX(2px);
+  }
+
+  /* Kunci visual pada pertemuan */
+  .pertemuan-item.locked {
+    opacity: 0.55;
+    cursor: not-allowed;
+    background: #FAF6F6;
+  }
+  .pertemuan-item.locked:hover {
+    border-color: var(--border);
+    transform: none;
+    box-shadow: var(--sh-xs);
+  }
+  .pertemuan-item.locked .pertemuan-number {
+    background: var(--border);
+    color: var(--muted);
+  }
+  .pertemuan-item.locked .chevron {
+    color: var(--border-strong);
+  }
+  .pertemuan-lock-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--border);
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .pertemuan-item.selesai .pertemuan-number {
+    background: var(--success-soft);
+    color: var(--success);
+  }
+  .pertemuan-done-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--success-soft);
+    color: var(--success);
+  }
+</style>
 </head>
 <body>
 
@@ -36,7 +180,7 @@
 <!-- ============================ LAYOUT ============================ -->
 <div class="desktop-layout">
 
-  <!-- ============================ SIDEBAR DESKTOP ============================ -->
+  <!-- SIDEBAR DESKTOP -->
   <aside class="desktop-sidebar">
     <div class="sidebar-brand">
       <div class="sidebar-brand-logo">
@@ -70,10 +214,9 @@
     </nav>
   </aside>
 
-  <!-- ============================ MAIN CONTENT ============================ -->
+  <!-- MAIN CONTENT -->
   <main class="desktop-main">
 
-    <!-- Topbar desktop -->
     <div class="desktop-topbar">
       <h2>Beranda</h2>
       <div style="display:flex;align-items:center;gap:10px;">
@@ -86,8 +229,8 @@
 
     <div class="container page" style="padding-top:20px;">
 
-      <!-- ============================ PROFIL CARD ============================ -->
-      <section id="profilCard" class="profile-card" style="margin-bottom:24px;">
+      <!-- PROFIL CARD -->
+      <section id="profilCard" class="profile-card" style="margin-bottom:20px;">
         <div class="profile-avatar" id="profilAvatar">?</div>
         <div class="profile-info">
           <div class="profile-name" id="profilNama">Memuat…</div>
@@ -96,7 +239,29 @@
         </div>
       </section>
 
-      <!-- ============================ MENU KHUSUS (KS/PENGURUS/ADMIN) ============================ -->
+      <!-- KARTU PROGRES -->
+      <section id="kartuProgres" class="progress-card hidden">
+        <div class="progress-card-head">
+          <div class="progress-card-title">
+            <span data-icon="award" class="icon-sm"></span>
+            Progres Anda
+          </div>
+          <div class="progress-card-count" id="progressCount">0/0</div>
+        </div>
+        <div class="progress-card-bar">
+          <div id="progressFill" style="width:0%"></div>
+          <div class="progress-card-percent" id="progressPercent">0%</div>
+        </div>
+        <div class="progress-card-info" id="progressInfo">
+          Memuat…
+        </div>
+        <a href="#" id="progressCta" class="progress-card-cta hidden">
+          <span data-icon="arrowRight" class="icon-sm"></span>
+          <span id="progressCtaText">Lanjut</span>
+        </a>
+      </section>
+
+      <!-- MENU KHUSUS -->
       <section id="panelKhusus" class="hidden" style="margin-bottom:24px;scroll-margin-top:80px;">
         <div class="section-head">
           <h3><span data-icon="award"></span> Menu Khusus</h3>
@@ -104,7 +269,7 @@
         <div id="listMenuKhusus"></div>
       </section>
 
-      <!-- ============================ PENGUMUMAN ============================ -->
+      <!-- PENGUMUMAN -->
       <section id="sectionPengumuman" style="margin-bottom:24px;scroll-margin-top:80px;">
         <div class="section-head">
           <h3><span data-icon="megaphone"></span> Pengumuman</h3>
@@ -113,7 +278,7 @@
         <div id="listPengumuman"></div>
       </section>
 
-      <!-- ============================ PERTEMUAN ============================ -->
+      <!-- PERTEMUAN -->
       <section id="sectionPertemuan" style="margin-bottom:24px;scroll-margin-top:80px;">
         <div class="section-head">
           <h3><span data-icon="calendar"></span> Pertemuan</h3>
@@ -126,7 +291,7 @@
   </main>
 </div>
 
-<!-- ============================ BOTTOM NAV (MOBILE) ============================ -->
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <a class="nav-item active" data-nav="beranda" href="beranda.html">
     <span data-icon="home"></span>
@@ -150,7 +315,6 @@
   </a>
 </nav>
 
-<!-- ============================ SCRIPTS ============================ -->
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/ui.js"></script>
@@ -163,13 +327,10 @@ document.querySelectorAll('[data-icon]').forEach(el => {
   el.style.display = 'contents';
 });
 
-// ============================================================
-// BIND LOGOUT
-// ============================================================
 UI.bindLogout();
 
 // ============================================================
-// SMOOTH SCROLL untuk anchor internal (#sectionXxx)
+// SMOOTH SCROLL
 // ============================================================
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', (e) => {
@@ -189,7 +350,13 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 });
 
 // ============================================================
-// INIT — CEK SESI + LOAD DATA
+// STATE
+// ============================================================
+let daftarPertemuan = [];
+let totalPertemuan = 0;
+
+// ============================================================
+// INIT
 // ============================================================
 (async () => {
   const profile = await Api.requireLogin();
@@ -240,7 +407,7 @@ function renderMenuKhusus(p) {
   const menu = [];
   const peranList = p.peran || [];
 
-  // Papan Juara — untuk SEMUA user
+  // Papan Juara — semua user
   menu.push({
     icon: 'award',
     title: 'Papan Juara',
@@ -248,7 +415,8 @@ function renderMenuKhusus(p) {
     href: 'award.html',
     warna: 'gold',
   });
-  // Aktivitas Saya — untuk SEMUA user
+
+  // Aktivitas Saya — semua user
   menu.push({
     icon: 'activity',
     title: 'Aktivitas Saya',
@@ -256,7 +424,8 @@ function renderMenuKhusus(p) {
     href: 'aktivitas.html',
     warna: 'maroon',
   });
-  // KS → Verifikasi Presensi
+
+  // KS
   if (peranList.includes('ks')) {
     menu.push({
       icon: 'shield',
@@ -267,7 +436,7 @@ function renderMenuKhusus(p) {
     });
   }
 
-  // Pengurus/Admin → Data Guru, Impor, Kelola Pertemuan, Kelola Award
+  // Pengurus/Admin
   if (peranList.includes('pengurus') || peranList.includes('super_admin')) {
     menu.push({
       icon: 'users',
@@ -325,6 +494,7 @@ function renderMenuKhusus(p) {
       href: 'admin/index.html',
       warna: 'gold',
     });
+
     if (peranList.includes('super_admin') && !peranList.includes('ks')) {
       menu.push({
         icon: 'checkCircle',
@@ -336,7 +506,6 @@ function renderMenuKhusus(p) {
     }
   }
 
-  // Cek tugas pengamat (async)
   cekTugasPengamat();
 
   if (menu.length === 0) {
@@ -437,7 +606,7 @@ async function loadPengumuman() {
 }
 
 // ============================================================
-// PERTEMUAN
+// PERTEMUAN + PROGRES
 // ============================================================
 async function loadPertemuan() {
   const el = document.getElementById('listPertemuan');
@@ -451,30 +620,100 @@ async function loadPertemuan() {
   }
   if (!res.data || res.data.length === 0) {
     el.innerHTML = UI.emptyHtml('calendar', 'Belum ada pertemuan', 'Jadwal akan muncul di sini.');
+    document.getElementById('kartuProgres').classList.add('hidden');
     return;
   }
 
-  el.innerHTML = res.data.map(p => `
-    <div class="pertemuan-item" onclick="bukaPertemuan(${p.id})">
-      <div class="pertemuan-number">
-        <div class="num">${p.urutan}</div>
-        <div class="lbl">PERTEMUAN</div>
-      </div>
-      <div class="pertemuan-body">
-        <div class="pertemuan-title">${UI.escapeHtml(p.judul)}</div>
-        <div class="pertemuan-meta">
-          ${Icons.get('calendar', { class: 'icon-sm' })}
-          ${UI.formatTanggal(p.tanggal)}
+  daftarPertemuan = res.data;
+  totalPertemuan = daftarPertemuan.length;
+
+  renderKartuProgres();
+  renderListPertemuan();
+}
+
+function renderKartuProgres() {
+  const selesai = daftarPertemuan.filter(p => p.selesai).length;
+  const total = totalPertemuan;
+  const persen = total > 0 ? Math.round((selesai / total) * 100) : 0;
+
+  // Cari pertemuan lanjut (terbuka && !selesai)
+  const lanjut = daftarPertemuan.find(p => p.terbuka && !p.selesai);
+  const semuaSelesai = selesai === total && total > 0;
+
+  const card = document.getElementById('kartuProgres');
+  card.classList.remove('hidden');
+
+  document.getElementById('progressCount').textContent = `${selesai}/${total}`;
+  document.getElementById('progressPercent').textContent = persen + '%';
+  document.getElementById('progressFill').style.width = persen + '%';
+
+  const info = document.getElementById('progressInfo');
+  const cta = document.getElementById('progressCta');
+  const ctaText = document.getElementById('progressCtaText');
+
+  if (semuaSelesai) {
+    info.innerHTML = `${Icons.get('checkCircle', { class: 'icon-sm' })} <span>Selamat! Semua pertemuan telah selesai 🎉</span>`;
+    cta.classList.add('hidden');
+  } else if (lanjut) {
+    info.innerHTML = `${Icons.get('arrowRight', { class: 'icon-sm' })} <span>Lanjut: Pertemuan #${lanjut.urutan} — ${UI.escapeHtml(lanjut.judul)}</span>`;
+    cta.href = 'pertemuan.html?id=' + lanjut.id;
+    ctaText.textContent = 'Buka Pertemuan #' + lanjut.urutan;
+    cta.classList.remove('hidden');
+  } else {
+    info.innerHTML = `${Icons.get('clock', { class: 'icon-sm' })} <span>Menunggu pertemuan berikutnya dibuka</span>`;
+    cta.classList.add('hidden');
+  }
+}
+
+function renderListPertemuan() {
+  const el = document.getElementById('listPertemuan');
+
+  el.innerHTML = daftarPertemuan.map(p => {
+    const locked = !p.terbuka;
+    const done = p.selesai;
+    const cls = locked ? 'locked' : (done ? 'selesai' : '');
+
+    // Tentukan badge
+    let badgeHtml = '';
+    if (done) {
+      badgeHtml = `
+        <div class="pertemuan-done-badge">
+          ${Icons.get('check', { class: 'icon-sm' })}
+          Selesai
         </div>
-        ${p.lokasi_nama ? `
+      `;
+    } else if (locked) {
+      badgeHtml = `
+        <div class="pertemuan-lock-badge">
+          ${Icons.get('lock', { class: 'icon-sm' })}
+          ${UI.escapeHtml(p.alasan || 'Terkunci')}
+        </div>
+      `;
+    }
+
+    return `
+      <div class="pertemuan-item ${cls}" onclick="${locked ? 'showLocked(' + p.id + ')' : 'bukaPertemuan(' + p.id + ')'}">
+        <div class="pertemuan-number">
+          <div class="num">${locked ? Icons.get('lock', { class: 'icon-sm' }) : p.urutan}</div>
+          ${!locked ? `<div class="lbl">PERTEMUAN</div>` : ''}
+        </div>
+        <div class="pertemuan-body">
+          <div class="pertemuan-title">${UI.escapeHtml(p.judul)}</div>
           <div class="pertemuan-meta">
-            ${Icons.get('mapPin', { class: 'icon-sm' })}
-            ${UI.escapeHtml(p.lokasi_nama)}
-          </div>` : ''}
+            ${Icons.get('calendar', { class: 'icon-sm' })}
+            ${UI.formatTanggal(p.tanggal)}
+          </div>
+          ${p.lokasi_nama ? `
+            <div class="pertemuan-meta">
+              ${Icons.get('mapPin', { class: 'icon-sm' })}
+              ${UI.escapeHtml(p.lokasi_nama)}
+            </div>` : ''}
+          ${badgeHtml}
+        </div>
+        <span class="chevron">${Icons.get(locked ? 'lock' : 'chevronRight', { class: 'icon' })}</span>
       </div>
-      <span class="chevron">${Icons.get('chevronRight', { class: 'icon' })}</span>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 // ============================================================
@@ -484,8 +723,10 @@ function bukaPertemuan(id) {
   window.location.href = 'pertemuan.html?id=' + id;
 }
 
-function bukaPresensi(id) {
-  window.location.href = 'presensi.html?id=' + id;
+function showLocked(id) {
+  const p = daftarPertemuan.find(x => x.id === id);
+  if (!p) return;
+  UI.toast(p.alasan || 'Pertemuan ini masih terkunci', 'warning', 3500);
 }
 </script>
 
