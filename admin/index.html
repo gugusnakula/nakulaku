@@ -80,9 +80,7 @@
     padding-top: 16px;
     border-top: 1px solid rgba(255,255,255,.15);
   }
-  .hero-stat {
-    text-align: center;
-  }
+  .hero-stat { text-align: center; }
   .hero-stat .n {
     font-size: 20px;
     font-weight: 800;
@@ -294,6 +292,11 @@
       <div class="menu-title">Log Aktivitas</div>
       <div class="menu-desc">Riwayat aksi admin</div>
     </a>
+    <a href="pengaturan.html" class="menu-card">
+      <div class="menu-icon maroon"><span data-icon="settings" class="icon-lg"></span></div>
+      <div class="menu-title">Pengaturan</div>
+      <div class="menu-desc">Backup & transfer admin</div>
+    </a>
   </div>
 
   <!-- Kegiatan -->
@@ -302,6 +305,11 @@
     Kegiatan
   </div>
   <div class="menu-grid">
+    <a href="periode.html" class="menu-card">
+      <div class="menu-icon blue"><span data-icon="calendar" class="icon-lg"></span></div>
+      <div class="menu-title">Kelola Periode</div>
+      <div class="menu-desc">Buat periode & arsip</div>
+    </a>
     <a href="pertemuan.html" class="menu-card">
       <div class="menu-icon maroon"><span data-icon="calendar" class="icon-lg"></span></div>
       <div class="menu-title">Kelola Pertemuan</div>
@@ -311,6 +319,11 @@
       <div class="menu-icon green"><span data-icon="megaphone" class="icon-lg"></span></div>
       <div class="menu-title">Pengumuman</div>
       <div class="menu-desc">Broadcast ke semua guru</div>
+    </a>
+    <a href="feedback.html" class="menu-card">
+      <div class="menu-icon blue"><span data-icon="messageSquare" class="icon-lg"></span></div>
+      <div class="menu-title">Rekap Feedback</div>
+      <div class="menu-desc">Penilaian peserta</div>
     </a>
   </div>
 
@@ -325,11 +338,6 @@
       <div class="menu-title">Kelola Award</div>
       <div class="menu-desc">Nominasi & juara</div>
     </a>
-    <a href="feedback.html" class="menu-card">
-      <div class="menu-icon blue"><span data-icon="messageSquare" class="icon-lg"></span></div>
-      <div class="menu-title">Rekap Feedback</div>
-      <div class="menu-desc">Penilaian peserta</div>
-    </a>
     <a href="sertifikat.html" class="menu-card">
       <div class="menu-icon gold"><span data-icon="fileText" class="icon-lg"></span></div>
       <div class="menu-title">Sertifikat</div>
@@ -340,11 +348,16 @@
       <div class="menu-title">Verifikasi</div>
       <div class="menu-desc">Presensi & izin</div>
     </a>
+    <a href="../award.html" class="menu-card">
+      <div class="menu-icon gold"><span data-icon="trophy" class="icon-lg"></span></div>
+      <div class="menu-title">Papan Juara</div>
+      <div class="menu-desc">Tampilan hasil award</div>
+    </a>
   </div>
 
-  <!-- Aktivitas Terbaru -->
+  <!-- Informasi Sistem -->
   <div class="section-title">
-    <span data-icon="activity" class="icon-sm"></span>
+    <span data-icon="info" class="icon-sm"></span>
     Informasi Sistem
   </div>
   <div class="quick-list">
@@ -354,13 +367,12 @@
         <div class="quick-title">Beranda Guru</div>
         <div class="quick-sub">Tampilan sebagai peserta</div>
       </div>
-      <span class="chevron">${''}</span>
     </a>
-    <a href="../award.html" class="quick-row">
-      <div class="quick-icon"><span data-icon="award" class="icon-sm"></span></div>
+    <a href="../aktivitas.html" class="quick-row">
+      <div class="quick-icon"><span data-icon="activity" class="icon-sm"></span></div>
       <div class="quick-info">
-        <div class="quick-title">Papan Juara</div>
-        <div class="quick-sub">Hasil NAKULAKU AWARD</div>
+        <div class="quick-title">Aktivitas Saya</div>
+        <div class="quick-sub">Rapor digital Anda</div>
       </div>
     </a>
     <a href="../profil.html" class="quick-row">
@@ -368,13 +380,6 @@
       <div class="quick-info">
         <div class="quick-title">Profil Saya</div>
         <div class="quick-sub">Ganti PIN & foto</div>
-      </div>
-    </a>
-    <a href="log.html" class="quick-row">
-      <div class="quick-icon"><span data-icon="activity" class="icon-sm"></span></div>
-      <div class="quick-info">
-        <div class="quick-title">Log Aktivitas</div>
-        <div class="quick-sub">Riwayat aksi admin</div>
       </div>
     </a>
   </div>
@@ -399,7 +404,6 @@ let profile;
   profile = await Api.requireLogin();
   if (!profile) return;
 
-  // Cek peran
   const peran = profile.peran || [];
   if (!peran.includes('pengurus') && !peran.includes('super_admin') && !peran.includes('ks')) {
     document.querySelector('main').innerHTML = UI.errorHtml(
@@ -409,9 +413,29 @@ let profile;
     return;
   }
 
-  // Sembunyikan menu verifikasi kalau tidak berhak
-  if (!peran.includes('ks') && !peran.includes('pengurus') && !peran.includes('super_admin')) {
-    document.getElementById('menuVerifikasi')?.remove();
+  // Sembunyikan menu yang tidak relevan untuk KS
+  if (!peran.includes('pengurus') && !peran.includes('super_admin')) {
+    // KS hanya bisa Verifikasi
+    document.querySelectorAll('.menu-card').forEach(card => {
+      const href = card.getAttribute('href');
+      if (href !== '../ks/verifikasi.html' && href !== '../award.html' && href !== '../beranda.html') {
+        if (!href || href === '#' || href.includes('admin/')) {
+          card.style.display = 'none';
+        }
+      }
+    });
+    // Sembunyikan section-title yang kosong
+    document.querySelectorAll('.section-title').forEach((title, idx) => {
+      const nextGrid = title.nextElementSibling;
+      if (nextGrid && nextGrid.classList.contains('menu-grid')) {
+        const visibleCards = Array.from(nextGrid.querySelectorAll('.menu-card'))
+          .filter(c => c.style.display !== 'none');
+        if (visibleCards.length === 0) {
+          title.style.display = 'none';
+          nextGrid.style.display = 'none';
+        }
+      }
+    });
   }
 
   // Render hero
@@ -421,7 +445,7 @@ let profile;
     `<span style="display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(201,169,97,.4);color:white;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;margin-right:4px;">${UI.escapeHtml(r.replace(/_/g,' '))}</span>`
   ).join('');
 
-  // Load statistik paralel
+  // Load statistik
   loadStatistik();
 })();
 
@@ -442,7 +466,7 @@ async function loadStatistik() {
     }
   } catch {}
 
-  // Pending verifikasi (presensi + izin)
+  // Pending verifikasi
   try {
     let total = 0;
 
@@ -456,7 +480,6 @@ async function loadStatistik() {
 
     document.getElementById('statPending').textContent = total;
 
-    // Badge di menu verifikasi
     if (total > 0) {
       const el = document.getElementById('menuVerifikasi');
       if (el && !el.querySelector('.menu-badge')) {
