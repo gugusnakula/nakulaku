@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#611329" />
+<title>Analitik — NAKULAKU Admin</title>
+
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/nakula.css" />
+
+<style>
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 16px 14px;
+    text-align: center;
+    transition: all .15s;
+  }
+  .stat-box:hover { border-color: var(--maroon); }
+  .stat-box .n {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--maroon);
+    line-height: 1;
+  }
+  .stat-box .l {
+    font-size: 10.5px;
+    color: var(--muted);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 18px 16px;
+    margin-bottom: 16px;
+  }
+  .chart-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 800;
+    color: var(--maroon);
+    margin-bottom: 14px;
+  }
+
+  /* Bar chart */
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 120px;
+    padding: 8px 0;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 8px;
+    overflow-x: auto;
+  }
+  .bar-col {
+    flex: 1;
+    min-width: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    height: 100%;
+    justify-content: flex-end;
+    position: relative;
+  }
+  .bar-stack {
+    width: 100%;
+    max-width: 32px;
+    border-radius: 4px 4px 0 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column-reverse;
+    transition: all .3s;
+    min-height: 2px;
+  }
+  .bar-stack:hover { transform: scaleY(1.02); }
+  .bar-seg { width: 100%; }
+  .bar-tepat { background: var(--success); }
+  .bar-terlambat { background: var(--warning); }
+  .bar-izin { background: var(--info); }
+  .bar-alfa { background: var(--danger); }
+  .bar-luar { background: #F59E0B; }
+
+  .bar-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--muted);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .legend {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* Top guru */
+  .top-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .top-item:last-child { border-bottom: none; }
+  .top-rank {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--bg);
+    color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 12px;
+    flex-shrink: 0;
+  }
+  .top-rank.g1 { background: var(--gold); color: white; }
+  .top-rank.g2 { background: #C0C0C0; color: white; }
+  .top-rank.g3 { background: #CD7F32; color: white; }
+  .top-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 13px;
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .top-avatar img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .top-info { flex: 1; min-width: 0; }
+  .top-nama { font-weight: 700; font-size: 13px; }
+  .top-sub { font-size: 11px; color: var(--muted); font-weight: 600; }
+  .top-poin {
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--maroon);
+    flex-shrink: 0;
+  }
+
+  /* Sekolah */
+  .sekolah-item {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .sekolah-item:last-child { border-bottom: none; }
+  .sekolah-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .sekolah-nama { font-weight: 700; font-size: 13px; }
+  .sekolah-info { font-size: 11px; color: var(--muted); font-weight: 600; }
+  .sekolah-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .sekolah-bar > div {
+    height: 100%;
+    background: linear-gradient(90deg, var(--maroon), var(--gold));
+    border-radius: 3px;
+    transition: width .5s;
+  }
+
+  /* Feedback trend */
+  .fb-mini-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 80px;
+    padding: 8px 0;
+    border-bottom: 2px solid var(--border);
+    overflow-x: auto;
+  }
+  .fb-bar {
+    flex: 1;
+    min-width: 18px;
+    background: linear-gradient(180deg, var(--maroon-light), var(--maroon));
+    border-radius: 3px 3px 0 0;
+    transition: all .3s;
+    position: relative;
+    min-height: 2px;
+  }
+  .fb-bar:hover { background: linear-gradient(180deg, var(--gold), var(--gold-dark)); }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="../beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Analitik</div>
+      <div class="app-header-sub">Admin NAKULAKU</div>
+    </div>
+  </div>
+</header>
+
+<main class="container page" style="max-width:820px;padding-top:16px;">
+
+  <div id="infoPeriode" style="margin-bottom:16px;font-size:12px;color:var(--muted);font-weight:600;"></div>
+
+  <div id="loading">
+    <div class="skeleton" style="height:80px;border-radius:16px;margin-bottom:16px;"></div>
+    <div class="skeleton" style="height:200px;border-radius:16px;margin-bottom:16px;"></div>
+    <div class="skeleton" style="height:200px;border-radius:16px;"></div>
+  </div>
+
+  <div id="content" class="hidden">
+
+    <!-- Ringkasan -->
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="n" id="statGuru">—</div>
+        <div class="l">Guru</div>
+      </div>
+      <div class="stat-box">
+        <div class="n" id="statSekolah">—</div>
+        <div class="l">Sekolah</div>
+      </div>
+      <div class="stat-box">
+        <div class="n" id="statPertemuan">—</div>
+        <div class="l">Pertemuan</div>
+      </div>
+    </div>
+
+    <!-- Grafik Kehadiran -->
+    <div class="chart-card">
+      <div class="chart-title">
+        <span data-icon="activity" class="icon-sm"></span>
+        Kehadiran per Pertemuan
+      </div>
+      <div id="chartKehadiran"></div>
+    </div>
+
+    <!-- Top 10 Guru -->
+    <div class="chart-card">
+      <div class="chart-title">
+        <span data-icon="users" class="icon-sm"></span>
+        Top 10 Guru Teraktif
+      </div>
+      <div id="topGuru"></div>
+    </div>
+
+    <!-- Statistik Sekolah -->
+    <div class="chart-card">
+      <div class="chart-title">
+        <span data-icon="home" class="icon-sm"></span>
+        Statistik Sekolah
+      </div>
+      <div id="statSekolahList"></div>
+    </div>
+
+    <!-- Tren Feedback -->
+    <div class="chart-card">
+      <div class="chart-title">
+        <span data-icon="messageSquare" class="icon-sm"></span>
+        Tren Feedback per Pertemuan
+      </div>
+      <div id="feedbackTrend"></div>
+    </div>
+
+  </div>
+
+</main>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+
+(async () => {
+  const profile = await Api.requireLogin();
+  if (!profile) return;
+
+  if (!profile.peran.includes('pengurus') && !profile.peran.includes('super_admin') && !profile.peran.includes('ks')) {
+    document.querySelector('main').innerHTML = UI.errorHtml('Halaman ini hanya untuk admin/KS.');
+    return;
+  }
+
+  const res = await Api.call('analitik.dashboard');
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('content').classList.remove('hidden');
+
+  if (!res.ok) {
+    document.getElementById('content').innerHTML = UI.errorHtml(res.error);
+    return;
+  }
+
+  render(res.data);
+})();
+
+function render(d) {
+  // Ringkasan
+  document.getElementById('statGuru').textContent = d.ringkasan.total_guru;
+  document.getElementById('statSekolah').textContent = d.ringkasan.total_sekolah;
+  document.getElementById('statPertemuan').textContent = d.ringkasan.total_pertemuan;
+
+  document.getElementById('infoPeriode').innerHTML =
+    `<span style="color:var(--maroon);">${Icons.get('activity', { class: 'icon-sm' })}</span> Data periode ini · ${d.presensi_per_pertemuan.length} pertemuan`;
+
+  // Grafik Kehadiran
+  renderChartKehadiran(d.presensi_per_pertemuan);
+
+  // Top Guru
+  renderTopGuru(d.top_guru);
+
+  // Statistik Sekolah
+  renderStatSekolah(d.statistik_sekolah);
+
+  // Feedback Trend
+  renderFeedbackTrend(d.feedback_trend);
+}
+
+function renderChartKehadiran(data) {
+  const el = document.getElementById('chartKehadiran');
+
+  if (!data || data.length === 0) {
+    el.innerHTML = UI.emptyHtml('activity', 'Belum ada data kehadiran');
+    return;
+  }
+
+  const maxTotal = Math.max(...data.map(d => d.total), 1);
+
+  el.innerHTML = `
+    <div class="bar-chart">
+      ${data.map(d => {
+        const hTepat = (d.tepat_waktu / maxTotal) * 100;
+        const hTerlambat = (d.terlambat / maxTotal) * 100;
+        const hLuar = (d.luar_radius / maxTotal) * 100;
+        const hIzin = (d.izin / maxTotal) * 100;
+        const hAlfa = (d.alfa / maxTotal) * 100;
+
+        return `
+          <div class="bar-col" title="Pertemuan #${d.urutan}: ${d.total} presensi, rata ${d.rata_poin} poin">
+            <div class="bar-stack">
+              ${hAlfa > 0 ? `<div class="bar-seg bar-alfa" style="height:${hAlfa}%"></div>` : ''}
+              ${hIzin > 0 ? `<div class="bar-seg bar-izin" style="height:${hIzin}%"></div>` : ''}
+              ${hLuar > 0 ? `<div class="bar-seg bar-luar" style="height:${hLuar}%"></div>` : ''}
+              ${hTerlambat > 0 ? `<div class="bar-seg bar-terlambat" style="height:${hTerlambat}%"></div>` : ''}
+              ${hTepat > 0 ? `<div class="bar-seg bar-tepat" style="height:${hTepat}%"></div>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+    <div style="display:flex;gap:4px;overflow-x:auto;">
+      ${data.map(d => `
+        <div style="flex:1;min-width:24px;text-align:center;">
+          <div class="bar-label">#${d.urutan}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot bar-tepat"></div> Tepat Waktu</div>
+      <div class="legend-item"><div class="legend-dot bar-terlambat"></div> Terlambat</div>
+      <div class="legend-item"><div class="legend-dot bar-luar"></div> Luar Radius</div>
+      <div class="legend-item"><div class="legend-dot bar-izin"></div> Izin/Sakit</div>
+      <div class="legend-item"><div class="legend-dot bar-alfa"></div> Alfa</div>
+    </div>
+  `;
+}
+
+function renderTopGuru(data) {
+  const el = document.getElementById('topGuru');
+
+  if (!data || data.length === 0) {
+    el.innerHTML = UI.emptyHtml('users', 'Belum ada data');
+    return;
+  }
+
+  el.innerHTML = data.map((g, i) => {
+    const rank = i + 1;
+    const rankCls = rank === 1 ? 'g1' : rank === 2 ? 'g2' : rank === 3 ? 'g3' : '';
+    const init = (g.nama || '?').charAt(0).toUpperCase();
+    const fotoUrl = g.foto_thumb_url || Api.fotoUrl(g.user_id, 't');
+
+    return `
+      <div class="top-item">
+        <div class="top-rank ${rankCls}">${rank}</div>
+        <div class="top-avatar">
+          <span>${init}</span>
+          ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.remove()">` : ''}
+        </div>
+        <div class="top-info">
+          <div class="top-nama">${UI.escapeHtml(g.nama)}</div>
+          <div class="top-sub">${UI.escapeHtml(g.sekolah)} · ${g.total_hadir}× hadir</div>
+        </div>
+        <div class="top-poin">${g.total_poin}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderStatSekolah(data) {
+  const el = document.getElementById('statSekolahList');
+
+  if (!data || data.length === 0) {
+    el.innerHTML = UI.emptyHtml('home', 'Belum ada data');
+    return;
+  }
+
+  const maxPoin = Math.max(...data.map(d => d.rata_poin), 1);
+
+  el.innerHTML = data.map(s => `
+    <div class="sekolah-item">
+      <div class="sekolah-head">
+        <div style="min-width:0;flex:1;">
+          <div class="sekolah-nama">${UI.escapeHtml(s.nama)}</div>
+          <div class="sekolah-info">${s.jumlah_guru} guru · ${s.persen_hadir}% kehadiran</div>
+        </div>
+        <div style="font-weight:800;font-size:14px;color:var(--maroon);flex-shrink:0;">
+          ${s.rata_poin}
+        </div>
+      </div>
+      <div class="sekolah-bar">
+        <div style="width:${(s.rata_poin / maxPoin) * 100}%"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderFeedbackTrend(data) {
+  const el = document.getElementById('feedbackTrend');
+
+  if (!data || data.length === 0) {
+    el.innerHTML = UI.emptyHtml('messageSquare', 'Belum ada feedback');
+    return;
+  }
+
+  const maxRata = 5;
+
+  el.innerHTML = `
+    <div class="fb-mini-chart">
+      ${data.map(d => `
+        <div class="fb-bar" style="height:${(d.rata / maxRata) * 100}%" title="Pertemuan #${d.urutan}: ${d.rata}/5 dari ${d.jumlah} feedback"></div>
+      `).join('')}
+    </div>
+    <div style="display:flex;gap:3px;overflow-x:auto;margin-top:6px;">
+      ${data.map(d => `
+        <div style="flex:1;min-width:18px;text-align:center;">
+          <div class="bar-label">#${d.urutan}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="legend">
+      <div class="legend-item">
+        Rata-rata: <strong style="color:var(--maroon);margin-left:4px;">${data.filter(d => d.rata > 0).length} pertemuan dengan feedback</strong>
+      </div>
+    </div>
+  `;
+}
+</script>
+
+</body>
+</html>
