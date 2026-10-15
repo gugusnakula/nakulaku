@@ -489,6 +489,14 @@ function showDetailModal(data) {
           ${Icons.get('users', { class: 'icon-sm' })} Kelola Peran
         </button>
       </div>
+
+      ${profile?.peran?.includes('super_admin') ? `
+        <div style="margin-top:10px;">
+          <button class="btn btn-ghost btn-sm" id="btnHapusGuru" style="color:var(--danger);width:100%;">
+            ${Icons.get('trash', { class: 'icon-sm' })} Hapus Guru
+          </button>
+        </div>
+      ` : ''}
     </div>
   `;
   document.body.appendChild(overlay);
@@ -508,6 +516,93 @@ function showDetailModal(data) {
     close();
     formKelolaPeran(data.user);
   });
+
+  // Hapus Guru (khusus super admin)
+  const btnHapus = overlay.querySelector('#btnHapusGuru');
+  if (btnHapus) {
+    btnHapus.addEventListener('click', () => {
+      close();
+      formHapusGuru(data.user);
+    });
+  }
+}
+
+// ============================================================
+// HAPUS GURU
+// ============================================================
+function formHapusGuru(user) {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:24px;max-width:480px;width:100%;box-shadow:var(--sh-xl);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h3 style="font-size:17px;color:var(--danger);margin:0;">Hapus Guru</h3>
+        <button data-close class="btn-icon">${Icons.get('x')}</button>
+      </div>
+
+      <div style="padding:12px;background:var(--danger-soft);border-radius:12px;margin-bottom:16px;font-size:12.5px;line-height:1.5;color:var(--danger);">
+        <strong>⚠️ Perhatian</strong><br>
+        Kalau guru ini <strong>sudah punya aktivitas</strong> (presensi, tugas, feedback, dll), akun akan <strong>dinonaktifkan</strong> saja — bukan dihapus permanen.<br>
+        Kalau <strong>belum ada aktivitas</strong>, akun akan dihapus permanen.
+      </div>
+
+      <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:16px;">
+        <div style="font-weight:700;font-size:13.5px;">${UI.escapeHtml(user.nama_lengkap)}</div>
+        <div style="font-size:12px;color:var(--muted);">${UI.escapeHtml(user.email || '')}</div>
+      </div>
+
+      <div class="field" style="margin-bottom:14px;">
+        <label class="label">Ketik nama lengkap guru untuk konfirmasi *</label>
+        <input type="text" id="konfirmasiHapus" class="input" placeholder="Ketik nama persis…" />
+      </div>
+
+      <div id="hapusAlert" class="alert alert-error" style="margin-bottom:12px;"></div>
+
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
+        <button class="btn btn-danger" id="btnProsesHapus" disabled style="flex:2;">Hapus</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  const konfirmasiEl = overlay.querySelector('#konfirmasiHapus');
+  const btnProses = overlay.querySelector('#btnProsesHapus');
+  const alertBox = overlay.querySelector('#hapusAlert');
+
+  konfirmasiEl.addEventListener('input', () => {
+    const valid = konfirmasiEl.value.trim().toLowerCase() === user.nama_lengkap.trim().toLowerCase();
+    btnProses.disabled = !valid;
+  });
+
+  btnProses.addEventListener('click', async () => {
+    if (btnProses.disabled) return;
+
+    alertBox.classList.remove('show');
+    UI.btnLoading(btnProses, 'Memproses…');
+
+    const res = await Api.call('admin.users.hapus', {
+      user_id: user.id,
+      konfirmasi: konfirmasiEl.value.trim(),
+    });
+
+    UI.btnReset(btnProses);
+
+    if (!res.ok) {
+      alertBox.textContent = res.error;
+      alertBox.classList.add('show');
+      return;
+    }
+
+    close();
+    UI.sukses(res.data.pesan, 5000);
+    await loadGuru();
+  });
+}
 
   // Mutasi
   overlay.querySelector('#btnMutasi').addEventListener('click', () => {
