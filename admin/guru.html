@@ -468,6 +468,16 @@ function showDetailModal(data) {
           </div>
         </div>
       </div>
+
+      <!-- Tombol Aksi -->
+      <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;display:flex;gap:8px;">
+        <button class="btn btn-secondary btn-sm" id="btnResetPin" style="flex:1;">
+          ${Icons.get('lock', { class: 'icon-sm' })} Reset PIN
+        </button>
+        <button class="btn btn-secondary btn-sm" id="btnKelolaPeran" style="flex:1;">
+          ${Icons.get('users', { class: 'icon-sm' })} Kelola Peran
+        </button>
+      </div>
     </div>
   `;
   document.body.appendChild(overlay);
@@ -475,6 +485,257 @@ function showDetailModal(data) {
   const close = () => overlay.remove();
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
   overlay.querySelector('[data-close]').addEventListener('click', close);
+
+  // Reset PIN
+  overlay.querySelector('#btnResetPin').addEventListener('click', () => {
+    close();
+    formResetPin(data.user);
+  });
+
+  // Kelola Peran
+  overlay.querySelector('#btnKelolaPeran').addEventListener('click', () => {
+    close();
+    formKelolaPeran(data.user);
+  });
+}
+
+// ============================================================
+// RESET PIN
+// ============================================================
+function formResetPin(user) {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:24px;max-width:480px;width:100%;box-shadow:var(--sh-xl);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h3 style="font-size:17px;color:var(--maroon);margin:0;">Reset PIN</h3>
+        <button data-close class="btn-icon">${Icons.get('x')}</button>
+      </div>
+
+      <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:16px;">
+        <div style="font-weight:700;font-size:13.5px;">${UI.escapeHtml(user.nama_lengkap)}</div>
+        <div style="font-size:12px;color:var(--muted);">${UI.escapeHtml(user.email || '')}</div>
+      </div>
+
+      <div class="field" style="margin-bottom:12px;">
+        <label class="label">PIN Baru (opsional)</label>
+        <input type="text" id="pinBaru" class="input" inputmode="numeric" maxlength="6" placeholder="Kosongkan untuk auto-generate" />
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">5–6 digit angka. Kalau kosong, sistem buat otomatis.</div>
+      </div>
+
+      <div id="resetAlert" class="alert alert-error" style="margin-bottom:12px;"></div>
+
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
+        <button class="btn btn-primary" id="btnReset" style="flex:2;">Reset PIN</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnReset').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnReset');
+    const pinBaru = overlay.querySelector('#pinBaru').value.trim();
+
+    if (pinBaru && !/^\d{5,6}$/.test(pinBaru)) {
+      UI.gagal('PIN harus 5–6 digit angka.');
+      return;
+    }
+
+    const ok = await UI.konfirmasi(
+      'Reset PIN',
+      `Reset PIN ${user.nama_lengkap}? Sesi login guru ini akan otomatis logout.`,
+      { okText: 'Reset', danger: true }
+    );
+    if (!ok) return;
+
+    UI.btnLoading(btn, 'Memproses…');
+    const res = await Api.call('admin.reset_pin', {
+      user_id: user.id,
+      pin_baru: pinBaru || undefined,
+    });
+    UI.btnReset(btn);
+
+    if (!res.ok) {
+      overlay.querySelector('#resetAlert').textContent = res.error;
+      overlay.querySelector('#resetAlert').classList.add('show');
+      return;
+    }
+
+    close();
+    showPinResult(res.data);
+  });
+}
+
+function showPinResult(data) {
+  const waText = encodeURIComponent(
+    `Halo ${data.nama},\n\nPIN NAKULAKU Anda telah direset.\n\nEmail: ${data.email}\nPIN baru: *${data.pin_baru}*\n\nSilakan login di:\nhttps://gugusnakula.github.io/nakulaku/login.html`
+  );
+  const waLink = `https://wa.me/?text=${waText}`;
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:24px;max-width:480px;width:100%;box-shadow:var(--sh-xl);text-align:center;">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--success-soft);color:var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        ${Icons.get('checkCircle', { class: 'icon-xl' })}
+      </div>
+      <h3 style="font-size:18px;color:var(--maroon);margin-bottom:8px;">PIN Berhasil Direset</h3>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Sampaikan PIN baru ini ke guru:</p>
+
+      <div style="padding:16px;background:var(--bg);border-radius:12px;margin-bottom:16px;border:2px dashed var(--maroon-soft);">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:6px;">PIN BARU</div>
+        <div style="font-size:32px;font-weight:800;color:var(--maroon);letter-spacing:6px;font-family:monospace;">${UI.escapeHtml(data.pin_baru)}</div>
+      </div>
+
+      <div style="font-size:11.5px;color:var(--muted);margin-bottom:16px;">
+        Nama: <strong>${UI.escapeHtml(data.nama)}</strong><br />
+        Email: ${UI.escapeHtml(data.email || '-')}
+      </div>
+
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary" id="btnTutup" style="flex:1;">Tutup</button>
+        <a href="${waLink}" target="_blank" rel="noopener" class="btn btn-primary" style="flex:2;text-decoration:none;">
+          ${Icons.get('send', { class: 'icon-sm' })} Kirim ke WhatsApp
+        </a>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  overlay.querySelector('#btnTutup').addEventListener('click', () => overlay.remove());
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+}
+
+// ============================================================
+// KELOLA PERAN
+// ============================================================
+async function formKelolaPeran(user) {
+  const res = await Api.call('admin.peran.list', { user_id: user.id });
+  if (!res.ok) { UI.gagal(res.error); return; }
+
+  const peranSaat = res.data || [];
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:24px;max-width:520px;width:100%;box-shadow:var(--sh-xl);max-height:90vh;overflow-y:auto;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h3 style="font-size:17px;color:var(--maroon);margin:0;">Kelola Peran</h3>
+        <button data-close class="btn-icon">${Icons.get('x')}</button>
+      </div>
+
+      <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:16px;">
+        <div style="font-weight:700;font-size:13.5px;">${UI.escapeHtml(user.nama_lengkap)}</div>
+        <div style="font-size:12px;color:var(--muted);">${UI.escapeHtml(user.email || '')}</div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0.5px;margin-bottom:10px;">PERAN SAAT INI</div>
+        <div id="listPeran">
+          ${renderPeranList(peranSaat)}
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:16px;">
+        <div style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0.5px;margin-bottom:10px;">TAMBAH PERAN</div>
+        <div style="display:flex;gap:8px;">
+          <select id="pilihPeran" class="input" style="flex:1;">
+            <option value="">— Pilih Peran —</option>
+            <option value="pengurus">Pengurus (admin)</option>
+            <option value="narasumber">Narasumber</option>
+            <option value="pengamat">Pengamat</option>
+            <option value="ks">Kepala Sekolah</option>
+          </select>
+          <button class="btn btn-primary" id="btnTambahPeran" style="flex:1;">
+            ${Icons.get('plus', { class: 'icon-sm' })} Tambah
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  // Wire hapus peran
+  function wireHapus() {
+    overlay.querySelectorAll('[data-hapus-peran]').forEach(b => {
+      b.addEventListener('click', async () => {
+        const peran = b.dataset.hapusPeran;
+        const ok = await UI.konfirmasi(
+          'Hapus Peran',
+          `Hapus peran "${peran}" dari ${user.nama_lengkap}?`,
+          { danger: true, okText: 'Hapus' }
+        );
+        if (!ok) return;
+        const res2 = await Api.call('admin.peran.hapus', {
+          user_id: user.id,
+          peran,
+        });
+        if (!res2.ok) { UI.gagal(res2.error); return; }
+        UI.sukses('Peran dihapus.');
+        await reload();
+      });
+    });
+  }
+  wireHapus();
+
+  async function reload() {
+    const r = await Api.call('admin.peran.list', { user_id: user.id });
+    if (!r.ok) return;
+    overlay.querySelector('#listPeran').innerHTML = renderPeranList(r.data || []);
+    wireHapus();
+  }
+
+  overlay.querySelector('#btnTambahPeran').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnTambahPeran');
+    const peran = overlay.querySelector('#pilihPeran').value;
+    if (!peran) { UI.gagal('Pilih peran.'); return; }
+
+    UI.btnLoading(btn, 'Menambah…');
+    const res2 = await Api.call('admin.peran.tambah', {
+      user_id: user.id,
+      peran,
+    });
+    UI.btnReset(btn);
+
+    if (!res2.ok) { UI.gagal(res2.error); return; }
+    UI.sukses('Peran ditambahkan.');
+    overlay.querySelector('#pilihPeran').value = '';
+    await reload();
+  });
+}
+
+function renderPeranList(peranList) {
+  if (!peranList || peranList.length === 0) {
+    return '<div style="text-align:center;padding:14px;color:var(--muted);font-size:13px;">Belum punya peran khusus.</div>';
+  }
+  const peranLabel = {
+    super_admin: 'Super Admin',
+    pengurus: 'Pengurus',
+    narasumber: 'Narasumber',
+    pengamat: 'Pengamat',
+    peserta: 'Peserta',
+    ks: 'Kepala Sekolah',
+  };
+  return peranList.map(p => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;">
+      <span class="badge badge-maroon" style="flex-shrink:0;">${UI.escapeHtml(peranLabel[p.peran] || p.peran)}</span>
+      <div style="flex:1;"></div>
+      ${p.peran !== 'super_admin' && p.peran !== 'peserta' ? `
+        <button class="btn-icon" data-hapus-peran="${p.peran}" style="color:var(--danger);width:32px;height:32px;">
+          ${Icons.get('trash', { class: 'icon-sm' })}
+        </button>
+      ` : ''}
+    </div>
+  `).join('');
 }
 </script>
 
