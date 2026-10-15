@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#611329" />
+<title>Log Aktivitas — NAKULAKU Admin</title>
+
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/nakula.css" />
+
+<style>
+  .log-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--maroon);
+    border-radius: var(--r-lg);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    transition: all .15s;
+  }
+  .log-item:hover { box-shadow: var(--sh-md); }
+  .log-item.merah { border-left-color: var(--danger); }
+  .log-item.kuning { border-left-color: var(--warning); }
+  .log-item.hijau { border-left-color: var(--success); }
+  .log-item.biru { border-left-color: var(--info); }
+  .log-item.emas { border-left-color: var(--gold); }
+
+  .log-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .log-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .log-item.merah .log-icon { background: var(--danger-soft); color: var(--danger); }
+  .log-item.kuning .log-icon { background: var(--warning-soft); color: var(--warning); }
+  .log-item.hijau .log-icon { background: var(--success-soft); color: var(--success); }
+  .log-item.biru .log-icon { background: var(--info-soft); color: var(--info); }
+  .log-item.emas .log-icon { background: var(--gold-soft); color: var(--gold-dark); }
+
+  .log-info { flex: 1; min-width: 0; }
+  .log-title { font-weight: 700; font-size: 13.5px; margin-bottom: 2px; }
+  .log-sub { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+
+  .log-detail {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .log-detail strong { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="../beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Log Aktivitas</div>
+      <div class="app-header-sub">Admin NAKULAKU</div>
+    </div>
+  </div>
+</header>
+
+<main class="container page" style="max-width:820px;padding-top:16px;">
+
+  <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+    <input type="text" id="cari" class="input" placeholder="Cari nama admin atau catatan…" style="flex:1;min-width:200px;" />
+    <select id="filterAksi" class="input" style="min-width:180px;flex-shrink:0;">
+      <option value="">Semua Aksi</option>
+    </select>
+  </div>
+
+  <div id="infoHasil" style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">Memuat…</div>
+
+  <div id="listLog">
+    <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
+    <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
+    <div class="skeleton" style="height:72px;border-radius:16px;"></div>
+  </div>
+
+</main>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+
+let profile;
+let daftarLog = [];
+let debounceTimer;
+
+// Mapping aksi → tampilan
+const AKSI_MAP = {
+  reset_pin: {
+    label: 'Reset PIN Guru',
+    icon: 'lock',
+    warna: 'merah',
+    warnaLabel: 'danger',
+    judulFn: (d) => `PIN direset`,
+    subFn: (l) => `${l.admin_nama} → ${l.detail?.nama || 'Guru'}`,
+  },
+  pertemuan_arsip: {
+    label: 'Pertemuan Diarsipkan',
+    icon: 'archive',
+    warna: 'kuning',
+    judulFn: (d) => `Pertemuan #${d.urutan} diarsipkan`,
+    subFn: (l) => `${l.admin_nama} → ${l.detail?.judul || ''}`,
+  },
+  pertemuan_hapus: {
+    label: 'Pertemuan Dihapus',
+    icon: 'trash',
+    warna: 'merah',
+    judulFn: (d) => `Pertemuan #${d.urutan} dihapus`,
+    subFn: (l) => `${l.admin_nama} → ${l.detail?.judul || ''}`,
+  },
+  buka_akses: {
+    label: 'Buka Akses Khusus',
+    icon: 'unlock',
+    warna: 'biru',
+    judulFn: (d) => `Buka akses: ${d.pertemuan || ''}`,
+    subFn: (l) => `${l.admin_nama} → user #${l.target_id}`,
+  },
+  award_umumkan: {
+    label: 'Award Diumumkan',
+    icon: 'award',
+    warna: 'emas',
+    judulFn: (d) => d.umumkan ? `Umumkan award: ${d.nama}` : `Sembunyikan award: ${d.nama}`,
+    subFn: (l) => `oleh ${l.admin_nama}`,
+  },
+  verifikasi_presensi: {
+    label: 'Verifikasi Presensi',
+    icon: 'checkCircle',
+    warna: (l) => l.detail?.keputusan === 'disetujui' ? 'hijau' : 'merah',
+    judulFn: (d) => `Presensi ${d.keputusan}`,
+    subFn: (l) => `${l.admin_nama} → presensi #${l.target_id}`,
+  },
+};
+
+(async () => {
+  profile = await Api.requireLogin();
+  if (!profile) return;
+
+  if (!profile.peran.includes('pengurus') && !profile.peran.includes('super_admin')) {
+    document.querySelector('main').innerHTML = UI.errorHtml('Halaman ini hanya untuk pengurus.');
+    return;
+  }
+
+  // Load filter aksi
+  const resA = await Api.call('admin.log.aksi_list');
+  if (resA.ok && resA.data) {
+    const sel = document.getElementById('filterAksi');
+    resA.data.forEach(a => {
+      const label = AKSI_MAP[a]?.label || a.replace(/_/g, ' ');
+      sel.innerHTML += `<option value="${a}">${UI.escapeHtml(label)}</option>`;
+    });
+  }
+
+  await load();
+
+  document.getElementById('cari').addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(load, 300);
+  });
+  document.getElementById('filterAksi').addEventListener('change', load);
+})();
+
+async function load() {
+  const el = document.getElementById('listLog');
+  el.innerHTML = '<div class="skeleton" style="height:72px;border-radius:16px;"></div>';
+
+  const q = document.getElementById('cari').value.trim();
+  const aksi = document.getElementById('filterAksi').value;
+
+  const res = await Api.call('admin.log.list', {
+    q: q || undefined,
+    aksi: aksi || undefined,
+    limit: 200,
+  });
+
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error);
+    document.getElementById('infoHasil').textContent = '';
+    return;
+  }
+
+  daftarLog = res.data || [];
+  document.getElementById('infoHasil').textContent = `Menampilkan ${daftarLog.length} log`;
+
+  if (daftarLog.length === 0) {
+    el.innerHTML = UI.emptyHtml('activity', 'Belum ada log', 'Aktivitas admin akan muncul di sini.');
+    return;
+  }
+
+  el.innerHTML = daftarLog.map(l => renderLog(l)).join('');
+}
+
+function renderLog(l) {
+  const meta = AKSI_MAP[l.aksi] || {
+    label: l.aksi.replace(/_/g, ' '),
+    icon: 'activity',
+    warna: 'maroon',
+    judulFn: (d) => l.aksi.replace(/_/g, ' '),
+    subFn: (ll) => ll.admin_nama || '-',
+  };
+
+  const warna = typeof meta.warna === 'function' ? meta.warna(l) : meta.warna;
+  const detail = l.detail || {};
+  const judul = meta.judulFn ? meta.judulFn(detail) : meta.label;
+  const sub = meta.subFn ? meta.subFn(l) : (l.admin_nama || '');
+
+  // Detail tambahan
+  const detailRows = [];
+  if (l.target_tipe) {
+    detailRows.push(`<strong>Target:</strong> ${UI.escapeHtml(l.target_tipe)} #${l.target_id || '-'}`);
+  }
+  if (detail.rata_poin_presensi) detailRows.push(`<strong>Rata-rata poin:</strong> ${detail.rata_poin_presensi}`);
+  if (detail.poin !== undefined) detailRows.push(`<strong>Poin baru:</strong> ${detail.poin}`);
+  if (detail.catatan) detailRows.push(`<strong>Catatan:</strong> ${UI.escapeHtml(detail.catatan)}`);
+  if (l.catatan) detailRows.push(`<strong>Keterangan:</strong> ${UI.escapeHtml(l.catatan)}`);
+
+  return `
+    <div class="log-item ${warna === 'maroon' ? '' : warna}">
+      <div class="log-head">
+        <div class="log-icon">${Icons.get(meta.icon, { class: 'icon-sm' })}</div>
+        <div class="log-info">
+          <div class="log-title">${UI.escapeHtml(judul)}</div>
+          <div class="log-sub">${UI.escapeHtml(sub)}</div>
+        </div>
+        <div style="font-size:10.5px;color:var(--muted);font-weight:600;text-align:right;flex-shrink:0;">
+          ${UI.timeAgo(l.dibuat_pada)}
+        </div>
+      </div>
+      ${detailRows.length > 0 ? `
+        <div class="log-detail">
+          ${detailRows.join('<br>')}
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+</script>
+
+</body>
+</html>
