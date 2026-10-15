@@ -215,7 +215,7 @@ function renderListAktif() {
   }
 
   el.innerHTML = daftarPertemuan.map(p => `
-    <div class="item-pertemuan" data-id="${p.id}">
+    <div class="item-pertemuan" style="margin-bottom:12px;">
       <div class="item-head">
         <div class="item-num">
           <div class="n">${p.urutan}</div>
@@ -234,15 +234,64 @@ function renderListAktif() {
         </div>
         <span class="status-pill status-${p.status}">${p.status}</span>
       </div>
+
+      <div style="display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+        <button class="btn btn-secondary btn-sm" data-detail="${p.id}" style="flex:2;">
+          ${Icons.get('settings', { class: 'icon-sm' })}
+          Materi & Tugas
+        </button>
+        <button class="btn btn-secondary btn-sm" data-edit="${p.id}" style="flex:1;">
+          ${Icons.get('edit', { class: 'icon-sm' })}
+          Edit
+        </button>
+        <button class="btn btn-ghost btn-sm" data-hapus="${p.id}" style="color:var(--danger);padding:8px 10px;">
+          ${Icons.get('trash', { class: 'icon-sm' })}
+        </button>
+      </div>
     </div>
   `).join('');
 
-  el.querySelectorAll('.item-pertemuan').forEach(item => {
-    item.addEventListener('click', () => {
-      const id = Number(item.dataset.id);
-      window.location.href = 'pertemuan-detail.html?id=' + id;
+  // Detail → buka halaman kelola materi/tugas
+  el.querySelectorAll('[data-detail]').forEach(b => {
+    b.addEventListener('click', () => {
+      window.location.href = 'pertemuan-detail.html?id=' + Number(b.dataset.detail);
     });
   });
+
+  // Edit → buka form edit pertemuan
+  el.querySelectorAll('[data-edit]').forEach(b => {
+    b.addEventListener('click', () => {
+      const id = Number(b.dataset.edit);
+      const p = daftarPertemuan.find(x => x.id === id);
+      if (p) bukaForm(p);
+    });
+  });
+
+  // Hapus
+  el.querySelectorAll('[data-hapus]').forEach(b => {
+    b.addEventListener('click', () => hapusPertemuan(Number(b.dataset.hapus)));
+  });
+}
+
+// ============================================================
+// HAPUS PERTEMUAN
+// ============================================================
+async function hapusPertemuan(id) {
+  const p = daftarPertemuan.find(x => x.id === id);
+  if (!p) return;
+
+  const ok = await UI.konfirmasi(
+    'Hapus Pertemuan',
+    `Hapus "${p.judul}"?\n\nKalau belum ada aktivitas (presensi/tugas/feedback), akan dihapus permanen.\nKalau sudah ada, akan diarsipkan (bisa dipulihkan).`,
+    { danger: true, okText: 'Hapus' }
+  );
+  if (!ok) return;
+
+  const res = await Api.call('admin.pertemuan.hapus', { pertemuan_id: id });
+  if (!res.ok) { UI.gagal(res.error); return; }
+
+  UI.sukses(res.data.pesan || 'Pertemuan dihapus.');
+  await loadPertemuan();
 }
 
 function renderListArsip() {
