@@ -105,6 +105,15 @@
 
   <div id="infoPeriode" style="margin-bottom:16px;font-size:12px;color:var(--muted);font-weight:600;"></div>
 
+  <div class="tabs" style="display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:12px;margin-bottom:16px;border:1px solid var(--border);">
+    <button class="tab-p" data-tipe="aktif" style="flex:1;padding:10px;text-align:center;font-size:13px;font-weight:700;color:var(--maroon);border-radius:8px;cursor:pointer;border:none;background:var(--surface);box-shadow:var(--sh-sm);">
+      Aktif
+    </button>
+    <button class="tab-p" data-tipe="arsip" style="flex:1;padding:10px;text-align:center;font-size:13px;font-weight:700;color:var(--muted);border-radius:8px;cursor:pointer;border:none;background:transparent;">
+      Diarsipkan
+    </button>
+  </div>
+
   <div id="listPertemuan">
     <div class="skeleton" style="height:88px;border-radius:16px;margin-bottom:10px;"></div>
     <div class="skeleton" style="height:88px;border-radius:16px;margin-bottom:10px;"></div>
@@ -128,6 +137,8 @@ document.querySelectorAll('[data-icon]').forEach(el => {
 let profile;
 let periodeAktif = null;
 let daftarPertemuan = [];
+let daftarArsip = [];
+let tabAktif = 'aktif';
 
 (async () => {
   profile = await Api.requireLogin();
@@ -142,7 +153,29 @@ let daftarPertemuan = [];
   await loadPertemuan();
 
   document.getElementById('btnTambah').addEventListener('click', () => bukaForm(null));
+
+  // Tab switching
+  document.querySelectorAll('.tab-p').forEach(t => {
+    t.addEventListener('click', () => {
+      tabAktif = t.dataset.tipe;
+      document.querySelectorAll('.tab-p').forEach(x => {
+        const on = x === t;
+        x.style.background = on ? 'var(--surface)' : 'transparent';
+        x.style.color = on ? 'var(--maroon)' : 'var(--muted)';
+        x.style.boxShadow = on ? 'var(--sh-sm)' : 'none';
+      });
+      renderTab();
+    });
+  });
 })();
+
+function renderTab() {
+  if (tabAktif === 'aktif') {
+    renderListAktif();
+  } else {
+    renderListArsip();
+  }
+}
 
 async function loadPeriode() {
   const res = await Api.call('periode.aktif');
@@ -162,16 +195,19 @@ async function loadPertemuan() {
     <div class="skeleton" style="height:88px;border-radius:16px;margin-bottom:10px;"></div>
   `;
 
-  const res = await Api.call('pertemuan.list', {
-    periode_id: periodeAktif?.id,
-  });
+  const [resAktif, resArsip] = await Promise.all([
+    Api.call('pertemuan.list', { periode_id: periodeAktif?.id }),
+    Api.call('admin.pertemuan.arsip', { periode_id: periodeAktif?.id }),
+  ]);
 
-  if (!res.ok) {
-    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat.');
-    return;
-  }
+  daftarPertemuan = resAktif.ok ? (resAktif.data || []) : [];
+  daftarArsip = resArsip.ok ? (resArsip.data || []) : [];
 
-  daftarPertemuan = res.data || [];
+  renderTab();
+}
+
+function renderListAktif() {
+  const el = document.getElementById('listPertemuan');
 
   if (daftarPertemuan.length === 0) {
     el.innerHTML = UI.emptyHtml('calendar', 'Belum ada pertemuan', 'Klik tombol + untuk menambah.');
@@ -205,6 +241,56 @@ async function loadPertemuan() {
     item.addEventListener('click', () => {
       const id = Number(item.dataset.id);
       window.location.href = 'pertemuan-detail.html?id=' + id;
+    });
+  });
+}
+
+function renderListArsip() {
+  const el = document.getElementById('listPertemuan');
+
+  if (daftarArsip.length === 0) {
+    el.innerHTML = UI.emptyHtml('archive', 'Tidak ada arsip', 'Pertemuan yang diarsipkan akan muncul di sini.');
+    return;
+  }
+
+  el.innerHTML = daftarArsip.map(p => `
+    <div class="item-pertemuan" data-id="${p.id}" style="opacity:0.85;">
+      <div class="item-head">
+        <div class="item-num" style="background:var(--border);color:var(--muted);">
+          <div class="n">${p.urutan}</div>
+          <div class="l">PERT</div>
+        </div>
+        <div class="item-info">
+          <div class="item-title">${UI.escapeHtml(p.judul)}</div>
+          <div class="item-meta">
+            ${Icons.get('calendar', { class: 'icon-sm' })} ${UI.formatTanggal(p.tanggal)}
+          </div>
+          <div class="item-meta" style="color:var(--warning);">
+            ${Icons.get('archive', { class: 'icon-sm' })} Diarsipkan ${UI.timeAgo(p.dihapus_pada)}
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-sm" data-pulihkan="${p.id}">
+          ${Icons.get('rotateCcw', { class: 'icon-sm' })} Pulihkan
+        </button>
+      </div>
+    </div>
+  `).join('');
+
+  el.querySelectorAll('[data-pulihkan]').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const id = Number(btn.dataset.pulihkan);
+      const ok = await UI.konfirmasi(
+        'Pulihkan Pertemuan',
+        'Pertemuan akan dikembalikan dengan urutan paling akhir. Lanjutkan?',
+        { okText: 'Pulihkan' }
+      );
+      if (!ok) return;
+
+      const res = await Api.call('admin.pertemuan.pulihkan', { pertemuan_id: id });
+      if (!res.ok) { UI.gagal(res.error); return; }
+      UI.sukses(res.data.pesan);
+      await loadPertemuan();
     });
   });
 }
@@ -358,7 +444,7 @@ function bukaForm(pertemuan) {
 
       const res = await Api.call('admin.pertemuan.hapus', { pertemuan_id: p.id });
       if (!res.ok) { UI.gagal(res.error || 'Gagal hapus.'); return; }
-      UI.sukses('Pertemuan dihapus.');
+      UI.sukses(res.data.pesan || 'Pertemuan dihapus.');
       close();
       loadPertemuan();
     });
