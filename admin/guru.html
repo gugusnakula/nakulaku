@@ -33,7 +33,7 @@
   .back-btn {
     width: 36px;
     height: 36px;
-    border-radius: var(--r-md);
+    border-radius: 12px;
     background: rgba(255,255,255,.12);
     border: none;
     color: white;
@@ -46,7 +46,6 @@
   }
   .back-btn:hover { background: rgba(255,255,255,.2); }
 
-  /* Search + filter */
   .toolbar {
     display: flex;
     gap: 8px;
@@ -85,7 +84,6 @@
     box-shadow: 0 0 0 4px rgba(125,29,58,.08);
   }
 
-  /* Stat row */
   .stat-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -114,7 +112,6 @@
     margin-top: 4px;
   }
 
-  /* Guru list */
   .guru-item {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -145,9 +142,12 @@
     font-size: 16px;
     flex-shrink: 0;
     overflow: hidden;
+    position: relative;
   }
   .guru-avatar img {
-    width: 100%; height: 100%; object-fit: cover;
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
   }
   .guru-info { flex: 1; min-width: 0; }
   .guru-name {
@@ -166,16 +166,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .guru-role-badges {
-    display: flex;
-    gap: 4px;
-    margin-top: 6px;
-    flex-wrap: wrap;
-  }
-  .guru-role-badges .badge {
-    font-size: 9px;
-    padding: 2px 7px;
-  }
   .guru-status {
     font-size: 10px;
     padding: 3px 8px;
@@ -188,7 +178,6 @@
   .guru-status.aktif { background: var(--success-soft); color: var(--success); }
   .guru-status.nonaktif { background: var(--danger-soft); color: var(--danger); }
 
-  /* Modal */
   .modal-overlay {
     position: fixed;
     inset: 0;
@@ -213,7 +202,6 @@
 </head>
 <body>
 
-<!-- Header -->
 <header class="admin-header">
   <div class="admin-header-left">
     <a href="../beranda.html" class="back-btn" aria-label="Kembali">
@@ -228,7 +216,6 @@
 
 <main class="container page" style="max-width:900px;padding-top:16px;">
 
-  <!-- Statistik -->
   <div class="stat-row">
     <div class="stat-mini">
       <div class="n" id="statTotal">—</div>
@@ -244,7 +231,6 @@
     </div>
   </div>
 
-  <!-- Toolbar -->
   <div class="toolbar">
     <div class="search-input">
       <span data-icon="search"></span>
@@ -260,12 +246,10 @@
     </select>
   </div>
 
-  <!-- Info hasil -->
   <div id="infoHasil" style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">
     Memuat…
   </div>
 
-  <!-- List guru -->
   <div id="listGuru">
     <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
     <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
@@ -278,18 +262,18 @@
 <script src="../assets/js/api.js"></script>
 <script src="../assets/js/ui.js"></script>
 <script>
-// ---------- Pasang ikon ----------
+// ============================================================
+// INIT
+// ============================================================
 document.querySelectorAll('[data-icon]').forEach(el => {
   el.innerHTML = Icons.get(el.dataset.icon);
   el.style.display = 'contents';
 });
 
-// ---------- State ----------
 let profile;
 let cacheSekolah = [];
 let debounceTimer;
 
-// ---------- Init ----------
 (async () => {
   profile = await Api.requireLogin();
   if (!profile) return;
@@ -303,7 +287,9 @@ let debounceTimer;
   await loadGuru();
 })();
 
-// ---------- Load daftar sekolah untuk filter ----------
+// ============================================================
+// LOAD SEKOLAH
+// ============================================================
 async function loadSekolah() {
   const res = await Api.call('sekolah.list');
   if (!res.ok) return;
@@ -316,7 +302,9 @@ async function loadSekolah() {
   document.getElementById('statSekolah').textContent = cacheSekolah.length;
 }
 
-// ---------- Load daftar guru ----------
+// ============================================================
+// LOAD GURU
+// ============================================================
 async function loadGuru() {
   const q = document.getElementById('inputCari').value.trim();
   const sekolahId = document.getElementById('filterSekolah').value;
@@ -355,28 +343,29 @@ async function loadGuru() {
   }
 
   el.innerHTML = list.map(g => renderGuruItem(g)).join('');
+
+  el.querySelectorAll('.guru-item').forEach(item => {
+    item.addEventListener('click', () => bukaDetail(Number(item.dataset.id)));
+  });
 }
 
-// ---------- Render item guru ----------
 function renderGuruItem(g) {
   const init = (g.nama_lengkap || 'G').charAt(0).toUpperCase();
   const fotoUrl = g.foto_thumb_url || Api.fotoUrl(g.id, 't');
-
   const isKS = (g.jabatan || '').toLowerCase().includes('kepala sekolah');
 
+  const badgeKS = isKS ? '<span class="badge badge-gold" style="margin-left:6px;">KS</span>' : '';
+
   return `
-    <div class="guru-item" onclick="bukaDetail(${g.id})">
+    <div class="guru-item" data-id="${g.id}">
       <div class="guru-avatar">
         <span>${init}</span>
-        <img src="${fotoUrl}" loading="lazy" onerror="this.remove()" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+        <img src="${fotoUrl}" loading="lazy" onerror="this.remove()" />
       </div>
       <div class="guru-info">
-        <div class="guru-name">${UI.escapeHtml(g.nama_lengkap || '-')}</div>
+        <div class="guru-name">${UI.escapeHtml(g.nama_lengkap || '-')}${badgeKS}</div>
         <div class="guru-meta">${UI.escapeHtml(g.sekolah?.nama || '-')}</div>
         <div class="guru-meta">${UI.escapeHtml(g.jabatan || '-')}${g.nip ? ' · ' + UI.escapeHtml(g.nip) : ''}</div>
-        <div class="guru-role-badges">
-          ${isKS ? '<span class="badge badge-gold">KS</span>' : ''}
-        </div>
       </div>
       <span class="guru-status ${g.aktif ? 'aktif' : 'nonaktif'}">
         ${g.aktif ? 'Aktif' : 'Non-Aktif'}
@@ -385,14 +374,18 @@ function renderGuruItem(g) {
   `;
 }
 
-// ---------- Event: pencarian dengan debounce ----------
+// ============================================================
+// EVENT
+// ============================================================
 document.getElementById('inputCari').addEventListener('input', () => {
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(loadGuru, 400);
 });
 document.getElementById('filterSekolah').addEventListener('change', loadGuru);
 
-// ---------- Buka detail ----------
+// ============================================================
+// DETAIL GURU
+// ============================================================
 async function bukaDetail(id) {
   const res = await Api.call('users.detail', { user_id: id });
   if (!res.ok) {
@@ -402,7 +395,6 @@ async function bukaDetail(id) {
   showDetailModal(res.data);
 }
 
-// ---------- Modal detail ----------
 function showDetailModal(data) {
   const u = data.user;
   const init = (u.nama_lengkap || 'G').charAt(0).toUpperCase();
@@ -421,6 +413,11 @@ function showDetailModal(data) {
       ${UI.escapeHtml(k.sekolah?.nama || '-')}
     </div>`
   ).join('');
+
+  const isSuperAdmin = profile && profile.peran && profile.peran.includes('super_admin');
+  const tombolHapusHtml = isSuperAdmin
+    ? '<div style="margin-top:10px;"><button class="btn btn-ghost btn-sm" id="btnHapusGuru" style="color:var(--danger);width:100%;">' + Icons.get('trash', { class: 'icon-sm' }) + ' Hapus Guru</button></div>'
+    : '';
 
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
@@ -469,7 +466,6 @@ function showDetailModal(data) {
         </div>
       </div>
 
-      <!-- Riwayat Sekolah -->
       <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
           <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;">Riwayat Sekolah</div>
@@ -477,10 +473,9 @@ function showDetailModal(data) {
             ${Icons.get('arrowRight', { class: 'icon-sm' })} Mutasi
           </button>
         </div>
-        <div id="riwayatSekolah">Memuat…</div>
+        <div id="riwayatSekolah" style="font-size:12px;color:var(--muted);">Memuat…</div>
       </div>
 
-      <!-- Tombol Aksi -->
       <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;display:flex;gap:8px;">
         <button class="btn btn-secondary btn-sm" id="btnResetPin" style="flex:1;">
           ${Icons.get('lock', { class: 'icon-sm' })} Reset PIN
@@ -490,13 +485,7 @@ function showDetailModal(data) {
         </button>
       </div>
 
-      ${profile?.peran?.includes('super_admin') ? `
-        <div style="margin-top:10px;">
-          <button class="btn btn-ghost btn-sm" id="btnHapusGuru" style="color:var(--danger);width:100%;">
-            ${Icons.get('trash', { class: 'icon-sm' })} Hapus Guru
-          </button>
-        </div>
-      ` : ''}
+      ${tombolHapusHtml}
     </div>
   `;
   document.body.appendChild(overlay);
@@ -505,19 +494,22 @@ function showDetailModal(data) {
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
   overlay.querySelector('[data-close]').addEventListener('click', close);
 
-  // Reset PIN
+  // Handlers
   overlay.querySelector('#btnResetPin').addEventListener('click', () => {
     close();
     formResetPin(data.user);
   });
 
-  // Kelola Peran
   overlay.querySelector('#btnKelolaPeran').addEventListener('click', () => {
     close();
     formKelolaPeran(data.user);
   });
 
-  // Hapus Guru (khusus super admin)
+  overlay.querySelector('#btnMutasi').addEventListener('click', () => {
+    close();
+    formMutasi(data.user);
+  });
+
   const btnHapus = overlay.querySelector('#btnHapusGuru');
   if (btnHapus) {
     btnHapus.addEventListener('click', () => {
@@ -525,95 +517,14 @@ function showDetailModal(data) {
       formHapusGuru(data.user);
     });
   }
-}
-
-// ============================================================
-// HAPUS GURU
-// ============================================================
-function formHapusGuru(user) {
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
-  overlay.innerHTML = `
-    <div style="background:white;border-radius:20px;padding:24px;max-width:480px;width:100%;box-shadow:var(--sh-xl);">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <h3 style="font-size:17px;color:var(--danger);margin:0;">Hapus Guru</h3>
-        <button data-close class="btn-icon">${Icons.get('x')}</button>
-      </div>
-
-      <div style="padding:12px;background:var(--danger-soft);border-radius:12px;margin-bottom:16px;font-size:12.5px;line-height:1.5;color:var(--danger);">
-        <strong>⚠️ Perhatian</strong><br>
-        Kalau guru ini <strong>sudah punya aktivitas</strong> (presensi, tugas, feedback, dll), akun akan <strong>dinonaktifkan</strong> saja — bukan dihapus permanen.<br>
-        Kalau <strong>belum ada aktivitas</strong>, akun akan dihapus permanen.
-      </div>
-
-      <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:16px;">
-        <div style="font-weight:700;font-size:13.5px;">${UI.escapeHtml(user.nama_lengkap)}</div>
-        <div style="font-size:12px;color:var(--muted);">${UI.escapeHtml(user.email || '')}</div>
-      </div>
-
-      <div class="field" style="margin-bottom:14px;">
-        <label class="label">Ketik nama lengkap guru untuk konfirmasi *</label>
-        <input type="text" id="konfirmasiHapus" class="input" placeholder="Ketik nama persis…" />
-      </div>
-
-      <div id="hapusAlert" class="alert alert-error" style="margin-bottom:12px;"></div>
-
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
-        <button class="btn btn-danger" id="btnProsesHapus" disabled style="flex:2;">Hapus</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-
-  const close = () => overlay.remove();
-  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
-  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
-
-  const konfirmasiEl = overlay.querySelector('#konfirmasiHapus');
-  const btnProses = overlay.querySelector('#btnProsesHapus');
-  const alertBox = overlay.querySelector('#hapusAlert');
-
-  konfirmasiEl.addEventListener('input', () => {
-    const valid = konfirmasiEl.value.trim().toLowerCase() === user.nama_lengkap.trim().toLowerCase();
-    btnProses.disabled = !valid;
-  });
-
-  btnProses.addEventListener('click', async () => {
-    if (btnProses.disabled) return;
-
-    alertBox.classList.remove('show');
-    UI.btnLoading(btnProses, 'Memproses…');
-
-    const res = await Api.call('admin.users.hapus', {
-      user_id: user.id,
-      konfirmasi: konfirmasiEl.value.trim(),
-    });
-
-    UI.btnReset(btnProses);
-
-    if (!res.ok) {
-      alertBox.textContent = res.error;
-      alertBox.classList.add('show');
-      return;
-    }
-
-    close();
-    UI.sukses(res.data.pesan, 5000);
-    await loadGuru();
-  });
-}
-
-  // Mutasi
-  overlay.querySelector('#btnMutasi').addEventListener('click', () => {
-    close();
-    formMutasi(data.user);
-  });
 
   // Load riwayat sekolah
   loadRiwayatSekolah(data.user.id, overlay.querySelector('#riwayatSekolah'));
 }
 
+// ============================================================
+// RIWAYAT SEKOLAH
+// ============================================================
 async function loadRiwayatSekolah(userId, el) {
   const res = await Api.call('admin.riwayat_sekolah.list', { user_id: userId });
   if (!res.ok) { el.innerHTML = UI.errorHtml(res.error); return; }
@@ -649,121 +560,13 @@ async function loadRiwayatSekolah(userId, el) {
 }
 
 // ============================================================
-// FORM MUTASI
-// ============================================================
-async function formMutasi(user) {
-  const resS = await Api.call('sekolah.list');
-  if (!resS.ok) { UI.gagal(resS.error); return; }
-  const sekolahList = (resS.data || []).filter(s => s.id !== user.sekolah_id);
-
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
-  overlay.innerHTML = `
-    <div style="background:white;border-radius:20px;padding:24px;max-width:520px;width:100%;box-shadow:var(--sh-xl);max-height:90vh;overflow-y:auto;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <h3 style="font-size:17px;color:var(--maroon);margin:0;">Mutasi Guru</h3>
-        <button data-close class="btn-icon">${Icons.get('x')}</button>
-      </div>
-
-      <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:16px;">
-        <div style="font-weight:700;font-size:13.5px;">${UI.escapeHtml(user.nama_lengkap)}</div>
-        <div style="font-size:12px;color:var(--muted);">Sekolah saat ini: ${UI.escapeHtml(user.sekolah?.nama || '-')}</div>
-      </div>
-
-      <div style="padding:10px 12px;background:var(--info-soft);border-radius:10px;margin-bottom:16px;font-size:12px;line-height:1.5;color:var(--info);">
-        <strong>ℹ️ Info:</strong> Mutasi tidak menghapus data historis. Presensi & tugas lama tetap tercatat di sekolah asal.
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div class="field">
-          <label class="label">Jenis Mutasi *</label>
-          <select id="mJenis" class="input">
-            <option value="induk">Pindah Induk (ganti sekolah utama)</option>
-            <option value="plt">PLT (tambah sekolah, tetap di sekolah asal)</option>
-            <option value="pindah_masuk">Pindah Masuk (dari luar gugus)</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label class="label">Sekolah Baru *</label>
-          <select id="mSekolah" class="input">
-            <option value="">— Pilih Sekolah —</option>
-            ${sekolahList.map(s => `<option value="${s.id}">${UI.escapeHtml(s.nama)}</option>`).join('')}
-          </select>
-        </div>
-
-        <div class="field">
-          <label class="label">Tanggal Mulai *</label>
-          <input type="date" id="mTanggal" class="input" value="${new Date().toISOString().slice(0, 10)}" />
-          <div style="font-size:11px;color:var(--muted);margin-top:4px;">Riwayat sekolah lama akan ditutup H-1 dari tanggal ini.</div>
-        </div>
-
-        <div class="field">
-          <label class="label">Catatan (opsional)</label>
-          <textarea id="mCatatan" class="input" rows="2" style="resize:vertical;" placeholder="Mis: SK Mutasi No. 123/2026"></textarea>
-        </div>
-      </div>
-
-      <div id="mAlert" class="alert alert-error" style="margin-top:14px;"></div>
-
-      <div style="display:flex;gap:8px;margin-top:20px;">
-        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
-        <button class="btn btn-primary" id="btnSimpanMutasi" style="flex:2;">Proses Mutasi</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-
-  const close = () => overlay.remove();
-  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
-  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
-
-  overlay.querySelector('#btnSimpanMutasi').addEventListener('click', async () => {
-    const btn = overlay.querySelector('#btnSimpanMutasi');
-    const alertBox = overlay.querySelector('#mAlert');
-    alertBox.classList.remove('show');
-
-    const jenis = overlay.querySelector('#mJenis').value;
-    const sekolahBaru = Number(overlay.querySelector('#mSekolah').value);
-    const tanggal = overlay.querySelector('#mTanggal').value;
-    const catatan = overlay.querySelector('#mCatatan').value.trim();
-
-    if (!sekolahBaru) { alertBox.textContent = 'Pilih sekolah baru.'; alertBox.classList.add('show'); return; }
-    if (!tanggal) { alertBox.textContent = 'Tanggal wajib.'; alertBox.classList.add('show'); return; }
-
-    const ok = await UI.konfirmasi(
-      'Konfirmasi Mutasi',
-      `Mutasi ${user.nama_lengkap} ke sekolah baru?\n\nData historis (presensi, tugas) tetap tersimpan.`,
-      { okText: 'Ya, Mutasi' }
-    );
-    if (!ok) return;
-
-    UI.btnLoading(btn, 'Memproses…');
-    const res = await Api.call('admin.mutasi.simpan', {
-      user_id: user.id,
-      sekolah_baru_id: sekolahBaru,
-      tanggal,
-      jenis,
-      catatan,
-    });
-    UI.btnReset(btn);
-
-    if (!res.ok) { alertBox.textContent = res.error; alertBox.classList.add('show'); return; }
-
-    UI.sukses(res.data.pesan);
-    close();
-    await loadGuru();
-  });
-}
-
-// ============================================================
-// RESET PIN
+// FORM RESET PIN
 // ============================================================
 function formResetPin(user) {
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
+  overlay.className = 'modal-overlay';
   overlay.innerHTML = `
-    <div style="background:white;border-radius:20px;padding:24px;max-width:480px;width:100%;box-shadow:var(--sh-xl);">
+    <div class="modal-box">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
         <h3 style="font-size:17px;color:var(--maroon);margin:0;">Reset PIN</h3>
         <button data-close class="btn-icon">${Icons.get('x')}</button>
@@ -805,7 +608,7 @@ function formResetPin(user) {
 
     const ok = await UI.konfirmasi(
       'Reset PIN',
-      `Reset PIN ${user.nama_lengkap}? Sesi login guru ini akan otomatis logout.`,
+      'Reset PIN ' + user.nama_lengkap + '? Sesi login guru ini akan otomatis logout.',
       { okText: 'Reset', danger: true }
     );
     if (!ok) return;
@@ -830,14 +633,14 @@ function formResetPin(user) {
 
 function showPinResult(data) {
   const waText = encodeURIComponent(
-    `Halo ${data.nama},\n\nPIN NAKULAKU Anda telah direset.\n\nEmail: ${data.email}\nPIN baru: *${data.pin_baru}*\n\nSilakan login di:\nhttps://gugusnakula.github.io/nakulaku/login.html`
+    'Halo ' + data.nama + ',\n\nPIN NAKULAKU Anda telah direset.\n\nEmail: ' + data.email + '\nPIN baru: *' + data.pin_baru + '*\n\nSilakan login di:\nhttps://gugusnakula.github.io/nakulaku/login.html'
   );
-  const waLink = `https://wa.me/?text=${waText}`;
+  const waLink = 'https://wa.me/?text=' + waText;
 
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
+  overlay.className = 'modal-overlay';
   overlay.innerHTML = `
-    <div style="background:white;border-radius:20px;padding:24px;max-width:480px;width:100%;box-shadow:var(--sh-xl);text-align:center;">
+    <div class="modal-box" style="text-align:center;">
       <div style="width:64px;height:64px;border-radius:50%;background:var(--success-soft);color:var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
         ${Icons.get('checkCircle', { class: 'icon-xl' })}
       </div>
@@ -869,7 +672,7 @@ function showPinResult(data) {
 }
 
 // ============================================================
-// KELOLA PERAN
+// FORM KELOLA PERAN
 // ============================================================
 async function formKelolaPeran(user) {
   const res = await Api.call('admin.peran.list', { user_id: user.id });
@@ -878,9 +681,9 @@ async function formKelolaPeran(user) {
   const peranSaat = res.data || [];
 
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
+  overlay.className = 'modal-overlay';
   overlay.innerHTML = `
-    <div style="background:white;border-radius:20px;padding:24px;max-width:520px;width:100%;box-shadow:var(--sh-xl);max-height:90vh;overflow-y:auto;">
+    <div class="modal-box">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
         <h3 style="font-size:17px;color:var(--maroon);margin:0;">Kelola Peran</h3>
         <button data-close class="btn-icon">${Icons.get('x')}</button>
@@ -893,9 +696,7 @@ async function formKelolaPeran(user) {
 
       <div style="margin-bottom:16px;">
         <div style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0.5px;margin-bottom:10px;">PERAN SAAT INI</div>
-        <div id="listPeran">
-          ${renderPeranList(peranSaat)}
-        </div>
+        <div id="listPeran">${renderPeranList(peranSaat)}</div>
       </div>
 
       <div style="border-top:1px solid var(--border);padding-top:16px;">
@@ -921,14 +722,13 @@ async function formKelolaPeran(user) {
   overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
 
-  // Wire hapus peran
   function wireHapus() {
     overlay.querySelectorAll('[data-hapus-peran]').forEach(b => {
       b.addEventListener('click', async () => {
         const peran = b.dataset.hapusPeran;
         const ok = await UI.konfirmasi(
           'Hapus Peran',
-          `Hapus peran "${peran}" dari ${user.nama_lengkap}?`,
+          'Hapus peran "' + peran + '" dari ' + user.nama_lengkap + '?',
           { danger: true, okText: 'Hapus' }
         );
         if (!ok) return;
@@ -982,17 +782,203 @@ function renderPeranList(peranList) {
     peserta: 'Peserta',
     ks: 'Kepala Sekolah',
   };
-  return peranList.map(p => `
-    <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;">
-      <span class="badge badge-maroon" style="flex-shrink:0;">${UI.escapeHtml(peranLabel[p.peran] || p.peran)}</span>
-      <div style="flex:1;"></div>
-      ${p.peran !== 'super_admin' && p.peran !== 'peserta' ? `
-        <button class="btn-icon" data-hapus-peran="${p.peran}" style="color:var(--danger);width:32px;height:32px;">
-          ${Icons.get('trash', { class: 'icon-sm' })}
-        </button>
-      ` : ''}
+  return peranList.map(p => {
+    const bisaHapus = p.peran !== 'super_admin' && p.peran !== 'peserta';
+    return `
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;">
+        <span class="badge badge-maroon" style="flex-shrink:0;">${UI.escapeHtml(peranLabel[p.peran] || p.peran)}</span>
+        <div style="flex:1;"></div>
+        ${bisaHapus ? '<button class="btn-icon" data-hapus-peran="' + p.peran + '" style="color:var(--danger);width:32px;height:32px;">' + Icons.get('trash', { class: 'icon-sm' }) + '</button>' : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================================
+// FORM MUTASI
+// ============================================================
+async function formMutasi(user) {
+  const resS = await Api.call('sekolah.list');
+  if (!resS.ok) { UI.gagal(resS.error); return; }
+  const sekolahList = (resS.data || []).filter(s => s.id !== user.sekolah_id);
+
+  const opsiSekolah = sekolahList.map(s => `<option value="${s.id}">${UI.escapeHtml(s.nama)}</option>`).join('');
+
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal-box">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h3 style="font-size:17px;color:var(--maroon);margin:0;">Mutasi Guru</h3>
+        <button data-close class="btn-icon">${Icons.get('x')}</button>
+      </div>
+
+      <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:16px;">
+        <div style="font-weight:700;font-size:13.5px;">${UI.escapeHtml(user.nama_lengkap)}</div>
+        <div style="font-size:12px;color:var(--muted);">Sekolah saat ini: ${UI.escapeHtml(user.sekolah?.nama || '-')}</div>
+      </div>
+
+      <div style="padding:10px 12px;background:var(--info-soft);border-radius:10px;margin-bottom:16px;font-size:12px;line-height:1.5;color:var(--info);">
+        <strong>ℹ️ Info:</strong> Mutasi tidak menghapus data historis. Presensi & tugas lama tetap tercatat di sekolah asal.
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="field">
+          <label class="label">Jenis Mutasi *</label>
+          <select id="mJenis" class="input">
+            <option value="induk">Pindah Induk (ganti sekolah utama)</option>
+            <option value="plt">PLT (tambah sekolah, tetap di sekolah asal)</option>
+            <option value="pindah_masuk">Pindah Masuk (dari luar gugus)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="label">Sekolah Baru *</label>
+          <select id="mSekolah" class="input">
+            <option value="">— Pilih Sekolah —</option>
+            ${opsiSekolah}
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="label">Tanggal Mulai *</label>
+          <input type="date" id="mTanggal" class="input" value="${new Date().toISOString().slice(0, 10)}" />
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">Riwayat sekolah lama akan ditutup H-1 dari tanggal ini.</div>
+        </div>
+
+        <div class="field">
+          <label class="label">Catatan (opsional)</label>
+          <textarea id="mCatatan" class="input" rows="2" style="resize:vertical;" placeholder="Mis: SK Mutasi No. 123/2026"></textarea>
+        </div>
+      </div>
+
+      <div id="mAlert" class="alert alert-error" style="margin-top:14px;"></div>
+
+      <div style="display:flex;gap:8px;margin-top:20px;">
+        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
+        <button class="btn btn-primary" id="btnSimpanMutasi" style="flex:2;">Proses Mutasi</button>
+      </div>
     </div>
-  `).join('');
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnSimpanMutasi').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnSimpanMutasi');
+    const alertBox = overlay.querySelector('#mAlert');
+    alertBox.classList.remove('show');
+
+    const jenis = overlay.querySelector('#mJenis').value;
+    const sekolahBaru = Number(overlay.querySelector('#mSekolah').value);
+    const tanggal = overlay.querySelector('#mTanggal').value;
+    const catatan = overlay.querySelector('#mCatatan').value.trim();
+
+    if (!sekolahBaru) { alertBox.textContent = 'Pilih sekolah baru.'; alertBox.classList.add('show'); return; }
+    if (!tanggal) { alertBox.textContent = 'Tanggal wajib.'; alertBox.classList.add('show'); return; }
+
+    const ok = await UI.konfirmasi(
+      'Konfirmasi Mutasi',
+      'Mutasi ' + user.nama_lengkap + ' ke sekolah baru?\n\nData historis (presensi, tugas) tetap tersimpan.',
+      { okText: 'Ya, Mutasi' }
+    );
+    if (!ok) return;
+
+    UI.btnLoading(btn, 'Memproses…');
+    const res = await Api.call('admin.mutasi.simpan', {
+      user_id: user.id,
+      sekolah_baru_id: sekolahBaru,
+      tanggal,
+      jenis,
+      catatan,
+    });
+    UI.btnReset(btn);
+
+    if (!res.ok) { alertBox.textContent = res.error; alertBox.classList.add('show'); return; }
+
+    UI.sukses(res.data.pesan);
+    close();
+    await loadGuru();
+  });
+}
+
+// ============================================================
+// FORM HAPUS GURU
+// ============================================================
+function formHapusGuru(user) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal-box">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h3 style="font-size:17px;color:var(--danger);margin:0;">Hapus Guru</h3>
+        <button data-close class="btn-icon">${Icons.get('x')}</button>
+      </div>
+
+      <div style="padding:12px;background:var(--danger-soft);border-radius:12px;margin-bottom:16px;font-size:12.5px;line-height:1.5;color:var(--danger);">
+        <strong>⚠️ Perhatian</strong><br>
+        Kalau guru ini <strong>sudah punya aktivitas</strong> (presensi, tugas, feedback, dll), akun akan <strong>dinonaktifkan</strong> saja — bukan dihapus permanen.<br>
+        Kalau <strong>belum ada aktivitas</strong>, akun akan dihapus permanen.
+      </div>
+
+      <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:16px;">
+        <div style="font-weight:700;font-size:13.5px;">${UI.escapeHtml(user.nama_lengkap)}</div>
+        <div style="font-size:12px;color:var(--muted);">${UI.escapeHtml(user.email || '')}</div>
+      </div>
+
+      <div class="field" style="margin-bottom:14px;">
+        <label class="label">Ketik nama lengkap guru untuk konfirmasi *</label>
+        <input type="text" id="konfirmasiHapus" class="input" placeholder="Ketik nama persis…" />
+      </div>
+
+      <div id="hapusAlert" class="alert alert-error" style="margin-bottom:12px;"></div>
+
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
+        <button class="btn btn-danger" id="btnProsesHapus" disabled style="flex:2;">Hapus</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  const konfirmasiEl = overlay.querySelector('#konfirmasiHapus');
+  const btnProses = overlay.querySelector('#btnProsesHapus');
+  const alertBox = overlay.querySelector('#hapusAlert');
+
+  konfirmasiEl.addEventListener('input', () => {
+    const valid = konfirmasiEl.value.trim().toLowerCase() === (user.nama_lengkap || '').trim().toLowerCase();
+    btnProses.disabled = !valid;
+  });
+
+  btnProses.addEventListener('click', async () => {
+    if (btnProses.disabled) return;
+
+    alertBox.classList.remove('show');
+    UI.btnLoading(btnProses, 'Memproses…');
+
+    const res = await Api.call('admin.users.hapus', {
+      user_id: user.id,
+      konfirmasi: konfirmasiEl.value.trim(),
+    });
+
+    UI.btnReset(btnProses);
+
+    if (!res.ok) {
+      alertBox.textContent = res.error;
+      alertBox.classList.add('show');
+      return;
+    }
+
+    close();
+    UI.sukses(res.data.pesan);
+    await loadGuru();
+  });
 }
 </script>
 
