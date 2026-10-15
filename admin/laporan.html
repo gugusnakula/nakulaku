@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#611329" />
+<title>Export Laporan — NAKULAKU Admin</title>
+
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/nakula.css" />
+
+<style>
+  .laporan-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 16px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .laporan-card:hover {
+    border-color: var(--maroon);
+    transform: translateY(-2px);
+    box-shadow: var(--sh-md);
+  }
+  .laporan-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .laporan-icon.gold { background: var(--gold-soft); color: var(--gold-dark); }
+  .laporan-icon.green { background: var(--success-soft); color: var(--success); }
+  .laporan-icon.blue { background: var(--info-soft); color: var(--info); }
+  .laporan-info { flex: 1; min-width: 0; }
+  .laporan-title { font-weight: 800; font-size: 14px; margin-bottom: 3px; }
+  .laporan-desc { font-size: 11.5px; color: var(--muted); font-weight: 600; line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="../beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Export Laporan</div>
+      <div class="app-header-sub">Admin NAKULAKU</div>
+    </div>
+  </div>
+</header>
+
+<main class="container page" style="max-width:720px;padding-top:16px;">
+
+  <div id="infoPeriode" style="margin-bottom:20px;font-size:12.5px;color:var(--muted);font-weight:600;"></div>
+
+  <div class="section-head" style="margin-bottom:12px;">
+    <h3><span data-icon="download" class="icon-sm"></span> Pilih Laporan</h3>
+  </div>
+
+  <div class="laporan-card" data-jenis="presensi">
+    <div class="laporan-icon">
+      <span data-icon="mapPin" class="icon-lg"></span>
+    </div>
+    <div class="laporan-info">
+      <div class="laporan-title">Laporan Presensi</div>
+      <div class="laporan-desc">Matriks kehadiran per guru × pertemuan + total poin</div>
+    </div>
+    <span class="chevron" style="color:var(--muted);">
+      <span data-icon="download" class="icon-sm"></span>
+    </span>
+  </div>
+
+  <div class="laporan-card" data-jenis="tugas">
+    <div class="laporan-icon gold">
+      <span data-icon="clipboard" class="icon-lg"></span>
+    </div>
+    <div class="laporan-info">
+      <div class="laporan-title">Laporan Tugas</div>
+      <div class="laporan-desc">Status & nilai tugas per guru × tugas</div>
+    </div>
+    <span class="chevron" style="color:var(--muted);">
+      <span data-icon="download" class="icon-sm"></span>
+    </span>
+  </div>
+
+  <div class="laporan-card" data-jenis="feedback">
+    <div class="laporan-icon blue">
+      <span data-icon="messageSquare" class="icon-lg"></span>
+    </div>
+    <div class="laporan-info">
+      <div class="laporan-title">Laporan Feedback</div>
+      <div class="laporan-desc">Detail feedback per peserta: skor per kategori + saran/kritik</div>
+    </div>
+    <span class="chevron" style="color:var(--muted);">
+      <span data-icon="download" class="icon-sm"></span>
+    </span>
+  </div>
+
+  <div class="laporan-card" data-jenis="ringkas">
+    <div class="laporan-icon green">
+      <span data-icon="activity" class="icon-lg"></span>
+    </div>
+    <div class="laporan-info">
+      <div class="laporan-title">Laporan Ringkas Per Guru</div>
+      <div class="laporan-desc">Rekap total: kehadiran, poin, feedback — untuk rapat</div>
+    </div>
+    <span class="chevron" style="color:var(--muted);">
+      <span data-icon="download" class="icon-sm"></span>
+    </span>
+  </div>
+
+  <div class="card" style="margin-top:20px;padding:14px;font-size:12px;line-height:1.6;color:var(--muted);">
+    <strong style="color:var(--ink);">💡 Tips:</strong><br>
+    File CSV bisa dibuka di <strong>Google Sheets</strong> atau <strong>Microsoft Excel</strong>.
+    Untuk Google Sheets: buka sheets.new → File → Import → Upload CSV.
+  </div>
+
+</main>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+
+let profile;
+let periodeAktif = null;
+
+(async () => {
+  profile = await Api.requireLogin();
+  if (!profile) return;
+
+  if (!profile.peran.includes('pengurus') && !profile.peran.includes('super_admin') && !profile.peran.includes('ks')) {
+    document.querySelector('main').innerHTML = UI.errorHtml('Halaman ini hanya untuk admin/KS.');
+    return;
+  }
+
+  const resP = await Api.call('periode.aktif');
+  if (resP.ok && resP.data) {
+    periodeAktif = resP.data;
+    document.getElementById('infoPeriode').innerHTML =
+      `<span style="color:var(--maroon);">${Icons.get('calendar', { class: 'icon-sm' })}</span> Periode: <strong>${UI.escapeHtml(periodeAktif.nama)}</strong>`;
+  } else {
+    document.getElementById('infoPeriode').innerHTML = `<span style="color:var(--danger);">⚠ Tidak ada periode aktif</span>`;
+  }
+
+  document.querySelectorAll('.laporan-card').forEach(card => {
+    card.addEventListener('click', () => exportLaporan(card.dataset.jenis));
+  });
+})();
+
+async function exportLaporan(jenis) {
+  if (!periodeAktif) { UI.gagal('Tidak ada periode aktif.'); return; }
+
+  UI.toast('Menyiapkan laporan…', 'info');
+
+  const res = await Api.call('laporan.export', {
+    jenis,
+    periode_id: periodeAktif.id,
+  });
+
+  if (!res.ok) { UI.gagal(res.error); return; }
+
+  const d = res.data;
+  if (!d.data || d.data.length === 0) {
+    UI.gagal('Belum ada data untuk laporan ini.');
+    return;
+  }
+
+  // Bangun CSV dengan label kolom
+  const kolom = d.kolom || [];
+  const label = d.label_kolom || kolom;
+
+  // Baris header
+  const header = label.map(escapeCSV).join(',');
+
+  // Baris data
+  const rows = d.data.map(row => kolom.map(k => escapeCSV(row[k])).join(','));
+
+  // Keterangan (opsional)
+  let keterangan = '';
+  if (d.keterangan && d.keterangan.length > 0) {
+    keterangan = '\n\n' + d.keterangan.map(k => '# ' + k).join('\n');
+  }
+
+  const csv = header + '\n' + rows.join('\n') + keterangan;
+
+  const stempel = stamp();
+  const namaFile = `nakula_${jenis}_${stempel}.csv`;
+
+  downloadFile(namaFile, csv);
+
+  UI.sukses(`${d.data.length} baris terunduh.`);
+}
+
+function escapeCSV(val) {
+  if (val === null || val === undefined) return '';
+  let s = String(val);
+  if (s.includes('"') || s.includes(',') || s.includes('\n') || s.includes('\r')) {
+    s = '"' + s.replace(/"/g, '""') + '"';
+  }
+  return s;
+}
+
+function downloadFile(namaFile, isi) {
+  const blob = new Blob(['\ufeff' + isi], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = namaFile;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function stamp() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`;
+}
+</script>
+
+</body>
+</html>
