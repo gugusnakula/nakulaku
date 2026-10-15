@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#611329" />
+<title>Pengaturan — NAKULAKU Admin</title>
+
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/nakula.css" />
+
+<style>
+  .danger-zone {
+    border: 1.5px solid var(--danger);
+    border-radius: var(--r-lg);
+    padding: 18px;
+    background: linear-gradient(180deg, #FEF2F2 0%, #FFFFFF 100%);
+    margin-top: 20px;
+  }
+  .danger-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--danger);
+    font-weight: 800;
+    font-size: 14px;
+    margin-bottom: 10px;
+    letter-spacing: 0.3px;
+  }
+  .danger-desc {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  .tbl-backup {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+  .tbl-backup th {
+    text-align: left;
+    padding: 10px 12px;
+    background: var(--bg);
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tbl-backup td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .tbl-backup tr:last-child td { border-bottom: none; }
+  .tbl-backup tr:hover { background: var(--bg); }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="../beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Pengaturan</div>
+      <div class="app-header-sub">Super Admin</div>
+    </div>
+  </div>
+</header>
+
+<main class="container page" style="max-width:820px;padding-top:16px;">
+
+  <div id="infoAdmin" style="margin-bottom:20px;font-size:12.5px;color:var(--muted);font-weight:600;"></div>
+
+  <!-- SECTION: BACKUP -->
+  <div class="section-head" style="margin-bottom:12px;">
+    <h3><span data-icon="download" class="icon-sm"></span> Backup Data</h3>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;font-size:12.5px;line-height:1.6;color:var(--muted);">
+    Backup data ke file CSV. Simpan file di Google Drive atau hard disk sebagai cadangan. Lakukan minimal 1× sebulan.
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden;">
+    <table class="tbl-backup">
+      <thead>
+        <tr>
+          <th>Tabel</th>
+          <th style="width:80px;text-align:right;">Baris</th>
+          <th style="width:100px;text-align:right;">Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tblBackup">
+        <tr><td colspan="3" style="text-align:center;padding:20px;color:var(--muted);">Memuat…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <button class="btn btn-primary btn-full" id="btnBackupSemua" style="margin-top:16px;">
+    <span data-icon="download"></span>
+    Backup Semua Tabel (ZIP)
+  </button>
+
+  <!-- SECTION: TRANSFER SUPER ADMIN -->
+  <div class="section-head" style="margin-top:32px;margin-bottom:12px;">
+    <h3><span data-icon="shield" class="icon-sm"></span> Transfer Super Admin</h3>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;font-size:12.5px;line-height:1.6;color:var(--muted);">
+    Pindahkan peran <strong>Super Admin</strong> ke orang lain. Berguna kalau Anda resign atau ingin digantikan.<br>
+    Setelah transfer, Anda akan menjadi <strong>Pengurus</strong> biasa.
+  </div>
+
+  <button class="btn btn-secondary btn-full" id="btnTransfer" style="color:var(--danger);border-color:var(--danger);">
+    <span data-icon="shield"></span>
+    Transfer Super Admin
+  </button>
+
+</main>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+
+let profile;
+let tabelList = [];
+
+(async () => {
+  profile = await Api.requireLogin();
+  if (!profile) return;
+
+  if (!profile.peran.includes('super_admin')) {
+    document.querySelector('main').innerHTML = UI.errorHtml(
+      'Halaman ini hanya untuk Super Admin.',
+      '<a href="../beranda.html" class="btn btn-primary btn-sm" style="margin-top:12px;">Kembali</a>'
+    );
+    return;
+  }
+
+  document.getElementById('infoAdmin').innerHTML =
+    `<span style="color:var(--maroon);">${Icons.get('shield', { class: 'icon-sm' })}</span> Anda login sebagai: <strong>${UI.escapeHtml(profile.nama)}</strong>`;
+
+  await loadBackupInfo();
+
+  document.getElementById('btnBackupSemua').addEventListener('click', backupSemua);
+  document.getElementById('btnTransfer').addEventListener('click', formTransfer);
+})();
+
+// ============================================================
+// BACKUP
+// ============================================================
+async function loadBackupInfo() {
+  const el = document.getElementById('tblBackup');
+  el.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:20px;color:var(--muted);">Memuat…</td></tr>';
+
+  const res = await Api.call('admin.backup.info');
+  if (!res.ok) {
+    el.innerHTML = `<tr><td colspan="3" style="text-align:center;padding:20px;color:var(--danger);">${UI.escapeHtml(res.error)}</td></tr>`;
+    return;
+  }
+
+  tabelList = res.data || [];
+
+  el.innerHTML = tabelList.map(t => `
+    <tr>
+      <td><strong>${UI.escapeHtml(t.label)}</strong><br><span style="font-size:11px;color:var(--muted);">${t.nama}</span></td>
+      <td style="text-align:right;font-weight:700;">${t.jumlah}</td>
+      <td style="text-align:right;">
+        <button class="btn btn-ghost btn-sm" data-export="${t.nama}" style="padding:6px 10px;">
+          ${Icons.get('download', { class: 'icon-sm' })}
+        </button>
+      </td>
+    </tr>
+  `).join('');
+
+  el.querySelectorAll('[data-export]').forEach(b => {
+    b.addEventListener('click', () => exportTabel(b.dataset.export));
+  });
+}
+
+async function exportTabel(tabel) {
+  UI.toast('Menyiapkan file…', 'info');
+
+  const res = await Api.call('admin.backup.export', { tabel });
+  if (!res.ok) { UI.gagal(res.error); return; }
+  if (!res.data.data || res.data.data.length === 0) {
+    UI.gagal('Tabel kosong.');
+    return;
+  }
+
+  const csv = jsonKeCSV(res.data.data);
+  downloadFile(`nakula_${tabel}_${stamp()}.csv`, csv);
+  UI.sukses(`${res.data.jumlah} baris di-export.`);
+}
+
+async function backupSemua() {
+  const ok = await UI.konfirmasi(
+    'Backup Semua',
+    `Akan mengunduh ${tabelList.length} file CSV (satu per tabel). Lanjutkan?`,
+    { okText: 'Unduh Semua' }
+  );
+  if (!ok) return;
+
+  const btn = document.getElementById('btnBackupSemua');
+  UI.btnLoading(btn, 'Memproses…');
+
+  const stempel = stamp();
+  for (const t of tabelList) {
+    if (t.jumlah === 0) continue;
+
+    const res = await Api.call('admin.backup.export', { tabel: t.nama });
+    if (!res.ok || !res.data.data) continue;
+
+    const csv = jsonKeCSV(res.data.data);
+    downloadFile(`nakula_${t.nama}_${stempel}.csv`, csv);
+
+    // Jeda 300ms antar download
+    await new Promise(r => setTimeout(r, 300));
+  }
+
+  UI.btnReset(btn);
+  UI.sukses('Semua tabel terunduh.');
+}
+
+// ============================================================
+// TRANSFER SUPER ADMIN
+// ============================================================
+async function formTransfer() {
+  const resG = await Api.call('users.list', { limit: 500 });
+  if (!resG.ok) { UI.gagal(resG.error); return; }
+
+  const semuaGuru = (resG.data.hasil || []).filter(g => g.id !== profile.id && g.aktif);
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:24px;max-width:520px;width:100%;max-height:88vh;display:flex;flex-direction:column;box-shadow:var(--sh-xl);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h3 style="font-size:17px;color:var(--danger);margin:0;">Transfer Super Admin</h3>
+        <button data-close class="btn-icon">${Icons.get('x')}</button>
+      </div>
+
+      <div style="padding:12px;background:var(--danger-soft);border-radius:12px;margin-bottom:14px;font-size:12.5px;line-height:1.5;color:var(--danger);">
+        <strong>⚠️ Aksi ini sensitif.</strong><br>
+        Setelah transfer, Anda menjadi <strong>Pengurus</strong> biasa dan tidak bisa mengakses halaman ini lagi.
+      </div>
+
+      <input type="text" id="cariGuru" class="input" placeholder="Cari nama guru…" style="margin-bottom:10px;" />
+
+      <div id="daftarGuru" style="flex:1;overflow-y:auto;border:1px solid var(--border);border-radius:12px;padding:6px;margin-bottom:12px;min-height:180px;max-height:300px;">
+      </div>
+
+      <div class="field" style="margin-bottom:14px;">
+        <label class="label">Ketik nama lengkap guru target untuk konfirmasi *</label>
+        <input type="text" id="konfirmasi" class="input" placeholder="Ketik nama persis…" />
+      </div>
+
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
+        <button class="btn btn-danger" id="btnProsesTransfer" style="flex:2;" disabled>Transfer</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const daftarEl = overlay.querySelector('#daftarGuru');
+  const cariEl = overlay.querySelector('#cariGuru');
+  const konfirmasiEl = overlay.querySelector('#konfirmasi');
+  const btnProses = overlay.querySelector('#btnProsesTransfer');
+
+  let selectedId = null;
+  let selectedNama = null;
+
+  function cekValid() {
+    const valid = selectedId && selectedNama &&
+      konfirmasiEl.value.trim().toLowerCase() === selectedNama.toLowerCase();
+    btnProses.disabled = !valid;
+  }
+
+  function renderGuru(filter = '') {
+    const f = filter.toLowerCase();
+    const list = semuaGuru.filter(g =>
+      !f || (g.nama_lengkap || '').toLowerCase().includes(f) || (g.sekolah?.nama || '').toLowerCase().includes(f)
+    );
+    if (list.length === 0) {
+      daftarEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">Tidak ada guru ditemukan.</div>';
+      return;
+    }
+    daftarEl.innerHTML = list.map(g => `
+      <label style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;">
+        <input type="radio" name="pilihGuru" value="${g.id}" data-nama="${UI.escapeHtml(g.nama_lengkap)}" style="width:18px;height:18px;accent-color:var(--maroon);" />
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:13px;">${UI.escapeHtml(g.nama_lengkap)}</div>
+          <div style="font-size:11px;color:var(--muted);">${UI.escapeHtml(g.sekolah?.nama || '-')}</div>
+        </div>
+      </label>
+    `).join('');
+
+    daftarEl.querySelectorAll('input[type=radio]').forEach(r => {
+      r.addEventListener('change', () => {
+        selectedId = Number(r.value);
+        selectedNama = r.dataset.nama;
+        cekValid();
+      });
+    });
+  }
+
+  renderGuru();
+  cariEl.addEventListener('input', () => renderGuru(cariEl.value));
+  konfirmasiEl.addEventListener('input', cekValid);
+
+  const close = () => overlay.remove();
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  btnProses.addEventListener('click', async () => {
+    if (btnProses.disabled) return;
+
+    const ok = await UI.konfirmasi(
+      'Konfirmasi Transfer',
+      `Yakin transfer Super Admin ke ${selectedNama}? Anda akan menjadi Pengurus biasa setelah ini.`,
+      { danger: true, okText: 'Ya, Transfer' }
+    );
+    if (!ok) return;
+
+    UI.btnLoading(btnProses, 'Memproses…');
+
+    const res = await Api.call('admin.transfer_super_admin', {
+      target_user_id: selectedId,
+      konfirmasi: konfirmasiEl.value.trim(),
+    });
+
+    UI.btnReset(btnProses);
+
+    if (!res.ok) {
+      UI.gagal(res.error);
+      return;
+    }
+
+    close();
+    UI.sukses(res.data.pesan);
+
+    // Logout otomatis setelah 2 detik
+    setTimeout(() => {
+      Api.clearSession();
+      window.location.href = '../login.html';
+    }, 2000);
+  });
+}
+
+// ============================================================
+// HELPER: CSV
+// ============================================================
+function jsonKeCSV(arr) {
+  if (!arr || arr.length === 0) return '';
+
+  // Kumpulkan semua kolom
+  const kolomSet = new Set();
+  arr.forEach(row => Object.keys(row).forEach(k => kolomSet.add(k)));
+  const kolom = Array.from(kolomSet);
+
+  const escape = (val) => {
+    if (val === null || val === undefined) return '';
+    let s = String(val);
+    // Kalau object/array, JSON stringify
+    if (typeof val === 'object') s = JSON.stringify(val);
+    // Escape kutip ganda
+    if (s.includes('"') || s.includes(',') || s.includes('\n')) {
+      s = '"' + s.replace(/"/g, '""') + '"';
+    }
+    return s;
+  };
+
+  const header = kolom.map(escape).join(',');
+  const rows = arr.map(row => kolom.map(k => escape(row[k])).join(','));
+
+  return [header, ...rows].join('\n');
+}
+
+function downloadFile(namaFile, isi) {
+  const blob = new Blob(['\ufeff' + isi], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = namaFile;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function stamp() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`;
+}
+</script>
+
+</body>
+</html>
