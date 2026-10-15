@@ -68,21 +68,6 @@
     color: var(--muted);
     pointer-events: none;
   }
-  .filter-select {
-    padding: 12px 14px;
-    border: 1.5px solid var(--border-strong);
-    border-radius: var(--r-md);
-    background: var(--surface);
-    font-size: 13px;
-    font-weight: 600;
-    min-width: 160px;
-    cursor: pointer;
-  }
-  .filter-select:focus {
-    outline: none;
-    border-color: var(--maroon);
-    box-shadow: 0 0 0 4px rgba(125,29,58,.08);
-  }
 
   .stat-row {
     display: grid;
@@ -241,9 +226,6 @@
         placeholder="Cari nama, email, atau NIP…"
       />
     </div>
-    <select class="filter-select" id="filterSekolah">
-      <option value="">Semua Sekolah</option>
-    </select>
   </div>
 
   <div id="infoHasil" style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">
@@ -271,7 +253,6 @@ document.querySelectorAll('[data-icon]').forEach(el => {
 });
 
 let profile;
-let cacheSekolah = [];
 let debounceTimer;
 
 (async () => {
@@ -283,31 +264,14 @@ let debounceTimer;
     return;
   }
 
-  await loadSekolah();
   await loadGuru();
 })();
-
-// ============================================================
-// LOAD SEKOLAH
-// ============================================================
-async function loadSekolah() {
-  const res = await Api.call('sekolah.list');
-  if (!res.ok) return;
-  cacheSekolah = res.data || [];
-
-  const sel = document.getElementById('filterSekolah');
-  sel.innerHTML = '<option value="">Semua Sekolah</option>' +
-    cacheSekolah.map(s => `<option value="${s.id}">${UI.escapeHtml(s.nama)}</option>`).join('');
-
-  document.getElementById('statSekolah').textContent = cacheSekolah.length;
-}
 
 // ============================================================
 // LOAD GURU
 // ============================================================
 async function loadGuru() {
   const q = document.getElementById('inputCari').value.trim();
-  const sekolahId = document.getElementById('filterSekolah').value;
 
   const el = document.getElementById('listGuru');
   el.innerHTML = `
@@ -318,7 +282,6 @@ async function loadGuru() {
 
   const res = await Api.call('users.list', {
     q,
-    sekolah_id: sekolahId ? Number(sekolahId) : undefined,
     limit: 200,
   });
 
@@ -332,8 +295,16 @@ async function loadGuru() {
   const total = res.data.total || 0;
 
   document.getElementById('statTotal').textContent = total;
+
+  // Hitung KS dari list
   document.getElementById('statKS').textContent =
     list.filter(g => (g.jabatan || '').toLowerCase() === 'kepala sekolah').length;
+
+  // Hitung sekolah unik dari list
+  const sekolahSet = new Set();
+  list.forEach(g => { if (g.sekolah?.id) sekolahSet.add(g.sekolah.id); });
+  document.getElementById('statSekolah').textContent = sekolahSet.size;
+
   document.getElementById('infoHasil').textContent =
     `Menampilkan ${list.length} dari ${total} guru`;
 
@@ -381,7 +352,6 @@ document.getElementById('inputCari').addEventListener('input', () => {
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(loadGuru, 400);
 });
-document.getElementById('filterSekolah').addEventListener('change', loadGuru);
 
 // ============================================================
 // DETAIL GURU
