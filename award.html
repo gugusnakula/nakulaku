@@ -406,15 +406,18 @@ UI.bindLogout();
 
   document.getElementById('subHero').textContent =
     awards.length > 0
-      ? `${awards.length} kategori · Diumumkan akhir periode`
-      : 'Belum ada kategori award';
+      ? `${awards.length} kategori telah diumumkan`
+      : 'Menunggu pengumuman resmi panitia';
 
   if (awards.length === 0) {
     el.innerHTML = `
       <div class="award-empty">
-        ${Icons.get('award', { class: 'icon-xl' })}
-        <div style="font-weight:700;margin-top:12px;color:var(--ink);">Belum ada nominasi</div>
-        <div style="font-size:12.5px;margin-top:4px;">Nominasi akan diumumkan menjelang akhir periode.</div>
+        ${Icons.get('lock', { class: 'icon-xl' })}
+        <div style="font-weight:700;margin-top:12px;color:var(--ink);">Nominasi Belum Diumumkan</div>
+        <div style="font-size:12.5px;margin-top:4px;line-height:1.6;">
+          Hasil NAKULAKU AWARD masih dalam proses penilaian panitia.<br>
+          Pemenang akan diumumkan pada akhir periode.
+        </div>
       </div>
     `;
     return;
