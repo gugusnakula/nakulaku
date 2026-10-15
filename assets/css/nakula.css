@@ -383,7 +383,16 @@ h1, h2, h3, h4 { font-weight: 800; line-height: 1.2; color: var(--ink); letter-s
 }
 .header-btn:hover { background: rgba(255,255,255,.22); }
 .header-btn:active { transform: scale(.92); }
-
+/* ---------- DESKTOP LAYOUT (hidden di mobile) ---------- */
+.desktop-layout {
+  display: block;
+}
+.desktop-sidebar {
+  display: none;
+}
+.desktop-topbar {
+  display: none;
+}
 /* ---------- BOTTOM NAV (dengan pill indicator) ---------- */
 .bottom-nav {
   position: fixed;
