@@ -19,7 +19,10 @@
     border-radius: var(--r-lg);
     padding: 16px;
     margin-bottom: 14px;
+    transition: all .15s;
   }
+  .award-card:hover { box-shadow: var(--sh-md); }
+
   .award-head {
     display: flex;
     align-items: flex-start;
@@ -40,12 +43,30 @@
   .award-info { flex: 1; min-width: 0; }
   .award-name { font-weight: 800; font-size: 15px; margin-bottom: 2px; }
   .award-meta { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+
   .award-actions {
     display: flex;
     gap: 8px;
     margin-top: 12px;
     padding-top: 12px;
     border-top: 1px solid var(--border);
+  }
+
+  .status-row {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .status-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex-wrap: wrap;
   }
 
   .nominasi-list {
@@ -62,32 +83,24 @@
   }
   .nom-row:last-child { border-bottom: none; }
   .nom-rank {
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     border-radius: 50%;
     background: var(--bg);
     color: var(--muted);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 13px;
     flex-shrink: 0;
   }
   .nom-rank.top1 { background: var(--gold); color: white; }
   .nom-rank.top2 { background: #C0C0C0; color: white; }
   .nom-rank.top3 { background: #CD7F32; color: white; }
   .nom-avatar {
-    width: 36px;
-    height: 36px;
+    width: 36px; height: 36px;
     border-radius: 50%;
     background: var(--maroon-soft);
     color: var(--maroon);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px;
     flex-shrink: 0;
     overflow: hidden;
     position: relative;
@@ -106,14 +119,9 @@
     color: var(--maroon);
     flex-shrink: 0;
   }
-  .juara-buttons {
-    display: flex;
-    gap: 4px;
-    flex-shrink: 0;
-  }
+  .juara-buttons { display: flex; gap: 4px; flex-shrink: 0; }
   .juara-buttons button {
-    width: 28px;
-    height: 28px;
+    width: 28px; height: 28px;
     border: 1.5px solid var(--border);
     background: var(--surface);
     border-radius: 6px;
@@ -122,7 +130,9 @@
     color: var(--muted);
     cursor: pointer;
     padding: 0;
+    transition: all .12s;
   }
+  .juara-buttons button:hover { border-color: var(--gold); }
   .juara-buttons button.on {
     background: var(--gold);
     color: white;
@@ -207,7 +217,6 @@ async function loadAwards() {
   awards = res.data.awards || [];
   const nominasi = res.data.nominasi || [];
 
-  // Group nominasi by award_id
   nominasiMap = {};
   nominasi.forEach(n => {
     if (!nominasiMap[n.award_id]) nominasiMap[n.award_id] = [];
@@ -220,22 +229,28 @@ async function loadAwards() {
   }
 
   el.innerHTML = awards.map(a => renderAward(a)).join('');
-  awards.forEach(a => {
-    const el = document.getElementById('award-' + a.id);
-    if (!el) return;
-    el.querySelector('[data-act="edit"]').addEventListener('click', () => formAward(a));
-    el.querySelector('[data-act="hapus"]').addEventListener('click', () => hapusAward(a.id));
-    el.querySelector('[data-act="hitung"]').addEventListener('click', () => hitungAward(a.id));
 
-    // Juara buttons
-    el.querySelectorAll('[data-nom-id]').forEach(row => {
+  // Wire event listeners
+  awards.forEach(a => {
+    const elA = document.getElementById('award-' + a.id);
+    if (!elA) return;
+
+    const btnEdit = elA.querySelector('[data-act="edit"]');
+    const btnHitung = elA.querySelector('[data-act="hitung"]');
+    const btnHapus = elA.querySelector('[data-act="hapus"]');
+    const btnUmumkan = elA.querySelector('[data-act="umumkan"]');
+
+    if (btnEdit) btnEdit.addEventListener('click', () => formAward(a));
+    if (btnHitung) btnHitung.addEventListener('click', () => hitungAward(a.id));
+    if (btnHapus) btnHapus.addEventListener('click', () => hapusAward(a.id));
+    if (btnUmumkan) btnUmumkan.addEventListener('click', () => toggleUmumkan(a));
+
+    // Wire juara buttons
+    elA.querySelectorAll('[data-nom-id]').forEach(row => {
       const nomId = Number(row.dataset.nomId);
       row.querySelectorAll('[data-juara]').forEach(b => {
-        b.addEventListener('click', () => setJuara(nomId, Number(b.dataset.juara), el));
+        b.addEventListener('click', () => setJuara(nomId, Number(b.dataset.juara)));
       });
-      // Clear button
-      const clearBtn = row.querySelector('[data-juara="clear"]');
-      if (clearBtn) clearBtn.addEventListener('click', () => setJuara(nomId, null, el));
     });
   });
 }
@@ -264,6 +279,30 @@ function renderAward(a) {
         <button class="btn btn-ghost btn-sm" data-act="hapus" style="color:var(--danger);margin-left:auto;">${Icons.get('trash', { class: 'icon-sm' })} Hapus</button>
       </div>
 
+      <div class="status-row">
+        <div class="status-left">
+          ${a.umumkan
+            ? `<span class="badge badge-success" style="display:inline-flex;align-items:center;gap:4px;">
+                 ${Icons.get('eye', { class: 'icon-sm' })}
+                 TERLIHAT GURU
+               </span>`
+            : `<span class="badge" style="display:inline-flex;align-items:center;gap:4px;background:var(--border);color:var(--muted);">
+                 ${Icons.get('eyeOff', { class: 'icon-sm' })}
+                 RAHASIA
+               </span>`}
+          ${a.diumumkan_pada ? `<span style="font-size:11px;color:var(--muted);font-weight:600;">${UI.timeAgo(a.diumumkan_pada)}</span>` : ''}
+        </div>
+        <button
+          class="btn ${a.umumkan ? 'btn-secondary' : 'btn-gold'} btn-sm"
+          data-act="umumkan"
+          style="flex-shrink:0;"
+        >
+          ${a.umumkan
+            ? `${Icons.get('eyeOff', { class: 'icon-sm' })} Sembunyikan`
+            : `${Icons.get('award', { class: 'icon-sm' })} Umumkan`}
+        </button>
+      </div>
+
       ${nominasi.length > 0 ? `
         <div class="nominasi-list">
           ${nominasi.map(n => {
@@ -272,7 +311,6 @@ function renderAward(a) {
             const init = (nama || '?').charAt(0).toUpperCase();
             const fotoUrl = n.user?.foto_thumb_url;
             const rankCls = n.peringkat === 1 ? 'top1' : n.peringkat === 2 ? 'top2' : n.peringkat === 3 ? 'top3' : '';
-
             return `
               <div class="nom-row" data-nom-id="${n.id}">
                 <div class="nom-rank ${rankCls}">${n.peringkat}</div>
@@ -303,17 +341,47 @@ function renderAward(a) {
   `;
 }
 
-async function setJuara(nominasiId, juara, awardEl) {
-  const res = await Api.call('award.set_juara', { nominasi_id: nominasiId, juara });
+// ============================================================
+// TOGGLE UMUMKAN
+// ============================================================
+async function toggleUmumkan(award) {
+  const akan = !award.umumkan;
+
+  const pesan = akan
+    ? `Umumkan "${award.nama}"? Award ini akan terlihat oleh semua guru di halaman Papan Juara.`
+    : `Sembunyikan "${award.nama}"? Award ini akan disembunyikan dari guru.`;
+
+  const ok = await UI.konfirmasi(
+    akan ? 'Umumkan Award' : 'Sembunyikan Award',
+    pesan,
+    { okText: akan ? 'Umumkan' : 'Sembunyikan', danger: !akan }
+  );
+  if (!ok) return;
+
+  const res = await Api.call('admin.award.toggle_umumkan', { award_id: award.id });
   if (!res.ok) { UI.gagal(res.error); return; }
-  UI.sukses(juara ? `Juara ${juara} ditetapkan.` : 'Juara dibatalkan.');
+
+  UI.sukses(res.data.pesan);
   await loadAwards();
 }
 
+// ============================================================
+// SET JUARA
+// ============================================================
+async function setJuara(nominasiId, juara) {
+  const res = await Api.call('award.set_juara', { nominasi_id: nominasiId, juara });
+  if (!res.ok) { UI.gagal(res.error); return; }
+  UI.sukses(`Juara ${juara} ditetapkan.`);
+  await loadAwards();
+}
+
+// ============================================================
+// HITUNG
+// ============================================================
 async function hitungAward(awardId) {
   const ok = await UI.konfirmasi(
     'Hitung Nominasi',
-    'Sistem akan menghitung ulang semua nominasi untuk award ini. Data nominasi lama akan diganti. Lanjutkan?',
+    'Sistem akan menghitung ulang semua nominasi. Data lama akan diganti. Lanjutkan?',
     { okText: 'Hitung' }
   );
   if (!ok) return;
@@ -325,6 +393,9 @@ async function hitungAward(awardId) {
   await loadAwards();
 }
 
+// ============================================================
+// HAPUS
+// ============================================================
 async function hapusAward(awardId) {
   const ok = await UI.konfirmasi('Hapus Award', 'Hapus award ini beserta semua nominasinya?', { danger: true, okText: 'Hapus' });
   if (!ok) return;
@@ -334,6 +405,9 @@ async function hapusAward(awardId) {
   await loadAwards();
 }
 
+// ============================================================
+// FORM AWARD
+// ============================================================
 function formAward(award) {
   const isEdit = !!award;
   const a = award || {};
@@ -342,7 +416,7 @@ function formAward(award) {
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
   overlay.innerHTML = `
-    <div style="background:white;border-radius:20px;padding:24px;max-width:480px;width:100%;box-shadow:var(--sh-xl);">
+    <div style="background:white;border-radius:20px;padding:24px;max-width:480px;width:100%;box-shadow:var(--sh-xl);max-height:90vh;overflow-y:auto;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <h3 style="font-size:17px;color:var(--maroon);margin:0;">${isEdit ? 'Edit' : 'Tambah'} Award</h3>
         <button data-close class="btn-icon">${Icons.get('x')}</button>
@@ -362,7 +436,7 @@ function formAward(award) {
             <option value="pengamat" ${a.kategori === 'pengamat' ? 'selected' : ''}>Pengamat</option>
             <option value="penyelenggara" ${a.kategori === 'penyelenggara' ? 'selected' : ''}>Penyelenggara</option>
           </select>
-          ${isEdit ? '<div style="font-size:11px;color:var(--muted);margin-top:4px;">Kategori tidak bisa diubah setelah dibuat.</div>' : ''}
+          ${isEdit ? '<div style="font-size:11px;color:var(--muted);margin-top:4px;">Kategori tidak bisa diubah.</div>' : ''}
         </div>
         <div class="field">
           <label class="label">Deskripsi (opsional)</label>
