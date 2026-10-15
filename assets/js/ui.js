@@ -1,6 +1,5 @@
 // ============================================================
-// NAKULAKU — UI Helpers
-// Fungsi bantu tampilan: toast, format, skeleton, empty state.
+// NAKULAKU — UI Helpers v2
 // ============================================================
 
 (function (global) {
@@ -8,14 +7,7 @@
   const UI = {
 
     // ==================== TOAST ====================
-
-    /**
-     * Tampilkan notifikasi kecil di atas layar.
-     * @param {string} pesan
-     * @param {'info'|'success'|'error'|'warning'} tipe
-     * @param {number} durasiMs
-     */
-    toast(pesan, tipe = 'info', durasiMs = 3000) {
+    toast(pesan, tipe = 'info', durasiMs = 3200) {
       let wrap = document.querySelector('.toast-wrap');
       if (!wrap) {
         wrap = document.createElement('div');
@@ -24,14 +16,24 @@
       }
       const el = document.createElement('div');
       el.className = `toast ${tipe}`;
-      el.textContent = pesan;
+
+      const iconMap = {
+        success: 'checkCircle',
+        error: 'alertCircle',
+        warning: 'alertTriangle',
+        info: 'info',
+      };
+      const iconName = iconMap[tipe] || 'info';
+      const svg = global.Icons ? Icons.get(iconName, { class: 'icon-sm' }) : '';
+
+      el.innerHTML = `${svg}<span>${String(pesan)}</span>`;
       wrap.appendChild(el);
 
       setTimeout(() => {
         el.style.opacity = '0';
-        el.style.transform = 'translateY(-8px)';
-        el.style.transition = 'all .25s ease';
-        setTimeout(() => el.remove(), 250);
+        el.style.transform = 'translateY(-12px)';
+        el.style.transition = 'all .3s var(--ease-out)';
+        setTimeout(() => el.remove(), 300);
       }, durasiMs);
     },
 
@@ -41,48 +43,28 @@
     peringatan(pesan) { this.toast(pesan, 'warning'); },
 
     // ==================== FORMAT ====================
-
-    /**
-     * Format tanggal panjang: "15 Januari 2026"
-     */
     formatTanggal(input) {
       if (!input) return '-';
       const d = input instanceof Date ? input : new Date(input);
       if (isNaN(d)) return '-';
-      return d.toLocaleDateString('id-ID', {
-        day: 'numeric', month: 'long', year: 'numeric'
-      });
+      return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
     },
 
-    /**
-     * Format tanggal pendek: "15 Jan 2026"
-     */
     formatTanggalPendek(input) {
       if (!input) return '-';
       const d = input instanceof Date ? input : new Date(input);
       if (isNaN(d)) return '-';
-      return d.toLocaleDateString('id-ID', {
-        day: 'numeric', month: 'short', year: 'numeric'
-      });
+      return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
     },
 
-    /**
-     * Format jam: "08:30"
-     */
     formatJam(input) {
       if (!input) return '-';
-      // input 'HH:MM:SS' atau Date
-      if (typeof input === 'string' && /^\d{2}:\d{2}/.test(input)) {
-        return input.slice(0, 5);
-      }
+      if (typeof input === 'string' && /^\d{2}:\d{2}/.test(input)) return input.slice(0, 5);
       const d = input instanceof Date ? input : new Date(input);
       if (isNaN(d)) return '-';
       return d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
     },
 
-    /**
-     * Format "3 jam lalu", "kemarin", dll.
-     */
     timeAgo(input) {
       if (!input) return '-';
       const d = input instanceof Date ? input : new Date(input);
@@ -95,9 +77,6 @@
       return this.formatTanggalPendek(d);
     },
 
-    /**
-     * Format tanggal + jam: "15 Jan 2026 · 08:30"
-     */
     formatTanggalJam(input) {
       if (!input) return '-';
       const d = input instanceof Date ? input : new Date(input);
@@ -106,10 +85,6 @@
     },
 
     // ==================== KEAMANAN ====================
-
-    /**
-     * Escape HTML — wajib sebelum menampilkan input user.
-     */
     escapeHtml(s) {
       return String(s ?? '').replace(/[&<>"']/g, c => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;',
@@ -118,17 +93,9 @@
     },
 
     // ==================== FOTO PROFIL ====================
-
-    /**
-     * HTML foto profil dengan fallback inisial.
-     * @param {number|string} guruId
-     * @param {string} nama
-     * @param {number} size  ukuran px
-     * @param {object} opts  { rounded: 'md'|'full', border: bool }
-     */
     fotoHtml(guruId, nama, size = 40, opts = {}) {
       const init = (nama || 'G').trim().charAt(0).toUpperCase();
-      const url = Api.fotoUrl(guruId, 't');
+      const url = global.Api ? Api.fotoUrl(guruId, 't') : null;
       const rounded = opts.rounded === 'full' ? '50%' : (opts.rounded === 'md' ? '12px' : '8px');
       const border = opts.border ? `border: 2px solid var(--gold);` : '';
       return `
@@ -147,53 +114,52 @@
       `;
     },
 
-    /**
-     * HTML ikon Lucide-style. Panggil Icons.get().
-     */
     icon(name, cls = '') {
       return global.Icons ? Icons.get(name, { class: cls }) : '';
     },
 
     // ==================== LOADING ====================
-
-    /**
-     * Skeleton block untuk placeholder.
-     */
     skeleton(height = 20, width = '100%', radius = '8px') {
       return `<div class="skeleton" style="height:${height}px;width:${width};border-radius:${radius};"></div>`;
     },
 
-    /**
-     * Skeleton list — banyak baris.
-     */
     skeletonList(jumlah = 3, tinggi = 72) {
       return Array(jumlah).fill(0).map(() =>
         `<div class="skeleton" style="height:${tinggi}px;border-radius:16px;margin-bottom:10px;"></div>`
       ).join('');
     },
 
-    // ==================== EMPTY STATE ====================
+    skeletonCard() {
+      return `
+        <div class="skeleton-card">
+          <div class="row">
+            <div class="skeleton" style="width:40px;height:40px;border-radius:12px;"></div>
+            <div style="flex:1;">
+              <div class="skeleton" style="height:14px;width:60%;border-radius:6px;margin-bottom:6px;"></div>
+              <div class="skeleton" style="height:11px;width:40%;border-radius:6px;"></div>
+            </div>
+          </div>
+          <div class="skeleton" style="height:11px;width:80%;border-radius:6px;margin-bottom:6px;"></div>
+          <div class="skeleton" style="height:11px;width:50%;border-radius:6px;"></div>
+        </div>
+      `;
+    },
 
-    /**
-     * Tampilan saat data kosong.
-     */
+    // ==================== EMPTY STATE ====================
     emptyHtml(ikon = 'info', judul = 'Belum ada data', deskripsi = '') {
       return `
         <div class="empty">
-          <div class="empty-icon">${UI.icon(ikon, 'icon-xl')}</div>
+          <div class="empty-icon">${UI.icon(ikon, 'icon-lg')}</div>
           <div class="empty-title">${UI.escapeHtml(judul)}</div>
           ${deskripsi ? `<div class="empty-desc">${UI.escapeHtml(deskripsi)}</div>` : ''}
         </div>
       `;
     },
 
-    /**
-     * Tampilan error.
-     */
     errorHtml(pesan = 'Terjadi kesalahan.', aksi = '') {
       return `
         <div class="empty">
-          <div class="empty-icon" style="color:var(--danger)">${UI.icon('alertCircle', 'icon-xl')}</div>
+          <div class="empty-icon" style="background:var(--danger-soft);color:var(--danger);">${UI.icon('alertCircle', 'icon-lg')}</div>
           <div class="empty-title">Ups…</div>
           <div class="empty-desc">${UI.escapeHtml(pesan)}</div>
           ${aksi}
@@ -201,71 +167,49 @@
       `;
     },
 
-    // ==================== MODAL ====================
-
-    /**
-     * Modal sederhana.
-     * @returns {Promise<boolean>} resolve true kalau konfirmasi.
-     */
+    // ==================== MODAL / KONFIRMASI ====================
     konfirmasi(judul, pesan, opts = {}) {
       const okText = opts.okText || 'Ya';
       const cancelText = opts.cancelText || 'Batal';
-      const danger = opts.danger ? 'background:var(--danger)' : '';
+      const danger = opts.danger;
 
       return new Promise((resolve) => {
         const overlay = document.createElement('div');
-        overlay.style.cssText = `
-          position:fixed;inset:0;background:rgba(28,20,20,.5);
-          display:flex;align-items:center;justify-content:center;
-          padding:20px;z-index:1000;animation:toast-in .2s ease;
-        `;
+        overlay.className = 'bottom-sheet-overlay';
         overlay.innerHTML = `
-          <div style="
-            background:white;border-radius:20px;padding:24px;
-            max-width:400px;width:100%;box-shadow:var(--sh-xl);
-          ">
+          <div class="bottom-sheet">
+            <div class="bottom-sheet-handle"></div>
             <h3 style="font-size:17px;margin-bottom:8px;color:var(--ink)">${UI.escapeHtml(judul)}</h3>
             <p style="color:var(--muted);font-size:13.5px;line-height:1.55;margin-bottom:20px;">
               ${UI.escapeHtml(pesan)}
             </p>
-            <div style="display:flex;gap:10px;justify-content:flex-end;">
-              <button data-act="cancel" class="btn btn-ghost btn-sm">${UI.escapeHtml(cancelText)}</button>
-              <button data-act="ok" class="btn btn-primary btn-sm" style="${danger}">${UI.escapeHtml(okText)}</button>
+            <div style="display:flex;gap:10px;">
+              <button data-act="cancel" class="btn btn-ghost" style="flex:1;">${UI.escapeHtml(cancelText)}</button>
+              <button data-act="ok" class="btn ${danger ? 'btn-danger' : 'btn-primary'}" style="flex:2;">${UI.escapeHtml(okText)}</button>
             </div>
           </div>
         `;
         document.body.appendChild(overlay);
 
-        overlay.addEventListener('click', (e) => {
-          if (e.target === overlay) { overlay.remove(); resolve(false); }
-        });
-        overlay.querySelector('[data-act="cancel"]').addEventListener('click', () => {
-          overlay.remove(); resolve(false);
-        });
-        overlay.querySelector('[data-act="ok"]').addEventListener('click', () => {
-          overlay.remove(); resolve(true);
-        });
+        const close = (val) => {
+          overlay.style.opacity = '0';
+          overlay.style.transition = 'opacity .2s';
+          setTimeout(() => { overlay.remove(); resolve(val); }, 200);
+        };
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) close(false); });
+        overlay.querySelector('[data-act="cancel"]').addEventListener('click', () => close(false));
+        overlay.querySelector('[data-act="ok"]').addEventListener('click', () => close(true));
       });
     },
 
-    /**
-     * Modal informasi (tanpa konfirmasi).
-     */
     modal(judul, isiHtml, opts = {}) {
       const overlay = document.createElement('div');
-      overlay.style.cssText = `
-        position:fixed;inset:0;background:rgba(28,20,20,.5);
-        display:flex;align-items:center;justify-content:center;
-        padding:20px;z-index:1000;
-      `;
+      overlay.className = 'bottom-sheet-overlay';
       overlay.innerHTML = `
-        <div style="
-          background:white;border-radius:20px;padding:24px;
-          max-width:480px;width:100%;max-height:85vh;overflow-y:auto;
-          box-shadow:var(--sh-xl);
-        ">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-            <h3 style="font-size:17px;color:var(--ink)">${UI.escapeHtml(judul)}</h3>
+        <div class="bottom-sheet">
+          <div class="bottom-sheet-handle"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <h3 style="font-size:17px;color:var(--maroon);margin:0;">${UI.escapeHtml(judul)}</h3>
             <button data-act="close" class="btn-icon">${UI.icon('x')}</button>
           </div>
           <div>${isiHtml}</div>
@@ -273,19 +217,17 @@
       `;
       document.body.appendChild(overlay);
 
-      const close = () => overlay.remove();
-      overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) close();
-      });
+      const close = () => {
+        overlay.style.opacity = '0';
+        overlay.style.transition = 'opacity .2s';
+        setTimeout(() => overlay.remove(), 200);
+      };
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
       overlay.querySelector('[data-act="close"]').addEventListener('click', close);
       return close;
     },
 
-    // ==================== LOADING STATE ====================
-
-    /**
-     * Set tombol jadi loading.
-     */
+    // ==================== BUTTON LOADING ====================
     btnLoading(btn, teks = 'Memproses…') {
       if (!btn) return;
       btn.dataset.originalHtml = btn.innerHTML;
@@ -300,12 +242,6 @@
           ${UI.escapeHtml(teks)}
         </span>
       `;
-      if (!document.getElementById('nakulaSpinStyle')) {
-        const s = document.createElement('style');
-        s.id = 'nakulaSpinStyle';
-        s.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
-        document.head.appendChild(s);
-      }
     },
 
     btnReset(btn) {
@@ -316,19 +252,12 @@
     },
 
     // ==================== SESSION UI ====================
-
-    /**
-     * Render info user di header (nama, foto).
-     * Cari elemen dengan id: headerNama, headerFoto.
-     */
     renderUserHeader(profile) {
       const namaEl = document.getElementById('headerNama');
       if (namaEl) namaEl.textContent = profile.nama || '-';
 
       const fotoEl = document.getElementById('headerFoto');
-      if (fotoEl) {
-        fotoEl.innerHTML = this.fotoHtml(profile.id, profile.nama, 32, { rounded: 'full' });
-      }
+      if (fotoEl) fotoEl.innerHTML = this.fotoHtml(profile.id, profile.nama, 32, { rounded: 'full' });
 
       const chipEl = document.getElementById('userChip');
       if (chipEl) {
@@ -340,28 +269,150 @@
     },
 
     // ==================== NAVIGASI ====================
-
-    /**
-     * Tandai menu bottom nav yang aktif.
-     * @param {string} nama  'beranda' | 'pertemuan' | 'tugas' | 'presensi' | 'profil'
-     */
     setNavActive(nama) {
       document.querySelectorAll('.nav-item, .sidebar-item').forEach(el => {
         el.classList.toggle('active', el.dataset.nav === nama);
       });
     },
 
-    /**
-     * Pasang listener logout ke semua tombol dengan data-act="logout".
-     */
     bindLogout() {
       document.querySelectorAll('[data-act="logout"]').forEach(btn => {
         btn.addEventListener('click', async (e) => {
           e.preventDefault();
           const ok = await this.konfirmasi('Keluar', 'Yakin ingin keluar dari akun Anda?', { danger: true, okText: 'Keluar' });
-          if (ok) Api.logout();
+          if (ok && global.Api) Api.logout();
         });
       });
+    },
+
+    // ==================== KOMPONEN BARU v2 ====================
+
+    /**
+     * Progress bar horizontal.
+     * @param {number} persen  0-100
+     * @param {string} label   label kiri (opsional)
+     */
+    progressBar(persen, label = '') {
+      const p = Math.max(0, Math.min(100, persen));
+      return `
+        <div class="progress-label">
+          <span>${UI.escapeHtml(label)}</span>
+          <span class="persen">${p}%</span>
+        </div>
+        <div class="progress-bar"><div style="width:${p}%"></div></div>
+      `;
+    },
+
+    /**
+     * Progress steps horizontal.
+     * @param {Array} steps  [{ label, status: 'done'|'active'|'pending' }]
+     */
+    progressSteps(steps) {
+      return `
+        <div class="progress-steps">
+          ${steps.map((s, i) => {
+            const cls = s.status === 'done' ? 'done' : s.status === 'active' ? 'active' : '';
+            const dot = s.status === 'done'
+              ? (global.Icons ? Icons.get('check', { class: 'icon-sm' }) : '✓')
+              : (i + 1);
+            return `
+              <div class="step ${cls}">
+                ${i > 0 ? `<div class="step-line"></div>` : ''}
+                <div class="step-dot">${dot}</div>
+                <div class="step-label">${UI.escapeHtml(s.label)}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    },
+
+    /**
+     * Avatar group.
+     * @param {Array} users  [{ id, nama_lengkap }]
+     * @param {number} max   maksimal yang ditampilkan
+     */
+    avatarGroup(users, max = 5) {
+      const list = users.slice(0, max);
+      const sisa = users.length - max;
+      return `
+        <div class="avatar-group">
+          ${list.map(u => {
+            const init = (u.nama_lengkap || '?').charAt(0).toUpperCase();
+            const url = global.Api ? Api.fotoUrl(u.id, 't') : null;
+            return `
+              <div class="av" title="${UI.escapeHtml(u.nama_lengkap)}">
+                <span>${init}</span>
+                ${url ? `<img src="${url}" onerror="this.remove()">` : ''}
+              </div>
+            `;
+          }).join('')}
+          ${sisa > 0 ? `<div class="av more">+${sisa}</div>` : ''}
+        </div>
+      `;
+    },
+
+    /**
+     * Stat card.
+     */
+    statCard(ikon, nilai, label, opts = {}) {
+      const trendHtml = opts.trend
+        ? `<div class="trend ${opts.trendarah || 'up'}">${opts.trend}</div>`
+        : '';
+      return `
+        <div class="stat-card">
+          <div class="icon-wrap">${UI.icon(ikon, 'icon-sm')}</div>
+          <div class="value">${UI.escapeHtml(String(nilai))}</div>
+          <div class="label">${UI.escapeHtml(label)}</div>
+          ${trendHtml}
+        </div>
+      `;
+    },
+
+    /**
+     * Timeline item.
+     */
+    timelineItem(judul, sub, waktu, status = '') {
+      return `
+        <div class="tl-item ${status}">
+          <div class="tl-dot"></div>
+          <div class="tl-title">${UI.escapeHtml(judul)}</div>
+          ${sub ? `<div class="tl-sub">${UI.escapeHtml(sub)}</div>` : ''}
+          ${waktu ? `<div class="tl-time">${UI.escapeHtml(waktu)}</div>` : ''}
+        </div>
+      `;
+    },
+
+    /**
+     * Bottom sheet — sebagai pengganti modal di mobile.
+     * @returns {Function} close()
+     */
+    sheet(isiHtml, opts = {}) {
+      const overlay = document.createElement('div');
+      overlay.className = 'bottom-sheet-overlay';
+      overlay.innerHTML = `
+        <div class="bottom-sheet">
+          <div class="bottom-sheet-handle"></div>
+          ${opts.judul ? `<h3 style="font-size:17px;color:var(--maroon);margin-bottom:16px;">${UI.escapeHtml(opts.judul)}</h3>` : ''}
+          <div>${isiHtml}</div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+
+      const close = () => {
+        overlay.style.opacity = '0';
+        overlay.style.transition = 'opacity .2s';
+        setTimeout(() => overlay.remove(), 200);
+      };
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+      return close;
+    },
+
+    /**
+     * Skeleton dengan struktur lengkap — untuk list yang kaya.
+     */
+    skeletonRichList(jumlah = 3) {
+      return Array(jumlah).fill(0).map(() => this.skeletonCard()).join('');
     },
   };
 
