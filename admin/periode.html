@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#611329" />
+<title>Kelola Periode — NAKULAKU Admin</title>
+
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/nakula.css" />
+
+<style>
+  .periode-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: all .15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .periode-card:hover { box-shadow: var(--sh-md); }
+  .periode-card.aktif {
+    border: 1.5px solid var(--maroon);
+    background: linear-gradient(135deg, #FFFFFF 0%, var(--maroon-faint) 100%);
+  }
+  .periode-card.aktif::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--maroon), var(--gold));
+  }
+  .periode-card.arsip {
+    opacity: 0.7;
+    background: #FAF6F6;
+  }
+  .periode-card.arsip .periode-nama { text-decoration: line-through; }
+
+  .periode-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .periode-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .periode-card.aktif .periode-icon {
+    background: var(--maroon);
+    color: white;
+  }
+  .periode-card.arsip .periode-icon {
+    background: var(--border);
+    color: var(--muted);
+  }
+  .periode-info { flex: 1; min-width: 0; }
+  .periode-nama {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .periode-meta {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 2px;
+  }
+
+  .periode-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .periode-stat {
+    text-align: center;
+  }
+  .periode-stat .n {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--maroon);
+    line-height: 1;
+  }
+  .periode-stat .l {
+    font-size: 9.5px;
+    color: var(--muted);
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  .periode-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+    flex-wrap: wrap;
+  }
+  .periode-actions .btn { flex: 1; min-width: 100px; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="../beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Kelola Periode</div>
+      <div class="app-header-sub">Admin NAKULAKU</div>
+    </div>
+  </div>
+</header>
+
+<main class="container page" style="max-width:820px;padding-top:16px;">
+
+  <div class="card" style="margin-bottom:16px;font-size:12.5px;line-height:1.6;color:var(--muted);">
+    <strong style="color:var(--ink);">Periode</strong> adalah tahun ajaran KKG. Hanya <strong>satu periode aktif</strong> dalam satu waktu.
+    Periode lama bisa <strong>diarsipkan</strong> (data tetap tersimpan) atau dihapus (kalau belum ada pertemuan).
+  </div>
+
+  <button class="btn btn-primary btn-full" id="btnTambah" style="margin-bottom:16px;">
+    <span data-icon="plus"></span>
+    Buat Periode Baru
+  </button>
+
+  <div id="listPeriode">
+    <div class="skeleton" style="height:180px;border-radius:16px;margin-bottom:12px;"></div>
+    <div class="skeleton" style="height:180px;border-radius:16px;"></div>
+  </div>
+
+</main>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+
+let profile;
+let daftarPeriode = [];
+
+(async () => {
+  profile = await Api.requireLogin();
+  if (!profile) return;
+
+  if (!profile.peran.includes('pengurus') && !profile.peran.includes('super_admin')) {
+    document.querySelector('main').innerHTML = UI.errorHtml('Halaman ini hanya untuk pengurus.');
+    return;
+  }
+
+  await load();
+  document.getElementById('btnTambah').addEventListener('click', () => formPeriode(null));
+})();
+
+async function load() {
+  const el = document.getElementById('listPeriode');
+  el.innerHTML = '<div class="skeleton" style="height:180px;border-radius:16px;"></div>';
+
+  const res = await Api.call('admin.periode.list');
+  if (!res.ok) { el.innerHTML = UI.errorHtml(res.error); return; }
+
+  daftarPeriode = res.data || [];
+
+  // Sortir: aktif dulu, lalu yang tidak arsip, lalu arsip
+  daftarPeriode.sort((a, b) => {
+    if (a.aktif !== b.aktif) return a.aktif ? -1 : 1;
+    if (a.diarsipkan !== b.diarsipkan) return a.diarsipkan ? 1 : -1;
+    return new Date(b.mulai) - new Date(a.mulai);
+  });
+
+  if (daftarPeriode.length === 0) {
+    el.innerHTML = UI.emptyHtml('calendar', 'Belum ada periode', 'Klik tombol di atas untuk membuat.');
+    return;
+  }
+
+  el.innerHTML = daftarPeriode.map(p => renderItem(p)).join('');
+
+  daftarPeriode.forEach(p => {
+    const c = document.getElementById('periode-' + p.id);
+    if (!c) return;
+    c.querySelector('[data-act="edit"]')?.addEventListener('click', () => formPeriode(p));
+    c.querySelector('[data-act="aktifkan"]')?.addEventListener('click', () => aktifkan(p));
+    c.querySelector('[data-act="arsipkan"]')?.addEventListener('click', () => arsipkan(p));
+    c.querySelector('[data-act="pulihkan"]')?.addEventListener('click', () => pulihkan(p));
+    c.querySelector('[data-act="hapus"]')?.addEventListener('click', () => hapusPeriode(p));
+  });
+}
+
+function renderItem(p) {
+  const cls = p.aktif ? 'aktif' : (p.diarsipkan ? 'arsip' : '');
+  const mulai = UI.formatTanggalPendek(p.mulai);
+  const selesai = UI.formatTanggalPendek(p.selesai);
+
+  // Badge status
+  let badge = '';
+  if (p.aktif) {
+    badge = `<span class="badge badge-success" style="display:inline-flex;align-items:center;gap:4px;">
+      ${Icons.get('checkCircle', { class: 'icon-sm' })} AKTIF
+    </span>`;
+  } else if (p.diarsipkan) {
+    badge = `<span class="badge" style="background:var(--border);color:var(--muted);display:inline-flex;align-items:center;gap:4px;">
+      ${Icons.get('archive', { class: 'icon-sm' })} ARSIP
+    </span>`;
+  } else {
+    badge = `<span class="badge badge-warning">TIDAK AKTIF</span>`;
+  }
+
+  // Tombol aksi
+  let actions = '';
+  if (p.aktif) {
+    actions = `
+      <button class="btn btn-secondary btn-sm" data-act="edit">
+        ${Icons.get('edit', { class: 'icon-sm' })} Edit
+      </button>
+    `;
+  } else if (p.diarsipkan) {
+    actions = `
+      <button class="btn btn-secondary btn-sm" data-act="pulihkan" style="color:var(--maroon);">
+        ${Icons.get('rotateCcw', { class: 'icon-sm' })} Pulihkan
+      </button>
+      ${profile.peran.includes('super_admin') ? `
+        <button class="btn btn-ghost btn-sm" data-act="hapus" style="color:var(--danger);">
+          ${Icons.get('trash', { class: 'icon-sm' })} Hapus
+        </button>
+      ` : ''}
+    `;
+  } else {
+    actions = `
+      <button class="btn btn-primary btn-sm" data-act="aktifkan">
+        ${Icons.get('checkCircle', { class: 'icon-sm' })} Aktifkan
+      </button>
+      <button class="btn btn-secondary btn-sm" data-act="edit">
+        ${Icons.get('edit', { class: 'icon-sm' })} Edit
+      </button>
+      <button class="btn btn-ghost btn-sm" data-act="arsipkan" style="color:var(--warning);">
+        ${Icons.get('archive', { class: 'icon-sm' })} Arsipkan
+      </button>
+      ${profile.peran.includes('super_admin') ? `
+        <button class="btn btn-ghost btn-sm" data-act="hapus" style="color:var(--danger);">
+          ${Icons.get('trash', { class: 'icon-sm' })} Hapus
+        </button>
+      ` : ''}
+    `;
+  }
+
+  return `
+    <div class="periode-card ${cls}" id="periode-${p.id}">
+      <div class="periode-head">
+        <div class="periode-icon">${Icons.get('calendar', { class: 'icon-lg' })}</div>
+        <div class="periode-info">
+          <div class="periode-nama">
+            ${UI.escapeHtml(p.nama)}
+            ${badge}
+          </div>
+          <div class="periode-meta">
+            ${Icons.get('calendar', { class: 'icon-sm' })}
+            ${mulai} — ${selesai}
+          </div>
+          ${p.catatan_target ? `
+            <div class="periode-meta" style="color:var(--muted);font-style:italic;">
+              ${Icons.get('info', { class: 'icon-sm' })}
+              ${UI.escapeHtml(p.catatan_target)}
+            </div>
+          ` : ''}
+        </div>
+      </div>
+
+      <div class="periode-stats">
+        <div class="periode-stat">
+          <div class="n">${p.jumlah_pertemuan}</div>
+          <div class="l">Pertemuan</div>
+        </div>
+        <div class="periode-stat">
+          <div class="n">${p.target_pertemuan || 16}</div>
+          <div class="l">Target</div>
+        </div>
+        <div class="periode-stat">
+          <div class="n">${p.jumlah_pertemuan >= (p.target_pertemuan || 16) ? '✓' : (p.jumlah_pertemuan + '/' + (p.target_pertemuan || 16))}</div>
+          <div class="l">Progress</div>
+        </div>
+      </div>
+
+      <div class="periode-actions">
+        ${actions}
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// AKSI
+// ============================================================
+async function aktifkan(p) {
+  const ok = await UI.konfirmasi(
+    'Aktifkan Periode',
+    `Jadikan "${p.nama}" sebagai periode aktif?\n\nPeriode lain akan otomatis dinonaktifkan.`,
+    { okText: 'Aktifkan' }
+  );
+  if (!ok) return;
+
+  const res = await Api.call('admin.periode.aktifkan', { periode_id: p.id });
+  if (!res.ok) { UI.gagal(res.error); return; }
+  UI.sukses(res.data.pesan);
+  await load();
+}
+
+async function arsipkan(p) {
+  const ok = await UI.konfirmasi(
+    'Arsipkan Periode',
+    `Arsipkan "${p.nama}"?\n\nPeriode akan disembunyikan dari daftar aktif, tapi data tetap tersimpan dan bisa dipulihkan.`,
+    { okText: 'Arsipkan' }
+  );
+  if (!ok) return;
+
+  const res = await Api.call('admin.periode.arsipkan', { periode_id: p.id });
+  if (!res.ok) { UI.gagal(res.error); return; }
+  UI.sukses(res.data.pesan);
+  await load();
+}
+
+async function pulihkan(p) {
+  const ok = await UI.konfirmasi(
+    'Pulihkan Periode',
+    `Pulihkan "${p.nama}" dari arsip?`,
+    { okText: 'Pulihkan' }
+  );
+  if (!ok) return;
+
+  const res = await Api.call('admin.periode.pulihkan', { periode_id: p.id });
+  if (!res.ok) { UI.gagal(res.error); return; }
+  UI.sukses('Periode dipulihkan.');
+  await load();
+}
+
+async function hapusPeriode(p) {
+  const ok = await UI.konfirmasi(
+    'Hapus Periode',
+    `Hapus "${p.nama}" permanen?\n\nHanya bisa dihapus kalau belum ada pertemuan.`,
+    { danger: true, okText: 'Hapus' }
+  );
+  if (!ok) return;
+
+  const res = await Api.call('admin.periode.hapus', { periode_id: p.id });
+  if (!res.ok) { UI.gagal(res.error); return; }
+  UI.sukses(res.data.pesan);
+  await load();
+}
+
+// ============================================================
+// FORM
+// ============================================================
+function formPeriode(periode) {
+  const isEdit = !!periode;
+  const p = periode || {};
+  const tahun = new Date().getFullYear();
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:24px;max-width:520px;width:100%;box-shadow:var(--sh-xl);max-height:90vh;overflow-y:auto;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <h3 style="font-size:17px;color:var(--maroon);margin:0;">${isEdit ? 'Edit' : 'Buat'} Periode</h3>
+        <button data-close class="btn-icon">${Icons.get('x')}</button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="field">
+          <label class="label">Nama Periode *</label>
+          <input type="text" id="pNama" class="input" value="${UI.escapeHtml(p.nama || 'Periode ' + tahun)}" placeholder="Mis: Periode 2026" />
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="field">
+            <label class="label">Tanggal Mulai *</label>
+            <input type="date" id="pMulai" class="input" value="${p.mulai || (tahun + '-01-01')}" />
+          </div>
+          <div class="field">
+            <label class="label">Tanggal Selesai *</label>
+            <input type="date" id="pSelesai" class="input" value="${p.selesai || (tahun + '-12-31')}" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Target Pertemuan</label>
+          <input type="number" id="pTarget" class="input" value="${p.target_pertemuan || 16}" min="1" max="50" />
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">Rencana awal. Bisa berubah, tidak memengaruhi perhitungan.</div>
+        </div>
+
+        <div class="field">
+          <label class="label">Catatan (opsional)</label>
+          <textarea id="pCatatan" class="input" rows="2" style="resize:vertical;" placeholder="Mis: Target awal 16, berkurang 1 karena kegiatan dinas">${UI.escapeHtml(p.catatan_target || '')}</textarea>
+        </div>
+      </div>
+
+      <div id="pAlert" class="alert alert-error" style="margin-top:14px;"></div>
+
+      <div style="display:flex;gap:8px;margin-top:20px;">
+        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
+        <button class="btn btn-primary" id="btnSimpanP" style="flex:2;">Simpan</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnSimpanP').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnSimpanP');
+    const alertBox = overlay.querySelector('#pAlert');
+    alertBox.classList.remove('show');
+
+    const payload = {
+      id: p.id || null,
+      nama: overlay.querySelector('#pNama').value.trim(),
+      mulai: overlay.querySelector('#pMulai').value,
+      selesai: overlay.querySelector('#pSelesai').value,
+      target_pertemuan: Number(overlay.querySelector('#pTarget').value) || 16,
+      catatan_target: overlay.querySelector('#pCatatan').value.trim() || null,
+    };
+
+    if (!payload.nama) { alertBox.textContent = 'Nama wajib.'; alertBox.classList.add('show'); return; }
+    if (!payload.mulai || !payload.selesai) { alertBox.textContent = 'Tanggal wajib.'; alertBox.classList.add('show'); return; }
+    if (new Date(payload.mulai) > new Date(payload.selesai)) {
+      alertBox.textContent = 'Tanggal selesai harus setelah tanggal mulai.';
+      alertBox.classList.add('show');
+      return;
+    }
+
+    UI.btnLoading(btn, 'Menyimpan…');
+    const res = await Api.call('admin.periode.simpan', { periode: payload });
+    UI.btnReset(btn);
+
+    if (!res.ok) { alertBox.textContent = res.error; alertBox.classList.add('show'); return; }
+
+    UI.sukses(isEdit ? 'Diperbarui.' : 'Periode baru dibuat.');
+    close();
+    await load();
+  });
+}
+</script>
+
+</body>
+</html>
