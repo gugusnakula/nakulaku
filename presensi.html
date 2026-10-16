@@ -19,7 +19,6 @@
     padding: 20px 16px 40px;
   }
 
-  /* CARD */
   .stage-card {
     background: var(--surface);
     border: 1.5px solid var(--border);
@@ -32,7 +31,7 @@
     overflow: hidden;
   }
 
-  /* LOADING STAGE */
+  /* LOADING */
   .stage-icon {
     width: 80px;
     height: 80px;
@@ -71,7 +70,7 @@
     margin: 0 auto;
   }
 
-  /* HEADER INFO */
+  /* INFO HEADER */
   .info-header {
     text-align: center;
     padding-bottom: 16px;
@@ -337,7 +336,7 @@
     letter-spacing: 0.3px;
   }
 
-  /* SUKSES STAGE */
+  /* SUKSES */
   .success-icon {
     width: 96px;
     height: 96px;
@@ -365,7 +364,7 @@
     to { transform: rotate(360deg); }
   }
 
-  /* ERROR ICON */
+  /* ERROR */
   .error-icon {
     width: 96px;
     height: 96px;
@@ -380,38 +379,12 @@
   }
   .error-icon svg { width: 48px; height: 48px; }
 
-  /* ACTION BUTTONS */
   .actions-row {
     display: flex;
     gap: 10px;
     margin-top: 16px;
   }
   .actions-row .btn { flex: 1; }
-
-  /* GPS STATUS MINI */
-  .gps-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 10px;
-    font-weight: 800;
-    padding: 3px 8px;
-    border-radius: 999px;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-  }
-  .gps-status.ok {
-    background: var(--success-soft);
-    color: var(--success);
-  }
-  .gps-status.wait {
-    background: var(--warning-soft);
-    color: var(--warning);
-  }
-  .gps-status.err {
-    background: var(--danger-soft);
-    color: var(--danger);
-  }
 </style>
 </head>
 <body>
@@ -484,13 +457,13 @@
       <div class="info-row" id="rowWindow">
         <span class="info-lbl">
           <span data-icon="hourglass" class="icon-sm"></span>
-          Window
+          Window Presensi
         </span>
         <span class="info-val" id="infoWindow">—</span>
       </div>
 
       <!-- Kamera -->
-      <div class="cam-wrap">
+      <div class="cam-wrap" style="margin-top:16px;">
         <video id="video" autoplay playsinline muted></video>
         <div class="cam-overlay">
           <div class="cam-circle"></div>
@@ -576,7 +549,6 @@
       </div>
 
       <a href="beranda.html" class="btn btn-primary btn-full" style="margin-top:20px;text-decoration:none;">
-        ${''}
         Selesai
       </a>
     </div>
@@ -619,6 +591,7 @@ UI.bindLogout();
 let profile;
 let pertemuanId = null;
 let pertemuanData = null;
+let presensiData = null;
 let gps = { lat: null, lng: null, accuracy: null };
 let stream = null;
 let fotoBase64 = null;
@@ -649,6 +622,7 @@ function showStage(nama) {
   }
 
   pertemuanData = res.data.pertemuan;
+  presensiData = res.data;
 
   if (res.data.presensi_saya) {
     showStage('stageError');
@@ -662,11 +636,17 @@ function showStage(nama) {
     UI.formatTanggal(pertemuanData.tanggal) +
     (pertemuanData.lokasi_nama ? ' · ' + pertemuanData.lokasi_nama : '');
 
-  // Info window presensi
+  // Render window
   renderInfoWindow(res.data);
 
   updateWaktu();
   setInterval(updateWaktu, 1000);
+
+  // Kalau window belum buka / sudah tutup, jangan aktifkan kamera
+  if (res.data.presensi_status !== 'buka') {
+    showStage('stageKamera');
+    return;
+  }
 
   mulaiGPS();
   mulaiKamera();
@@ -679,6 +659,8 @@ function showStage(nama) {
 function renderInfoWindow(data) {
   const el = document.getElementById('infoWindow');
   const row = document.getElementById('rowWindow');
+  const btn = document.getElementById('btnAmbilFoto');
+  const alertEl = document.getElementById('alertKamera');
 
   if (!data.presensi_buka || !data.presensi_tutup) {
     el.textContent = '—';
@@ -694,32 +676,32 @@ function renderInfoWindow(data) {
 
   el.textContent = `${bukaStr} – ${tutupStr}`;
 
-  // Warnai sesuai status
   row.classList.remove('highlight', 'warning', 'error');
   el.classList.remove('ok', 'warn', 'err');
 
   if (status === 'buka') {
     el.classList.add('ok');
     row.classList.add('highlight');
+    // Tombol capture: aktif kalau GPS sudah dapat
+    // (akan diupdate oleh mulaiGPS)
   } else if (status === 'belum') {
     el.classList.add('warn');
     row.classList.add('warning');
-    // Disable tombol capture
-    document.getElementById('btnAmbilFoto').disabled = true;
-    // Tampilkan alert
-    const alertEl = document.getElementById('alertKamera');
+    btn.disabled = true;
     alertEl.textContent = `Presensi belum dibuka. Dibuka pukul ${bukaStr} WIB.`;
     alertEl.classList.add('show');
   } else if (status === 'tutup') {
     el.classList.add('err');
     row.classList.add('error');
-    document.getElementById('btnAmbilFoto').disabled = true;
-    const alertEl = document.getElementById('alertKamera');
-    alertEl.textContent = `Presensi sudah ditutup pada pukul ${tutupStr} WIB.`;
+    btn.disabled = true;
+    alertEl.textContent = `Presensi sudah ditutup pada pukul ${tutupStr} WIB. Ajukan izin kalau berhalangan.`;
     alertEl.classList.add('show');
   }
 }
 
+// ============================================================
+// UPDATE WAKTU
+// ============================================================
 function updateWaktu() {
   const now = new Date();
   const str = now.toLocaleTimeString('id-ID', {
@@ -738,7 +720,7 @@ function updateWaktu() {
 function mulaiGPS() {
   if (!navigator.geolocation) {
     document.getElementById('infoLokasi').textContent = 'Tidak didukung';
-    document.getElementById('infoLokasi').className = 'val err';
+    document.getElementById('infoLokasi').className = 'info-val err';
     return;
   }
 
@@ -753,7 +735,11 @@ function mulaiGPS() {
       document.getElementById('infoLokasi').className = 'info-val ok';
       document.getElementById('rowLokasi').classList.add('highlight');
       document.getElementById('rowLokasi').classList.remove('warning', 'error');
-      document.getElementById('btnAmbilFoto').disabled = false;
+
+      // Aktifkan tombol hanya kalau window "buka"
+      if (presensiData && presensiData.presensi_status === 'buka') {
+        document.getElementById('btnAmbilFoto').disabled = false;
+      }
 
       updateJarak();
     },
@@ -847,6 +833,7 @@ function stopKamera() {
 
 document.getElementById('btnAmbilFoto').addEventListener('click', () => {
   if (!gps.lat) { UI.gagal('Tunggu GPS terdeteksi…'); return; }
+
   const video = document.getElementById('video');
   const canvas = document.createElement('canvas');
   canvas.width = 480;
