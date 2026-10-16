@@ -414,7 +414,7 @@ h1, h2, h3, h4 { font-weight: 800; line-height: 1.2; color: var(--ink); letter-s
   flex-direction: column;
   align-items: center;
   gap: 3px;
-  padding: 6px 2px;
+  padding: 6px 2px 8px;
   color: var(--muted);
   font-size: 10px;
   font-weight: 700;
@@ -424,19 +424,66 @@ h1, h2, h3, h4 { font-weight: 800; line-height: 1.2; color: var(--ink); letter-s
   transition: all var(--t-fast);
   -webkit-tap-highlight-color: transparent;
   position: relative;
+  letter-spacing: 0.2px;
 }
 .nav-item .icon {
   transition: all var(--t-norm);
 }
-.nav-item.active { color: var(--maroon); }
-.nav-item.active .icon {
-  background: var(--maroon-soft);
-  border-radius: var(--r-sm);
-  padding: 4px;
-  margin: -4px;
-  transform: scale(1.05);
+
+/* ICON WRAPPER — bikin icon punya "rumah" sendiri */
+.nav-item .icon {
+  position: relative;
+  z-index: 1;
 }
-.nav-item:active .icon { transform: scale(.9); }
+
+/* MENU AKTIF — pill maroon + glow + scale */
+.nav-item.active {
+  color: var(--maroon);
+  font-weight: 800;
+}
+.nav-item.active .icon {
+  background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 5px 10px;
+  margin: -5px -10px;
+  transform: scale(1.02) translateY(-1px);
+  box-shadow:
+    0 4px 12px rgba(125,29,58,.28),
+    inset 0 0 0 1px rgba(201,169,97,.35);
+  stroke-width: 2.5;
+}
+
+/* DOT indicator di bawah menu aktif */
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--maroon);
+  animation: dot-in .3s var(--ease-spring) both;
+}
+
+@keyframes dot-in {
+  from { opacity: 0; transform: translateX(-50%) scale(0); }
+  to { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+
+/* Hover (desktop touch) */
+.nav-item:not(.active):hover .icon {
+  color: var(--maroon);
+  transform: translateY(-1px);
+}
+
+/* Tap feedback */
+.nav-item:active .icon { transform: scale(.92); }
+.nav-item.active:active .icon {
+  transform: scale(1.02) translateY(0) scale(.95);
+}
 
 /* ---------- PROFILE CARD ---------- */
 .profile-card {
@@ -1238,23 +1285,58 @@ h1, h2, h3, h4 { font-weight: 800; line-height: 1.2; color: var(--ink); letter-s
     gap: 12px;
     padding: 11px 14px;
     border-radius: var(--r-md);
-    color: rgba(255,255,255,.75);
+    color: rgba(255,255,255,.72);
     font-size: 13.5px;
     font-weight: 600;
     cursor: pointer;
     text-decoration: none;
-    transition: all var(--t-fast);
+    transition: all var(--t-norm);
     -webkit-tap-highlight-color: transparent;
+    position: relative;
+    border: 1px solid transparent;
+  }
+  .sidebar-item .icon {
+    transition: all var(--t-norm);
+    color: rgba(255,255,255,.85);
   }
   .sidebar-item:hover {
     background: rgba(255,255,255,.08);
     color: white;
     transform: translateX(2px);
   }
+  .sidebar-item:hover .icon {
+    color: var(--gold-light);
+  }
+
+  /* Menu aktif desktop — gradient + border gold + shadow */
   .sidebar-item.active {
-    background: rgba(255,255,255,.16);
+    background: linear-gradient(135deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,.1) 100%);
     color: white;
-    box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    border: 1px solid rgba(201,169,97,.4);
+    box-shadow:
+      0 6px 16px rgba(0,0,0,.2),
+      inset 0 0 0 1px rgba(255,255,255,.06);
+    font-weight: 800;
+  }
+  .sidebar-item.active .icon {
+    color: var(--gold);
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 6px rgba(201,169,97,.5));
+  }
+
+  /* Gold dot di kanan menu aktif desktop */
+  .sidebar-item.active::after {
+    content: '';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,169,97,.2);
+    animation: dot-in .3s var(--ease-spring) both;
   }
 
   /* Main */
