@@ -13,8 +13,9 @@
 <link rel="stylesheet" href="assets/css/nakula.css" />
 
 <style>
+  /* PUBLIC HEADER */
   .public-header {
-    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon) 100%);
+    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 100%);
     color: white;
     padding: 14px 16px;
     display: flex;
@@ -40,62 +41,96 @@
     align-items: center;
     justify-content: center;
     border: 1.5px solid var(--gold);
-    padding: 3px;
     flex-shrink: 0;
+    overflow: hidden;
   }
-  .public-header-logo img { width: 100%; height: 100%; object-fit: contain; }
-
-  .hero-sekolah {
-    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon-mid) 100%);
+  .public-header-logo img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transform: scale(1.25);
+  }
+  .public-header-btn {
     color: white;
-    border-radius: var(--r-xl);
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,.12);
+    padding: 8px 14px;
+    border-radius: 10px;
+    transition: all .15s;
+  }
+  .public-header-btn:hover {
+    background: rgba(255,255,255,.22);
+    color: white;
+    text-decoration: none;
+  }
+
+  /* PILIH SEKOLAH */
+  .select-sekolah {
+    padding: 14px 16px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 14px;
+    background: var(--surface);
+    font-size: 14px;
+    font-weight: 700;
+    width: 100%;
+    margin-bottom: 18px;
+    font-family: inherit;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236E6060' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 20px;
+    padding-right: 44px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .select-sekolah:focus {
+    outline: none;
+    border-color: var(--maroon);
+    box-shadow: 0 0 0 4px rgba(125,29,58,.08);
+  }
+
+  /* HERO SEKOLAH */
+  .hero-sekolah {
+    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 50%, #9B2649 100%);
+    color: white;
+    border-radius: 24px;
     padding: 24px 20px;
     margin-bottom: 16px;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 12px 32px rgba(125,29,58,.3);
+    box-shadow: 0 12px 32px rgba(125,29,58,.28);
+    animation: fade-in-up .5s var(--ease-out) both;
   }
   .hero-sekolah::before {
     content: '';
     position: absolute;
-    top: -60px; right: -60px;
-    width: 200px; height: 200px;
+    top: -80px; right: -60px;
+    width: 240px; height: 240px;
     border-radius: 50%;
-    background: var(--gold);
-    opacity: 0.12;
+    background: radial-gradient(circle, rgba(201,169,97,.22) 0%, transparent 70%);
+    pointer-events: none;
   }
-  .hero-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
-    background: rgba(255,255,255,.15);
-    border: 1px solid rgba(201,169,97,.5);
-    border-radius: 999px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    margin-bottom: 12px;
-    position: relative;
-  }
-  .hero-nama {
-    font-size: 22px;
-    font-weight: 800;
-    margin-bottom: 4px;
-    position: relative;
-    line-height: 1.3;
-  }
-  .hero-npsn {
-    font-size: 12.5px;
-    opacity: 0.85;
-    position: relative;
+  .hero-sekolah::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -40px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,169,97,.15) 0%, transparent 70%);
+    pointer-events: none;
   }
   .hero-top {
     display: flex;
     align-items: center;
     gap: 16px;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
     position: relative;
+    z-index: 1;
   }
   .hero-logo-wrap {
     width: 88px;
@@ -124,161 +159,321 @@
     letter-spacing: 1.5px;
   }
   .hero-info-wrap { flex: 1; min-width: 0; }
-
-    gap: 8px;
-    padding-top: 16px;
-    margin-top: 16px;
-    border-top: 1px solid rgba(255,255,255,.15);
-    position: relative;
-  }
-  .hero-stat { text-align: center; }
-  .hero-stat .n { font-size: 22px; font-weight: 800; line-height: 1; }
-  .hero-stat .l {
-    font-size: 9px; opacity: 0.8; font-weight: 700;
-    margin-top: 4px; text-transform: uppercase; letter-spacing: 0.3px;
-  }
-
-  .stat-poin {
-    background: linear-gradient(135deg, var(--gold-soft) 0%, #FBF3D0 100%);
-    border: 1.5px solid var(--gold);
-    border-radius: var(--r-lg);
-    padding: 16px;
-    text-align: center;
-    margin-bottom: 16px;
-  }
-  .stat-poin .l {
+  .hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(201,169,97,.5);
+    border-radius: 999px;
     font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    color: var(--gold-dark);
-    text-transform: uppercase;
-    margin-bottom: 6px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
   }
-  .stat-poin .n {
-    font-size: 36px;
+  .hero-nama {
+    font-size: 20px;
     font-weight: 800;
-    color: var(--maroon);
-    line-height: 1;
+    margin-bottom: 5px;
+    line-height: 1.25;
+    letter-spacing: 0.2px;
   }
-  .stat-poin .sub {
-    font-size: 11.5px;
-    color: var(--muted);
-    margin-top: 6px;
+  .hero-npsn {
+    font-size: 12.5px;
+    opacity: 0.85;
     font-weight: 600;
   }
 
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,.15);
+    position: relative;
+    z-index: 1;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat .n {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+  .hero-stat .l {
+    font-size: 9px;
+    opacity: 0.8;
+    font-weight: 700;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  /* KARTU POIN TOTAL */
+  .poin-card {
+    background: linear-gradient(135deg, #FFFFFF 0%, #FBF4E0 100%);
+    border: 1.5px solid var(--gold);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    animation: fade-in-up .5s var(--ease-out) .05s both;
+    box-shadow: 0 6px 20px rgba(201,169,97,.15);
+  }
+  .poin-card::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,169,97,.25) 0%, transparent 70%);
+  }
+  .poin-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--gold-dark);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .poin-value {
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--maroon);
+    letter-spacing: -1.5px;
+    position: relative;
+    margin-bottom: 6px;
+  }
+  .poin-sub {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  /* TAB */
   .tab-row {
     display: flex;
     gap: 4px;
     background: var(--bg);
     padding: 4px;
-    border-radius: 12px;
+    border-radius: 14px;
     margin-bottom: 16px;
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     overflow-x: auto;
+    scrollbar-width: none;
+    animation: fade-in-up .5s var(--ease-out) .1s both;
   }
+  .tab-row::-webkit-scrollbar { display: none; }
   .tab-p {
     flex: 1;
     min-width: 90px;
-    padding: 10px 6px;
+    padding: 11px 8px;
     text-align: center;
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 700;
     color: var(--muted);
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     border: none;
     background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 5px;
     white-space: nowrap;
     transition: all .15s;
+    font-family: inherit;
   }
   .tab-p.active {
     background: var(--surface);
     color: var(--maroon);
-    box-shadow: var(--sh-sm);
+    box-shadow: 0 2px 8px rgba(125,29,58,.08);
   }
 
+  /* ITEM */
   .item-publik {
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
     padding: 14px;
     margin-bottom: 10px;
-    transition: all .15s;
+    transition: all .2s var(--ease-out);
+    animation: fade-in-up .4s var(--ease-out) both;
+    position: relative;
+    overflow: hidden;
   }
   .item-publik:hover {
-    border-color: var(--maroon);
-    box-shadow: var(--sh-md);
-    transform: translateY(-1px);
+    border-color: var(--maroon-light);
+    box-shadow: 0 8px 20px rgba(125,29,58,.08);
+    transform: translateY(-2px);
   }
-  .item-icon {
-    width: 44px; height: 44px;
-    border-radius: 12px;
-    background: var(--gold-soft);
-    color: var(--gold-dark);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+
+  .item-publik.prestasi::after,
+  .item-publik.kegiatan::after,
+  .item-publik.pembiasaan::after {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.5;
   }
-  .item-icon.prestasi { background: var(--gold-soft); color: var(--gold-dark); }
-  .item-icon.pembiasaan { background: var(--success-soft); color: var(--success); }
-  .item-icon.kegiatan { background: var(--info-soft); color: var(--info); }
+  .item-publik.prestasi::after {
+    background: radial-gradient(circle, rgba(201,169,97,.15) 0%, transparent 70%);
+  }
+  .item-publik.kegiatan::after {
+    background: radial-gradient(circle, rgba(30,64,175,.12) 0%, transparent 70%);
+  }
+  .item-publik.pembiasaan::after {
+    background: radial-gradient(circle, rgba(21,128,61,.12) 0%, transparent 70%);
+  }
+
   .item-head {
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+  }
+  .item-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,.06);
+    transition: transform .2s var(--ease-out);
+  }
+  .item-publik:hover .item-icon {
+    transform: scale(1.05);
+  }
+  .item-icon.prestasi {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
+  }
+  .item-icon.pembiasaan {
+    background: linear-gradient(135deg, #22C55E 0%, #15803D 100%);
+    color: white;
+  }
+  .item-icon.kegiatan {
+    background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+    color: white;
   }
   .item-info { flex: 1; min-width: 0; }
-  .item-title { font-weight: 800; font-size: 14px; margin-bottom: 3px; line-height: 1.4; }
-  .item-sub { font-size: 11.5px; color: var(--muted); font-weight: 600; }
-
-  .link-bukti {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--maroon);
-    margin-top: 8px;
+  .item-title {
+    font-weight: 800;
+    font-size: 14px;
+    margin-bottom: 3px;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .item-sub {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 600;
+    line-height: 1.5;
   }
 
+  .item-extra {
+    margin-top: 8px;
+    position: relative;
+    z-index: 1;
+  }
   .badge-tingkat {
     display: inline-block;
     font-size: 10px;
     font-weight: 800;
-    padding: 3px 8px;
+    padding: 3px 9px;
     border-radius: 999px;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.4px;
     text-transform: uppercase;
-    margin-right: 4px;
+    margin-right: 5px;
+    margin-bottom: 4px;
   }
-  .badge-tingkat.sekolah { background: var(--border); color: var(--muted); }
-  .badge-tingkat.kecamatan { background: var(--info-soft); color: var(--info); }
-  .badge-tingkat.kabupaten { background: var(--warning-soft); color: var(--warning); }
-  .badge-tingkat.provinsi { background: var(--gold-soft); color: var(--gold-dark); }
+  .badge-tingkat.sekolah { background: #E5E7EB; color: #4B5563; }
+  .badge-tingkat.kecamatan { background: #DBEAFE; color: #1E40AF; }
+  .badge-tingkat.kabupaten { background: #FEF3C7; color: #B45309; }
+  .badge-tingkat.provinsi { background: #FBF3D0; color: #A37E2E; }
   .badge-tingkat.nasional { background: var(--maroon-soft); color: var(--maroon); }
-  .badge-tingkat.internasional { background: linear-gradient(135deg, var(--gold), var(--maroon)); color: white; }
-
-  .select-sekolah {
-    padding: 12px 14px;
-    border: 1.5px solid var(--border-strong);
-    border-radius: 12px;
-    background: var(--surface);
-    font-size: 13.5px;
-    font-weight: 700;
-    width: 100%;
-    margin-bottom: 16px;
+  .badge-tingkat.internasional {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--maroon) 100%);
+    color: white;
   }
-  .select-sekolah:focus {
-    outline: none;
-    border-color: var(--maroon);
-    box-shadow: 0 0 0 4px rgba(125,29,58,.08);
+  .badge-peringkat {
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 999px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    display: inline-block;
+  }
+
+  .link-bukti {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11.5px;
+    font-weight: 800;
+    color: var(--maroon);
+    text-decoration: none;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1.5px solid var(--maroon-soft);
+    background: transparent;
+    transition: all .15s;
+    margin-top: 10px;
+    position: relative;
+    z-index: 1;
+  }
+  .link-bukti:hover {
+    background: var(--maroon-soft);
+    text-decoration: none;
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 50px 20px;
+  }
+  .empty-state .big-icon {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+    position: relative;
+  }
+  .empty-state .big-icon svg { width: 40px; height: 40px; }
+  .empty-state .title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .empty-state .desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+    max-width: 320px;
+    margin: 0 auto;
   }
 </style>
 </head>
@@ -294,24 +489,29 @@
       <div style="font-size:10px;opacity:.8;">KKG Gugus Nakula</div>
     </div>
   </a>
-  <a href="galeri.html" style="color:white;font-size:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);padding:8px 12px;border-radius:10px;">
-    <span data-icon="grid" class="icon-sm"></span> Galeri
+  <a href="galeri.html" class="public-header-btn">
+    <span data-icon="grid" class="icon-sm"></span>
+    Galeri
   </a>
 </header>
 
-<main class="container page" style="max-width:720px;padding-top:16px;">
+<main class="container page" style="max-width:720px;padding-top:16px;padding-bottom:40px;">
 
+  <!-- Pilih Sekolah -->
   <select id="pilihSekolah" class="select-sekolah">
     <option value="">— Pilih Sekolah —</option>
   </select>
 
   <div id="loading">
-    <div class="skeleton" style="height:180px;border-radius:24px;margin-bottom:16px;"></div>
-    <div class="skeleton" style="height:60px;border-radius:12px;margin-bottom:16px;"></div>
+    <div class="skeleton" style="height:220px;border-radius:24px;margin-bottom:20px;"></div>
+    <div class="skeleton" style="height:140px;border-radius:20px;margin-bottom:20px;"></div>
+    <div class="skeleton" style="height:60px;border-radius:14px;margin-bottom:16px;"></div>
     <div class="skeleton" style="height:120px;border-radius:16px;"></div>
   </div>
 
   <div id="content" class="hidden">
+
+    <!-- HERO -->
     <div class="hero-sekolah">
       <div class="hero-top">
         <div class="hero-logo-wrap" id="heroLogoWrap"></div>
@@ -325,19 +525,36 @@
         </div>
       </div>
       <div class="hero-stats">
-        <div class="hero-stat"><div class="n" id="hPrestasi">—</div><div class="l">Prestasi</div></div>
-        <div class="hero-stat"><div class="n" id="hPembiasaan">—</div><div class="l">Pembiasaan</div></div>
-        <div class="hero-stat"><div class="n" id="hKegiatan">—</div><div class="l">Kegiatan</div></div>
-        <div class="hero-stat"><div class="n" id="hGuru">—</div><div class="l">Guru</div></div>
+        <div class="hero-stat">
+          <div class="n" id="hPrestasi">—</div>
+          <div class="l">Prestasi</div>
+        </div>
+        <div class="hero-stat">
+          <div class="n" id="hPembiasaan">—</div>
+          <div class="l">Pembiasaan</div>
+        </div>
+        <div class="hero-stat">
+          <div class="n" id="hKegiatan">—</div>
+          <div class="l">Kegiatan</div>
+        </div>
+        <div class="hero-stat">
+          <div class="n" id="hGuru">—</div>
+          <div class="l">Guru</div>
+        </div>
       </div>
     </div>
 
-    <div class="stat-poin">
-      <div class="l">Total Poin Sekolah</div>
-      <div class="n" id="heroPoin">—</div>
-      <div class="sub" id="heroPoinSub">Prestasi + Pembiasaan + Kegiatan</div>
+    <!-- KARTU POIN -->
+    <div class="poin-card">
+      <div class="poin-head">
+        <span data-icon="award" class="icon-sm"></span>
+        Total Poin Sekolah
+      </div>
+      <div class="poin-value" id="heroPoin">—</div>
+      <div class="poin-sub" id="heroPoinSub">Prestasi · Pembiasaan · Kegiatan</div>
     </div>
 
+    <!-- TABS -->
     <div class="tab-row">
       <button class="tab-p active" data-tab="prestasi">
         <span data-icon="award" class="icon-sm"></span> Prestasi
@@ -370,8 +587,8 @@ let tabAktif = 'prestasi';
 let cacheItems = {};
 
 (async () => {
-  // Load daftar sekolah
-  const res = await Api.callSekolahPublik('ping'); // Pastikan function hidup
+  // Pastikan function hidup
+  await Api.callSekolahPublik('ping');
 
   const resS = await Api.call('sekolah.list');
   if (resS.ok && resS.data) {
@@ -383,7 +600,7 @@ let cacheItems = {};
 
   document.getElementById('loading').classList.add('hidden');
 
-  // Cek query string
+  // Query string
   const params = new URLSearchParams(window.location.search);
   const sid = Number(params.get('id'));
 
@@ -391,13 +608,11 @@ let cacheItems = {};
     document.getElementById('pilihSekolah').value = sid;
     await pilihSekolah(sid);
   } else if (semuaSekolah.length > 0) {
-    // Pilih otomatis sekolah pertama
     const first = semuaSekolah[0];
     document.getElementById('pilihSekolah').value = first.id;
     await pilihSekolah(first.id);
   }
 
-  // Event
   document.getElementById('pilihSekolah').addEventListener('change', (e) => {
     const id = Number(e.target.value);
     if (id) pilihSekolah(id);
@@ -420,7 +635,6 @@ async function pilihSekolah(id) {
   document.getElementById('loading').classList.remove('hidden');
   document.getElementById('content').classList.add('hidden');
 
-  // Load profil
   const res = await Api.callSekolahPublik('sekolah.profil', { sekolah_id: id });
 
   document.getElementById('loading').classList.add('hidden');
@@ -436,9 +650,6 @@ async function pilihSekolah(id) {
   document.getElementById('heroNama').textContent = d.sekolah.nama;
   document.getElementById('heroNpsn').textContent = 'NPSN ' + (d.sekolah.npsn || '-') +
     (d.sekolah.kecamatan ? ' · ' + d.sekolah.kecamatan : '');
-
-  // Render logo hero
-  renderLogoHero(d.sekolah);
   document.getElementById('hPrestasi').textContent = r.jumlah_prestasi;
   document.getElementById('hPembiasaan').textContent = r.jumlah_pembiasaan;
   document.getElementById('hKegiatan').textContent = r.jumlah_kegiatan;
@@ -447,16 +658,15 @@ async function pilihSekolah(id) {
   document.getElementById('heroPoinSub').textContent =
     `Prestasi ${r.poin_prestasi} · Pembiasaan ${r.poin_pembiasaan} · Kegiatan ${r.poin_kegiatan}`;
 
+  // Render logo
+  renderLogoHero(d.sekolah);
+
   document.getElementById('content').classList.remove('hidden');
 
-  // Reset cache saat ganti sekolah
   cacheItems = {};
   await renderTab();
 }
 
-// ============================================================
-// RENDER LOGO HERO
-// ============================================================
 function renderLogoHero(sekolah) {
   const wrap = document.getElementById('heroLogoWrap');
   if (!wrap) return;
@@ -473,18 +683,21 @@ function renderLogoHero(sekolah) {
   `;
 }
 
+async function renderTab() {
   if (!sekolahAktif) return;
 
   const el = document.getElementById('listItem');
-
-  // Cek cache
   const cacheKey = `${tabAktif}_${sekolahAktif.id}`;
+
   if (cacheItems[cacheKey]) {
     renderList(cacheItems[cacheKey]);
     return;
   }
 
-  el.innerHTML = '<div class="skeleton" style="height:120px;border-radius:16px;"></div>';
+  el.innerHTML = `
+    <div class="skeleton" style="height:120px;border-radius:16px;margin-bottom:10px;"></div>
+    <div class="skeleton" style="height:120px;border-radius:16px;"></div>
+  `;
 
   const res = await Api.callSekolahPublik('sekolah.galeri', {
     jenis: tabAktif,
@@ -507,14 +720,20 @@ function renderList(list) {
 
   if (list.length === 0) {
     const label = { prestasi: 'prestasi', pembiasaan: 'pembiasaan', kegiatan: 'kegiatan' }[tabAktif] || 'data';
-    el.innerHTML = UI.emptyHtml('inbox', 'Belum ada ' + label, 'Data akan muncul setelah diverifikasi panitia.');
+    el.innerHTML = `
+      <div class="empty-state">
+        <div class="big-icon">${Icons.get('inbox', { class: 'icon-xl' })}</div>
+        <div class="title">Belum Ada ${label.charAt(0).toUpperCase() + label.slice(1)}</div>
+        <div class="desc">Data akan muncul setelah panitia verifikasi.</div>
+      </div>
+    `;
     return;
   }
 
-  el.innerHTML = list.map(it => renderItem(it)).join('');
+  el.innerHTML = list.map((it, idx) => renderItem(it, idx)).join('');
 }
 
-function renderItem(it) {
+function renderItem(it, idx) {
   const jenis = it._jenis;
 
   let judul = '';
@@ -532,9 +751,9 @@ function renderItem(it) {
     }[it.peringkat] || it.peringkat;
     sub = `${it.nama_siswa}${it.kelas ? ' (' + it.kelas + ')' : ''} · ${UI.formatTanggalPendek(it.tanggal)}`;
     extra = `
-      <div style="margin-top:6px;">
+      <div class="item-extra">
         <span class="badge-tingkat ${it.tingkat}">${tingkatLabel}</span>
-        <span class="badge-tingkat" style="background:var(--maroon);color:white;">${peringkatLabel}</span>
+        <span class="badge-peringkat">${peringkatLabel}</span>
       </div>
     `;
   } else if (jenis === 'kegiatan') {
@@ -544,11 +763,13 @@ function renderItem(it) {
       komunitas: 'Komunitas', kecamatan: 'Kecamatan', kabupaten_plus: 'Kabupaten+',
     }[it.skala] || it.skala;
     sub = `${UI.formatTanggalPendek(it.tanggal)}${it.tempat ? ' · ' + it.tempat : ''}`;
-    extra = `<div style="margin-top:6px;"><span class="badge-tingkat kecamatan">${skalaLabel}</span></div>`;
+    extra = `<div class="item-extra"><span class="badge-tingkat kecamatan">${skalaLabel}</span></div>`;
   } else if (jenis === 'pembiasaan') {
     judul = it.nama;
     sub = `${it.frekuensi || '-'}${it.bulan ? ' · Bulan ' + it.bulan : ''} ${it.tahun}`;
-    extra = it.deskripsi ? `<div style="margin-top:6px;font-size:12.5px;color:var(--muted);line-height:1.5;">${UI.escapeHtml(it.deskripsi)}</div>` : '';
+    extra = it.deskripsi
+      ? `<div class="item-extra" style="font-size:12.5px;color:var(--muted);line-height:1.5;">${UI.escapeHtml(it.deskripsi)}</div>`
+      : '';
   }
 
   const buktiHtml = it.bukti_url
@@ -557,10 +778,12 @@ function renderItem(it) {
        </a>`
     : '';
 
+  const iconName = jenis === 'prestasi' ? 'award' : jenis === 'kegiatan' ? 'calendar' : 'sparkles';
+
   return `
-    <div class="item-publik">
+    <div class="item-publik ${jenis}" style="animation-delay:${idx * 0.04}s">
       <div class="item-head">
-        <div class="item-icon ${jenis}">${Icons.get(jenis === 'prestasi' ? 'award' : jenis === 'kegiatan' ? 'calendar' : 'sparkles', { class: 'icon-sm' })}</div>
+        <div class="item-icon ${jenis}">${Icons.get(iconName, { class: 'icon-sm' })}</div>
         <div class="item-info">
           <div class="item-title">${UI.escapeHtml(judul)}</div>
           <div class="item-sub">${UI.escapeHtml(sub)}</div>
