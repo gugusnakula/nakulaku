@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#611329" />
-<title>NAKULAKU AWARD — Papan Juara</title>
+<title>Papan Juara — NAKULAKU AWARD</title>
 
 <link rel="icon" type="image/png" href="assets/img/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -13,178 +13,291 @@
 <link rel="stylesheet" href="assets/css/nakula.css" />
 
 <style>
-  /* Hero Award */
-  .award-hero {
-    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon-mid) 100%);
+  /* ============================================
+     PUBLIC HEADER
+     ============================================ */
+  .public-header {
+    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 100%);
     color: white;
-    border-radius: var(--r-xl);
-    padding: 28px 20px 22px;
-    text-align: center;
-    margin-bottom: 24px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 2px 12px rgba(97,19,41,.15);
+  }
+  .public-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: white;
+  }
+  .public-header-logo {
+    width: 40px; height: 40px;
+    background: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--gold);
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .public-header-logo img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transform: scale(1.25);
+  }
+  .public-header-btn {
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,.12);
+    padding: 8px 14px;
+    border-radius: 10px;
+    transition: all .15s;
+  }
+  .public-header-btn:hover {
+    background: rgba(255,255,255,.22);
+    color: white;
+    text-decoration: none;
+  }
+
+  /* ============================================
+     HERO AWARD
+     ============================================ */
+  .hero-award {
+    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 50%, #9B2649 100%);
+    color: white;
+    border-radius: 24px;
+    padding: 32px 24px 24px;
+    margin-bottom: 20px;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 12px 32px rgba(125,29,58,.3);
+    box-shadow: 0 12px 32px rgba(125,29,58,.28);
+    animation: fade-in-up .5s var(--ease-out) both;
+    text-align: center;
   }
-  .award-hero::before {
+  .hero-award::before {
     content: '';
     position: absolute;
-    top: -60px; right: -60px;
-    width: 200px; height: 200px;
+    top: -100px; right: -80px;
+    width: 280px; height: 280px;
     border-radius: 50%;
-    background: var(--gold);
-    opacity: 0.12;
+    background: radial-gradient(circle, rgba(201,169,97,.28) 0%, transparent 70%);
+    pointer-events: none;
   }
-  .award-hero::after {
+  .hero-award::after {
     content: '';
     position: absolute;
-    bottom: -40px; left: -40px;
-    width: 140px; height: 140px;
+    bottom: -80px; left: -60px;
+    width: 220px; height: 220px;
     border-radius: 50%;
-    background: var(--gold);
-    opacity: 0.08;
+    background: radial-gradient(circle, rgba(201,169,97,.2) 0%, transparent 70%);
+    pointer-events: none;
   }
-  .award-hero .trophy-icon {
-    width: 64px;
-    height: 64px;
-    margin: 0 auto 14px;
+  .hero-trophy {
+    width: 88px; height: 88px;
+    margin: 0 auto 18px;
     border-radius: 50%;
-    background: rgba(255,255,255,.15);
+    background: linear-gradient(135deg, rgba(201,169,97,.25) 0%, rgba(201,169,97,.1) 100%);
     border: 2px solid var(--gold);
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--gold);
     position: relative;
+    box-shadow:
+      0 12px 28px rgba(0,0,0,.25),
+      0 0 0 8px rgba(201,169,97,.1);
   }
-  .award-hero h1 {
-    font-size: 22px;
+  .hero-trophy::after {
+    content: '';
+    position: absolute;
+    inset: -14px;
+    border-radius: 50%;
+    border: 1px dashed rgba(201,169,97,.35);
+    animation: spin-slow 30s linear infinite;
+  }
+  @keyframes spin-slow {
+    to { transform: rotate(360deg); }
+  }
+  .hero-award h1 {
+    font-size: 26px;
     font-weight: 800;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
     position: relative;
+    background: linear-gradient(135deg, #FFFFFF 0%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
-  .award-hero p {
-    font-size: 12.5px;
+  .hero-award p {
+    font-size: 13px;
     opacity: 0.85;
+    font-weight: 600;
     position: relative;
+    line-height: 1.5;
   }
 
-  /* Kartu Award */
+  /* ============================================
+     SECTION AWARD
+     ============================================ */
   .award-section {
     background: var(--surface);
-    border-radius: var(--r-xl);
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
+    border-radius: 22px;
     padding: 20px;
     margin-bottom: 16px;
-    box-shadow: var(--sh-sm);
+    box-shadow: 0 4px 16px rgba(125,29,58,.05);
     position: relative;
     overflow: hidden;
+    animation: fade-in-up .5s var(--ease-out) both;
   }
   .award-section::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--maroon), var(--gold));
+    top: -60px; right: -60px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,169,97,.1) 0%, transparent 70%);
+    pointer-events: none;
   }
+
   .award-section-head {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 14px;
+    margin-bottom: 18px;
     padding-bottom: 16px;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1.5px solid var(--border);
+    position: relative;
+    z-index: 1;
   }
   .award-section-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--gold-soft), #F5E8C8);
-    color: var(--gold-dark);
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    box-shadow: 0 8px 20px rgba(201,169,97,.3);
   }
-  .award-section-title {
-    flex: 1;
-    min-width: 0;
-  }
+  .award-section-title { flex: 1; min-width: 0; }
   .award-section-title h2 {
     font-size: 16px;
     font-weight: 800;
     color: var(--maroon);
-    margin-bottom: 2px;
+    margin-bottom: 3px;
+    line-height: 1.3;
   }
   .award-section-title p {
     font-size: 11.5px;
     color: var(--muted);
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: 0.2px;
   }
 
-  /* Podium Juara */
+  /* ============================================
+     PODIUM 3 BESAR
+     ============================================ */
   .podium {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
+    gap: 10px;
     align-items: end;
     margin-bottom: 20px;
+    padding-top: 20px;
+    position: relative;
+    z-index: 1;
   }
   .podium-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 12px 6px;
-    border-radius: var(--r-lg);
+    padding: 14px 8px;
+    border-radius: 18px;
     background: var(--bg);
     position: relative;
+    transition: transform .2s var(--ease-out);
+  }
+  .podium-item:hover {
+    transform: translateY(-3px);
   }
   .podium-item.rank-1 {
-    background: linear-gradient(180deg, #FFF9E6, #FBF3D0);
-    padding-top: 16px;
-    padding-bottom: 20px;
-    border: 1.5px solid var(--gold);
-    transform: scale(1.02);
+    background: linear-gradient(180deg, #FFFEF7 0%, #FBF3D0 100%);
+    padding: 20px 8px 24px;
+    border: 2px solid var(--gold);
+    box-shadow: 0 12px 28px rgba(201,169,97,.25);
+    transform: translateY(-8px);
+  }
+  .podium-item.rank-1:hover {
+    transform: translateY(-11px);
   }
   .podium-item.rank-2 {
-    background: linear-gradient(180deg, #F5F5F5, #EAEAEA);
+    background: linear-gradient(180deg, #FAFAFA 0%, #EEEEEE 100%);
     border: 1.5px solid #C0C0C0;
   }
   .podium-item.rank-3 {
-    background: linear-gradient(180deg, #FAEFE5, #F1DFCA);
+    background: linear-gradient(180deg, #FDF5EC 0%, #F1DFCA 100%);
     border: 1.5px solid #CD7F32;
   }
+
   .podium-crown {
     position: absolute;
-    top: -14px;
+    top: -22px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 22px;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,.15));
+    font-size: 28px;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,.15));
+    animation: crown-bounce 2s ease-in-out infinite;
   }
+  @keyframes crown-bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-3px); }
+  }
+
   .podium-rank-badge {
     position: absolute;
     top: 8px;
     right: 8px;
-    width: 22px;
-    height: 22px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
     background: var(--maroon);
     color: white;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
   }
-  .podium-item.rank-1 .podium-rank-badge { background: var(--gold); }
+  .podium-item.rank-1 .podium-rank-badge {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+  }
   .podium-item.rank-2 .podium-rank-badge { background: #999; }
   .podium-item.rank-3 .podium-rank-badge { background: #CD7F32; }
 
   .podium-avatar {
-    width: 56px;
-    height: 56px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background: var(--surface);
     color: var(--maroon);
@@ -195,43 +308,48 @@
     font-size: 22px;
     overflow: hidden;
     position: relative;
-    border: 2px solid var(--surface);
-    box-shadow: 0 2px 8px rgba(0,0,0,.1);
-    margin-bottom: 8px;
+    border: 3px solid var(--surface);
+    box-shadow: 0 4px 12px rgba(0,0,0,.1);
+    margin-bottom: 10px;
   }
   .podium-item.rank-1 .podium-avatar {
-    width: 68px;
-    height: 68px;
-    font-size: 26px;
+    width: 76px;
+    height: 76px;
+    font-size: 28px;
     border-color: var(--gold);
-    box-shadow: 0 4px 12px rgba(201,169,97,.4);
+    box-shadow:
+      0 8px 20px rgba(201,169,97,.4),
+      0 0 0 4px rgba(201,169,97,.15);
   }
   .podium-avatar img {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover;
   }
+
   .podium-name {
     font-size: 12px;
     font-weight: 800;
     line-height: 1.3;
     margin-bottom: 4px;
     color: var(--ink);
+    padding: 0 4px;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    padding: 0 4px;
   }
   .podium-item.rank-1 .podium-name {
-    font-size: 13px;
+    font-size: 13.5px;
     color: var(--maroon);
   }
   .podium-sub {
     font-size: 10px;
     color: var(--muted);
     font-weight: 600;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    line-height: 1.4;
+    padding: 0 4px;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -242,49 +360,71 @@
     font-weight: 800;
     color: var(--maroon);
     background: var(--surface);
-    padding: 3px 8px;
+    padding: 4px 10px;
     border-radius: 999px;
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
   }
   .podium-item.rank-1 .podium-skor {
-    background: var(--gold);
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
     color: white;
-    border-color: var(--gold);
-    font-size: 14px;
+    border-color: transparent;
+    font-size: 15px;
+    padding: 5px 12px;
+    box-shadow: 0 6px 14px rgba(201,169,97,.35);
   }
 
-  /* Daftar nominasi lain */
+  /* ============================================
+     NOMINASI LAIN
+     ============================================ */
   .nominasi-rest {
     padding-top: 16px;
-    border-top: 1px dashed var(--border);
+    border-top: 1.5px dashed var(--border);
+    position: relative;
+    z-index: 1;
   }
   .nominasi-rest-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 11px;
     font-weight: 800;
     color: var(--muted);
-    letter-spacing: 0.5px;
-    margin-bottom: 10px;
+    letter-spacing: 0.8px;
+    margin-bottom: 12px;
     text-transform: uppercase;
   }
+  .nominasi-rest-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
   .nom-mini {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px 0;
+    gap: 12px;
+    padding: 10px 0;
     border-bottom: 1px solid var(--border);
+    transition: all .15s;
   }
   .nom-mini:last-child { border-bottom: none; }
+  .nom-mini:hover { padding-left: 4px; }
   .nom-mini-rank {
-    width: 24px;
+    width: 32px;
     font-size: 12px;
     font-weight: 800;
     color: var(--muted);
     flex-shrink: 0;
     text-align: center;
+    letter-spacing: 0.5px;
   }
   .nom-mini-avatar {
-    width: 32px;
-    height: 32px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     background: var(--maroon-soft);
     color: var(--maroon);
@@ -292,7 +432,7 @@
     align-items: center;
     justify-content: center;
     font-weight: 800;
-    font-size: 13px;
+    font-size: 14px;
     overflow: hidden;
     position: relative;
     flex-shrink: 0;
@@ -314,63 +454,117 @@
     font-size: 11px;
     color: var(--muted);
     font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .nom-mini-skor {
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 800;
     color: var(--maroon);
     flex-shrink: 0;
+    background: var(--maroon-soft);
+    padding: 3px 10px;
+    border-radius: 999px;
   }
 
-  /* Empty */
-  .award-empty {
+  /* ============================================
+     EMPTY STATE
+     ============================================ */
+  .empty-award {
     text-align: center;
-    padding: 40px 20px;
+    padding: 60px 24px;
+    animation: fade-in-up .5s var(--ease-out) both;
+  }
+  .empty-award .big-icon {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-soft) 0%, #FBF3D0 100%);
+    color: var(--gold-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    position: relative;
+    border: 2px solid var(--gold);
+    box-shadow:
+      0 12px 28px rgba(201,169,97,.2),
+      0 0 0 10px rgba(201,169,97,.08);
+  }
+  .empty-award .big-icon::after {
+    content: '';
+    position: absolute;
+    inset: -18px;
+    border-radius: 50%;
+    border: 1.5px dashed var(--gold);
+    opacity: 0.35;
+  }
+  .empty-award .big-icon svg { width: 48px; height: 48px; }
+  .empty-award h2 {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--maroon);
+    margin-bottom: 8px;
+  }
+  .empty-award p {
+    font-size: 13.5px;
     color: var(--muted);
+    line-height: 1.6;
+    max-width: 340px;
+    margin: 0 auto;
+    font-weight: 500;
+  }
+
+  @media (min-width: 720px) {
+    .award-section { padding: 24px; }
+    .hero-award { padding: 40px 24px 32px; }
+    .hero-award h1 { font-size: 32px; }
   }
 </style>
 </head>
 <body>
 
-<header class="app-header">
-  <div class="app-header-brand">
-    <a href="beranda.html" class="header-btn" style="text-decoration:none;">
-      <span data-icon="chevronLeft"></span>
-    </a>
-    <div class="app-header-text">
-      <div class="app-header-title">NAKULAKU AWARD</div>
-      <div class="app-header-sub">Papan Juara</div>
+<header class="public-header">
+  <a href="beranda.html" class="public-header-brand">
+    <div class="public-header-logo">
+      <img src="assets/img/logo-mark.svg" alt="Nakula" />
     </div>
-  </div>
-  <button class="header-btn" data-act="logout">
-    <span data-icon="logOut"></span>
-  </button>
+    <div>
+      <div style="font-weight:800;font-size:14px;letter-spacing:.5px;">NAKULAKU</div>
+      <div style="font-size:10px;opacity:.8;">KKG Gugus Nakula</div>
+    </div>
+  </a>
+  <a href="galeri.html" class="public-header-btn">
+    <span data-icon="grid" class="icon-sm"></span>
+    Galeri
+  </a>
 </header>
 
-<main class="container page" style="max-width:720px;padding-top:16px;">
+<main class="container page" style="max-width:720px;padding-top:16px;padding-bottom:40px;">
 
-  <div class="award-hero">
-    <div class="trophy-icon">
-      <span data-icon="award" class="icon-xl"></span>
-    </div>
-    <h1>NAKULAKU AWARD</h1>
-    <p id="subHero">Memuat…</p>
+  <div id="loading">
+    <div class="skeleton" style="height:280px;border-radius:24px;margin-bottom:16px;"></div>
+    <div class="skeleton" style="height:240px;border-radius:22px;margin-bottom:16px;"></div>
+    <div class="skeleton" style="height:240px;border-radius:22px;"></div>
   </div>
 
-  <div id="listAward">
-    <div class="skeleton" style="height:280px;border-radius:24px;margin-bottom:16px;"></div>
-    <div class="skeleton" style="height:280px;border-radius:24px;"></div>
+  <div id="content" class="hidden">
+
+    <!-- HERO -->
+    <div class="hero-award">
+      <div class="hero-trophy">
+        <span data-icon="trophy" class="icon-xl"></span>
+      </div>
+      <h1>NAKULAKU AWARD</h1>
+      <p id="subHero">Memuat…</p>
+    </div>
+
+    <!-- LIST AWARD -->
+    <div id="listAward"></div>
   </div>
 
 </main>
-
-<nav class="bottom-nav">
-  <a class="nav-item" data-nav="beranda" href="beranda.html"><span data-icon="home"></span> Beranda</a>
-  <a class="nav-item" data-nav="pertemuan" href="beranda.html"><span data-icon="calendar"></span> Pertemuan</a>
-  <a class="nav-item" data-nav="tugas" href="beranda.html"><span data-icon="clipboard"></span> Tugas</a>
-  <a class="nav-item" data-nav="presensi" href="beranda.html"><span data-icon="mapPin"></span> Presensi</a>
-  <a class="nav-item" data-nav="profil" href="profil.html"><span data-icon="user"></span> Profil</a>
-</nav>
 
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/api.js"></script>
@@ -380,71 +574,60 @@ document.querySelectorAll('[data-icon]').forEach(el => {
   el.innerHTML = Icons.get(el.dataset.icon);
   el.style.display = 'contents';
 });
-UI.bindLogout();
 
 (async () => {
-  const profile = await Api.requireLogin();
-  if (!profile) return;
-
   const res = await Api.call('award.list');
-  const el = document.getElementById('listAward');
+
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('content').classList.remove('hidden');
 
   if (!res.ok) {
-    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat data.');
+    document.getElementById('listAward').innerHTML = UI.errorHtml(res.error || 'Gagal memuat data.');
     return;
   }
 
   const awards = res.data.awards || [];
   const nominasi = res.data.nominasi || [];
 
-  // Group nominasi
   const nomMap = {};
   nominasi.forEach(n => {
     if (!nomMap[n.award_id]) nomMap[n.award_id] = [];
     nomMap[n.award_id].push(n);
   });
 
-  document.getElementById('subHero').textContent =
-    awards.length > 0
-      ? `${awards.length} kategori telah diumumkan`
-      : 'Menunggu pengumuman resmi panitia';
+  document.getElementById('subHero').textContent = awards.length > 0
+    ? `${awards.length} kategori telah diumumkan`
+    : 'Menunggu pengumuman resmi panitia';
 
   if (awards.length === 0) {
-    el.innerHTML = `
-      <div class="award-empty">
-        ${Icons.get('lock', { class: 'icon-xl' })}
-        <div style="font-weight:700;margin-top:12px;color:var(--ink);">Nominasi Belum Diumumkan</div>
-        <div style="font-size:12.5px;margin-top:4px;line-height:1.6;">
-          Hasil NAKULAKU AWARD masih dalam proses penilaian panitia.<br>
-          Pemenang akan diumumkan pada akhir periode.
-        </div>
+    document.getElementById('listAward').innerHTML = `
+      <div class="empty-award">
+        <div class="big-icon">${Icons.get('lock', { class: 'icon-xl' })}</div>
+        <h2>Nominasi Belum Diumumkan</h2>
+        <p>Hasil NAKULAKU AWARD masih dalam proses penilaian panitia.<br>Pemenang akan diumumkan pada akhir periode.</p>
       </div>
     `;
     return;
   }
 
-  // Filter: hanya award yang punya nominasi (yang sudah dihitung)
   const awardDenganNominasi = awards.filter(a => (nomMap[a.id] || []).length > 0);
-  const awardKosong = awards.filter(a => (nomMap[a.id] || []).length === 0);
-
-  let html = '';
 
   if (awardDenganNominasi.length === 0) {
-    html = `
-      <div class="award-empty">
-        ${Icons.get('award', { class: 'icon-xl' })}
-        <div style="font-weight:700;margin-top:12px;color:var(--ink);">Nominasi belum dihitung</div>
-        <div style="font-size:12.5px;margin-top:4px;">Tunggu pengumuman dari pengurus.</div>
+    document.getElementById('listAward').innerHTML = `
+      <div class="empty-award">
+        <div class="big-icon">${Icons.get('award', { class: 'icon-xl' })}</div>
+        <h2>Nominasi Belum Dihitung</h2>
+        <p>Tunggu pengumuman dari pengurus KKG.</p>
       </div>
     `;
-  } else {
-    html = awardDenganNominasi.map(a => renderAwardSection(a, nomMap[a.id] || [])).join('');
+    return;
   }
 
-  el.innerHTML = html;
+  document.getElementById('listAward').innerHTML =
+    awardDenganNominasi.map((a, idx) => renderAwardSection(a, nomMap[a.id] || [], idx)).join('');
 })();
 
-function renderAwardSection(a, nominasi) {
+function renderAwardSection(a, nominasi, idx) {
   const kategoriLabel = {
     sekolah: 'Sekolah', guru: 'Guru', narsum: 'Narasumber',
     pengamat: 'Pengamat', penyelenggara: 'Penyelenggara',
@@ -454,26 +637,22 @@ function renderAwardSection(a, nominasi) {
     sekolah_overall: 'Sekolah Terbaik Overall',
   }[a.kategori] || a.kategori;
 
-  // Urutkan by peringkat
   const sorted = [...nominasi].sort((x, y) => x.peringkat - y.peringkat);
   const top3 = sorted.slice(0, 3);
   const rest = sorted.slice(3);
 
-  // Podium urutan: 2, 1, 3
   const podium = [];
   if (top3[1]) podium.push({ rank: 2, data: top3[1] });
   if (top3[0]) podium.push({ rank: 1, data: top3[0] });
   if (top3[2]) podium.push({ rank: 3, data: top3[2] });
 
-  const juaraDitetapkan = top3.some(n => n.juara);
-
   return `
-    <div class="award-section">
+    <div class="award-section" style="animation-delay:${idx * 0.08}s">
       <div class="award-section-head">
         <div class="award-section-icon">${Icons.get(awardIcon(a.kategori), { class: 'icon-lg' })}</div>
         <div class="award-section-title">
           <h2>${UI.escapeHtml(a.nama)}</h2>
-          <p>Kategori ${kategoriLabel} · ${nominasi.length} nominasi</p>
+          <p>Kategori ${UI.escapeHtml(kategoriLabel)} · ${nominasi.length} nominasi</p>
         </div>
       </div>
 
@@ -485,7 +664,10 @@ function renderAwardSection(a, nominasi) {
 
       ${rest.length > 0 ? `
         <div class="nominasi-rest">
-          <div class="nominasi-rest-title">Nominasi Lainnya</div>
+          <div class="nominasi-rest-title">
+            ${Icons.get('users', { class: 'icon-sm' })}
+            Nominasi Lainnya
+          </div>
           ${rest.map(n => renderNomMini(n)).join('')}
         </div>
       ` : ''}
@@ -495,15 +677,16 @@ function renderAwardSection(a, nominasi) {
 
 function renderPodiumItem(rank, n) {
   const nama = n.user?.nama_lengkap || n.sekolah?.nama || '-';
-  const sub = n.user?.sekolah?.nama || (n.rincian_skor?.pertemuan_id ? 'Pertemuan #' + n.rincian_skor.pertemuan_id : '');
+  const sub = n.user?.sekolah?.nama
+    || (n.rincian_skor?.pertemuan_id ? 'Pertemuan #' + n.rincian_skor.pertemuan_id : '');
   const init = (nama || '?').charAt(0).toUpperCase();
   const fotoUrl = n.user?.foto_thumb_url;
 
-  const crown = rank === 1 ? '👑' : '';
+  const crown = rank === 1 ? '<div class="podium-crown">👑</div>' : '';
 
   return `
     <div class="podium-item rank-${rank}">
-      ${crown ? `<div class="podium-crown">${crown}</div>` : ''}
+      ${crown}
       <div class="podium-rank-badge">${rank}</div>
       <div class="podium-avatar">
         <span>${init}</span>
@@ -518,7 +701,8 @@ function renderPodiumItem(rank, n) {
 
 function renderNomMini(n) {
   const nama = n.user?.nama_lengkap || n.sekolah?.nama || '-';
-  const sub = n.user?.sekolah?.nama || (n.rincian_skor?.pertemuan_id ? 'Pertemuan #' + n.rincian_skor.pertemuan_id : '');
+  const sub = n.user?.sekolah?.nama
+    || (n.rincian_skor?.pertemuan_id ? 'Pertemuan #' + n.rincian_skor.pertemuan_id : '');
   const init = (nama || '?').charAt(0).toUpperCase();
   const fotoUrl = n.user?.foto_thumb_url;
 
@@ -537,6 +721,7 @@ function renderNomMini(n) {
     </div>
   `;
 }
+
 function awardIcon(kategori) {
   const map = {
     sekolah: 'home',
