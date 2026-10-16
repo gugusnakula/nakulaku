@@ -48,9 +48,57 @@
   .hero-nama { font-size: 18px; font-weight: 800; margin-bottom: 4px; position: relative; }
   .hero-npsn { font-size: 12px; opacity: 0.85; position: relative; }
 
-  .hero-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+  .hero-top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .hero-logo-wrap {
+    width: 80px;
+    height: 80px;
+    border-radius: 18px;
+    background: white;
+    border: 3px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0,0,0,.2);
+    transition: transform .2s var(--ease-out);
+  }
+  .hero-logo-wrap:hover {
+    transform: scale(1.03);
+  }
+  .hero-logo-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .hero-logo-wrap .fallback {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--maroon);
+    letter-spacing: 1px;
+  }
+  .hero-logo-wrap .edit-badge {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--maroon);
+    z-index: 2;
+  }
+  .hero-info-wrap { flex: 1; min-width: 0; }
+
     gap: 8px;
     padding-top: 14px;
     margin-top: 14px;
@@ -162,13 +210,19 @@
 <main class="container page" style="max-width:720px;padding-top:16px;">
 
   <div id="heroSekolah" class="hero-sekolah hidden">
-    <div class="hero-label">
-      ${''}
-      <span data-icon="home" class="icon-sm"></span>
-      PROFIL SEKOLAH
+    <div class="hero-top">
+      <div class="hero-logo-wrap" id="heroLogoWrap">
+        <!-- Logo diisi via JS -->
+      </div>
+      <div class="hero-info-wrap">
+        <div class="hero-label">
+          <span data-icon="home" class="icon-sm"></span>
+          PROFIL SEKOLAH
+        </div>
+        <div class="hero-nama" id="heroNama">—</div>
+        <div class="hero-npsn" id="heroNpsn">NPSN —</div>
+      </div>
     </div>
-    <div class="hero-nama" id="heroNama">—</div>
-    <div class="hero-npsn" id="heroNpsn">NPSN —</div>
     <div class="hero-stats">
       <div class="hero-stat">
         <div class="n" id="statPrestasi">—</div>
@@ -214,6 +268,9 @@
     <div class="skeleton" style="height:120px;border-radius:16px;margin-bottom:10px;"></div>
     <div class="skeleton" style="height:120px;border-radius:16px;"></div>
   </div>
+
+  <!-- File input tersembunyi -->
+  <input type="file" id="fileLogo" accept="image/*" style="display:none;" />
 
 </main>
 
@@ -301,6 +358,12 @@ let daftarItem = [];
   });
 
   document.getElementById('btnTambah').addEventListener('click', tambahData);
+
+  // Upload logo
+  document.getElementById('fileLogo').addEventListener('change', (e) => {
+    if (e.target.files[0]) handleUploadLogo(e.target.files[0]);
+    e.target.value = '';
+  });
 })();
 
 async function refresh() {
@@ -309,6 +372,9 @@ async function refresh() {
   document.getElementById('heroNama').textContent = sekolahAktif.nama;
   document.getElementById('heroNpsn').textContent = 'NPSN ' + (sekolahAktif.npsn || '-');
   document.getElementById('heroSekolah').classList.remove('hidden');
+
+  // Render logo hero
+  renderLogoHero(sekolahAktif);
 
   // Load ringkasan
   const res = await Api.callSekolahPublik('sekolah.profil', { sekolah_id: sekolahAktif.id });
@@ -320,6 +386,145 @@ async function refresh() {
   }
 
   await loadTab();
+}
+
+// ============================================================
+// LOGO HERO
+// ============================================================
+function renderLogoHero(sekolah) {
+  const wrap = document.getElementById('heroLogoWrap');
+  if (!wrap) return;
+
+  const ver = sekolah.logo_updated_at;
+  const url = Api.logoUrl(sekolah.id, ver);
+  const init = Api.inisialSekolah(sekolah.nama);
+
+  wrap.innerHTML = `
+    ${url
+      ? `<img src="${url}" alt="${sekolah.nama}" onerror="this.remove(); this.parentElement.querySelector('.fallback').style.display='flex';" />`
+      : ''}
+    <div class="fallback" style="${url ? 'display:none;' : ''}">${init}</div>
+    <div class="edit-badge">${Icons.get('camera', { class: 'icon-sm' })}</div>
+  `;
+
+  // Klik → buka file picker
+  wrap.onclick = () => {
+    // Cek hak akses
+    const peran = profile.peran || [];
+    const isPanitia = peran.includes('pengurus') || peran.includes('super_admin');
+    const isKS = peran.includes('ks');
+
+    if (!isPanitia && !isKS) {
+      UI.gagal('Hanya KS atau panitia yang bisa upload logo.');
+      return;
+    }
+    document.getElementById('fileLogo').click();
+  };
+}
+
+// ============================================================
+// UPLOAD LOGO
+// ============================================================
+async function handleUploadLogo(file) {
+  if (!file) return;
+
+  if (!file.type.startsWith('image/')) {
+    UI.gagal('File harus berupa gambar.');
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    UI.gagal('File terlalu besar (maks 5 MB).');
+    return;
+  }
+
+  UI.toast('Memproses logo…', 'info');
+
+  try {
+    const dataUrl = await kompresLogo(file, 200, 0.85);
+
+    const sizeKb = Math.round((dataUrl.length * 3 / 4) / 1024);
+    if (sizeKb > 500) {
+      UI.gagal('Logo masih terlalu besar (' + sizeKb + ' KB). Coba foto lain.');
+      return;
+    }
+
+    const res = await Api.callSekolah('sekolah.upload_logo', {
+      sekolah_id: sekolahAktif.id,
+      foto: dataUrl,
+    });
+
+    if (!res.ok) {
+      UI.gagal(res.error || 'Gagal upload logo.');
+      return;
+    }
+
+    UI.sukses('Logo berhasil diunggah (' + res.data.size_kb + ' KB)');
+
+    // Update data lokal
+    sekolahAktif.logo_updated_at = res.data.logo_updated_at;
+
+    // Update di semuaSekolah juga
+    const idx = daftarSekolah.findIndex(s => s.id === sekolahAktif.id);
+    if (idx >= 0) daftarSekolah[idx].logo_updated_at = res.data.logo_updated_at;
+
+    // Re-render
+    renderLogoHero(sekolahAktif);
+  } catch (err) {
+    console.error(err);
+    UI.gagal('Gagal memproses logo.');
+  }
+}
+
+// ============================================================
+// KOMPRES LOGO (square, 200×200, webp)
+// ============================================================
+function kompresLogo(file, maxSize, quality) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width;
+        let h = img.height;
+        const ratio = Math.min(maxSize / w, maxSize / h, 1);
+        w = Math.round(w * ratio);
+        h = Math.round(h * ratio);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = maxSize;
+        canvas.height = maxSize;
+        const ctx = canvas.getContext('2d');
+
+        // Background putih (untuk PNG transparan)
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, maxSize, maxSize);
+
+        // Center crop ke persegi
+        const size = Math.min(w, h);
+        const sx = (img.width - size * (w / w)) / 2 * (img.width / w);
+        // Hitung proper crop dari gambar asli
+        const cx = (img.width - size * (img.width / w)) / 2;
+        const cy = (img.height - size * (img.height / h)) / 2;
+
+        ctx.drawImage(
+          img,
+          (img.width - size * (img.width / w)) / 2,
+          (img.height - size * (img.height / h)) / 2,
+          size * (img.width / w),
+          size * (img.height / h),
+          0, 0, maxSize, maxSize
+        );
+
+        const out = canvas.toDataURL('image/webp', quality);
+        resolve(out);
+      };
+      img.onerror = reject;
+      img.src = ev.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 async function loadTab() {
