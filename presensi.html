@@ -16,53 +16,161 @@
   .presensi-stage {
     max-width: 480px;
     margin: 0 auto;
-    padding: 20px 16px 100px;
+    padding: 20px 16px 40px;
   }
+
+  /* CARD */
   .stage-card {
     background: var(--surface);
-    border-radius: var(--r-xl);
-    padding: 20px;
-    border: 1px solid var(--border);
-    box-shadow: var(--sh-md);
+    border: 1.5px solid var(--border);
+    border-radius: 24px;
+    padding: 24px 20px;
+    box-shadow: 0 8px 24px rgba(125,29,58,.06);
     margin-bottom: 16px;
+    animation: fade-in-up .5s var(--ease-out) both;
+    position: relative;
+    overflow: hidden;
   }
+
+  /* LOADING STAGE */
   .stage-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: var(--r-lg);
-    background: var(--maroon-soft);
-    color: var(--maroon);
+    width: 80px;
+    height: 80px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 14px;
+    margin: 0 auto 16px;
+    box-shadow:
+      0 12px 28px rgba(125,29,58,.3),
+      inset 0 0 0 1px rgba(201,169,97,.3);
+    animation: pulse-soft 2s ease-in-out infinite;
+  }
+  .stage-icon svg { width: 36px; height: 36px; }
+  @keyframes pulse-soft {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
   }
   .stage-title {
     text-align: center;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 800;
-    color: var(--ink);
+    color: var(--maroon);
     margin-bottom: 6px;
+    letter-spacing: 0.3px;
   }
   .stage-desc {
     text-align: center;
     font-size: 13px;
     color: var(--muted);
-    margin-bottom: 20px;
+    line-height: 1.55;
+    font-weight: 500;
+    max-width: 320px;
+    margin: 0 auto;
   }
 
-  /* Kamera */
+  /* HEADER INFO */
+  .info-header {
+    text-align: center;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1.5px dashed var(--border);
+    position: relative;
+  }
+  .info-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .info-pertemuan {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .info-sub {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  /* INFO ROW */
+  .info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: var(--bg);
+    border-radius: 14px;
+    margin-bottom: 8px;
+    font-size: 12.5px;
+    gap: 12px;
+    transition: all .15s;
+  }
+  .info-row.highlight {
+    background: linear-gradient(135deg, #F5FDF9 0%, #ECFDF5 100%);
+    border: 1px solid rgba(21,128,61,.15);
+  }
+  .info-row.warning {
+    background: linear-gradient(135deg, #FFFCF3 0%, #FEF3C7 100%);
+    border: 1px solid rgba(180,83,9,.15);
+  }
+  .info-row.error {
+    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+    border: 1px solid rgba(185,28,28,.15);
+  }
+  .info-lbl {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted);
+    font-weight: 700;
+    flex-shrink: 0;
+    font-size: 12px;
+  }
+  .info-val {
+    font-weight: 800;
+    color: var(--ink);
+    text-align: right;
+    font-size: 12.5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .info-val.ok { color: var(--success); }
+  .info-val.warn { color: var(--warning); }
+  .info-val.err { color: var(--danger); }
+
+  /* KAMERA */
   .cam-wrap {
     position: relative;
     width: 100%;
     aspect-ratio: 3/4;
-    max-height: 380px;
-    background: #000;
-    border-radius: var(--r-lg);
+    max-height: 400px;
+    background: #1A0F12;
+    border-radius: 20px;
     overflow: hidden;
     margin-bottom: 16px;
+    box-shadow:
+      0 12px 32px rgba(0,0,0,.2),
+      inset 0 0 0 1px rgba(201,169,97,.15);
+    border: 1.5px solid var(--maroon);
   }
-  .cam-wrap video, .cam-wrap img.preview {
+  .cam-wrap video,
+  .cam-wrap img.preview {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -80,6 +188,27 @@
     aspect-ratio: 1;
     border: 3px dashed rgba(255,255,255,.5);
     border-radius: 50%;
+    position: relative;
+  }
+  .cam-circle::before,
+  .cam-circle::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--gold);
+  }
+  .cam-circle::before {
+    top: 0; left: 0;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 12px 0 0 0;
+  }
+  .cam-circle::after {
+    bottom: 0; right: 0;
+    border-left: none;
+    border-top: none;
+    border-radius: 0 0 12px 0;
   }
   .cam-status {
     position: absolute;
@@ -87,51 +216,202 @@
     left: 12px;
     background: rgba(0,0,0,.6);
     color: white;
-    padding: 4px 10px;
+    padding: 6px 12px;
     border-radius: 999px;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 800;
     display: flex;
     align-items: center;
     gap: 6px;
+    backdrop-filter: blur(8px);
+    letter-spacing: 0.3px;
   }
   .cam-status .dot {
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    background: var(--success);
-    animation: pulse 1.5s infinite;
+    background: #22C55E;
+    box-shadow: 0 0 0 3px rgba(34,197,94,.3);
+    animation: pulse-dot-cam 1.5s infinite;
   }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+  @keyframes pulse-dot-cam {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.85); }
   }
-
-  /* GPS info */
-  .info-row {
+  .cam-timestamp {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    text-align: center;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    text-shadow: 0 2px 6px rgba(0,0,0,.5);
+    letter-spacing: 0.3px;
+    background: rgba(0,0,0,.4);
+    padding: 6px 12px;
+    border-radius: 999px;
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 12px 14px;
-    background: var(--bg);
-    border-radius: var(--r-md);
-    margin-bottom: 8px;
-    font-size: 13px;
+    justify-content: center;
+    gap: 6px;
   }
-  .info-row .lbl {
-    color: var(--muted);
-    font-weight: 600;
+
+  /* PREVIEW */
+  .preview-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
     display: flex;
     align-items: center;
     gap: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.3);
+    letter-spacing: 0.3px;
   }
-  .info-row .val {
+
+  /* BUTTON CAPTURE */
+  .btn-capture {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+    border: 5px solid var(--surface);
+    box-shadow:
+      0 8px 24px rgba(125,29,58,.35),
+      inset 0 0 0 2px rgba(201,169,97,.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    transition: all .2s var(--ease-out);
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+  }
+  .btn-capture::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 2px solid var(--maroon);
+    opacity: 0.25;
+    animation: ring-pulse 2s ease-in-out infinite;
+  }
+  @keyframes ring-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.25; }
+    50% { transform: scale(1.1); opacity: 0.1; }
+  }
+  .btn-capture:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow:
+      0 12px 32px rgba(125,29,58,.45),
+      inset 0 0 0 2px rgba(201,169,97,.5);
+  }
+  .btn-capture:active:not(:disabled) {
+    transform: scale(.95);
+  }
+  .btn-capture:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .btn-capture svg {
+    width: 32px;
+    height: 32px;
+    stroke: white;
+    stroke-width: 2.5;
+  }
+  .capture-hint {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 700;
+    margin-top: 12px;
+    letter-spacing: 0.3px;
+  }
+
+  /* SUKSES STAGE */
+  .success-icon {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--success-soft) 0%, #D1FAE5 100%);
+    color: var(--success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    position: relative;
+    box-shadow: 0 0 0 12px rgba(21,128,61,.08);
+  }
+  .success-icon svg { width: 48px; height: 48px; }
+  .success-icon::after {
+    content: '';
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    border: 2px dashed var(--success);
+    opacity: 0.3;
+    animation: spin-slow 20s linear infinite;
+  }
+  @keyframes spin-slow {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ERROR ICON */
+  .error-icon {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--danger-soft) 0%, #FEE2E2 100%);
+    color: var(--danger);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 0 0 12px rgba(185,28,28,.08);
+  }
+  .error-icon svg { width: 48px; height: 48px; }
+
+  /* ACTION BUTTONS */
+  .actions-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .actions-row .btn { flex: 1; }
+
+  /* GPS STATUS MINI */
+  .gps-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
     font-weight: 800;
-    color: var(--ink);
+    padding: 3px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
   }
-  .info-row .val.ok { color: var(--success); }
-  .info-row .val.warn { color: var(--warning); }
-  .info-row .val.err { color: var(--danger); }
+  .gps-status.ok {
+    background: var(--success-soft);
+    color: var(--success);
+  }
+  .gps-status.wait {
+    background: var(--warning-soft);
+    color: var(--warning);
+  }
+  .gps-status.err {
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
 </style>
 </head>
 <body>
@@ -153,48 +433,56 @@
 
 <main class="presensi-stage">
 
-  <!-- Stage 1: Loading / Inisialisasi -->
+  <!-- STAGE 1: LOADING -->
   <section id="stageLoading">
     <div class="stage-card">
       <div class="stage-icon">
-        <span data-icon="mapPin" class="icon-lg"></span>
+        <span data-icon="mapPin"></span>
       </div>
       <div class="stage-title">Menyiapkan…</div>
       <div class="stage-desc">Mengambil data pertemuan & lokasi GPS Anda.</div>
     </div>
   </section>
 
-  <!-- Stage 2: Kamera Selfie -->
+  <!-- STAGE 2: KAMERA -->
   <section id="stageKamera" class="hidden">
     <div class="stage-card">
-      <div class="stage-title" id="judulPertemuan">Memuat…</div>
-      <div class="stage-desc" id="subPertemuan">—</div>
+      <div class="info-header">
+        <div class="info-badge">
+          <span data-icon="camera" class="icon-sm"></span>
+          SELFIE + GPS
+        </div>
+        <div class="info-pertemuan" id="judulPertemuan">Memuat…</div>
+        <div class="info-sub" id="subPertemuan">—</div>
+      </div>
 
       <!-- Info GPS -->
-      <div class="info-row">
-        <span class="lbl">
+      <div class="info-row" id="rowLokasi">
+        <span class="info-lbl">
           <span data-icon="mapPin" class="icon-sm"></span>
           Lokasi Anda
         </span>
-        <span class="val" id="infoLokasi">Mendeteksi…</span>
+        <span class="info-val" id="infoLokasi">Mendeteksi…</span>
       </div>
-      <div class="info-row">
-        <span class="lbl">
+
+      <div class="info-row" id="rowJarak">
+        <span class="info-lbl">
           <span data-icon="target" class="icon-sm"></span>
-          Jarak ke Lokasi
+          Jarak
         </span>
-        <span class="val" id="infoJarak">—</span>
+        <span class="info-val" id="infoJarak">—</span>
       </div>
+
       <div class="info-row">
-        <span class="lbl">
+        <span class="info-lbl">
           <span data-icon="clock" class="icon-sm"></span>
-          Waktu Sekarang
+          Waktu
         </span>
-        <span class="val" id="infoWaktu">—</span>
+        <span class="info-val" id="infoWaktu">—</span>
       </div>
 
       <!-- Kamera -->
-      <div class="cam-wrap" style="margin-top:16px;">
+      <div class="cam-wrap">
         <video id="video" autoplay playsinline muted></video>
         <div class="cam-overlay">
           <div class="cam-circle"></div>
@@ -203,78 +491,99 @@
           <span class="dot"></span>
           <span>Kamera Aktif</span>
         </div>
+        <div class="cam-timestamp" id="camTimestamp">
+          <span data-icon="mapPin" class="icon-sm"></span>
+          <span id="camTimestampText">—</span>
+        </div>
       </div>
 
       <div id="alertKamera" class="alert alert-error" style="margin-bottom:12px;"></div>
 
-      <button class="btn btn-primary btn-full" id="btnAmbilFoto">
+      <button class="btn-capture" id="btnAmbilFoto" aria-label="Ambil Foto">
         <span data-icon="camera"></span>
-        <span>Ambil Foto &amp; Kirim</span>
       </button>
+      <div class="capture-hint">Ketuk untuk ambil foto &amp; kirim</div>
     </div>
   </section>
 
-  <!-- Stage 3: Preview Foto -->
+  <!-- STAGE 3: PREVIEW -->
   <section id="stagePreview" class="hidden">
     <div class="stage-card">
-      <div class="stage-title">Periksa Foto Anda</div>
-      <div class="stage-desc">Pastikan wajah Anda terlihat jelas.</div>
+      <div class="info-header">
+        <div class="info-badge" style="background:var(--gold-soft);color:var(--gold-dark);">
+          <span data-icon="checkCircle" class="icon-sm"></span>
+          PERIKSA FOTO
+        </div>
+        <div class="info-pertemuan">Pastikan wajah Anda terlihat jelas</div>
+        <div class="info-sub">Foto akan dikirim ke KS untuk verifikasi</div>
+      </div>
 
       <div class="cam-wrap">
         <img id="previewImg" class="preview" alt="Preview" />
+        <div class="preview-badge">
+          <span data-icon="check" class="icon-sm"></span>
+          Foto Siap
+        </div>
       </div>
 
-      <div style="display:flex;gap:10px;">
-        <button class="btn btn-secondary" id="btnUlang" style="flex:1;">
-          <span data-icon="rotateCcw"></span>
+      <div class="actions-row">
+        <button class="btn btn-secondary" id="btnUlang">
+          <span data-icon="rotateCcw" class="icon-sm"></span>
           Ulangi
         </button>
-        <button class="btn btn-primary" id="btnKirim" style="flex:2;">
-          <span data-icon="send"></span>
+        <button class="btn btn-primary" id="btnKirim" style="flex:1.5;">
+          <span data-icon="send" class="icon-sm"></span>
           Kirim Presensi
         </button>
       </div>
     </div>
   </section>
 
-  <!-- Stage 4: Sukses -->
+  <!-- STAGE 4: SUKSES -->
   <section id="stageSukses" class="hidden">
-    <div class="stage-card" style="text-align:center;">
-      <div style="width:72px;height:72px;border-radius:50%;background:var(--success-soft);color:var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-        <span data-icon="checkCircle" class="icon-xl"></span>
+    <div class="stage-card">
+      <div class="success-icon">
+        <span data-icon="checkCircle"></span>
       </div>
-      <div class="stage-title">Presensi Berhasil!</div>
-      <div class="stage-desc" id="suksesDesc">—</div>
+      <div class="stage-title" style="font-size:20px;">Presensi Berhasil!</div>
+      <div class="stage-desc" id="suksesDesc" style="margin-bottom:20px;">—</div>
 
-      <div class="info-row">
-        <span class="lbl">Status</span>
-        <span class="val ok" id="suksesStatus">—</span>
+      <div class="info-row highlight">
+        <span class="info-lbl">Status</span>
+        <span class="info-val ok" id="suksesStatus">—</span>
       </div>
       <div class="info-row">
-        <span class="lbl">Poin</span>
-        <span class="val" id="suksesPoin">—</span>
+        <span class="info-lbl">
+          <span data-icon="award" class="icon-sm"></span>
+          Poin
+        </span>
+        <span class="info-val ok" id="suksesPoin">—</span>
       </div>
       <div class="info-row">
-        <span class="lbl">Jarak dari Lokasi</span>
-        <span class="val" id="suksesJarak">—</span>
+        <span class="info-lbl">
+          <span data-icon="target" class="icon-sm"></span>
+          Jarak dari Lokasi
+        </span>
+        <span class="info-val" id="suksesJarak">—</span>
       </div>
 
-      <a href="beranda.html" class="btn btn-primary btn-full" style="margin-top:16px;">
+      <a href="beranda.html" class="btn btn-primary btn-full" style="margin-top:20px;text-decoration:none;">
+        ${''}
         Selesai
       </a>
     </div>
   </section>
 
-  <!-- Stage 5: Error -->
+  <!-- STAGE 5: ERROR -->
   <section id="stageError" class="hidden">
-    <div class="stage-card" style="text-align:center;">
-      <div style="width:72px;height:72px;border-radius:50%;background:var(--danger-soft);color:var(--danger);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-        <span data-icon="alertCircle" class="icon-xl"></span>
+    <div class="stage-card">
+      <div class="error-icon">
+        <span data-icon="alertCircle"></span>
       </div>
-      <div class="stage-title">Tidak Bisa Presensi</div>
-      <div class="stage-desc" id="errorDesc">—</div>
-      <a href="beranda.html" class="btn btn-primary btn-full" style="margin-top:16px;">
-        Kembali
+      <div class="stage-title" style="font-size:20px;">Tidak Bisa Presensi</div>
+      <div class="stage-desc" id="errorDesc" style="margin-bottom:20px;">—</div>
+      <a href="beranda.html" class="btn btn-primary btn-full" style="text-decoration:none;">
+        Kembali ke Beranda
       </a>
     </div>
   </section>
@@ -282,39 +591,23 @@
 </main>
 
 <nav class="bottom-nav">
-  <a class="nav-item" data-nav="beranda" href="beranda.html">
-    <span data-icon="home"></span> Beranda
-  </a>
-  <a class="nav-item" data-nav="pertemuan" href="#">
-    <span data-icon="calendar"></span> Pertemuan
-  </a>
-  <a class="nav-item" data-nav="tugas" href="#">
-    <span data-icon="clipboard"></span> Tugas
-  </a>
-  <a class="nav-item active" data-nav="presensi" href="#">
-    <span data-icon="mapPin"></span> Presensi
-  </a>
-  <a class="nav-item" data-nav="profil" href="profil.html">
-    <span data-icon="user"></span> Profil
-  </a>
+  <a class="nav-item" data-nav="beranda" href="beranda.html"><span data-icon="home"></span> Beranda</a>
+  <a class="nav-item" data-nav="pertemuan" href="beranda.html#sectionPertemuan"><span data-icon="calendar"></span> Pertemuan</a>
+  <a class="nav-item" data-nav="galeri" href="galeri.html"><span data-icon="grid"></span> Galeri</a>
+  <a class="nav-item" data-nav="aktivitas" href="aktivitas.html"><span data-icon="activity"></span> Aktivitas</a>
+  <a class="nav-item" data-nav="profil" href="profil.html"><span data-icon="user"></span> Profil</a>
 </nav>
 
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/ui.js"></script>
 <script>
-// ============================================================
-// INIT
-// ============================================================
 document.querySelectorAll('[data-icon]').forEach(el => {
   el.innerHTML = Icons.get(el.dataset.icon);
   el.style.display = 'contents';
 });
 UI.bindLogout();
 
-// ============================================================
-// STATE
-// ============================================================
 let profile;
 let pertemuanId = null;
 let pertemuanData = null;
@@ -325,17 +618,11 @@ let fotoBase64 = null;
 const params = new URLSearchParams(window.location.search);
 pertemuanId = params.get('id');
 
-// ============================================================
-// STAGES
-// ============================================================
 function showStage(nama) {
   ['stageLoading', 'stageKamera', 'stagePreview', 'stageSukses', 'stageError']
     .forEach(id => document.getElementById(id).classList.toggle('hidden', id !== nama));
 }
 
-// ============================================================
-// MULAI
-// ============================================================
 (async () => {
   profile = await Api.requireLogin();
   if (!profile) return;
@@ -346,7 +633,6 @@ function showStage(nama) {
     return;
   }
 
-  // Ambil data pertemuan
   const res = await Api.call('pertemuan.detail', { pertemuan_id: Number(pertemuanId) });
   if (!res.ok || !res.data) {
     showStage('stageError');
@@ -356,7 +642,6 @@ function showStage(nama) {
 
   pertemuanData = res.data.pertemuan;
 
-  // Cek sudah presensi?
   if (res.data.presensi_saya) {
     showStage('stageError');
     document.getElementById('errorDesc').textContent =
@@ -364,21 +649,30 @@ function showStage(nama) {
     return;
   }
 
-  // Isi info
   document.getElementById('judulPertemuan').textContent = pertemuanData.judul;
   document.getElementById('subPertemuan').textContent =
     UI.formatTanggal(pertemuanData.tanggal) +
     (pertemuanData.lokasi_nama ? ' · ' + pertemuanData.lokasi_nama : '');
 
-  document.getElementById('infoWaktu').textContent = new Date().toLocaleTimeString('id-ID', {
-    hour: '2-digit', minute: '2-digit', second: '2-digit'
-  });
+  updateWaktu();
+  setInterval(updateWaktu, 1000);
 
-  // Mulai GPS + kamera
   mulaiGPS();
   mulaiKamera();
   showStage('stageKamera');
 })();
+
+function updateWaktu() {
+  const now = new Date();
+  const str = now.toLocaleTimeString('id-ID', {
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
+  });
+  document.getElementById('infoWaktu').textContent = str;
+  const el = document.getElementById('camTimestampText');
+  if (el) el.textContent = str + ' · ' + now.toLocaleDateString('id-ID', {
+    day: 'numeric', month: 'long', year: 'numeric'
+  });
+}
 
 // ============================================================
 // GPS
@@ -397,19 +691,24 @@ function mulaiGPS() {
       gps.accuracy = Math.round(pos.coords.accuracy);
 
       document.getElementById('infoLokasi').textContent =
-        gps.lat.toFixed(5) + ', ' + gps.lng.toFixed(5) + ' (±' + gps.accuracy + 'm)';
-      document.getElementById('infoLokasi').className = 'val ok';
+        gps.lat.toFixed(5) + ', ' + gps.lng.toFixed(5);
+      document.getElementById('infoLokasi').className = 'info-val ok';
+      document.getElementById('rowLokasi').classList.add('highlight');
+      document.getElementById('rowLokasi').classList.remove('warning', 'error');
+      document.getElementById('btnAmbilFoto').disabled = false;
 
       updateJarak();
     },
     (e) => {
-      console.error('GPS error:', e);
       let msg = 'Gagal akses GPS';
       if (e.code === 1) msg = 'Izin lokasi ditolak';
       else if (e.code === 2) msg = 'Lokasi tidak tersedia';
       else if (e.code === 3) msg = 'Timeout GPS';
       document.getElementById('infoLokasi').textContent = msg;
-      document.getElementById('infoLokasi').className = 'val err';
+      document.getElementById('infoLokasi').className = 'info-val err';
+      document.getElementById('rowLokasi').classList.add('error');
+      document.getElementById('rowLokasi').classList.remove('highlight', 'warning');
+      document.getElementById('btnAmbilFoto').disabled = true;
     },
     { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
   );
@@ -417,15 +716,16 @@ function mulaiGPS() {
 
 function updateJarak() {
   const el = document.getElementById('infoJarak');
-  if (!pertemuanData || !gps.lat) {
-    el.textContent = '—';
-    return;
-  }
+  const row = document.getElementById('rowJarak');
+
+  if (!pertemuanData || !gps.lat) { el.textContent = '—'; return; }
+
   const latP = Number(pertemuanData.latitude);
   const lngP = Number(pertemuanData.longitude);
   if (isNaN(latP) || isNaN(lngP)) {
     el.textContent = 'Lokasi belum diatur';
-    el.className = 'val warn';
+    el.className = 'info-val warn';
+    row.classList.add('warning');
     return;
   }
 
@@ -433,8 +733,16 @@ function updateJarak() {
   const radius = Number(pertemuanData.radius_meter) || 100;
   const ok = jarak <= radius;
 
-  el.textContent = jarak + ' m (radius ' + radius + ' m)';
-  el.className = 'val ' + (ok ? 'ok' : 'warn');
+  el.textContent = jarak + ' m';
+  el.className = 'info-val ' + (ok ? 'ok' : 'warn');
+
+  if (ok) {
+    row.classList.add('highlight');
+    row.classList.remove('warning', 'error');
+  } else {
+    row.classList.add('warning');
+    row.classList.remove('highlight', 'error');
+  }
 }
 
 function haversine(lat1, lon1, lat2, lon2) {
@@ -461,7 +769,6 @@ async function mulaiKamera() {
     });
     document.getElementById('video').srcObject = stream;
   } catch (e) {
-    console.error('Kamera error:', e);
     let msg = 'Tidak bisa akses kamera. ';
     if (e.name === 'NotAllowedError') msg += 'Izin kamera ditolak.';
     else if (e.name === 'NotFoundError') msg += 'Kamera tidak ditemukan.';
@@ -480,47 +787,30 @@ function stopKamera() {
   }
 }
 
-// ============================================================
-// AMBIL FOTO
-// ============================================================
 document.getElementById('btnAmbilFoto').addEventListener('click', () => {
-  if (!gps.lat) {
-    UI.gagal('Tunggu GPS terdeteksi…');
-    return;
-  }
+  if (!gps.lat) { UI.gagal('Tunggu GPS terdeteksi…'); return; }
   const video = document.getElementById('video');
   const canvas = document.createElement('canvas');
   canvas.width = 480;
   canvas.height = 640;
   const ctx = canvas.getContext('2d');
 
-  // Crop centered
   const vw = video.videoWidth;
   const vh = video.videoHeight;
   const targetR = 480 / 640;
   const srcR = vw / vh;
   let sx = 0, sy = 0, sw = vw, sh = vh;
-  if (srcR > targetR) {
-    sw = vh * targetR;
-    sx = (vw - sw) / 2;
-  } else {
-    sh = vw / targetR;
-    sy = (vh - sh) / 2;
-  }
+  if (srcR > targetR) { sw = vh * targetR; sx = (vw - sw) / 2; }
+  else { sh = vw / targetR; sy = (vh - sh) / 2; }
 
   ctx.drawImage(video, sx, sy, sw, sh, 0, 0, 480, 640);
 
-  // Kompres ke webp kualitas 0.75 (~10-20 KB)
   fotoBase64 = canvas.toDataURL('image/webp', 0.75);
   document.getElementById('previewImg').src = fotoBase64;
-
   stopKamera();
   showStage('stagePreview');
 });
 
-// ============================================================
-// ULANGI
-// ============================================================
 document.getElementById('btnUlang').addEventListener('click', () => {
   fotoBase64 = null;
   mulaiKamera();
@@ -565,7 +855,6 @@ document.getElementById('btnKirim').addEventListener('click', async () => {
     return;
   }
 
-  // Sukses
   const d = res.data;
   const statusLabel = {
     tepat_waktu: 'Tepat Waktu',
@@ -574,9 +863,9 @@ document.getElementById('btnKirim').addEventListener('click', async () => {
   }[d.status] || d.status;
 
   document.getElementById('suksesDesc').textContent =
-    'Presensi Anda telah tercatat.';
+    'Presensi Anda telah tercatat dan akan diverifikasi KS.';
   document.getElementById('suksesStatus').textContent = statusLabel;
-  document.getElementById('suksesPoin').textContent = '+' + d.poin;
+  document.getElementById('suksesPoin').textContent = '+' + d.poin + ' poin';
   document.getElementById('suksesJarak').textContent =
     (d.jarak_meter !== null ? d.jarak_meter + ' m' : '—');
 
