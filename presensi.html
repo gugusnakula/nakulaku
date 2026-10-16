@@ -481,6 +481,14 @@
         <span class="info-val" id="infoWaktu">—</span>
       </div>
 
+      <div class="info-row" id="rowWindow">
+        <span class="info-lbl">
+          <span data-icon="hourglass" class="icon-sm"></span>
+          Window
+        </span>
+        <span class="info-val" id="infoWindow">—</span>
+      </div>
+
       <!-- Kamera -->
       <div class="cam-wrap">
         <video id="video" autoplay playsinline muted></video>
@@ -654,6 +662,9 @@ function showStage(nama) {
     UI.formatTanggal(pertemuanData.tanggal) +
     (pertemuanData.lokasi_nama ? ' · ' + pertemuanData.lokasi_nama : '');
 
+  // Info window presensi
+  renderInfoWindow(res.data);
+
   updateWaktu();
   setInterval(updateWaktu, 1000);
 
@@ -661,6 +672,53 @@ function showStage(nama) {
   mulaiKamera();
   showStage('stageKamera');
 })();
+
+// ============================================================
+// RENDER INFO WINDOW
+// ============================================================
+function renderInfoWindow(data) {
+  const el = document.getElementById('infoWindow');
+  const row = document.getElementById('rowWindow');
+
+  if (!data.presensi_buka || !data.presensi_tutup) {
+    el.textContent = '—';
+    return;
+  }
+
+  const buka = new Date(data.presensi_buka);
+  const tutup = new Date(data.presensi_tutup);
+  const status = data.presensi_status;
+
+  const bukaStr = buka.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+  const tutupStr = tutup.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+  el.textContent = `${bukaStr} – ${tutupStr}`;
+
+  // Warnai sesuai status
+  row.classList.remove('highlight', 'warning', 'error');
+  el.classList.remove('ok', 'warn', 'err');
+
+  if (status === 'buka') {
+    el.classList.add('ok');
+    row.classList.add('highlight');
+  } else if (status === 'belum') {
+    el.classList.add('warn');
+    row.classList.add('warning');
+    // Disable tombol capture
+    document.getElementById('btnAmbilFoto').disabled = true;
+    // Tampilkan alert
+    const alertEl = document.getElementById('alertKamera');
+    alertEl.textContent = `Presensi belum dibuka. Dibuka pukul ${bukaStr} WIB.`;
+    alertEl.classList.add('show');
+  } else if (status === 'tutup') {
+    el.classList.add('err');
+    row.classList.add('error');
+    document.getElementById('btnAmbilFoto').disabled = true;
+    const alertEl = document.getElementById('alertKamera');
+    alertEl.textContent = `Presensi sudah ditutup pada pukul ${tutupStr} WIB.`;
+    alertEl.classList.add('show');
+  }
+}
 
 function updateWaktu() {
   const now = new Date();
