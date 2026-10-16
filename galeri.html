@@ -276,7 +276,53 @@
     background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
     color: white;
   }
-
+  /* THUMBNAIL */
+  .item-thumb {
+    width: 88px;
+    height: 88px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: var(--bg);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .item-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .item-thumb .fallback-icon {
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+  .item-thumb .fallback-icon svg { width: 28px; height: 28px; }
+  .item-thumb.prestasi .fallback-icon {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  }
+  .item-thumb.pembiasaan .fallback-icon {
+    background: linear-gradient(135deg, #22C55E 0%, #15803D 100%);
+  }
+  .item-thumb.kegiatan .fallback-icon {
+    background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+  }
+  .item-thumb .play-badge {
+    position: absolute;
+    bottom: 4px; right: 4px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: rgba(0,0,0,.65);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .item-thumb .play-badge svg { width: 12px; height: 12px; }
   .item-info { flex: 1; min-width: 0; position: relative; z-index: 1; }
   .item-title {
     font-weight: 800;
@@ -594,6 +640,11 @@ function renderItem(it, idx) {
       : '';
   }
 
+  // Thumbnail dari bukti_url
+  const thumbUrl = UI.thumbnail(it.bukti_url);
+  const isYT = it.bukti_url && /youtube\.com|youtu\.be/.test(it.bukti_url);
+  const iconName = jenis === 'prestasi' ? 'award' : jenis === 'kegiatan' ? 'calendar' : 'sparkles';
+
   const logoSekolah = Api.logoHtml(
     sekolahId,
     sekolah.nama,
@@ -620,18 +671,26 @@ function renderItem(it, idx) {
 
   const iconName = jenis === 'prestasi' ? 'award' : jenis === 'kegiatan' ? 'calendar' : 'sparkles';
 
+  const thumbHtml = `
+    <div class="item-thumb ${jenis}">
+      ${thumbUrl
+        ? `<img src="${thumbUrl}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+           <div class="fallback-icon" style="display:none;">${Icons.get(iconName)}</div>
+           ${isYT ? `<div class="play-badge">${Icons.get('play')}</div>` : ''}`
+        : `<div class="fallback-icon">${Icons.get(iconName)}</div>`}
+    </div>
+  `;
+
   return `
     <div class="item-publik ${jenis}" style="animation-delay:${idx * 0.04}s">
       <div class="item-head">
-        <div class="item-icon ${jenis}">
-          ${Icons.get(iconName, { class: 'icon-sm' })}
-        </div>
+        ${thumbHtml}
         <div class="item-info">
           <div class="item-title">${UI.escapeHtml(judul)}</div>
           <div class="item-sub">${UI.escapeHtml(sub)}</div>
+          ${extra}
         </div>
       </div>
-      ${extra}
       <div class="item-footer">
         ${sekolahLink}
         ${buktiHtml}
