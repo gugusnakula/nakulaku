@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#611329" />
 <title>Kategori Ajuan — Admin NAKULAKU</title>
 
@@ -14,281 +14,125 @@
 <link rel="stylesheet" href="layout.css" />
 
 <style>
-  .kat-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+  /* ─── List Kategori ─── */
+  .kat-list { display: flex; flex-direction: column; gap: 10px; }
   .kat-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px;
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 16px;
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px; background: var(--surface);
+    border: 1.5px solid var(--border); border-radius: 16px;
     transition: all .15s;
   }
-  .kat-item:hover {
-    border-color: var(--maroon);
-    box-shadow: 0 4px 12px rgba(125,29,58,.08);
-  }
-  .kat-item.nonaktif {
-    opacity: 0.55;
-    background: var(--bg);
-  }
+  .kat-item:hover { border-color: var(--maroon); box-shadow: 0 4px 12px rgba(125,29,58,.08); }
+  .kat-item.nonaktif { opacity: 0.55; background: var(--bg); }
+
   .kat-icon-box {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: white;
-    position: relative;
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: white; position: relative;
   }
-  .kat-icon-box svg {
-    width: 22px;
-    height: 22px;
-  }
+  .kat-icon-box svg { width: 22px; height: 22px; stroke-width: 2; }
+
   .kat-body { flex: 1; min-width: 0; }
   .kat-nama {
-    font-weight: 800;
-    font-size: 14px;
-    color: var(--ink);
-    margin-bottom: 2px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
+    font-weight: 800; font-size: 14px; color: var(--ink);
+    margin-bottom: 2px; display: flex; align-items: center;
+    gap: 6px; flex-wrap: wrap;
   }
   .kat-kode {
-    font-family: 'Monaco', monospace;
-    font-size: 10.5px;
-    font-weight: 600;
-    color: var(--muted);
-    background: var(--bg);
-    padding: 1px 6px;
-    border-radius: 4px;
+    font-family: monospace; font-size: 10.5px; font-weight: 600;
+    color: var(--muted); background: var(--bg);
+    padding: 1px 6px; border-radius: 4px;
   }
   .kat-meta {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    font-size: 11px;
-    color: var(--muted);
-    font-weight: 600;
-    margin-top: 4px;
+    display: flex; gap: 8px; flex-wrap: wrap;
+    font-size: 11px; color: var(--muted); font-weight: 600; margin-top: 4px;
   }
-  .kat-meta-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-  }
+  .kat-meta-item { display: inline-flex; align-items: center; gap: 3px; }
+  .kat-meta-item svg { width: 12px; height: 12px; }
   .kat-poin {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 10px;
-    background: var(--maroon-soft);
-    color: var(--maroon);
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 800;
-    flex-shrink: 0;
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; background: var(--maroon-soft);
+    color: var(--maroon); border-radius: 999px;
+    font-size: 11px; font-weight: 800; flex-shrink: 0;
   }
-  .kat-actions {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-  }
+  .kat-actions { display: flex; gap: 6px; flex-shrink: 0; }
   .btn-icon-sm {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    border: 1.5px solid var(--border);
-    background: var(--surface);
-    color: var(--muted);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all .15s;
-    padding: 0;
+    width: 34px; height: 34px; border-radius: 10px;
+    border: 1.5px solid var(--border); background: var(--surface);
+    color: var(--muted); display: flex; align-items: center;
+    justify-content: center; cursor: pointer; transition: all .15s; padding: 0;
   }
-  .btn-icon-sm:hover {
-    border-color: var(--maroon);
-    color: var(--maroon);
-    background: var(--maroon-soft);
-  }
-  .btn-icon-sm.danger:hover {
-    border-color: var(--danger);
-    color: var(--danger);
-    background: var(--danger-soft);
-  }
+  .btn-icon-sm svg { width: 16px; height: 16px; }
+  .btn-icon-sm:hover { border-color: var(--maroon); color: var(--maroon); background: var(--maroon-soft); }
+  .btn-icon-sm.danger:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-soft); }
 
-  .badge-sistem {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    font-size: 9.5px;
-    font-weight: 800;
-    padding: 2px 7px;
-    background: var(--info-soft, #DBEAFE);
-    color: var(--info, #1D4ED8);
-    border-radius: 999px;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
+  .badge-sistem, .badge-nonaktif {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-size: 9.5px; font-weight: 800; padding: 2px 7px;
+    border-radius: 999px; letter-spacing: 0.3px; text-transform: uppercase;
   }
-  .badge-nonaktif {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    font-size: 9.5px;
-    font-weight: 800;
-    padding: 2px 7px;
-    background: var(--danger-soft);
-    color: var(--danger);
-    border-radius: 999px;
-    letter-spacing: 0.3px;
-    text-transform: uppercase;
-  }
+  .badge-sistem { background: #DBEAFE; color: #1D4ED8; }
+  .badge-nonaktif { background: var(--danger-soft); color: var(--danger); }
 
-  /* FORM */
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-  }
+  /* ─── Form ─── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .form-grid .full { grid-column: 1 / -1; }
-  @media (max-width: 600px) {
-    .form-grid { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
 
   .form-field { display: flex; flex-direction: column; gap: 6px; }
-  .form-label {
-    font-size: 12px;
-    font-weight: 800;
-    color: var(--ink);
-    letter-spacing: 0.3px;
-  }
+  .form-label { font-size: 12px; font-weight: 800; color: var(--ink); letter-spacing: 0.3px; }
   .form-label .req { color: var(--danger); }
-  .form-help {
-    font-size: 11px;
-    color: var(--muted);
-    font-weight: 500;
-    line-height: 1.5;
-  }
+  .form-help { font-size: 11px; color: var(--muted); font-weight: 500; line-height: 1.5; }
+  .form-help code { background: var(--bg); padding: 1px 4px; border-radius: 3px; font-size: 10px; }
 
-  .color-pick {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
+  .color-pick { display: flex; gap: 6px; flex-wrap: wrap; }
   .color-dot {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: all .15s;
-    padding: 0;
-    position: relative;
+    width: 32px; height: 32px; border-radius: 8px;
+    border: 2px solid transparent; cursor: pointer;
+    transition: all .15s; padding: 0; position: relative;
   }
-  .color-dot.active {
-    border-color: var(--ink);
-    transform: scale(1.1);
-    box-shadow: 0 0 0 2px var(--surface) inset;
-  }
+  .color-dot.active { border-color: var(--ink); transform: scale(1.1); }
   .color-dot.active::after {
-    content: '✓';
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 14px;
-    font-weight: 800;
+    content: '✓'; position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 14px; font-weight: 800;
     text-shadow: 0 1px 2px rgba(0,0,0,.3);
   }
 
   .icon-pick {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
-    gap: 6px;
-    max-height: 180px;
-    overflow-y: auto;
-    padding: 8px;
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
+    gap: 6px; max-height: 180px; overflow-y: auto;
+    padding: 8px; background: var(--bg);
+    border: 1.5px solid var(--border); border-radius: 12px;
   }
   .icon-opt {
-    width: 100%;
-    aspect-ratio: 1;
-    border-radius: 10px;
-    border: 1.5px solid transparent;
-    background: var(--surface);
-    color: var(--muted);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all .15s;
-    padding: 0;
-  }
-  .icon-opt:hover {
-    border-color: var(--maroon);
-    color: var(--maroon);
-  }
-  .icon-opt.active {
-    background: var(--maroon);
-    color: white;
-    border-color: var(--maroon);
+    width: 100%; aspect-ratio: 1; border-radius: 10px;
+    border: 1.5px solid transparent; background: var(--surface);
+    color: var(--muted); display: flex; align-items: center;
+    justify-content: center; cursor: pointer; transition: all .15s; padding: 0;
   }
   .icon-opt svg { width: 20px; height: 20px; }
+  .icon-opt:hover { border-color: var(--maroon); color: var(--maroon); }
+  .icon-opt.active { background: var(--maroon); color: white; border-color: var(--maroon); }
 
   .switch-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 14px;
-    background: var(--bg);
-    border-radius: 12px;
-    gap: 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px; background: var(--bg); border-radius: 12px; gap: 12px;
   }
   .switch-row + .switch-row { margin-top: 8px; }
   .switch-lbl { font-size: 13px; font-weight: 700; }
   .switch-desc { font-size: 11px; color: var(--muted); margin-top: 2px; font-weight: 500; }
 
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 44px;
-    height: 24px;
-    flex-shrink: 0;
-  }
+  .switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
   .switch input { opacity: 0; width: 0; height: 0; }
   .slider {
-    position: absolute;
-    cursor: pointer;
-    inset: 0;
-    background: var(--border);
-    transition: .2s;
-    border-radius: 999px;
+    position: absolute; cursor: pointer; inset: 0;
+    background: var(--border); transition: .2s; border-radius: 999px;
   }
   .slider::before {
-    content: '';
-    position: absolute;
-    height: 18px;
-    width: 18px;
-    left: 3px;
-    bottom: 3px;
-    background: white;
-    transition: .2s;
-    border-radius: 50%;
+    content: ''; position: absolute; height: 18px; width: 18px;
+    left: 3px; bottom: 3px; background: white;
+    transition: .2s; border-radius: 50%;
     box-shadow: 0 1px 3px rgba(0,0,0,.2);
   }
   .switch input:checked + .slider { background: var(--maroon); }
@@ -297,41 +141,164 @@
   .preview-card {
     padding: 16px;
     background: linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 100%);
-    border-radius: 14px;
-    border: 1.5px dashed var(--maroon);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-top: 4px;
+    border-radius: 14px; border: 1.5px dashed var(--maroon);
+    display: flex; align-items: center; gap: 14px; margin-top: 4px;
   }
   .preview-card .kat-icon-box { width: 56px; height: 56px; }
   .preview-card .kat-icon-box svg { width: 26px; height: 26px; }
+  .preview-card .badge-poin {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 10px; background: rgba(255,255,255,.7);
+    border-radius: 999px; font-size: 11px; font-weight: 800; margin-top: 4px;
+  }
+
+  /* ─── Modal ─── */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(28,20,20,.55);
+    z-index: 1000; display: flex; align-items: center; justify-content: center;
+    padding: 20px; animation: fade-in .2s both;
+  }
+  .modal {
+    background: var(--surface); border-radius: 20px;
+    width: 100%; max-width: 560px; max-height: 90vh;
+    display: flex; flex-direction: column;
+    box-shadow: 0 24px 64px rgba(0,0,0,.3);
+    animation: slide-up-sm .3s var(--ease-out) both;
+  }
+  @keyframes slide-up-sm {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 20px; border-bottom: 1px solid var(--border); gap: 12px;
+  }
+  .modal-title { font-size: 16px; font-weight: 800; color: var(--ink); }
+  .modal-sub { font-size: 11.5px; color: var(--muted); margin-top: 2px; font-weight: 600; }
+  .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+  .modal-footer {
+    display: flex; gap: 10px; justify-content: flex-end;
+    padding: 14px 20px; border-top: 1px solid var(--border);
+    background: var(--bg); border-radius: 0 0 20px 20px;
+  }
+
+  .hidden { display: none !important; }
 </style>
 </head>
-<body>
+<body class="admin-body">
 
 <!-- ============================================================
-     LAYOUT ADMIN
+     HEADER MOBILE
+     ============================================================ -->
+<header class="admin-header">
+  <div class="admin-header-left">
+    <a href="index.html" class="admin-header-btn" aria-label="Kembali">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="admin-header-title">
+      <div class="admin-header-title-1">Kategori Ajuan</div>
+      <div class="admin-header-title-2">Admin NAKULAKU</div>
+    </div>
+  </div>
+  <button class="admin-header-btn" data-act="logout" aria-label="Keluar">
+    <span data-icon="logOut"></span>
+  </button>
+</header>
+
+<!-- ============================================================
+     LAYOUT
      ============================================================ -->
 <div class="admin-layout">
 
-  <!-- SIDEBAR (dimuat via layout.js) -->
-  <aside id="sidebar" class="admin-sidebar"></aside>
-
-  <div class="admin-main">
-    <header class="admin-header">
-      <button class="admin-menu-btn" id="btnMenu" aria-label="Menu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" x2="21" y1="6" y2="6"/><line x1="3" x2="21" y1="12" y2="12"/><line x1="3" x2="21" y1="18" y2="18"/></svg>
-      </button>
-      <div>
-        <h1 class="admin-page-title">Kategori Ajuan</h1>
-        <div class="admin-page-sub">Kelola jenis ajuan izin/sakit/cuti/dinas luar</div>
+  <!-- SIDEBAR (desktop) -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <div class="admin-sidebar-logo">
+        <img src="../assets/img/logo.svg" alt="NAKULAKU" onerror="this.style.display='none'">
       </div>
-      <button class="btn btn-primary" id="btnTambah" style="margin-left:auto;">
-        <span data-icon="plus" class="icon-sm"></span>
-        Kategori Baru
-      </button>
-    </header>
+      <div>
+        <div class="admin-sidebar-name">NAKULAKU</div>
+        <div class="admin-sidebar-sub">Admin Panel</div>
+      </div>
+    </div>
+
+    <div class="admin-sidebar-menu">
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Utama</div>
+        <a class="admin-sidebar-item" href="index.html">
+          <span data-icon="layoutDashboard"></span> Dashboard
+        </a>
+        <a class="admin-sidebar-item" href="guru.html">
+          <span data-icon="users"></span> Data Guru
+        </a>
+        <a class="admin-sidebar-item" href="impor.html">
+          <span data-icon="upload"></span> Impor
+        </a>
+      </div>
+
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Kegiatan</div>
+        <a class="admin-sidebar-item" href="periode.html">
+          <span data-icon="calendar"></span> Periode
+        </a>
+        <a class="admin-sidebar-item" href="pertemuan.html">
+          <span data-icon="list"></span> Pertemuan
+        </a>
+        <a class="admin-sidebar-item" href="pengumuman.html">
+          <span data-icon="megaphone"></span> Pengumuman
+        </a>
+      </div>
+
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Pengaturan</div>
+        <a class="admin-sidebar-item active" href="kategori-ajuan.html">
+          <span data-icon="tag"></span> Kategori Ajuan
+        </a>
+        <a class="admin-sidebar-item" href="verifikasi-sekolah.html">
+          <span data-icon="shield"></span> Verifikasi
+        </a>
+        <a class="admin-sidebar-item" href="feedback.html">
+          <span data-icon="messageSquare"></span> Feedback
+        </a>
+      </div>
+
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Laporan</div>
+        <a class="admin-sidebar-item" href="award.html">
+          <span data-icon="award"></span> Award
+        </a>
+        <a class="admin-sidebar-item" href="sertifikat.html">
+          <span data-icon="fileText"></span> Sertifikat
+        </a>
+        <a class="admin-sidebar-item" href="analitik.html">
+          <span data-icon="activity"></span> Analitik
+        </a>
+        <a class="admin-sidebar-item" href="laporan.html">
+          <span data-icon="download"></span> Laporan
+        </a>
+        <a class="admin-sidebar-item" href="log.html">
+          <span data-icon="list"></span> Log
+        </a>
+        <a class="admin-sidebar-item" href="pengaturan.html">
+          <span data-icon="settings"></span> Pengaturan
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="admin-main">
+
+    <!-- Topbar desktop -->
+    <div class="admin-topbar">
+      <h1 class="admin-topbar-title">Kategori Ajuan</h1>
+      <div class="admin-topbar-right">
+        <button class="btn btn-primary" id="btnTambahDesktop">
+          <span data-icon="plus" class="icon-sm"></span>
+          Kategori Baru
+        </button>
+      </div>
+    </div>
 
     <main class="admin-content">
 
@@ -344,6 +311,12 @@
         </div>
       </div>
 
+      <!-- Tombol tambah (mobile) -->
+      <button class="btn btn-primary btn-full" id="btnTambahMobile" style="margin-bottom:16px;">
+        <span data-icon="plus" class="icon-sm"></span>
+        Tambah Kategori Baru
+      </button>
+
       <!-- Loading -->
       <div id="loading" class="skeleton" style="height:400px;border-radius:16px;"></div>
 
@@ -354,7 +327,9 @@
 
       <!-- Empty -->
       <div id="empty" class="hidden" style="text-align:center;padding:60px 20px;">
-        <div style="font-size:48px;margin-bottom:12px;color:var(--muted);" data-icon="inbox"></div>
+        <div style="font-size:48px;margin-bottom:12px;color:var(--muted);">
+          <span data-icon="inbox"></span>
+        </div>
         <div style="font-weight:800;font-size:16px;margin-bottom:6px;">Belum ada kategori</div>
         <div style="font-size:13px;color:var(--muted);margin-bottom:16px;">Klik "Kategori Baru" untuk menambahkan.</div>
       </div>
@@ -364,10 +339,36 @@
 </div>
 
 <!-- ============================================================
+     BOTTOM NAV (mobile)
+     ============================================================ -->
+<nav class="admin-bottom-nav">
+  <a class="admin-nav-item" href="index.html">
+    <span data-icon="layoutDashboard"></span>
+    <span>Dashboard</span>
+  </a>
+  <a class="admin-nav-item" href="guru.html">
+    <span data-icon="users"></span>
+    <span>Guru</span>
+  </a>
+  <a class="admin-nav-item" href="pertemuan.html">
+    <span data-icon="list"></span>
+    <span>Pertemuan</span>
+  </a>
+  <a class="admin-nav-item" href="award.html">
+    <span data-icon="award"></span>
+    <span>Award</span>
+  </a>
+  <button class="admin-nav-item" id="btnMoreNav" style="background:none;border:none;font-family:inherit;">
+    <span data-icon="menu"></span>
+    <span>Lainnya</span>
+  </button>
+</nav>
+
+<!-- ============================================================
      MODAL FORM
      ============================================================ -->
 <div id="modalForm" class="modal-backdrop hidden">
-  <div class="modal" style="max-width:560px;">
+  <div class="modal">
     <div class="modal-header">
       <div>
         <div class="modal-title" id="modalTitle">Kategori Baru</div>
@@ -378,22 +379,19 @@
       </button>
     </div>
 
-    <div class="modal-body" style="max-height:70vh;overflow-y:auto;">
-
+    <div class="modal-body">
       <input type="hidden" id="inputId" />
-
       <div class="form-grid">
 
         <div class="form-field full">
           <label class="form-label">Kode <span class="req">*</span></label>
           <input type="text" id="inputKode" class="input" placeholder="contoh: cuti_menikah" />
-          <div class="form-help">Huruf kecil, tanpa spasi. Gunakan underscore (_) untuk pemisah. Contoh: <code>cuti_menikah</code></div>
+          <div class="form-help">Huruf kecil, tanpa spasi. Gunakan underscore (_) untuk pemisah.</div>
         </div>
 
         <div class="form-field full">
           <label class="form-label">Nama Kategori <span class="req">*</span></label>
           <input type="text" id="inputNama" class="input" placeholder="contoh: Cuti Menikah" />
-          <div class="form-help">Nama ini yang akan tampil di halaman guru.</div>
         </div>
 
         <div class="form-field">
@@ -410,16 +408,12 @@
 
         <div class="form-field full">
           <label class="form-label">Warna</label>
-          <div class="color-pick" id="colorPick">
-            <!-- Render via JS -->
-          </div>
+          <div class="color-pick" id="colorPick"></div>
         </div>
 
         <div class="form-field full">
           <label class="form-label">Ikon</label>
-          <div class="icon-pick" id="iconPick">
-            <!-- Render via JS -->
-          </div>
+          <div class="icon-pick" id="iconPick"></div>
         </div>
 
         <div class="form-field full">
@@ -458,11 +452,11 @@
 
         <div class="form-field full">
           <label class="form-label">Pratinjau</label>
-          <div class="preview-card" id="previewCard">
-            <div class="kat-icon-box" id="previewIcon" style="background:var(--maroon);"></div>
+          <div class="preview-card">
+            <div class="kat-icon-box" id="previewIcon" style="background:#7D1D3A;"></div>
             <div>
               <div style="font-weight:800;font-size:14px;" id="previewNama">Nama Kategori</div>
-              <div style="display:inline-flex;align-items:center;gap:4px;padding:2px 10px;background:rgba(255,255,255,.7);color:var(--maroon);border-radius:999px;font-size:11px;font-weight:800;margin-top:4px;">
+              <div class="badge-poin" id="previewBadge">
                 <span id="previewPoin">50</span> poin
               </div>
             </div>
@@ -472,7 +466,6 @@
       </div>
 
       <div id="formAlert" class="alert alert-error hidden" style="margin-top:14px;"></div>
-
     </div>
 
     <div class="modal-footer">
@@ -492,7 +485,7 @@
   <div class="modal" style="max-width:400px;">
     <div class="modal-header">
       <div class="modal-title">Nonaktifkan Kategori?</div>
-      <button class="btn-icon-sm" data-close-modal aria-hidden="true" style="visibility:hidden;">
+      <button class="btn-icon-sm" data-close-modal aria-label="Tutup">
         <span data-icon="x"></span>
       </button>
     </div>
@@ -501,9 +494,9 @@
         Kategori <strong id="hapusNama">—</strong> akan <strong>dinonaktifkan</strong> (tidak dihapus permanen).
         Riwayat presensi lama tetap tersimpan. Kategori bisa diaktifkan kembali kapan saja.
       </p>
-      <div class="alert alert-warning" style="font-size:12px;">
-        <span data-icon="alertTriangle" class="icon-sm"></span>
-        Setelah dinonaktifkan, kategori ini tidak muncul di halaman guru.
+      <div class="alert alert-warning" style="font-size:12px;display:flex;gap:8px;align-items:flex-start;">
+        <span data-icon="alertTriangle" class="icon-sm" style="flex-shrink:0;margin-top:2px;"></span>
+        <div>Setelah dinonaktifkan, kategori ini tidak muncul di halaman guru.</div>
       </div>
     </div>
     <div class="modal-footer">
@@ -516,10 +509,57 @@
   </div>
 </div>
 
+<!-- ============================================================
+     BOTTOM SHEET "Lainnya"
+     ============================================================ -->
+<div id="sheetMore" class="admin-sheet-overlay hidden">
+  <div class="admin-sheet">
+    <div class="admin-sheet-handle"></div>
+    <div class="admin-sheet-title">Menu Lainnya</div>
+    <div class="admin-sheet-grid">
+      <a class="admin-sheet-item" href="impor.html">
+        <span class="icon-wrap"><span data-icon="upload"></span></span>
+        <span>Impor</span>
+      </a>
+      <a class="admin-sheet-item" href="periode.html">
+        <span class="icon-wrap"><span data-icon="calendar"></span></span>
+        <span>Periode</span>
+      </a>
+      <a class="admin-sheet-item" href="pengumuman.html">
+        <span class="icon-wrap"><span data-icon="megaphone"></span></span>
+        <span>Pengumuman</span>
+      </a>
+      <a class="admin-sheet-item" href="kategori-ajuan.html">
+        <span class="icon-wrap"><span data-icon="tag"></span></span>
+        <span>Kategori</span>
+      </a>
+      <a class="admin-sheet-item" href="verifikasi-sekolah.html">
+        <span class="icon-wrap"><span data-icon="shield"></span></span>
+        <span>Verifikasi</span>
+      </a>
+      <a class="admin-sheet-item" href="feedback.html">
+        <span class="icon-wrap"><span data-icon="messageSquare"></span></span>
+        <span>Feedback</span>
+      </a>
+      <a class="admin-sheet-item gold" href="sertifikat.html">
+        <span class="icon-wrap"><span data-icon="fileText"></span></span>
+        <span>Sertifikat</span>
+      </a>
+      <a class="admin-sheet-item gold" href="analitik.html">
+        <span class="icon-wrap"><span data-icon="activity"></span></span>
+        <span>Analitik</span>
+      </a>
+      <a class="admin-sheet-item gold" href="laporan.html">
+        <span class="icon-wrap"><span data-icon="download"></span></span>
+        <span>Laporan</span>
+      </a>
+    </div>
+  </div>
+</div>
+
 <script src="../assets/js/icons.js"></script>
 <script src="../assets/js/api.js"></script>
 <script src="../assets/js/ui.js"></script>
-<script src="layout.js"></script>
 <script>
 // ============================================================
 // INIT ICONS
@@ -533,7 +573,6 @@ function refreshIcons(root = document) {
   });
 }
 refreshIcons();
-
 UI.bindLogout();
 
 // ============================================================
@@ -554,9 +593,9 @@ const WARNA_PILIHAN = [
 
 const IKON_PILIHAN = [
   'userX', 'heart', 'heartPulse', 'briefcase', 'baby', 'calendarX',
-  'checkCircle', 'clock', 'mapPin', 'xCircle', 'fileText', 'calendar',
+  'checkCircle', 'clock', 'mapPin', 'x', 'fileText', 'calendar',
   'user', 'users', 'home', 'star', 'activity', 'award',
-  'shield', 'flag', 'book', 'clipboard', 'info', 'alertCircle'
+  'shield', 'trophy', 'book', 'clipboard', 'info', 'alertCircle'
 ];
 
 // ============================================================
@@ -590,6 +629,7 @@ async function loadKategori() {
 
   if (kategoriData.length === 0) {
     document.getElementById('empty').classList.remove('hidden');
+    refreshIcons(document.getElementById('empty'));
     return;
   }
 
@@ -626,7 +666,7 @@ function renderList() {
         </div>
         <div class="kat-poin">${k.poin} poin</div>
         <div class="kat-actions">
-          <button class="btn-icon-sm" data-act="edit" data-id="${k.id}" title="${isSistem ? 'Kategori sistem — hanya bisa lihat' : 'Edit'}">
+          <button class="btn-icon-sm" data-act="edit" data-id="${k.id}" title="${isSistem ? 'Lihat' : 'Edit'}">
             ${Icons.get(isSistem ? 'eye' : 'edit')}
           </button>
           ${!isSistem && k.aktif ? `
@@ -635,7 +675,7 @@ function renderList() {
             </button>
           ` : ''}
           ${!isSistem && !k.aktif ? `
-            <button class="btn-icon-sm" data-act="aktifkan" data-id="${k.id}" title="Aktifkan kembali">
+            <button class="btn-icon-sm" data-act="aktifkan" data-id="${k.id}" title="Aktifkan">
               ${Icons.get('checkCircle')}
             </button>
           ` : ''}
@@ -645,7 +685,6 @@ function renderList() {
   }).join('');
 
   document.getElementById('listWrap').classList.remove('hidden');
-  refreshIcons(el);
 
   // Bind actions
   el.querySelectorAll('[data-act]').forEach(btn => {
@@ -660,55 +699,37 @@ function renderList() {
 }
 
 // ============================================================
+// TOMBOL TAMBAH (mobile + desktop)
+// ============================================================
+document.getElementById('btnTambahMobile').addEventListener('click', () => bukaModal(null));
+document.getElementById('btnTambahDesktop').addEventListener('click', () => bukaModal(null));
+
+// ============================================================
 // MODAL FORM — BUKA
 // ============================================================
-document.getElementById('btnTambah').addEventListener('click', () => bukaModal(null));
-
 function bukaModal(id) {
   editId = id;
 
-  const modal = document.getElementById('modalForm');
-  const isSistem = id && KATEGORI_SISTEM.includes(
-    (kategoriData.find(k => k.id === id) || {}).kode
-  );
+  const k = id ? kategoriData.find(x => x.id === id) : null;
+  const isSistem = k && KATEGORI_SISTEM.includes(k.kode);
 
-  // Reset form
-  document.getElementById('inputId').value = '';
-  document.getElementById('inputKode').value = '';
-  document.getElementById('inputNama').value = '';
-  document.getElementById('inputPoin').value = '50';
-  document.getElementById('inputUrutan').value = '10';
-  document.getElementById('inputLampiran').checked = false;
-  document.getElementById('inputMulti').checked = true;
-  document.getElementById('inputAktif').checked = true;
+  document.getElementById('inputId').value = k ? k.id : '';
+  document.getElementById('inputKode').value = k ? k.kode : '';
+  document.getElementById('inputKode').dataset.touched = k ? '1' : '';
+  document.getElementById('inputNama').value = k ? k.nama : '';
+  document.getElementById('inputPoin').value = k ? k.poin : '50';
+  document.getElementById('inputUrutan').value = k ? k.urutan : '10';
+  document.getElementById('inputLampiran').checked = k ? !!k.butuh_lampiran : false;
+  document.getElementById('inputMulti').checked = k ? !!k.multi_hari : true;
+  document.getElementById('inputAktif').checked = k ? !!k.aktif : true;
   document.getElementById('formAlert').classList.add('hidden');
 
-  warnaDipilih = '#7D1D3A';
-  ikonDipilih = 'fileText';
+  warnaDipilih = k ? (k.warna || '#7D1D3A') : '#7D1D3A';
+  ikonDipilih = k ? (k.ikon || 'fileText') : 'fileText';
 
-  if (id) {
-    const k = kategoriData.find(x => x.id === id);
-    if (k) {
-      document.getElementById('inputId').value = k.id;
-      document.getElementById('inputKode').value = k.kode;
-      document.getElementById('inputNama').value = k.nama;
-      document.getElementById('inputPoin').value = k.poin;
-      document.getElementById('inputUrutan').value = k.urutan;
-      document.getElementById('inputLampiran').checked = !!k.butuh_lampiran;
-      document.getElementById('inputMulti').checked = !!k.multi_hari;
-      document.getElementById('inputAktif').checked = !!k.aktif;
-      warnaDipilih = k.warna || '#7D1D3A';
-      ikonDipilih = k.ikon || 'fileText';
-    }
+  document.getElementById('modalTitle').textContent = isSistem ? 'Lihat Kategori Sistem' : (k ? 'Edit Kategori' : 'Kategori Baru');
+  document.getElementById('modalSub').textContent = k ? k.kode : 'Isi data kategori ajuan';
 
-    document.getElementById('modalTitle').textContent = isSistem ? 'Lihat Kategori Sistem' : 'Edit Kategori';
-    document.getElementById('modalSub').textContent = k ? k.kode : '';
-  } else {
-    document.getElementById('modalTitle').textContent = 'Kategori Baru';
-    document.getElementById('modalSub').textContent = 'Isi data kategori ajuan';
-  }
-
-  // Disable kalau sistem
   ['inputKode', 'inputNama', 'inputPoin', 'inputUrutan',
    'inputLampiran', 'inputMulti', 'inputAktif'].forEach(fid => {
     document.getElementById(fid).disabled = !!isSistem;
@@ -719,12 +740,14 @@ function bukaModal(id) {
   renderIconPick();
   updatePreview();
 
-  modal.classList.remove('hidden');
-  setTimeout(() => document.getElementById('inputKode').focus(), 150);
+  document.getElementById('modalForm').classList.remove('hidden');
+  setTimeout(() => {
+    if (!isSistem) document.getElementById('inputKode').focus();
+  }, 150);
 }
 
 // ============================================================
-// MODAL FORM — TUTUP
+// MODAL — TUTUP
 // ============================================================
 document.querySelectorAll('[data-close-modal]').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -733,7 +756,6 @@ document.querySelectorAll('[data-close-modal]').forEach(btn => {
   });
 });
 
-// Tutup kalau klik backdrop
 ['modalForm', 'modalHapus'].forEach(id => {
   const m = document.getElementById(id);
   m.addEventListener('click', e => {
@@ -748,9 +770,7 @@ function renderColorPick() {
   const el = document.getElementById('colorPick');
   el.innerHTML = WARNA_PILIHAN.map(w => `
     <button type="button" class="color-dot ${w.hex === warnaDipilih ? 'active' : ''}"
-      data-warna="${w.hex}" style="background:${w.hex};"
-      title="${w.nama}">
-    </button>
+      data-warna="${w.hex}" style="background:${w.hex};" title="${w.nama}"></button>
   `).join('');
 
   el.querySelectorAll('.color-dot').forEach(b => {
@@ -769,9 +789,7 @@ function renderIconPick() {
   const el = document.getElementById('iconPick');
   el.innerHTML = IKON_PILIHAN.map(nama => `
     <button type="button" class="icon-opt ${nama === ikonDipilih ? 'active' : ''}"
-      data-ikon="${nama}" title="${nama}">
-      ${Icons.get(nama)}
-    </button>
+      data-ikon="${nama}" title="${nama}">${Icons.get(nama)}</button>
   `).join('');
 
   el.querySelectorAll('.icon-opt').forEach(b => {
@@ -784,7 +802,7 @@ function renderIconPick() {
 }
 
 // ============================================================
-// UPDATE PREVIEW
+// PREVIEW
 // ============================================================
 function updatePreview() {
   const nama = document.getElementById('inputNama').value.trim() || 'Nama Kategori';
@@ -796,32 +814,23 @@ function updatePreview() {
 
   document.getElementById('previewNama').textContent = nama;
   document.getElementById('previewPoin').textContent = poin;
-
-  // Update warna badge poin
-  const badge = document.querySelector('#previewCard div[style*="border-radius:999px"]');
-  if (badge) badge.style.color = warnaDipilih;
+  document.getElementById('previewBadge').style.color = warnaDipilih;
 }
 
-// Bind live update
 ['inputNama', 'inputPoin'].forEach(id => {
   document.getElementById(id).addEventListener('input', updatePreview);
 });
 
-// Auto-generate kode dari nama
+// Auto-generate kode
 document.getElementById('inputNama').addEventListener('input', e => {
   const kodeEl = document.getElementById('inputKode');
-  // Hanya auto-generate kalau kode masih kosong atau belum diedit manual
   if (!kodeEl.dataset.touched) {
-    kodeEl.value = e.target.value
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '_')
-      .replace(/^_+|_+$/g, '');
+    kodeEl.value = e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
   }
 });
 
 document.getElementById('inputKode').addEventListener('input', e => {
   e.target.dataset.touched = '1';
-  // Sanitasi kode
   const bersih = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '');
   if (bersih !== e.target.value) e.target.value = bersih;
 });
@@ -847,16 +856,13 @@ document.getElementById('btnSimpan').addEventListener('click', async () => {
     urutan: Number(document.getElementById('inputUrutan').value) || 0,
   };
 
-  // Validasi
   if (!data.kode) return tampilkanAlert('Kode wajib diisi.');
   if (!/^[a-z0-9_]+$/.test(data.kode)) return tampilkanAlert('Kode hanya boleh huruf kecil, angka, dan underscore.');
   if (!data.nama) return tampilkanAlert('Nama wajib diisi.');
   if (isNaN(data.poin) || data.poin < 0 || data.poin > 100) return tampilkanAlert('Poin harus 0–100.');
 
   UI.btnLoading(btn, 'Menyimpan…');
-
   const res = await Api.call('admin.kategori_ajuan.simpan', { kategori: data });
-
   UI.btnReset(btn);
 
   if (!res.ok) {
@@ -866,7 +872,6 @@ document.getElementById('btnSimpan').addEventListener('click', async () => {
 
   document.getElementById('modalForm').classList.add('hidden');
   UI.sukses(res.data.created ? 'Kategori ditambahkan.' : 'Kategori diperbarui.');
-
   await loadKategori();
 });
 
@@ -895,14 +900,12 @@ document.getElementById('btnHapusConfirm').addEventListener('click', async () =>
   const res = await Api.call('admin.kategori_ajuan.hapus', { id: hapusTarget });
 
   UI.btnReset(btn);
-
   document.getElementById('modalHapus').classList.add('hidden');
 
   if (!res.ok) {
     UI.gagal(res.error || 'Gagal menonaktifkan.');
     return;
   }
-
   UI.sukses('Kategori dinonaktifkan.');
   hapusTarget = null;
   await loadKategori();
@@ -917,7 +920,7 @@ async function aktifkanKategori(id) {
 
   const ok = await UI.konfirmasi(
     'Aktifkan Kembali?',
-    `Kategori "${k.nama}" akan diaktifkan lagi dan muncul di halaman guru.`,
+    `Kategori "${k.nama}" akan diaktifkan lagi.`,
     { okText: 'Aktifkan' }
   );
   if (!ok) return;
@@ -935,13 +938,24 @@ async function aktifkanKategori(id) {
 }
 
 // ============================================================
+// BOTTOM SHEET "LAINNYA"
+// ============================================================
+document.getElementById('btnMoreNav').addEventListener('click', () => {
+  document.getElementById('sheetMore').classList.remove('hidden');
+});
+document.getElementById('sheetMore').addEventListener('click', e => {
+  if (e.target.id === 'sheetMore') {
+    document.getElementById('sheetMore').classList.add('hidden');
+  }
+});
+
+// ============================================================
 // START
 // ============================================================
 (async () => {
   const profile = await Api.requireLogin();
   if (!profile) return;
 
-  // Cek akses
   if (!Api.hasAnyPeran(['super_admin', 'pengurus'])) {
     document.querySelector('.admin-content').innerHTML = UI.errorHtml(
       'Halaman ini hanya untuk admin/pengurus.',
