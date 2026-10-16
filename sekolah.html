@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#611329" />
+<meta name="robots" content="noindex, nofollow" />
 <title>Profil Sekolah — NAKULAKU</title>
 
 <link rel="icon" type="image/png" href="assets/img/favicon.png" />
@@ -61,37 +62,14 @@
     padding: 8px 14px;
     border-radius: 10px;
     transition: all .15s;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
   }
   .public-header-btn:hover {
     background: rgba(255,255,255,.22);
     color: white;
     text-decoration: none;
-  }
-
-  /* PILIH SEKOLAH */
-  .select-sekolah {
-    padding: 14px 16px;
-    border: 1.5px solid var(--border-strong);
-    border-radius: 14px;
-    background: var(--surface);
-    font-size: 14px;
-    font-weight: 700;
-    width: 100%;
-    margin-bottom: 18px;
-    font-family: inherit;
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236E6060' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    background-size: 20px;
-    padding-right: 44px;
-    cursor: pointer;
-    transition: all .15s;
-  }
-  .select-sekolah:focus {
-    outline: none;
-    border-color: var(--maroon);
-    box-shadow: 0 0 0 4px rgba(125,29,58,.08);
   }
 
   /* HERO SEKOLAH */
@@ -210,8 +188,8 @@
     letter-spacing: 0.4px;
   }
 
-  /* KARTU POIN TOTAL */
-  .poin-card {
+  /* KARTU TOTAL KONTRIBUSI (tanpa poin) */
+  .kontribusi-card {
     background: linear-gradient(135deg, #FFFFFF 0%, #FBF4E0 100%);
     border: 1.5px solid var(--gold);
     border-radius: 20px;
@@ -222,7 +200,7 @@
     animation: fade-in-up .5s var(--ease-out) .05s both;
     box-shadow: 0 6px 20px rgba(201,169,97,.15);
   }
-  .poin-card::before {
+  .kontribusi-card::before {
     content: '';
     position: absolute;
     top: -40px; right: -40px;
@@ -230,7 +208,7 @@
     border-radius: 50%;
     background: radial-gradient(circle, rgba(201,169,97,.25) 0%, transparent 70%);
   }
-  .poin-head {
+  .kontribusi-head {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -239,25 +217,72 @@
     color: var(--gold-dark);
     letter-spacing: 1px;
     text-transform: uppercase;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     position: relative;
   }
-  .poin-value {
-    font-size: 42px;
+  .kontribusi-value {
+    font-size: 38px;
     font-weight: 800;
     line-height: 1;
     color: var(--maroon);
-    letter-spacing: -1.5px;
+    letter-spacing: -1px;
     position: relative;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
-  .poin-sub {
-    font-size: 12px;
+  .kontribusi-sub {
+    font-size: 12.5px;
     color: var(--muted);
     font-weight: 600;
     position: relative;
     line-height: 1.5;
   }
+  .kontribusi-sub strong {
+    color: var(--maroon);
+    font-weight: 800;
+  }
+
+  /* TOMBOL SHARE */
+  .share-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    animation: fade-in-up .5s var(--ease-out) .08s both;
+  }
+  .share-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 11px 12px;
+    border-radius: 12px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all .15s;
+    font-family: inherit;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .share-btn:hover {
+    border-color: var(--maroon);
+    color: var(--maroon);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .share-btn.primary {
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+    color: white;
+    border-color: var(--maroon);
+  }
+  .share-btn.primary:hover {
+    color: white;
+    box-shadow: 0 8px 20px rgba(125,29,58,.3);
+  }
+  .share-btn svg { width: 14px; height: 14px; }
 
   /* TAB */
   .tab-row {
@@ -299,7 +324,7 @@
     box-shadow: 0 2px 8px rgba(125,29,58,.08);
   }
 
-  /* ITEM */
+  /* ITEM DENGAN THUMBNAIL */
   .item-publik {
     background: var(--surface);
     border: 1.5px solid var(--border);
@@ -346,31 +371,62 @@
     position: relative;
     z-index: 1;
   }
-  .item-icon {
-    width: 44px; height: 44px;
+
+  /* THUMBNAIL */
+  .item-thumb {
+    width: 88px;
+    height: 88px;
     border-radius: 12px;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: var(--bg);
+    position: relative;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(0,0,0,.06);
     transition: transform .2s var(--ease-out);
   }
-  .item-publik:hover .item-icon {
-    transform: scale(1.05);
+  .item-thumb:hover { transform: scale(1.02); }
+  .item-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
   }
-  .item-icon.prestasi {
+  .item-thumb .fallback-icon {
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+  .item-thumb .fallback-icon svg {
+    width: 28px; height: 28px;
+  }
+  .item-thumb.prestasi .fallback-icon {
     background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-    color: white;
   }
-  .item-icon.pembiasaan {
+  .item-thumb.pembiasaan .fallback-icon {
     background: linear-gradient(135deg, #22C55E 0%, #15803D 100%);
-    color: white;
   }
-  .item-icon.kegiatan {
+  .item-thumb.kegiatan .fallback-icon {
     background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
-    color: white;
   }
+  .item-thumb .play-badge {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(0,0,0,.65);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .item-thumb .play-badge svg { width: 12px; height: 12px; }
+
   .item-info { flex: 1; min-width: 0; }
   .item-title {
     font-weight: 800;
@@ -475,6 +531,26 @@
     max-width: 320px;
     margin: 0 auto;
   }
+
+  /* LIGHTBOX */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.92);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fade-in .2s both;
+    cursor: zoom-out;
+  }
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  }
 </style>
 </head>
 <body>
@@ -496,11 +572,6 @@
 </header>
 
 <main class="container page" style="max-width:720px;padding-top:16px;padding-bottom:40px;">
-
-  <!-- Pilih Sekolah -->
-  <select id="pilihSekolah" class="select-sekolah">
-    <option value="">— Pilih Sekolah —</option>
-  </select>
 
   <div id="loading">
     <div class="skeleton" style="height:220px;border-radius:24px;margin-bottom:20px;"></div>
@@ -544,14 +615,28 @@
       </div>
     </div>
 
-    <!-- KARTU POIN -->
-    <div class="poin-card">
-      <div class="poin-head">
-        <span data-icon="award" class="icon-sm"></span>
-        Total Poin Sekolah
+    <!-- KARTU TOTAL KONTRIBUSI (tanpa poin) -->
+    <div class="kontribusi-card">
+      <div class="kontribusi-head">
+        <span data-icon="sparkles" class="icon-sm"></span>
+        Total Kontribusi Sekolah
       </div>
-      <div class="poin-value" id="heroPoin">—</div>
-      <div class="poin-sub" id="heroPoinSub">Prestasi · Pembiasaan · Kegiatan</div>
+      <div class="kontribusi-value" id="heroTotal">—</div>
+      <div class="kontribusi-sub" id="heroTotalSub">
+        Prestasi · Pembiasaan · Kegiatan
+      </div>
+    </div>
+
+    <!-- TOMBOL SHARE -->
+    <div class="share-row">
+      <button class="share-btn primary" id="btnShareWA">
+        <span data-icon="send"></span>
+        Share
+      </button>
+      <button class="share-btn" id="btnCopyLink">
+        <span data-icon="link"></span>
+        Salin Link
+      </button>
     </div>
 
     <!-- TABS -->
@@ -581,43 +666,27 @@ document.querySelectorAll('[data-icon]').forEach(el => {
   el.style.display = 'contents';
 });
 
-let semuaSekolah = [];
 let sekolahAktif = null;
 let tabAktif = 'prestasi';
 let cacheItems = {};
 
 (async () => {
-  // Pastikan function hidup
   await Api.callSekolahPublik('ping');
 
-  const resS = await Api.call('sekolah.list');
-  if (resS.ok && resS.data) {
-    semuaSekolah = resS.data;
-    const sel = document.getElementById('pilihSekolah');
-    sel.innerHTML = '<option value="">— Pilih Sekolah —</option>' +
-      semuaSekolah.map(s => `<option value="${s.id}">${UI.escapeHtml(s.nama)}</option>`).join('');
-  }
-
-  document.getElementById('loading').classList.add('hidden');
-
-  // Query string
   const params = new URLSearchParams(window.location.search);
   const sid = Number(params.get('id'));
 
-  if (sid && semuaSekolah.find(s => s.id === sid)) {
-    document.getElementById('pilihSekolah').value = sid;
-    await pilihSekolah(sid);
-  } else if (semuaSekolah.length > 0) {
-    const first = semuaSekolah[0];
-    document.getElementById('pilihSekolah').value = first.id;
-    await pilihSekolah(first.id);
+  if (!sid) {
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('content').innerHTML = UI.errorHtml(
+      'Link tidak lengkap. Minta link profil ke pengurus sekolah Anda.',
+      '<a href="galeri.html" class="btn btn-primary btn-sm" style="margin-top:12px;">Lihat Galeri Sekolah</a>'
+    );
+    document.getElementById('content').classList.remove('hidden');
+    return;
   }
 
-  document.getElementById('pilihSekolah').addEventListener('change', (e) => {
-    const id = Number(e.target.value);
-    if (id) pilihSekolah(id);
-    else document.getElementById('content').classList.add('hidden');
-  });
+  await pilihSekolah(sid);
 
   document.querySelectorAll('.tab-p').forEach(t => {
     t.addEventListener('click', () => {
@@ -626,12 +695,27 @@ let cacheItems = {};
       renderTab();
     });
   });
+
+  // Share WA
+  document.getElementById('btnShareWA').addEventListener('click', () => {
+    if (!sekolahAktif) return;
+    const url = window.location.href;
+    const text = `Profil Digital ${sekolahAktif.nama} — KKG Gugus Nakula\n${url}`;
+    window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+  });
+
+  // Copy Link
+  document.getElementById('btnCopyLink').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      UI.sukses('Link disalin ke clipboard');
+    } catch {
+      UI.gagal('Gagal menyalin. Coba salin manual.');
+    }
+  });
 })();
 
 async function pilihSekolah(id) {
-  sekolahAktif = semuaSekolah.find(s => s.id === id);
-  if (!sekolahAktif) return;
-
   document.getElementById('loading').classList.remove('hidden');
   document.getElementById('content').classList.add('hidden');
 
@@ -640,12 +724,18 @@ async function pilihSekolah(id) {
   document.getElementById('loading').classList.add('hidden');
 
   if (!res.ok || !res.data) {
-    document.getElementById('content').innerHTML = UI.errorHtml(res.error || 'Gagal memuat.');
+    document.getElementById('content').innerHTML = UI.errorHtml(
+      res.error || 'Sekolah tidak ditemukan.',
+      '<a href="galeri.html" class="btn btn-primary btn-sm" style="margin-top:12px;">Lihat Galeri</a>'
+    );
+    document.getElementById('content').classList.remove('hidden');
     return;
   }
 
   const d = res.data;
   const r = d.ringkasan;
+
+  sekolahAktif = d.sekolah;
 
   document.getElementById('heroNama').textContent = d.sekolah.nama;
   document.getElementById('heroNpsn').textContent = 'NPSN ' + (d.sekolah.npsn || '-') +
@@ -654,11 +744,16 @@ async function pilihSekolah(id) {
   document.getElementById('hPembiasaan').textContent = r.jumlah_pembiasaan;
   document.getElementById('hKegiatan').textContent = r.jumlah_kegiatan;
   document.getElementById('hGuru').textContent = r.jumlah_guru;
-  document.getElementById('heroPoin').textContent = r.total_poin;
-  document.getElementById('heroPoinSub').textContent =
-    `Prestasi ${r.poin_prestasi} · Pembiasaan ${r.poin_pembiasaan} · Kegiatan ${r.poin_kegiatan}`;
 
-  // Render logo
+  // Total kontribusi (bukan poin) — rahasia poin hanya admin
+  const totalItem = r.jumlah_prestasi + r.jumlah_pembiasaan + r.jumlah_kegiatan;
+  document.getElementById('heroTotal').textContent = totalItem;
+  document.getElementById('heroTotalSub').innerHTML =
+    `<strong>${r.jumlah_prestasi}</strong> prestasi · <strong>${r.jumlah_pembiasaan}</strong> pembiasaan · <strong>${r.jumlah_kegiatan}</strong> kegiatan`;
+
+  // Title dinamis
+  document.title = d.sekolah.nama + ' — NAKULAKU';
+
   renderLogoHero(d.sekolah);
 
   document.getElementById('content').classList.remove('hidden');
@@ -731,6 +826,14 @@ function renderList(list) {
   }
 
   el.innerHTML = list.map((it, idx) => renderItem(it, idx)).join('');
+
+  // Bind lightbox thumbnail
+  el.querySelectorAll('[data-thumb]').forEach(thumb => {
+    thumb.addEventListener('click', () => {
+      const url = thumb.dataset.fullurl;
+      if (url) showLightbox(url);
+    });
+  });
 }
 
 function renderItem(it, idx) {
@@ -772,18 +875,32 @@ function renderItem(it, idx) {
       : '';
   }
 
+  // Thumbnail dari bukti_url
+  const thumbUrl = UI.thumbnail(it.bukti_url);
+  const iconName = jenis === 'prestasi' ? 'award' : jenis === 'kegiatan' ? 'calendar' : 'sparkles';
+  const isYT = it.bukti_url && /youtube\.com|youtu\.be/.test(it.bukti_url);
+
+  const thumbHtml = `
+    <div class="item-thumb ${jenis}"
+         ${thumbUrl ? `data-thumb data-fullurl="${UI.escapeHtml(it.bukti_url)}"` : ''}>
+      ${thumbUrl
+        ? `<img src="${thumbUrl}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+           <div class="fallback-icon" style="display:none;">${Icons.get(iconName)}</div>
+           ${isYT ? `<div class="play-badge">${Icons.get('play')}</div>` : ''}`
+        : `<div class="fallback-icon">${Icons.get(iconName)}</div>`}
+    </div>
+  `;
+
   const buktiHtml = it.bukti_url
     ? `<a href="${UI.escapeHtml(it.bukti_url)}" target="_blank" rel="noopener" class="link-bukti">
          ${Icons.get('externalLink', { class: 'icon-sm' })} Lihat Bukti
        </a>`
     : '';
 
-  const iconName = jenis === 'prestasi' ? 'award' : jenis === 'kegiatan' ? 'calendar' : 'sparkles';
-
   return `
     <div class="item-publik ${jenis}" style="animation-delay:${idx * 0.04}s">
       <div class="item-head">
-        <div class="item-icon ${jenis}">${Icons.get(iconName, { class: 'icon-sm' })}</div>
+        ${thumbHtml}
         <div class="item-info">
           <div class="item-title">${UI.escapeHtml(judul)}</div>
           <div class="item-sub">${UI.escapeHtml(sub)}</div>
@@ -793,6 +910,14 @@ function renderItem(it, idx) {
       ${buktiHtml}
     </div>
   `;
+}
+
+function showLightbox(url) {
+  const lb = document.createElement('div');
+  lb.className = 'lightbox';
+  lb.innerHTML = `<img src="${UI.escapeHtml(url)}" alt="">`;
+  lb.addEventListener('click', () => lb.remove());
+  document.body.appendChild(lb);
 }
 </script>
 
