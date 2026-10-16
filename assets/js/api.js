@@ -224,9 +224,6 @@
 
     // ==================== HELPERS ====================
 
-    fotoUrl(id, ukuran = 't') {
-    // ==================== HELPERS ====================
-
     /**
      * URL foto profil guru.
      * @param {number|string} id  guru_id
