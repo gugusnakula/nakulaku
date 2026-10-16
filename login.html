@@ -145,21 +145,29 @@
   .login-field {
     position: relative;
   }
-  .login-field > svg {
+  .login-field .field-icon {
     position: absolute;
     left: 16px;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--muted-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 20px;
     height: 20px;
+    color: var(--muted-soft);
     pointer-events: none;
     z-index: 2;
     transition: all .2s var(--ease-out);
   }
-  .login-field:focus-within > svg {
+  .login-field:focus-within .field-icon {
     color: var(--maroon);
     transform: translateY(-50%) scale(1.1);
+  }
+  .login-field .field-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
   }
 
   .login-input {
@@ -464,7 +472,10 @@
     // ============================================================
     document.querySelectorAll('[data-icon]').forEach(el => {
       el.innerHTML = Icons.get(el.dataset.icon);
-      el.style.display = 'contents';
+      // KECUALI .field-icon — biar bisa diposisikan absolute
+      if (!el.classList.contains('field-icon')) {
+        el.style.display = 'contents';
+      }
     });
 
     // ============================================================
