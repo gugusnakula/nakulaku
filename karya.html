@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>Karya Saya — NAKULAKU</title>
+
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/nakula.css" />
+
+<style>
+  .karya-stage {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 16px;
+    padding-bottom: 90px;
+  }
+
+  /* HERO */
+  .hero-karya {
+    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 50%, #9B2649 100%);
+    color: white;
+    border-radius: 24px;
+    padding: 22px 20px 20px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(125,29,58,.28);
+    animation: fade-in-up .5s var(--ease-out) both;
+  }
+  .hero-karya::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,169,97,.22) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-karya::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,169,97,.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-icon {
+    width: 52px; height: 52px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.15);
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .hero-title {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 3px;
+    letter-spacing: 0.3px;
+  }
+  .hero-sub {
+    font-size: 12px;
+    opacity: 0.85;
+    font-weight: 600;
+  }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,.15);
+    position: relative;
+    z-index: 1;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat .n {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+  .hero-stat .l {
+    font-size: 9px;
+    opacity: 0.8;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-top: 5px;
+  }
+  .hero-stat.poin .n { color: var(--gold); }
+  .hero-stat.dis .n { color: #86EFAC; }
+
+  /* TABS */
+  .tab-switch {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    padding: 4px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    border: 1.5px solid var(--border);
+    animation: fade-in-up .4s var(--ease-out) .05s both;
+  }
+  .tsw {
+    flex: 1;
+    padding: 12px 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all .15s;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tsw.active {
+    background: var(--surface);
+    color: var(--maroon);
+    box-shadow: 0 2px 8px rgba(125,29,58,.08);
+  }
+  .tsw-count {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--border);
+    color: var(--muted);
+    font-weight: 800;
+    min-width: 18px;
+    text-align: center;
+  }
+  .tsw.active .tsw-count {
+    background: var(--maroon-soft);
+    color: var(--maroon);
+  }
+
+  /* TOMBOL TAMBAH */
+  .btn-tambah {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 6px 16px rgba(125,29,58,.25), inset 0 0 0 1px rgba(201,169,97,.3);
+    transition: all .2s var(--ease-out);
+    margin-bottom: 16px;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-tambah:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(125,29,58,.35), inset 0 0 0 1px rgba(201,169,97,.4);
+  }
+  .btn-tambah:active { transform: scale(.98); }
+
+  /* CARD KARYA */
+  .karya-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 14px;
+    margin-bottom: 12px;
+    transition: all .2s var(--ease-out);
+    animation: fade-in-up .4s var(--ease-out) both;
+    position: relative;
+    overflow: hidden;
+  }
+  .karya-card:hover {
+    border-color: var(--maroon-light);
+    box-shadow: 0 8px 20px rgba(125,29,58,.08);
+    transform: translateY(-2px);
+  }
+
+  .karya-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  /* THUMBNAIL */
+  .karya-thumb {
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: var(--bg);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .karya-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .karya-thumb .fb {
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+  .karya-thumb .fb svg { width: 26px; height: 26px; }
+  .karya-thumb.inovasi .fb {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  }
+  .karya-thumb.implementasi .fb {
+    background: linear-gradient(135deg, #22C55E 0%, #15803D 100%);
+  }
+  .karya-thumb .play-badge {
+    position: absolute;
+    bottom: 4px; right: 4px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: rgba(0,0,0,.7);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .karya-thumb .play-badge svg { width: 10px; height: 10px; }
+
+  .karya-body { flex: 1; min-width: 0; }
+  .karya-judul {
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.4;
+    margin-bottom: 4px;
+  }
+  .karya-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+    font-weight: 500;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .karya-meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 700;
+    margin-top: 6px;
+  }
+
+  /* STATUS BADGE */
+  .status-pill {
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 4px 9px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 0.4px;
+  }
+  .st-menunggu { background: var(--warning-soft); color: var(--warning); }
+  .st-disetujui { background: var(--success-soft); color: var(--success); }
+  .st-ditolak { background: var(--danger-soft); color: var(--danger); }
+
+  /* KATEGORI BADGE */
+  .kat-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10.5px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  /* POIN */
+  .poin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    box-shadow: 0 3px 8px rgba(201,169,97,.25);
+  }
+
+  /* CATATAN VERIFIKATOR */
+  .catatan-box {
+    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+    color: var(--danger);
+    padding: 10px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin-top: 10px;
+    line-height: 1.55;
+    font-weight: 600;
+    border: 1px solid rgba(185,28,28,.15);
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .catatan-box svg { flex-shrink: 0; margin-top: 2px; }
+
+  /* FOOTER ACTIONS */
+  .karya-foot {
+    display: flex;
+    gap: 8px;
+    padding-top: 12px;
+    margin-top: 10px;
+    border-top: 1px dashed var(--border);
+    align-items: center;
+  }
+  .link-bukti {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11.5px;
+    font-weight: 800;
+    color: var(--maroon);
+    text-decoration: none;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1.5px solid var(--maroon-soft);
+    transition: all .15s;
+  }
+  .link-bukti:hover {
+    background: var(--maroon-soft);
+    text-decoration: none;
+  }
+  .karya-actions {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+  }
+  .btn-mini {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .15s;
+    padding: 0;
+  }
+  .btn-mini:hover {
+    border-color: var(--maroon);
+    color: var(--maroon);
+    background: var(--maroon-soft);
+  }
+  .btn-mini.danger:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+    background: var(--danger-soft);
+  }
+
+  /* EMPTY */
+  .empty-state {
+    text-align: center;
+    padding: 50px 20px;
+  }
+  .empty-state .big-icon {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+  }
+  .empty-state .big-icon svg { width: 40px; height: 40px; }
+  .empty-state h3 {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .empty-state p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  /* MODAL */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(28,20,20,.55);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fade-in .2s both;
+  }
+  .modal {
+    background: var(--surface);
+    border-radius: 22px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 92vh;
+    overflow-y: auto;
+    padding: 22px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.3);
+    animation: slide-up-sm .3s var(--ease-out) both;
+  }
+  @keyframes slide-up-sm {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--maroon);
+    margin-bottom: 4px;
+  }
+  .modal-sub {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .form-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: 0.3px;
+  }
+  .form-label .req { color: var(--danger); }
+  .form-help {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  .kategori-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .kat-opt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all .15s;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .kat-opt:hover { border-color: var(--maroon-light); }
+  .kat-opt.active {
+    background: var(--maroon-soft);
+    border-color: var(--maroon);
+    color: var(--maroon);
+  }
+  .kat-opt svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .modal-actions .btn { flex: 1; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Karya Saya</div>
+      <div class="app-header-sub">Inovasi & Aksi Nyata</div>
+    </div>
+  </div>
+  <button class="header-btn" data-act="logout">
+    <span data-icon="logOut"></span>
+  </button>
+</header>
+
+<main class="karya-stage">
+
+  <!-- HERO -->
+  <div class="hero-karya">
+    <div class="hero-head">
+      <div class="hero-icon">
+        <span data-icon="sparkles" class="icon-lg"></span>
+      </div>
+      <div>
+        <div class="hero-title">Karya & Kontribusi</div>
+        <div class="hero-sub">Bagikan inovasi & aksi nyata Anda</div>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="n" id="statTotal">—</div>
+        <div class="l">Total Karya</div>
+      </div>
+      <div class="hero-stat dis">
+        <div class="n" id="statDisetujui">—</div>
+        <div class="l">Disetujui</div>
+      </div>
+      <div class="hero-stat poin">
+        <div class="n" id="statPoin">—</div>
+        <div class="l">Poin Kontribusi</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-switch">
+    <button class="tsw active" data-jenis="inovasi">
+      <span data-icon="sparkles" class="icon-sm"></span>
+      Inovasi
+      <span class="tsw-count" id="countInovasi">0</span>
+    </button>
+    <button class="tsw" data-jenis="implementasi">
+      <span data-icon="target" class="icon-sm"></span>
+      Aksi Nyata
+      <span class="tsw-count" id="countImplementasi">0</span>
+    </button>
+  </div>
+
+  <!-- TOMBOL TAMBAH -->
+  <button class="btn-tambah" id="btnTambah">
+    <span data-icon="plus" class="icon-sm"></span>
+    <span id="btnTambahText">Tambah Inovasi</span>
+  </button>
+
+  <!-- LIST -->
+  <div id="listKarya">
+    <div class="skeleton" style="height:120px;border-radius:18px;margin-bottom:12px;"></div>
+    <div class="skeleton" style="height:120px;border-radius:18px;"></div>
+  </div>
+
+</main>
+
+<nav class="bottom-nav">
+  <a class="nav-item" data-nav="beranda" href="beranda.html"><span data-icon="home"></span> Beranda</a>
+  <a class="nav-item" data-nav="pertemuan" href="beranda.html#sectionPertemuan"><span data-icon="calendar"></span> Pertemuan</a>
+  <a class="nav-item" data-nav="galeri" href="galeri.html"><span data-icon="grid"></span> Galeri</a>
+  <a class="nav-item active" data-nav="aktivitas" href="aktivitas.html"><span data-icon="activity"></span> Aktivitas</a>
+  <a class="nav-item" data-nav="profil" href="profil.html"><span data-icon="user"></span> Profil</a>
+</nav>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+// ============================================================
+// INIT
+// ============================================================
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+UI.bindLogout();
+
+// ============================================================
+// KONSTANTA
+// ============================================================
+const KATEGORI_INOVASI = {
+  media:   { label: 'Media Pembelajaran', icon: 'camera' },
+  metode:  { label: 'Metode Mengajar',    icon: 'book' },
+  modul:   { label: 'Modul Ajar',         icon: 'fileText' },
+  alat:    { label: 'Alat Peraga',        icon: 'settings' },
+  video:   { label: 'Video Pembelajaran', icon: 'camera' },
+  lainnya: { label: 'Lainnya',            icon: 'sparkles' },
+};
+
+const STATUS_MAP = {
+  menunggu:  { label: 'Menunggu',  cls: 'st-menunggu' },
+  disetujui: { label: 'Disetujui', cls: 'st-disetujui' },
+  ditolak:   { label: 'Ditolak',   cls: 'st-ditolak' },
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let profile;
+let jenisAktif = 'inovasi';
+let semuaKarya = [];
+let pertemuanList = [];
+
+// ============================================================
+// INIT DATA
+// ============================================================
+(async () => {
+  profile = await Api.requireLogin();
+  if (!profile) return;
+
+  // Load pertemuan (untuk dropdown di form implementasi)
+  const resP = await Api.call('pertemuan.list');
+  if (resP.ok) pertemuanList = resP.data || [];
+
+  await loadKarya();
+
+  // Bind tabs
+  document.querySelectorAll('.tsw').forEach(t => {
+    t.addEventListener('click', () => {
+      jenisAktif = t.dataset.jenis;
+      document.querySelectorAll('.tsw').forEach(x => x.classList.toggle('active', x === t));
+      document.getElementById('btnTambahText').textContent =
+        jenisAktif === 'inovasi' ? 'Tambah Inovasi' : 'Tambah Aksi Nyata';
+      renderList();
+    });
+  });
+
+  // Tombol tambah
+  document.getElementById('btnTambah').addEventListener('click', () => bukaForm(null));
+})();
+
+// ============================================================
+// LOAD KARYA
+// ============================================================
+async function loadKarya() {
+  const el = document.getElementById('listKarya');
+  el.innerHTML = '<div class="skeleton" style="height:120px;border-radius:18px;"></div>';
+
+  const res = await Api.call('karya.saya');
+
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat.');
+    return;
+  }
+
+  semuaKarya = res.data.list || [];
+  const r = res.data.ringkasan;
+
+  document.getElementById('statTotal').textContent = r.total;
+  document.getElementById('statDisetujui').textContent = r.disetujui;
+  document.getElementById('statPoin').textContent = '+' + r.total_poin;
+  document.getElementById('countInovasi').textContent = r.inovasi;
+  document.getElementById('countImplementasi').textContent = r.implementasi;
+
+  renderList();
+}
+
+// ============================================================
+// RENDER LIST
+// ============================================================
+function renderList() {
+  const el = document.getElementById('listKarya');
+  const filtered = semuaKarya.filter(k => k.jenis === jenisAktif);
+
+  if (filtered.length === 0) {
+    const label = jenisAktif === 'inovasi' ? 'Inovasi' : 'Aksi Nyata';
+    const desc = jenisAktif === 'inovasi'
+      ? 'Bagikan karya inovasi Anda — media pembelajaran, metode mengajar, modul ajar, dll.'
+      : 'Ceritakan aksi nyata Anda — penerapan materi KKG di kelas.';
+    el.innerHTML = `
+      <div class="empty-state">
+        <div class="big-icon">${Icons.get(jenisAktif === 'inovasi' ? 'sparkles' : 'target', { class: 'icon-lg' })}</div>
+        <h3>Belum Ada ${label}</h3>
+        <p>${desc}</p>
+      </div>
+    `;
+    return;
+  }
+
+  el.innerHTML = filtered.map((k, idx) => renderCard(k, idx)).join('');
+
+  // Bind actions
+  el.querySelectorAll('[data-edit]').forEach(b => {
+    b.addEventListener('click', () => bukaForm(Number(b.dataset.edit)));
+  });
+  el.querySelectorAll('[data-hapus]').forEach(b => {
+    b.addEventListener('click', () => hapusKarya(Number(b.dataset.hapus)));
+  });
+}
+
+function renderCard(k, idx) {
+  const st = STATUS_MAP[k.status] || STATUS_MAP.menunggu;
+  const thumbUrl = UI.thumbnail(k.link_url);
+  const isYT = k.link_url && /youtube\.com|youtu\.be/.test(k.link_url);
+  const iconName = k.jenis === 'inovasi' ? 'sparkles' : 'target';
+
+  // Kategori badge
+  let kategoriHtml = '';
+  if (k.jenis === 'inovasi' && k.kategori && KATEGORI_INOVASI[k.kategori]) {
+    const kat = KATEGORI_INOVASI[k.kategori];
+    kategoriHtml = `
+      <span class="kat-badge">
+        ${Icons.get(kat.icon, { class: 'icon-sm' })}
+        ${kat.label}
+      </span>
+    `;
+  } else if (k.jenis === 'implementasi' && k.pertemuan_id) {
+    const p = pertemuanList.find(x => x.id === k.pertemuan_id);
+    if (p) {
+      kategoriHtml = `
+        <span class="kat-badge">
+          ${Icons.get('calendar', { class: 'icon-sm' })}
+          Pertemuan #${p.urutan}
+        </span>
+      `;
+    }
+  }
+
+  // Poin
+  const poinHtml = k.status === 'disetujui' && k.poin > 0
+    ? `<span class="poin-badge">${Icons.get('award', { class: 'icon-sm' })} +${k.poin}</span>`
+    : '';
+
+  // Catatan verifikator
+  const catatanHtml = k.status === 'ditolak' && k.catatan_verifikator
+    ? `<div class="catatan-box">
+         ${Icons.get('alertCircle', { class: 'icon-sm' })}
+         <span>${UI.escapeHtml(k.catatan_verifikator)}</span>
+       </div>`
+    : '';
+
+  // Thumbnail
+  const thumbHtml = `
+    <div class="karya-thumb ${k.jenis}">
+      ${thumbUrl
+        ? `<img src="${thumbUrl}" alt="" loading="lazy" onerror="UI.fotoError(this)" />
+           <div class="fb" style="display:none;">${Icons.get(iconName)}</div>
+           ${isYT ? `<div class="play-badge">${Icons.get('play')}</div>` : ''}`
+        : `<div class="fb">${Icons.get(iconName)}</div>`}
+    </div>
+  `;
+
+  // Link bukti
+  const linkHtml = k.link_url
+    ? `<a href="${UI.escapeHtml(k.link_url)}" target="_blank" rel="noopener" class="link-bukti">
+         ${Icons.get('externalLink', { class: 'icon-sm' })} Bukti
+       </a>`
+    : '';
+
+  // Bisa edit?
+  const bisaEdit = k.status === 'menunggu';
+  const actionsHtml = bisaEdit
+    ? `<div class="karya-actions">
+         <button class="btn-mini" data-edit="${k.id}" title="Edit">
+           ${Icons.get('edit')}
+         </button>
+         <button class="btn-mini danger" data-hapus="${k.id}" title="Hapus">
+           ${Icons.get('trash')}
+         </button>
+       </div>`
+    : '';
+
+  return `
+    <div class="karya-card" style="animation-delay:${idx * 0.04}s">
+      <div class="karya-head">
+        ${thumbHtml}
+        <div class="karya-body">
+          <div class="karya-judul">${UI.escapeHtml(k.judul)}</div>
+          ${k.deskripsi ? `<div class="karya-desc">${UI.escapeHtml(k.deskripsi)}</div>` : ''}
+          <div class="karya-meta">
+            ${Icons.get('calendar', { class: 'icon-sm' })}
+            ${UI.formatTanggalPendek(k.tanggal)}
+          </div>
+        </div>
+        <span class="status-pill ${st.cls}">${st.label}</span>
+      </div>
+
+      ${kategoriHtml || poinHtml ? `
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:4px;">
+          ${kategoriHtml}
+          ${poinHtml}
+        </div>
+      ` : ''}
+
+      ${catatanHtml}
+
+      ${linkHtml ? `
+        <div class="karya-foot">
+          ${linkHtml}
+          ${actionsHtml}
+        </div>
+      ` : (actionsHtml ? `<div class="karya-foot" style="justify-content:flex-end;">${actionsHtml}</div>` : '')}
+    </div>
+  `;
+}
+
+// ============================================================
+// FORM
+// ============================================================
+function bukaForm(id) {
+  const isEdit = !!id;
+  const k = id ? semuaKarya.find(x => x.id === id) : null;
+  const jenis = k ? k.jenis : jenisAktif;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-backdrop';
+  overlay.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">${isEdit ? 'Edit' : 'Tambah'} ${jenis === 'inovasi' ? 'Inovasi' : 'Aksi Nyata'}</div>
+      <div class="modal-sub">
+        ${jenis === 'inovasi'
+          ? 'Bagikan karya inovasi Anda agar bermanfaat untuk guru lain.'
+          : 'Ceritakan bagaimana Anda menerapkan materi KKG di kelas.'}
+      </div>
+
+      <div id="formContent"></div>
+
+      <div id="formAlert" class="alert alert-error hidden" style="margin-top:14px;"></div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" data-close>Batal</button>
+        <button class="btn btn-primary" id="btnSimpan">
+          <span data-icon="save" class="icon-sm"></span>
+          Simpan
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const formEl = overlay.querySelector('#formContent');
+  formEl.innerHTML = jenis === 'inovasi' ? formInovasi(k) : formImplementasi(k);
+
+  // Re-render icons baru
+  overlay.querySelectorAll('[data-icon]').forEach(el => {
+    el.innerHTML = Icons.get(el.dataset.icon);
+    el.style.display = 'contents';
+  });
+
+  // Bind kategori picker
+  overlay.querySelectorAll('.kat-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      overlay.querySelectorAll('.kat-opt').forEach(x => x.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  const close = () => overlay.remove();
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnSimpan').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnSimpan');
+    const alertEl = overlay.querySelector('#formAlert');
+    alertEl.classList.add('hidden');
+
+    const data = collectForm(overlay, id, jenis);
+    if (!data) return;
+
+    UI.btnLoading(btn, 'Menyimpan…');
+    const res = await Api.call('karya.ajukan', { karya: data });
+    UI.btnReset(btn);
+
+    if (!res.ok) {
+      alertEl.textContent = res.error || 'Gagal menyimpan.';
+      alertEl.classList.remove('hidden');
+      return;
+    }
+
+    UI.sukses(isEdit ? 'Karya diperbarui.' : 'Karya terkirim! Menunggu verifikasi admin.');
+    close();
+    await loadKarya();
+  });
+}
+
+function formInovasi(k) {
+  const kategoriTerpilih = k?.kategori || 'media';
+  return `
+    <div class="form-field">
+      <label class="form-label">Judul <span class="req">*</span></label>
+      <input type="text" id="fJudul" class="input" placeholder="Mis: Media Pembelajaran Interaktif" value="${UI.escapeHtml(k?.judul || '')}" />
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">Kategori</label>
+      <div class="kategori-grid">
+        ${Object.entries(KATEGORI_INOVASI).map(([kode, kat]) => `
+          <button type="button" class="kat-opt ${kode === kategoriTerpilih ? 'active' : ''}" data-kat="${kode}">
+            ${Icons.get(kat.icon)}
+            ${kat.label}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">Deskripsi</label>
+      <textarea id="fDeskripsi" class="input" rows="3" style="resize:vertical;" placeholder="Jelaskan karya Anda secara singkat…">${UI.escapeHtml(k?.deskripsi || '')}</textarea>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">Link Bukti</label>
+      <input type="url" id="fLink" class="input" placeholder="https://drive.google.com/… atau YouTube" value="${UI.escapeHtml(k?.link_url || '')}" />
+      <div class="form-help">Opsional. Bisa Google Drive, YouTube, blog, dsb.</div>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">Tanggal</label>
+      <input type="date" id="fTanggal" class="input" value="${k?.tanggal || new Date().toISOString().slice(0,10)}" />
+    </div>
+  `;
+}
+
+function formImplementasi(k) {
+  const opsiPertemuan = pertemuanList
+    .sort((a, b) => b.urutan - a.urutan)
+    .map(p => `
+      <option value="${p.id}" ${k?.pertemuan_id === p.id ? 'selected' : ''}>
+        #${p.urutan} — ${UI.escapeHtml(p.judul)}
+      </option>
+    `).join('');
+
+  return `
+    <div class="form-field">
+      <label class="form-label">Judul <span class="req">*</span></label>
+      <input type="text" id="fJudul" class="input" placeholder="Mis: Penerapan PBL di Kelas 6" value="${UI.escapeHtml(k?.judul || '')}" />
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">Terkait Pertemuan</label>
+      <select id="fPertemuan" class="input">
+        <option value="">— Tidak spesifik —</option>
+        ${opsiPertemuan}
+      </select>
+      <div class="form-help">Pilih pertemuan yang materinya Anda terapkan.</div>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">Deskripsi Aksi</label>
+      <textarea id="fDeskripsi" class="input" rows="3" style="resize:vertical;" placeholder="Apa yang Anda lakukan? Bagaimana caranya?">${UI.escapeHtml(k?.deskripsi || '')}</textarea>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">Link Bukti</label>
+      <input type="url" id="fLink" class="input" placeholder="https://drive.google.com/…" value="${UI.escapeHtml(k?.link_url || '')}" />
+      <div class="form-help">Disarankan — foto kegiatan, video, atau dokumentasi.</div>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">Tanggal</label>
+      <input type="date" id="fTanggal" class="input" value="${k?.tanggal || new Date().toISOString().slice(0,10)}" />
+    </div>
+  `;
+}
+
+function collectForm(overlay, id, jenis) {
+  const val = sel => overlay.querySelector(sel)?.value.trim() || '';
+
+  const judul = val('#fJudul');
+  if (!judul) { UI.gagal('Judul wajib diisi.'); return null; }
+
+  const link = val('#fLink');
+  if (link && !/^https?:\/\/.+/i.test(link)) {
+    UI.gagal('Link harus dimulai http:// atau https://');
+    return null;
+  }
+
+  const data = {
+    id: id || null,
+    jenis,
+    judul,
+    deskripsi: val('#fDeskripsi'),
+    link_url: link,
+    tanggal: val('#fTanggal'),
+  };
+
+  if (jenis === 'inovasi') {
+    const katEl = overlay.querySelector('.kat-opt.active');
+    data.kategori = katEl?.dataset.kat || 'lainnya';
+  } else {
+    const pVal = val('#fPertemuan');
+    data.pertemuan_id = pVal ? Number(pVal) : null;
+  }
+
+  return data;
+}
+
+// ============================================================
+// HAPUS
+// ============================================================
+async function hapusKarya(id) {
+  const k = semuaKarya.find(x => x.id === id);
+  if (!k) return;
+
+  const ok = await UI.konfirmasi(
+    'Hapus Karya',
+    `Hapus "${k.judul}"? Tindakan ini tidak bisa dibatalkan.`,
+    { danger: true, okText: 'Hapus' }
+  );
+  if (!ok) return;
+
+  const res = await Api.call('karya.hapus', { karya_id: id });
+  if (!res.ok) { UI.gagal(res.error); return; }
+
+  UI.sukses('Karya dihapus.');
+  await loadKarya();
+}
+</script>
+
+</body>
+</html>
