@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>Sekolah Saya — NAKULAKU</title>
+
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/nakula.css" />
+
+<style>
+  .hero-sekolah {
+    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon-mid) 100%);
+    color: white;
+    border-radius: var(--r-xl);
+    padding: 20px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(125,29,58,.25);
+  }
+  .hero-sekolah::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.1;
+  }
+  .hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(201,169,97,.4);
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .hero-nama { font-size: 18px; font-weight: 800; margin-bottom: 4px; position: relative; }
+  .hero-npsn { font-size: 12px; opacity: 0.85; position: relative; }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding-top: 14px;
+    margin-top: 14px;
+    border-top: 1px solid rgba(255,255,255,.15);
+    position: relative;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat .n { font-size: 20px; font-weight: 800; line-height: 1; }
+  .hero-stat .l { font-size: 9px; opacity: 0.75; font-weight: 700; margin-top: 4px; text-transform: uppercase; }
+
+  .tab-row {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    padding: 4px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .tab-p {
+    flex: 1;
+    min-width: 90px;
+    padding: 10px 6px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .tab-p.active {
+    background: var(--surface);
+    color: var(--maroon);
+    box-shadow: var(--sh-sm);
+  }
+
+  .item-sekolah {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .item-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .item-info { flex: 1; min-width: 0; }
+  .item-title { font-weight: 700; font-size: 13.5px; margin-bottom: 3px; }
+  .item-sub { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+
+  .status-pill {
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .st-menunggu { background: var(--warning-soft); color: var(--warning); }
+  .st-disetujui { background: var(--success-soft); color: var(--success); }
+  .st-ditolak { background: var(--danger-soft); color: var(--danger); }
+
+  .item-actions {
+    display: flex;
+    gap: 6px;
+    padding-top: 10px;
+    margin-top: 10px;
+    border-top: 1px dashed var(--border);
+  }
+  .item-actions .btn { flex: 1; }
+
+  .catatan-box {
+    background: var(--danger-soft);
+    color: var(--danger);
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand">
+    <a href="../beranda.html" class="header-btn" style="text-decoration:none;">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="app-header-text">
+      <div class="app-header-title">Sekolah Saya</div>
+      <div class="app-header-sub">NAKULAKU</div>
+    </div>
+  </div>
+</header>
+
+<main class="container page" style="max-width:720px;padding-top:16px;">
+
+  <div id="heroSekolah" class="hero-sekolah hidden">
+    <div class="hero-label">
+      ${''}
+      <span data-icon="home" class="icon-sm"></span>
+      PROFIL SEKOLAH
+    </div>
+    <div class="hero-nama" id="heroNama">—</div>
+    <div class="hero-npsn" id="heroNpsn">NPSN —</div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="n" id="statPrestasi">—</div>
+        <div class="l">Prestasi</div>
+      </div>
+      <div class="hero-stat">
+        <div class="n" id="statPembiasaan">—</div>
+        <div class="l">Pembiasaan</div>
+      </div>
+      <div class="hero-stat">
+        <div class="n" id="statKegiatan">—</div>
+        <div class="l">Kegiatan</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PILIH SEKOLAH (kalau lebih dari 1) -->
+  <div id="pilihSekolahWrap" class="hidden" style="margin-bottom:16px;">
+    <label class="label">Pilih Sekolah</label>
+    <select id="pilihSekolah" class="input"></select>
+  </div>
+
+  <button class="btn btn-primary btn-full" id="btnTambah" style="margin-bottom:16px;">
+    <span data-icon="plus"></span> Tambah Data
+  </button>
+
+  <div class="tab-row">
+    <button class="tab-p active" data-tab="prestasi">
+      <span data-icon="award" class="icon-sm"></span> Prestasi
+    </button>
+    <button class="tab-p" data-tab="pembiasaan">
+      <span data-icon="sparkles" class="icon-sm"></span> Pembiasaan
+    </button>
+    <button class="tab-p" data-tab="kegiatan">
+      <span data-icon="calendar" class="icon-sm"></span> Kegiatan
+    </button>
+    <button class="tab-p" data-tab="pelapor">
+      <span data-icon="users" class="icon-sm"></span> Pelapor
+    </button>
+  </div>
+
+  <div id="listItem">
+    <div class="skeleton" style="height:120px;border-radius:16px;margin-bottom:10px;"></div>
+    <div class="skeleton" style="height:120px;border-radius:16px;"></div>
+  </div>
+
+</main>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+
+let profile;
+let daftarSekolah = [];
+let sekolahAktif = null;
+let tabAktif = 'prestasi';
+let daftarItem = [];
+
+(async () => {
+  profile = await Api.requireLogin();
+  if (!profile) return;
+
+  const peran = profile.peran || [];
+  const isPanitia = peran.includes('pengurus') || peran.includes('super_admin');
+  const isKS = peran.includes('ks');
+
+  // Tentukan sekolah yang bisa diakses
+  if (isPanitia) {
+    const res = await Api.call('sekolah.list');
+    if (res.ok) daftarSekolah = res.data || [];
+  } else if (isKS) {
+    // KS: sekolah induk + PLT
+    const ksSekolah = profile.ks_sekolah || [];
+    if (ksSekolah.length > 0) {
+      daftarSekolah = ksSekolah.map(k => k.sekolah).filter(Boolean);
+    } else if (profile.sekolah) {
+      daftarSekolah = [profile.sekolah];
+    }
+  } else {
+    // Cek sebagai pelapor
+    const res = await Api.callSekolah('pelapor.list_saya');
+    if (res.ok && res.data && res.data.length > 0) {
+      daftarSekolah = res.data.map(x => x.sekolah).filter(Boolean);
+    } else if (profile.sekolah) {
+      daftarSekolah = [profile.sekolah];
+    }
+  }
+
+  if (daftarSekolah.length === 0) {
+    document.querySelector('main').innerHTML = UI.errorHtml('Anda tidak punya akses ke sekolah mana pun.');
+    return;
+  }
+
+  // Kalau lebih dari 1, tampilkan pilihan
+  if (daftarSekolah.length > 1) {
+    document.getElementById('pilihSekolahWrap').classList.remove('hidden');
+    const sel = document.getElementById('pilihSekolah');
+    sel.innerHTML = daftarSekolah.map(s => `<option value="${s.id}">${UI.escapeHtml(s.nama)}</option>`).join('');
+    sel.addEventListener('change', () => {
+      sekolahAktif = daftarSekolah.find(s => s.id === Number(sel.value));
+      refresh();
+    });
+  }
+
+  sekolahAktif = daftarSekolah[0];
+  refresh();
+
+  // Tab switching
+  document.querySelectorAll('.tab-p').forEach(t => {
+    t.addEventListener('click', () => {
+      tabAktif = t.dataset.tab;
+      document.querySelectorAll('.tab-p').forEach(x => x.classList.toggle('active', x === t));
+      loadTab();
+    });
+  });
+
+  document.getElementById('btnTambah').addEventListener('click', tambahData);
+})();
+
+async function refresh() {
+  if (!sekolahAktif) return;
+
+  document.getElementById('heroNama').textContent = sekolahAktif.nama;
+  document.getElementById('heroNpsn').textContent = 'NPSN ' + (sekolahAktif.npsn || '-');
+  document.getElementById('heroSekolah').classList.remove('hidden');
+
+  // Load ringkasan
+  const res = await Api.callSekolahPublik('sekolah.profil', { sekolah_id: sekolahAktif.id });
+  if (res.ok && res.data) {
+    const r = res.data.ringkasan;
+    document.getElementById('statPrestasi').textContent = r.jumlah_prestasi;
+    document.getElementById('statPembiasaan').textContent = r.jumlah_pembiasaan;
+    document.getElementById('statKegiatan').textContent = r.jumlah_kegiatan;
+  }
+
+  await loadTab();
+}
+
+async function loadTab() {
+  if (tabAktif === 'pelapor') {
+    await loadPelapor();
+    return;
+  }
+
+  const el = document.getElementById('listItem');
+  el.innerHTML = '<div class="skeleton" style="height:120px;border-radius:16px;"></div>';
+
+  const actionMap = {
+    prestasi: 'prestasi.list',
+    pembiasaan: 'pembiasaan.list',
+    kegiatan: 'kegiatan.list',
+  };
+  const action = actionMap[tabAktif];
+  if (!action) return;
+
+  const res = await Api.callSekolah(action, { sekolah_id: sekolahAktif.id, limit: 100 });
+  if (!res.ok) { el.innerHTML = UI.errorHtml(res.error); return; }
+
+  daftarItem = res.data || [];
+
+  if (daftarItem.length === 0) {
+    el.innerHTML = UI.emptyHtml('inbox', 'Belum ada data', 'Klik tombol Tambah Data untuk mulai.');
+    return;
+  }
+
+  el.innerHTML = daftarItem.map(it => renderItem(it)).join('');
+
+  // Wire actions
+  el.querySelectorAll('[data-act="edit"]').forEach(b => {
+    b.addEventListener('click', () => tambahData(Number(b.dataset.id)));
+  });
+  el.querySelectorAll('[data-act="hapus"]').forEach(b => {
+    b.addEventListener('click', () => hapusData(Number(b.dataset.id)));
+  });
+}
+
+function renderItem(it) {
+  const statusLabel = {
+    menunggu: 'Menunggu',
+    disetujui: 'Disetujui',
+    ditolak: 'Ditolak',
+  }[it.status] || it.status;
+
+  let judul = '';
+  let sub = '';
+
+  if (tabAktif === 'prestasi') {
+    judul = it.nama_lomba;
+    const tingkatLabel = {
+      sekolah: 'Sekolah', kecamatan: 'Kecamatan', kabupaten: 'Kabupaten',
+      provinsi: 'Provinsi', nasional: 'Nasional', internasional: 'Internasional',
+    }[it.tingkat] || it.tingkat;
+    const peringkatLabel = {
+      juara_1: 'Juara 1', juara_2: 'Juara 2', juara_3: 'Juara 3', harapan: 'Harapan',
+    }[it.peringkat] || it.peringkat;
+    sub = `${it.nama_siswa} · ${tingkatLabel} ${peringkatLabel}`;
+  } else if (tabAktif === 'pembiasaan') {
+    judul = it.nama;
+    sub = `${it.frekuensi || '-'} · ${it.bulan || '-'}/${it.tahun}`;
+  } else if (tabAktif === 'kegiatan') {
+    judul = it.nama;
+    sub = `${it.tanggal} · ${it.tempat || '-'}`;
+  }
+
+  const bisaEdit = it.status === 'menunggu';
+  const poinHtml = it.status === 'disetujui' && it.poin > 0
+    ? `<span style="color:var(--maroon);font-weight:800;font-size:12px;">+${it.poin} poin</span>`
+    : '';
+
+  const catatanHtml = it.status === 'ditolak' && it.catatan_verifikator
+    ? `<div class="catatan-box">❌ ${UI.escapeHtml(it.catatan_verifikator)}</div>`
+    : '';
+
+  return `
+    <div class="item-sekolah">
+      <div class="item-head">
+        <div class="item-info">
+          <div class="item-title">${UI.escapeHtml(judul)}</div>
+          <div class="item-sub">${UI.escapeHtml(sub)}</div>
+          ${poinHtml}
+        </div>
+        <span class="status-pill st-${it.status}">${statusLabel}</span>
+      </div>
+
+      ${it.bukti_url ? `
+        <a href="${UI.escapeHtml(it.bukti_url)}" target="_blank" rel="noopener" style="font-size:12px;font-weight:700;color:var(--maroon);display:inline-flex;align-items:center;gap:4px;">
+          ${Icons.get('externalLink', { class: 'icon-sm' })} Lihat Bukti
+        </a>
+      ` : ''}
+
+      ${catatanHtml}
+
+      ${bisaEdit ? `
+        <div class="item-actions">
+          <button class="btn btn-secondary btn-sm" data-act="edit" data-id="${it.id}">
+            ${Icons.get('edit', { class: 'icon-sm' })} Edit
+          </button>
+          <button class="btn btn-ghost btn-sm" data-act="hapus" data-id="${it.id}" style="color:var(--danger);">
+            ${Icons.get('trash', { class: 'icon-sm' })} Hapus
+          </button>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+// ============================================================
+// PELAPOR
+// ============================================================
+async function loadPelapor() {
+  const el = document.getElementById('listItem');
+  el.innerHTML = '<div class="skeleton" style="height:80px;border-radius:16px;"></div>';
+
+  const res = await Api.callSekolah('pelapor.list', { sekolah_id: sekolahAktif.id });
+  if (!res.ok) { el.innerHTML = UI.errorHtml(res.error); return; }
+
+  const list = res.data || [];
+
+  let html = `
+    <div class="card" style="margin-bottom:12px;font-size:12px;line-height:1.5;color:var(--muted);">
+      Pelapor adalah guru yang ditunjuk untuk membantu KS menginput data prestasi, pembiasaan, dan kegiatan sekolah. Maksimal 3 guru + KS.
+    </div>
+    <button class="btn btn-primary btn-full" id="btnTambahPelapor" style="margin-bottom:12px;">
+      <span data-icon="plus"></span> Tunjuk Pelapor
+    </button>
+  `;
+
+  if (list.length === 0) {
+    html += UI.emptyHtml('users', 'Belum ada pelapor', 'Klik tombol di atas untuk menunjuk guru.');
+  } else {
+    html += list.map(p => `
+      <div class="item-sekolah">
+        <div class="item-head">
+          <div class="item-info">
+            <div class="item-title">${UI.escapeHtml(p.user?.nama_lengkap || '-')}</div>
+            <div class="item-sub">${UI.escapeHtml(p.user?.jabatan || '-')}</div>
+          </div>
+          <button class="btn-icon" data-hapus-pelapor="${p.id}" style="color:var(--danger);">
+            ${Icons.get('trash', { class: 'icon-sm' })}
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  el.innerHTML = html;
+
+  el.querySelector('#btnTambahPelapor')?.addEventListener('click', tambahPelapor);
+  el.querySelectorAll('[data-hapus-pelapor]').forEach(b => {
+    b.addEventListener('click', () => hapusPelapor(Number(b.dataset.hapusPelapor)));
+  });
+}
+
+async function tambahPelapor() {
+  const res = await Api.call('users.list', { sekolah_id: sekolahAktif.id, limit: 100 });
+  if (!res.ok) { UI.gagal(res.error); return; }
+
+  const guruList = res.data.hasil || [];
+  if (guruList.length === 0) { UI.gagal('Tidak ada guru di sekolah ini.'); return; }
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:24px;max-width:480px;width:100%;max-height:85vh;display:flex;flex-direction:column;box-shadow:var(--sh-xl);">
+      <h3 style="font-size:17px;color:var(--maroon);margin:0 0 14px;">Tunjuk Pelapor</h3>
+      <div style="flex:1;overflow-y:auto;border:1px solid var(--border);border-radius:12px;padding:6px;margin-bottom:14px;min-height:200px;">
+        ${guruList.map(g => `
+          <label style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;">
+            <input type="radio" name="pilihGuru" value="${g.id}" style="width:18px;height:18px;accent-color:var(--maroon);" />
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:700;font-size:13px;">${UI.escapeHtml(g.nama_lengkap)}</div>
+              <div style="font-size:11px;color:var(--muted);">${UI.escapeHtml(g.jabatan || '-')}</div>
+            </div>
+          </label>
+        `).join('')}
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary" id="btnBatal" style="flex:1;">Batal</button>
+        <button class="btn btn-primary" id="btnSimpan" style="flex:2;">Tunjuk</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  let selectedId = null;
+  overlay.querySelectorAll('input[name="pilihGuru"]').forEach(r => {
+    r.addEventListener('change', () => { selectedId = Number(r.value); });
+  });
+
+  const close = () => overlay.remove();
+  overlay.querySelector('#btnBatal').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnSimpan').addEventListener('click', async () => {
+    if (!selectedId) { UI.gagal('Pilih guru dulu.'); return; }
+
+    const res2 = await Api.callSekolah('pelapor.tambah', {
+      sekolah_id: sekolahAktif.id,
+      user_id: selectedId,
+    });
+    if (!res2.ok) { UI.gagal(res2.error); return; }
+
+    UI.sukses('Pelapor ditambahkan.');
+    close();
+    await loadPelapor();
+  });
+}
+
+async function hapusPelapor(id) {
+  const ok = await UI.konfirmasi('Hapus Pelapor', 'Cabut akses guru ini sebagai pelapor?', { danger: true, okText: 'Hapus' });
+  if (!ok) return;
+  const res = await Api.callSekolah('pelapor.hapus', { pelapor_id: id });
+  if (!res.ok) { UI.gagal(res.error); return; }
+  UI.sukses('Pelapor dihapus.');
+  await loadPelapor();
+}
+
+// ============================================================
+// TAMBAH DATA (FORM)
+// ============================================================
+async function tambahData(id = null) {
+  const item = id ? daftarItem.find(x => x.id === id) : null;
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:20px;padding:24px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--sh-xl);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h3 style="font-size:17px;color:var(--maroon);margin:0;">${id ? 'Edit' : 'Tambah'} ${tabAktif.charAt(0).toUpperCase() + tabAktif.slice(1)}</h3>
+        <button class="btn-icon" id="btnX">${Icons.get('x')}</button>
+      </div>
+      <div id="formContent"></div>
+      <div style="display:flex;gap:8px;margin-top:16px;">
+        <button class="btn btn-secondary" id="btnBatal" style="flex:1;">Batal</button>
+        <button class="btn btn-primary" id="btnSimpan" style="flex:2;">Simpan</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  // Render form sesuai tab
+  const formEl = overlay.querySelector('#formContent');
+  if (tabAktif === 'prestasi') {
+    formEl.innerHTML = formPrestasi(item);
+  } else if (tabAktif === 'pembiasaan') {
+    formEl.innerHTML = formPembiasaan(item);
+  } else if (tabAktif === 'kegiatan') {
+    formEl.innerHTML = formKegiatan(item);
+  }
+
+  const close = () => overlay.remove();
+  overlay.querySelector('#btnX').addEventListener('click', close);
+  overlay.querySelector('#btnBatal').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnSimpan').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnSimpan');
+    const data = collectForm(overlay, id);
+
+    if (!data) return;
+
+    UI.btnLoading(btn, 'Menyimpan…');
+    const res = await Api.callSekolah(`${tabAktif}.simpan`, { data });
+    UI.btnReset(btn);
+
+    if (!res.ok) { UI.gagal(res.error); return; }
+
+    UI.sukses(id ? 'Diperbarui.' : 'Ditambahkan. Menunggu verifikasi panitia.');
+    close();
+    await loadTab();
+    await refresh();
+  });
+}
+
+function formPrestasi(it) {
+  return `
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="field">
+        <label class="label">Nama Siswa *</label>
+        <input type="text" id="f1" class="input" value="${UI.escapeHtml(it?.nama_siswa || '')}" />
+      </div>
+      <div class="field">
+        <label class="label">Kelas</label>
+        <input type="text" id="f2" class="input" value="${UI.escapeHtml(it?.kelas || '')}" placeholder="Mis: 5A" />
+      </div>
+      <div class="field">
+        <label class="label">Nama Lomba *</label>
+        <input type="text" id="f3" class="input" value="${UI.escapeHtml(it?.nama_lomba || '')}" />
+      </div>
+      <div class="field">
+        <label class="label">Jenis Lomba</label>
+        <input type="text" id="f4" class="input" value="${UI.escapeHtml(it?.jenis_lomba || '')}" placeholder="Mis: OSN Matematika" />
+      </div>
+      <div class="field">
+        <label class="label">Tingkat *</label>
+        <select id="f5" class="input">
+          <option value="">— Pilih —</option>
+          <option value="sekolah" ${it?.tingkat === 'sekolah' ? 'selected' : ''}>Sekolah</option>
+          <option value="kecamatan" ${it?.tingkat === 'kecamatan' ? 'selected' : ''}>Kecamatan</option>
+          <option value="kabupaten" ${it?.tingkat === 'kabupaten' ? 'selected' : ''}>Kabupaten</option>
+          <option value="provinsi" ${it?.tingkat === 'provinsi' ? 'selected' : ''}>Provinsi</option>
+          <option value="nasional" ${it?.tingkat === 'nasional' ? 'selected' : ''}>Nasional</option>
+          <option value="internasional" ${it?.tingkat === 'internasional' ? 'selected' : ''}>Internasional</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="label">Peringkat *</label>
+        <select id="f6" class="input">
+          <option value="">— Pilih —</option>
+          <option value="juara_1" ${it?.peringkat === 'juara_1' ? 'selected' : ''}>Juara 1</option>
+          <option value="juara_2" ${it?.peringkat === 'juara_2' ? 'selected' : ''}>Juara 2</option>
+          <option value="juara_3" ${it?.peringkat === 'juara_3' ? 'selected' : ''}>Juara 3</option>
+          <option value="harapan" ${it?.peringkat === 'harapan' ? 'selected' : ''}>Harapan</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="label">Tanggal *</label>
+        <input type="date" id="f7" class="input" value="${it?.tanggal || new Date().toISOString().slice(0,10)}" />
+      </div>
+      <div class="field">
+        <label class="label">Guru Pembina (opsional)</label>
+        <input type="text" id="f8" class="input" value="${UI.escapeHtml(it?.guru_pembina || '')}" />
+      </div>
+      <div class="field">
+        <label class="label">Link Bukti (opsional)</label>
+        <input type="url" id="f9" class="input" value="${UI.escapeHtml(it?.bukti_url || '')}" placeholder="https://drive.google.com/…" />
+      </div>
+    </div>
+  `;
+}
+
+function formPembiasaan(it) {
+  return `
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="field">
+        <label class="label">Nama Pembiasaan *</label>
+        <input type="text" id="f1" class="input" value="${UI.escapeHtml(it?.nama || '')}" placeholder="Mis: Sholat Dhuha Berjamaah" />
+      </div>
+      <div class="field">
+        <label class="label">Deskripsi</label>
+        <textarea id="f2" class="input" rows="2" style="resize:vertical;">${UI.escapeHtml(it?.deskripsi || '')}</textarea>
+      </div>
+      <div class="field">
+        <label class="label">Frekuensi</label>
+        <select id="f3" class="input">
+          <option value="harian" ${it?.frekuensi === 'harian' ? 'selected' : ''}>Harian</option>
+          <option value="mingguan" ${it?.frekuensi === 'mingguan' ? 'selected' : ''}>Mingguan</option>
+          <option value="bulanan" ${it?.frekuensi === 'bulanan' ? 'selected' : ''}>Bulanan</option>
+          <option value="insidental" ${it?.frekuensi === 'insidental' ? 'selected' : ''}>Insidental</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="label">Bulan (opsional)</label>
+        <select id="f4" class="input">
+          <option value="">— Pilih —</option>
+          ${[1,2,3,4,5,6,7,8,9,10,11,12].map(b => `<option value="${b}" ${it?.bulan === b ? 'selected' : ''}>${b}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field">
+        <label class="label">Tahun *</label>
+        <input type="number" id="f5" class="input" value="${it?.tahun || new Date().getFullYear()}" min="2020" max="2100" />
+      </div>
+      <div class="field">
+        <label class="label">Link Bukti (opsional)</label>
+        <input type="url" id="f6" class="input" value="${UI.escapeHtml(it?.bukti_url || '')}" placeholder="https://drive.google.com/…" />
+      </div>
+    </div>
+  `;
+}
+
+function formKegiatan(it) {
+  return `
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="field">
+        <label class="label">Nama Kegiatan *</label>
+        <input type="text" id="f1" class="input" value="${UI.escapeHtml(it?.nama || '')}" />
+      </div>
+      <div class="field">
+        <label class="label">Kategori</label>
+        <input type="text" id="f2" class="input" value="${UI.escapeHtml(it?.kategori || '')}" placeholder="Mis: Peringatan HUT RI" />
+      </div>
+      <div class="field">
+        <label class="label">Deskripsi</label>
+        <textarea id="f3" class="input" rows="2" style="resize:vertical;">${UI.escapeHtml(it?.deskripsi || '')}</textarea>
+      </div>
+      <div class="field">
+        <label class="label">Tanggal *</label>
+        <input type="date" id="f4" class="input" value="${it?.tanggal || new Date().toISOString().slice(0,10)}" />
+      </div>
+      <div class="field">
+        <label class="label">Tempat</label>
+        <input type="text" id="f5" class="input" value="${UI.escapeHtml(it?.tempat || '')}" />
+      </div>
+      <div class="field">
+        <label class="label">Jumlah Peserta</label>
+        <input type="number" id="f6" class="input" value="${it?.jumlah_peserta || ''}" min="0" />
+      </div>
+      <div class="field">
+        <label class="label">Skala *</label>
+        <select id="f7" class="input">
+          <option value="">— Pilih —</option>
+          <option value="internal" ${it?.skala === 'internal' ? 'selected' : ''}>Internal Sekolah</option>
+          <option value="orang_tua" ${it?.skala === 'orang_tua' ? 'selected' : ''}>Melibatkan Orang Tua</option>
+          <option value="komunitas" ${it?.skala === 'komunitas' ? 'selected' : ''}>Melibatkan Komunitas</option>
+          <option value="kecamatan" ${it?.skala === 'kecamatan' ? 'selected' : ''}>Tingkat Kecamatan</option>
+          <option value="kabupaten_plus" ${it?.skala === 'kabupaten_plus' ? 'selected' : ''}>Kabupaten+</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="label">Link Bukti (opsional)</label>
+        <input type="url" id="f8" class="input" value="${UI.escapeHtml(it?.bukti_url || '')}" placeholder="https://drive.google.com/…" />
+      </div>
+    </div>
+  `;
+}
+
+function collectForm(overlay, id) {
+  const val = (sel) => overlay.querySelector(sel)?.value.trim() || '';
+  const base = { sekolah_id: sekolahAktif.id, id: id || null };
+
+  if (tabAktif === 'prestasi') {
+    const d = {
+      ...base,
+      nama_siswa: val('#f1'),
+      kelas: val('#f2'),
+      nama_lomba: val('#f3'),
+      jenis_lomba: val('#f4'),
+      tingkat: val('#f5'),
+      peringkat: val('#f6'),
+      tanggal: val('#f7'),
+      guru_pembina: val('#f8'),
+      bukti_url: val('#f9'),
+    };
+    if (!d.nama_siswa || !d.nama_lomba || !d.tingkat || !d.peringkat || !d.tanggal) {
+      UI.gagal('Lengkapi field bertanda *'); return null;
+    }
+    return d;
+  }
+
+  if (tabAktif === 'pembiasaan') {
+    const d = {
+      ...base,
+      nama: val('#f1'),
+      deskripsi: val('#f2'),
+      frekuensi: val('#f3'),
+      bulan: val('#f4') ? Number(val('#f4')) : null,
+      tahun: Number(val('#f5')),
+      bukti_url: val('#f6'),
+    };
+    if (!d.nama || !d.tahun) { UI.gagal('Lengkapi field bertanda *'); return null; }
+    return d;
+  }
+
+  if (tabAktif === 'kegiatan') {
+    const d = {
+      ...base,
+      nama: val('#f1'),
+      kategori: val('#f2'),
+      deskripsi: val('#f3'),
+      tanggal: val('#f4'),
+      tempat: val('#f5'),
+      jumlah_peserta: val('#f6') ? Number(val('#f6')) : null,
+      skala: val('#f7'),
+      bukti_url: val('#f8'),
+    };
+    if (!d.nama || !d.tanggal || !d.skala) { UI.gagal('Lengkapi field bertanda *'); return null; }
+    return d;
+  }
+
+  return null;
+}
+
+async function hapusData(id) {
+  const ok = await UI.konfirmasi('Hapus Data', 'Yakin hapus data ini?', { danger: true, okText: 'Hapus' });
+  if (!ok) return;
+
+  const res = await Api.callSekolah(`${tabAktif}.hapus`, { id });
+  if (!res.ok) { UI.gagal(res.error); return; }
+
+  UI.sukses('Dihapus.');
+  await loadTab();
+  await refresh();
+}
+</script>
+
+</body>
+</html>
