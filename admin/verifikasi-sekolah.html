@@ -334,13 +334,20 @@ function renderItem(it) {
        </a>`
     : '';
 
+  const logoSekolah = it.sekolah
+    ? Api.logoHtml(it.sekolah_id, it.sekolah.nama, 22, it.sekolah.logo_updated_at, { rounded: 'md' })
+    : '';
+
   return `
     <div class="item-verif">
       <div class="item-head">
         <div class="item-icon ${jenis}">${Icons.get(jenisIcon, { class: 'icon-sm' })}</div>
         <div class="item-info">
           <div class="item-title">${UI.escapeHtml(judul)}</div>
-          <div class="item-sub">${jenisLabel} · ${UI.escapeHtml(sekolah)}</div>
+          <div class="item-sub" style="display:inline-flex;align-items:center;gap:6px;">
+            ${logoSekolah}
+            <span>${jenisLabel} · ${UI.escapeHtml(sekolah)}</span>
+          </div>
           <div class="item-sub">Dilaporkan oleh: ${UI.escapeHtml(pelapor)}</div>
         </div>
       </div>
