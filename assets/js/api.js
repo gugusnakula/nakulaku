@@ -155,7 +155,76 @@
       }
       return r.json();
     },
+    // ==================== LOGO SEKOLAH ====================
 
+    /**
+     * URL logo sekolah (path deterministik).
+     * @param {number|string} sekolahId
+     * @param {string} ver  timestamp untuk cache busting (opsional)
+     */
+    logoUrl(sekolahId, ver = null) {
+      if (!sekolahId) return null;
+      const base = `${CONFIG.SUPABASE_URL}/storage/v1/object/public/nakula-logo/${sekolahId}.webp`;
+      return ver ? `${base}?v=${new Date(ver).getTime()}` : base;
+    },
+
+    /**
+     * HTML logo sekolah dengan fallback inisial.
+     * @param {number} sekolahId
+     * @param {string} nama
+     * @param {number} size  ukuran px
+     * @param {string} ver   logo_updated_at
+     * @param {object} opts  { rounded: 'md'|'full'|'lg', border: bool }
+     */
+    logoHtml(sekolahId, nama, size = 40, ver = null, opts = {}) {
+      // Inisial fallback — ambil 2 huruf dari nama sekolah
+      const init = this.inisialSekolah(nama);
+      const url = this.logoUrl(sekolahId, ver);
+      const rounded = opts.rounded === 'full' ? '50%'
+                    : opts.rounded === 'lg' ? '14px'
+                    : '10px';
+      const border = opts.border ? `border: 1.5px solid var(--gold);` : '';
+
+      return `
+        <span style="
+          display:inline-flex;align-items:center;justify-content:center;
+          width:${size}px;height:${size}px;border-radius:${rounded};
+          background:${opts.bg || 'var(--maroon-soft)'};
+          color:${opts.color || 'var(--maroon)'};
+          font-weight:800;font-size:${Math.round(size * 0.38)}px;
+          position:relative;overflow:hidden;flex-shrink:0;${border}
+          letter-spacing:0.5px;
+        ">
+          <span>${UI ? UI.escapeHtml(init) : init}</span>
+          ${url ? `<img src="${url}" loading="lazy" alt="${nama || ''}"
+            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;"
+            onerror="this.remove()">` : ''}
+        </span>
+      `;
+    },
+
+    /**
+     * Inisial sekolah dari nama — mis. "SD Negeri 1 Krisak" → "S1K"
+     */
+    inisialSekolah(nama) {
+      if (!nama) return '?';
+      // Ambil kata yang bukan "SD", "Negeri", "SMP", dsb.
+      const stop = ['sd', 'smp', 'sma', 'smk', 'negeri', 'swasta', 'n', 's'];
+      const parts = String(nama).split(/\s+/).filter(w => {
+        const l = w.toLowerCase();
+        return l && !stop.includes(l);
+      });
+
+      if (parts.length === 0) return nama.charAt(0).toUpperCase();
+
+      // Ambil huruf pertama tiap kata, max 3
+      const initials = parts.slice(0, 3).map(w => w.charAt(0).toUpperCase()).join('');
+      return initials || nama.charAt(0).toUpperCase();
+    },
+
+    // ==================== HELPERS ====================
+
+    fotoUrl(id, ukuran = 't') {
     // ==================== HELPERS ====================
 
     /**
