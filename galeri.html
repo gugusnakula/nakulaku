@@ -343,19 +343,17 @@
   .item-sekolah {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 5px 12px;
+    gap: 8px;
+    padding: 4px 12px 4px 4px;
     background: var(--maroon-soft);
     color: var(--maroon);
     border-radius: 999px;
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 800;
     text-decoration: none;
     transition: all .15s;
     max-width: 100%;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
   .item-sekolah:hover {
     background: var(--maroon);
@@ -596,11 +594,23 @@ function renderItem(it, idx) {
       : '';
   }
 
+  const logoSekolah = Api.logoHtml(
+    sekolahId,
+    sekolah.nama,
+    24,
+    sekolah.logo_updated_at,
+    { rounded: 'md' }
+  );
+
   const sekolahLink = sekolahId
     ? `<a href="sekolah.html?id=${sekolahId}" class="item-sekolah">
-         ${Icons.get('home', { class: 'icon-sm' })} ${UI.escapeHtml(sekolah.nama || '-')}
+         ${logoSekolah}
+         <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${UI.escapeHtml(sekolah.nama || '-')}</span>
        </a>`
-    : `<span class="item-sekolah">${Icons.get('home', { class: 'icon-sm' })} ${UI.escapeHtml(sekolah.nama || '-')}</span>`;
+    : `<span class="item-sekolah">
+         ${logoSekolah}
+         <span>${UI.escapeHtml(sekolah.nama || '-')}</span>
+       </span>`;
 
   const buktiHtml = it.bukti_url
     ? `<a href="${UI.escapeHtml(it.bukti_url)}" target="_blank" rel="noopener" class="link-bukti">
