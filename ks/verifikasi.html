@@ -2,9 +2,9 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#611329" />
-<title>Verifikasi Presensi — NAKULAKU</title>
+<title>Verifikasi — NAKULAKU</title>
 
 <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -13,42 +13,119 @@
 <link rel="stylesheet" href="../assets/css/nakula.css" />
 
 <style>
-  .stat-row {
+  /* ============================================
+     HERO
+     ============================================ */
+  .hero-ks {
+    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 50%, #9B2649 100%);
+    color: white;
+    border-radius: 24px;
+    padding: 24px 20px 20px;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(125,29,58,.28);
+    animation: fade-in-up .5s var(--ease-out) both;
+  }
+  .hero-ks::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,169,97,.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-ks::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,169,97,.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-icon {
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.15);
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    flex-shrink: 0;
+    box-shadow: 0 8px 20px rgba(0,0,0,.2);
+  }
+  .hero-info { flex: 1; min-width: 0; }
+  .hero-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 3px;
+    letter-spacing: 0.3px;
+  }
+  .hero-sub {
+    font-size: 12.5px;
+    opacity: 0.85;
+    font-weight: 600;
+  }
+  .hero-stats {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    margin-bottom: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,.15);
+    position: relative;
+    z-index: 1;
   }
-  .stat-mini {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-md);
-    padding: 14px;
+  .hero-stat {
     text-align: center;
   }
-  .stat-mini .n {
-    font-size: 26px;
+  .hero-stat .n {
+    font-size: 28px;
     font-weight: 800;
     line-height: 1;
-    color: var(--maroon);
+    letter-spacing: -0.5px;
   }
-  .stat-mini .l {
+  .hero-stat .l {
     font-size: 10px;
-    color: var(--muted);
-    font-weight: 700;
+    opacity: 0.8;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: .5px;
-    margin-top: 4px;
+    letter-spacing: 0.5px;
+    margin-top: 6px;
   }
+  .hero-stat.izin .n { color: #FCD34D; }
 
-  .tab-verif {
+  /* ============================================
+     TAB SWITCH
+     ============================================ */
+  .tab-switch {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    padding: 4px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    border: 1.5px solid var(--border);
+    animation: fade-in-up .4s var(--ease-out) .05s both;
+  }
+  .tsw {
     flex: 1;
-    padding: 10px;
+    padding: 12px 10px;
     text-align: center;
     font-size: 13px;
     font-weight: 700;
     color: var(--muted);
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     border: none;
     background: transparent;
@@ -57,34 +134,58 @@
     justify-content: center;
     gap: 6px;
     transition: all .15s;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
   }
-  .tab-verif.active {
+  .tsw.active {
     background: var(--surface);
     color: var(--maroon);
-    box-shadow: var(--sh-sm);
+    box-shadow: 0 2px 8px rgba(125,29,58,.08);
+  }
+  .tsw-count {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--danger);
+    color: white;
+    font-weight: 800;
+    min-width: 18px;
+    text-align: center;
+  }
+  .tsw:not(.active) .tsw-count {
+    background: var(--border);
+    color: var(--muted);
   }
 
+  /* ============================================
+     ITEM VERIFIKASI
+     ============================================ */
   .verif-item {
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    padding: 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 16px;
     margin-bottom: 12px;
-    transition: all .15s;
+    transition: all .2s var(--ease-out);
+    animation: fade-in-up .4s var(--ease-out) both;
+    position: relative;
+    overflow: hidden;
   }
-  .verif-item:hover { box-shadow: var(--sh-md); }
+  .verif-item:hover {
+    border-color: var(--maroon-light);
+    box-shadow: 0 8px 24px rgba(125,29,58,.08);
+  }
 
   .verif-head {
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
   }
   .verif-avatar {
-    width: 48px;
-    height: 48px;
+    width: 48px; height: 48px;
     border-radius: 50%;
-    background: var(--maroon-soft);
+    background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
     color: var(--maroon);
     display: flex;
     align-items: center;
@@ -94,21 +195,24 @@
     flex-shrink: 0;
     overflow: hidden;
     position: relative;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(125,29,58,.1);
   }
   .verif-avatar img {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover;
   }
-
   .verif-info { flex: 1; min-width: 0; }
   .verif-name {
     font-weight: 800;
-    font-size: 14px;
-    margin-bottom: 2px;
+    font-size: 14.5px;
+    color: var(--ink);
+    margin-bottom: 3px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 1.3;
   }
   .verif-meta {
     font-size: 11.5px;
@@ -120,50 +224,170 @@
   .verif-foto {
     width: 100%;
     aspect-ratio: 4/3;
-    border-radius: var(--r-md);
+    border-radius: 14px;
     background: var(--bg);
     object-fit: cover;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     cursor: pointer;
+    transition: transform .15s;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  }
+  .verif-foto:hover {
+    transform: scale(1.01);
   }
 
   .verif-detail {
     background: var(--bg);
-    border-radius: var(--r-md);
-    padding: 10px 12px;
-    margin-bottom: 12px;
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
     font-size: 12.5px;
+    border: 1px solid var(--border);
   }
   .verif-detail-row {
     display: flex;
     justify-content: space-between;
-    padding: 3px 0;
-    gap: 8px;
+    padding: 4px 0;
+    gap: 10px;
   }
-  .verif-detail-row .lbl { color: var(--muted); font-weight: 600; flex-shrink: 0; }
-  .verif-detail-row .val { font-weight: 700; text-align: right; }
-  .verif-detail-row .val.warn { color: var(--warning); }
+  .verif-detail-row .lbl {
+    color: var(--muted);
+    font-weight: 700;
+    flex-shrink: 0;
+    font-size: 11.5px;
+  }
+  .verif-detail-row .val {
+    font-weight: 700;
+    text-align: right;
+    color: var(--ink);
+  }
+  .verif-detail-row .val.warn {
+    color: var(--warning);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
 
+  /* ALASAN BOX */
+  .alasan-box {
+    background: linear-gradient(135deg, #FFFCF3 0%, #FEF3C7 100%);
+    border: 1px solid rgba(180,83,9,.15);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+  }
+  .alasan-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10.5px;
+    font-weight: 800;
+    color: var(--warning);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .alasan-text {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .lampiran-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--maroon);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--maroon-soft);
+    margin-top: 10px;
+    transition: all .15s;
+  }
+  .lampiran-link:hover {
+    background: var(--maroon);
+    color: white;
+    text-decoration: none;
+  }
+
+  /* ACTIONS */
   .verif-actions {
     display: flex;
-    gap: 8px;
+    gap: 10px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border);
   }
   .verif-actions .btn { flex: 1; }
 
+  /* JENIS BADGE */
+  .jenis-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  .jenis-badge.izin { background: var(--info-soft); color: var(--info); }
+  .jenis-badge.sakit { background: var(--warning-soft); color: var(--warning); }
+  .jenis-badge.cuti { background: var(--maroon-soft); color: var(--maroon); }
+  .jenis-badge.luar { background: var(--warning-soft); color: var(--warning); }
+
+  /* LIGHTBOX */
   .lightbox {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.9);
+    background: rgba(0,0,0,.92);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
     padding: 20px;
+    animation: fade-in .2s both;
   }
   .lightbox img {
     max-width: 100%;
     max-height: 100%;
-    border-radius: var(--r-md);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  }
+
+  /* EMPTY */
+  .empty-panel {
+    text-align: center;
+    padding: 50px 20px;
+  }
+  .empty-panel .big-icon {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--success-soft) 0%, #D1FAE5 100%);
+    color: var(--success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+    position: relative;
+  }
+  .empty-panel .big-icon svg { width: 40px; height: 40px; }
+  .empty-panel h3 {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .empty-panel p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 300px;
+    margin: 0 auto;
   }
 </style>
 </head>
@@ -186,33 +410,57 @@
 
 <main class="container page" style="max-width:720px;padding-top:16px;">
 
-  <div class="stat-row">
-    <div class="stat-mini">
-      <div class="n" id="statTotal">—</div>
-      <div class="l">Presensi Perlu Verifikasi</div>
+  <!-- HERO -->
+  <div class="hero-ks">
+    <div class="hero-head">
+      <div class="hero-icon">
+        <span data-icon="shield" class="icon-xl"></span>
+      </div>
+      <div class="hero-info">
+        <div class="hero-title">Verifikasi</div>
+        <div class="hero-sub">Presensi & Ajuan Izin</div>
+      </div>
     </div>
-    <div class="stat-mini">
-      <div class="n" id="statIzin">—</div>
-      <div class="l">Ajuan Izin</div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="n" id="statTotal">—</div>
+        <div class="l">Presensi</div>
+      </div>
+      <div class="hero-stat izin">
+        <div class="n" id="statIzin">—</div>
+        <div class="l">Ajuan Izin</div>
+      </div>
     </div>
   </div>
 
-  <!-- Tab switch -->
-  <div style="display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:12px;margin-bottom:16px;border:1px solid var(--border);">
-    <button class="tab-verif active" data-tipe="presensi">
-      <span data-icon="mapPin" class="icon-sm"></span> Presensi
+  <!-- TAB -->
+  <div class="tab-switch">
+    <button class="tsw active" data-tipe="presensi">
+      <span data-icon="mapPin" class="icon-sm"></span>
+      Presensi
+      <span class="tsw-count" id="countPresensi">0</span>
     </button>
-    <button class="tab-verif" data-tipe="izin">
-      <span data-icon="fileText" class="icon-sm"></span> Ajuan Izin
+    <button class="tsw" data-tipe="izin">
+      <span data-icon="fileText" class="icon-sm"></span>
+      Ajuan Izin
+      <span class="tsw-count" id="countIzin">0</span>
     </button>
   </div>
 
   <div id="listVerif">
-    <div class="skeleton" style="height:200px;border-radius:16px;margin-bottom:12px;"></div>
-    <div class="skeleton" style="height:200px;border-radius:16px;"></div>
+    <div class="skeleton" style="height:220px;border-radius:20px;margin-bottom:12px;"></div>
+    <div class="skeleton" style="height:220px;border-radius:20px;"></div>
   </div>
 
 </main>
+
+<nav class="bottom-nav">
+  <a class="nav-item" data-nav="beranda" href="../beranda.html"><span data-icon="home"></span> Beranda</a>
+  <a class="nav-item" data-nav="pertemuan" href="../beranda.html#sectionPertemuan"><span data-icon="calendar"></span> Pertemuan</a>
+  <a class="nav-item" data-nav="galeri" href="../galeri.html"><span data-icon="grid"></span> Galeri</a>
+  <a class="nav-item" data-nav="aktivitas" href="../aktivitas.html"><span data-icon="activity"></span> Aktivitas</a>
+  <a class="nav-item" data-nav="profil" href="../profil.html"><span data-icon="user"></span> Profil</a>
+</nav>
 
 <script src="../assets/js/icons.js"></script>
 <script src="../assets/js/api.js"></script>
@@ -233,7 +481,8 @@ let daftarIzin = [];
   profile = await Api.requireLogin();
   if (!profile) return;
 
-  if (!profile.peran.includes('ks') && !profile.peran.includes('pengurus') && !profile.peran.includes('super_admin')) {
+  const peran = profile.peran || [];
+  if (!peran.includes('ks') && !peran.includes('pengurus') && !peran.includes('super_admin')) {
     document.querySelector('main').innerHTML = UI.errorHtml(
       'Halaman ini hanya untuk Kepala Sekolah.',
       '<a href="../beranda.html" class="btn btn-primary btn-sm" style="margin-top:12px;">Kembali</a>'
@@ -243,12 +492,10 @@ let daftarIzin = [];
 
   await loadSemua();
 
-  document.querySelectorAll('.tab-verif').forEach(t => {
+  document.querySelectorAll('.tsw').forEach(t => {
     t.addEventListener('click', () => {
       tabAktif = t.dataset.tipe;
-      document.querySelectorAll('.tab-verif').forEach(x => {
-        x.classList.toggle('active', x === t);
-      });
+      document.querySelectorAll('.tsw').forEach(x => x.classList.toggle('active', x === t));
       renderList();
     });
   });
@@ -256,7 +503,7 @@ let daftarIzin = [];
 
 async function loadSemua() {
   const el = document.getElementById('listVerif');
-  el.innerHTML = '<div class="skeleton" style="height:200px;border-radius:16px;"></div>';
+  el.innerHTML = '<div class="skeleton" style="height:220px;border-radius:20px;"></div>';
 
   const [resPresensi, resIzin] = await Promise.all([
     Api.call('presensi.menunggu_ks'),
@@ -268,6 +515,8 @@ async function loadSemua() {
 
   document.getElementById('statTotal').textContent = daftarPresensi.length;
   document.getElementById('statIzin').textContent = daftarIzin.length;
+  document.getElementById('countPresensi').textContent = daftarPresensi.length;
+  document.getElementById('countIzin').textContent = daftarIzin.length;
 
   renderList();
 }
@@ -277,10 +526,16 @@ function renderList() {
 
   if (tabAktif === 'presensi') {
     if (daftarPresensi.length === 0) {
-      el.innerHTML = UI.emptyHtml('checkCircle', 'Semua presensi sudah diverifikasi', 'Tidak ada yang menunggu.');
+      el.innerHTML = `
+        <div class="empty-panel">
+          <div class="big-icon">${Icons.get('checkCircle', { class: 'icon-lg' })}</div>
+          <h3>Semua Presensi Sudah Diverifikasi</h3>
+          <p>Tidak ada presensi yang menunggu verifikasi Anda.</p>
+        </div>
+      `;
       return;
     }
-    el.innerHTML = daftarPresensi.map(v => renderPresensiItem(v)).join('');
+    el.innerHTML = daftarPresensi.map((v, idx) => renderPresensiItem(v, idx)).join('');
     daftarPresensi.forEach(v => {
       const item = document.getElementById('verif-' + v.id);
       if (!item) return;
@@ -290,10 +545,16 @@ function renderList() {
     });
   } else {
     if (daftarIzin.length === 0) {
-      el.innerHTML = UI.emptyHtml('checkCircle', 'Tidak ada ajuan izin', 'Semua ajuan sudah diproses.');
+      el.innerHTML = `
+        <div class="empty-panel">
+          <div class="big-icon">${Icons.get('checkCircle', { class: 'icon-lg' })}</div>
+          <h3>Tidak Ada Ajuan Izin</h3>
+          <p>Semua ajuan sudah diproses.</p>
+        </div>
+      `;
       return;
     }
-    el.innerHTML = daftarIzin.map(v => renderIzinItem(v)).join('');
+    el.innerHTML = daftarIzin.map((v, idx) => renderIzinItem(v, idx)).join('');
     daftarIzin.forEach(v => {
       const item = document.getElementById('verif-' + v.id);
       if (!item) return;
@@ -303,7 +564,7 @@ function renderList() {
   }
 }
 
-function renderPresensiItem(v) {
+function renderPresensiItem(v, idx) {
   const init = (v.user?.nama_lengkap || '?').charAt(0).toUpperCase();
   const fotoUrl = v.foto_thumb_url;
   const waktu = UI.formatTanggalJam(v.waktu_submit);
@@ -312,7 +573,7 @@ function renderPresensiItem(v) {
     : 'Pertemuan tidak diketahui';
 
   return `
-    <div class="verif-item" id="verif-${v.id}">
+    <div class="verif-item" id="verif-${v.id}" style="animation-delay:${idx * 0.05}s">
       <div class="verif-head">
         <div class="verif-avatar"><span>${init}</span></div>
         <div class="verif-info">
@@ -320,9 +581,15 @@ function renderPresensiItem(v) {
           <div class="verif-meta">${UI.escapeHtml(v.user?.sekolah?.nama || '-')}</div>
           <div class="verif-meta">${UI.escapeHtml(v.user?.jabatan || '-')}</div>
         </div>
+        <span class="jenis-badge luar">
+          ${Icons.get('alertTriangle', { class: 'icon-sm' })}
+          Luar Radius
+        </span>
       </div>
 
-      ${fotoUrl ? `<img class="verif-foto" data-act="foto" src="${fotoUrl}" alt="Foto presensi" loading="lazy" />` : ''}
+      ${fotoUrl ? `
+        <img class="verif-foto" data-act="foto" src="${fotoUrl}" alt="Foto presensi" loading="lazy" />
+      ` : ''}
 
       <div class="verif-detail">
         <div class="verif-detail-row">
@@ -335,37 +602,39 @@ function renderPresensiItem(v) {
         </div>
         <div class="verif-detail-row">
           <span class="lbl">Jarak dari Lokasi</span>
-          <span class="val warn">${v.jarak_meter !== null ? v.jarak_meter + ' m' : '—'}</span>
-        </div>
-        <div class="verif-detail-row">
-          <span class="lbl">Status Awal</span>
-          <span class="val"><span class="badge badge-warning">Luar Radius</span></span>
+          <span class="val warn">
+            ${Icons.get('target', { class: 'icon-sm' })}
+            ${v.jarak_meter !== null ? v.jarak_meter + ' m' : '—'}
+          </span>
         </div>
       </div>
 
       <div class="verif-actions">
-        <button class="btn btn-secondary btn-sm" data-act="tolak">
-          ${Icons.get('x', { class: 'icon-sm' })} Tolak
+        <button class="btn btn-secondary" data-act="tolak">
+          ${Icons.get('x', { class: 'icon-sm' })}
+          Tolak
         </button>
-        <button class="btn btn-primary btn-sm" data-act="setuju">
-          ${Icons.get('check', { class: 'icon-sm' })} Setujui
+        <button class="btn btn-primary" data-act="setuju">
+          ${Icons.get('check', { class: 'icon-sm' })}
+          Setujui
         </button>
       </div>
     </div>
   `;
 }
 
-function renderIzinItem(v) {
+function renderIzinItem(v, idx) {
   const init = (v.user?.nama_lengkap || '?').charAt(0).toUpperCase();
   const waktu = UI.formatTanggalJam(v.waktu);
   const jenisLabel = { ijin: 'Ijin', sakit: 'Sakit', cuti: 'Cuti' }[v.jenis] || v.jenis;
-  const jenisColor = { ijin: 'badge-info', sakit: 'badge-warning', cuti: 'badge-maroon' }[v.jenis] || 'badge-maroon';
+  const jenisIcon = { ijin: 'fileText', sakit: 'heartPulse', cuti: 'calendar' }[v.jenis] || 'fileText';
+  const jenisCls = { ijin: 'izin', sakit: 'sakit', cuti: 'cuti' }[v.jenis] || 'izin';
   const pertemuanInfo = v.pertemuan
     ? `Pertemuan #${v.pertemuan.urutan} · ${UI.escapeHtml(v.pertemuan.judul)}`
     : '-';
 
   return `
-    <div class="verif-item" id="verif-${v.id}">
+    <div class="verif-item" id="verif-${v.id}" style="animation-delay:${idx * 0.05}s">
       <div class="verif-head">
         <div class="verif-avatar"><span>${init}</span></div>
         <div class="verif-info">
@@ -373,13 +642,13 @@ function renderIzinItem(v) {
           <div class="verif-meta">${UI.escapeHtml(v.user?.sekolah?.nama || '-')}</div>
           <div class="verif-meta">${UI.escapeHtml(v.user?.jabatan || '-')}</div>
         </div>
+        <span class="jenis-badge ${jenisCls}">
+          ${Icons.get(jenisIcon, { class: 'icon-sm' })}
+          ${jenisLabel}
+        </span>
       </div>
 
       <div class="verif-detail">
-        <div class="verif-detail-row">
-          <span class="lbl">Jenis</span>
-          <span class="val"><span class="badge ${jenisColor}">${jenisLabel}</span></span>
-        </div>
         <div class="verif-detail-row">
           <span class="lbl">Pertemuan</span>
           <span class="val" style="font-size:11.5px;">${pertemuanInfo}</span>
@@ -388,23 +657,30 @@ function renderIzinItem(v) {
           <span class="lbl">Diajukan</span>
           <span class="val">${waktu}</span>
         </div>
-        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">
-          <div style="font-size:11px;color:var(--muted);font-weight:700;margin-bottom:4px;">ALASAN:</div>
-          <div style="font-size:13px;line-height:1.5;">${UI.escapeHtml(v.alasan || '-')}</div>
-          ${v.lampiran_url ? `
-            <a href="${UI.escapeHtml(v.lampiran_url)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;font-weight:700;">
-              ${Icons.get('externalLink', { class: 'icon-sm' })} Lihat Lampiran
-            </a>
-          ` : ''}
+      </div>
+
+      <div class="alasan-box">
+        <div class="alasan-label">
+          ${Icons.get('messageSquare', { class: 'icon-sm' })}
+          Alasan
         </div>
+        <div class="alasan-text">${UI.escapeHtml(v.alasan || '-')}</div>
+        ${v.lampiran_url ? `
+          <a href="${UI.escapeHtml(v.lampiran_url)}" target="_blank" rel="noopener" class="lampiran-link">
+            ${Icons.get('externalLink', { class: 'icon-sm' })}
+            Lihat Lampiran
+          </a>
+        ` : ''}
       </div>
 
       <div class="verif-actions">
-        <button class="btn btn-secondary btn-sm" data-act="tolak">
-          ${Icons.get('x', { class: 'icon-sm' })} Tolak
+        <button class="btn btn-secondary" data-act="tolak">
+          ${Icons.get('x', { class: 'icon-sm' })}
+          Tolak
         </button>
-        <button class="btn btn-primary btn-sm" data-act="setuju">
-          ${Icons.get('check', { class: 'icon-sm' })} Setujui
+        <button class="btn btn-primary" data-act="setuju">
+          ${Icons.get('check', { class: 'icon-sm' })}
+          Setujui
         </button>
       </div>
     </div>
