@@ -642,9 +642,13 @@ function showStage(nama) {
   updateWaktu();
   setInterval(updateWaktu, 1000);
 
-  // Kalau window belum buka / sudah tutup, jangan aktifkan kamera
-  if (res.data.presensi_status !== 'buka') {
-    showStage('stageKamera');
+  // Kalau window belum buka / sudah tutup, tampilkan stage khusus
+  if (res.data.presensi_status === 'belum') {
+    showStageWindowTutup('belum', res.data);
+    return;
+  }
+  if (res.data.presensi_status === 'tutup') {
+    showStageWindowTutup('tutup', res.data);
     return;
   }
 
@@ -652,6 +656,60 @@ function showStage(nama) {
   mulaiKamera();
   showStage('stageKamera');
 })();
+
+// ============================================================
+// STAGE KHUSUS: WINDOW BELUM / TUTUP
+// ============================================================
+function showStageWindowTutup(status, data) {
+  const bukaStr = new Date(data.presensi_buka).toLocaleTimeString('id-ID', {
+    hour: '2-digit', minute: '2-digit'
+  });
+  const tutupStr = new Date(data.presensi_tutup).toLocaleTimeString('id-ID', {
+    hour: '2-digit', minute: '2-digit'
+  });
+
+  const stageEl = document.getElementById('stageError');
+  const iconWrap = stageEl.querySelector('.error-icon');
+  const titleEl = stageEl.querySelector('.stage-title');
+  const descEl = document.getElementById('errorDesc');
+  const cardEl = stageEl.querySelector('.stage-card');
+
+  // Hapus tombol lama
+  cardEl.querySelectorAll('.btn, a.btn').forEach(el => el.remove());
+
+  if (status === 'belum') {
+    iconWrap.innerHTML = `<span data-icon="hourglass"></span>`;
+    titleEl.textContent = 'Presensi Belum Dibuka';
+    descEl.innerHTML = `Presensi dibuka pukul <strong>${bukaStr} WIB</strong>. Silakan kembali lagi nanti.`;
+    cardEl.insertAdjacentHTML('beforeend', `
+      <a href="beranda.html" class="btn btn-primary btn-full" style="margin-top:20px;text-decoration:none;text-align:center;">
+        Kembali ke Beranda
+      </a>
+    `);
+  } else {
+    iconWrap.innerHTML = `<span data-icon="clock"></span>`;
+    titleEl.textContent = 'Presensi Sudah Ditutup';
+    descEl.innerHTML = `Presensi ditutup pukul <strong>${tutupStr} WIB</strong>. Kalau Anda berhalangan hadir, silakan ajukan izin.`;
+    cardEl.insertAdjacentHTML('beforeend', `
+      <a href="ajukan.html?id=${pertemuanId}" class="btn btn-primary btn-full" style="margin-top:20px;text-decoration:none;text-align:center;display:block;">
+        Ajukan Izin / Sakit / Cuti
+      </a>
+      <a href="beranda.html" class="btn btn-secondary btn-full" style="margin-top:10px;text-decoration:none;text-align:center;display:block;">
+        Kembali ke Beranda
+      </a>
+    `);
+  }
+
+  // Re-render ikon yang baru disisipkan
+  stageEl.querySelectorAll('[data-icon]').forEach(el => {
+    el.innerHTML = Icons.get(el.dataset.icon);
+    if (el.tagName === 'SPAN' && !el.style.display) {
+      el.style.display = 'contents';
+    }
+  });
+
+  showStage('stageError');
+}
 
 // ============================================================
 // RENDER INFO WINDOW
@@ -670,6 +728,12 @@ function renderInfoWindow(data) {
   const buka = new Date(data.presensi_buka);
   const tutup = new Date(data.presensi_tutup);
   const status = data.presensi_status;
+
+  // Guard: kalau date invalid (format backend aneh), skip render
+  if (isNaN(buka.getTime()) || isNaN(tutup.getTime())) {
+    el.textContent = '—';
+    return;
+  }
 
   const bukaStr = buka.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
   const tutupStr = tutup.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
@@ -904,13 +968,22 @@ document.getElementById('btnKirim').addEventListener('click', async () => {
   const statusLabel = {
     tepat_waktu: 'Tepat Waktu',
     terlambat: 'Terlambat',
-    luar_radius: 'Luar Radius (menunggu verifikasi KS)',
+    luar_radius: 'Luar Radius — Menunggu Verifikasi Admin',
   }[d.status] || d.status;
 
-  document.getElementById('suksesDesc').textContent =
-    'Presensi Anda telah tercatat dan akan diverifikasi KS.';
+  // Deskripsi & poin dinamis
+  const descEl = document.getElementById('suksesDesc');
+  const poinEl = document.getElementById('suksesPoin');
+
+  if (d.status === 'luar_radius') {
+    descEl.textContent = 'Presensi Anda tercatat di luar radius. Poin akan diberikan setelah admin memverifikasi foto Anda.';
+    poinEl.textContent = 'Menunggu verifikasi';
+  } else {
+    descEl.textContent = 'Presensi Anda telah tercatat.';
+    poinEl.textContent = '+' + d.poin + ' poin';
+  }
+
   document.getElementById('suksesStatus').textContent = statusLabel;
-  document.getElementById('suksesPoin').textContent = '+' + d.poin + ' poin';
   document.getElementById('suksesJarak').textContent =
     (d.jarak_meter !== null ? d.jarak_meter + ' m' : '—');
 
