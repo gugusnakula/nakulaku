@@ -13,52 +13,48 @@
 <link rel="stylesheet" href="../assets/css/nakula.css" />
 
 <style>
+  /* HERO SEKOLAH */
   .hero-sekolah {
-    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon-mid) 100%);
+    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 50%, #9B2649 100%);
     color: white;
-    border-radius: var(--r-xl);
-    padding: 20px;
+    border-radius: 24px;
+    padding: 22px 20px 20px;
     margin-bottom: 16px;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 8px 24px rgba(125,29,58,.25);
+    box-shadow: 0 12px 32px rgba(125,29,58,.28);
+    animation: fade-in-up .5s var(--ease-out) both;
   }
   .hero-sekolah::before {
     content: '';
     position: absolute;
-    top: -60px; right: -60px;
-    width: 180px; height: 180px;
+    top: -80px; right: -60px;
+    width: 220px; height: 220px;
     border-radius: 50%;
-    background: var(--gold);
-    opacity: 0.1;
+    background: radial-gradient(circle, rgba(201,169,97,.22) 0%, transparent 70%);
+    pointer-events: none;
   }
-  .hero-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 3px 10px;
-    background: rgba(255,255,255,.15);
-    border: 1px solid rgba(201,169,97,.4);
-    border-radius: 999px;
-    font-size: 10px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    position: relative;
+  .hero-sekolah::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,169,97,.15) 0%, transparent 70%);
+    pointer-events: none;
   }
-  .hero-nama { font-size: 18px; font-weight: 800; margin-bottom: 4px; position: relative; }
-  .hero-npsn { font-size: 12px; opacity: 0.85; position: relative; }
-
   .hero-top {
     display: flex;
     align-items: center;
     gap: 16px;
-    margin-bottom: 12px;
+    margin-bottom: 18px;
     position: relative;
+    z-index: 1;
   }
   .hero-logo-wrap {
-    width: 80px;
-    height: 80px;
-    border-radius: 18px;
+    width: 84px;
+    height: 84px;
+    border-radius: 20px;
     background: white;
     border: 3px solid var(--gold);
     display: flex;
@@ -68,7 +64,9 @@
     overflow: hidden;
     position: relative;
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(0,0,0,.2);
+    box-shadow:
+      0 12px 28px rgba(0,0,0,.25),
+      0 0 0 6px rgba(201,169,97,.12);
     transition: transform .2s var(--ease-out);
   }
   .hero-logo-wrap:hover {
@@ -82,114 +80,262 @@
     font-size: 28px;
     font-weight: 800;
     color: var(--maroon);
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
   }
   .hero-logo-wrap .edit-badge {
     position: absolute;
     bottom: 0; right: 0;
-    width: 26px; height: 26px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
-    background: var(--gold);
-    color: var(--maroon);
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid var(--maroon);
+    border: 2.5px solid var(--maroon);
     z-index: 2;
+    box-shadow: 0 4px 10px rgba(0,0,0,.25);
   }
   .hero-info-wrap { flex: 1; min-width: 0; }
+  .hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(201,169,97,.4);
+    border-radius: 999px;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .hero-nama {
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .hero-npsn {
+    font-size: 11.5px;
+    opacity: 0.85;
+    font-weight: 600;
+  }
 
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     padding-top: 14px;
-    margin-top: 14px;
     border-top: 1px solid rgba(255,255,255,.15);
     position: relative;
+    z-index: 1;
   }
   .hero-stat { text-align: center; }
   .hero-stat .n { font-size: 20px; font-weight: 800; line-height: 1; }
-  .hero-stat .l { font-size: 9px; opacity: 0.75; font-weight: 700; margin-top: 4px; text-transform: uppercase; }
+  .hero-stat .l {
+    font-size: 9px;
+    opacity: 0.8;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-top: 5px;
+    text-transform: uppercase;
+  }
 
-  .tab-row {
+  /* PILIH SEKOLAH */
+  .pilih-sekolah-wrap {
+    margin-bottom: 16px;
+    animation: fade-in-up .4s var(--ease-out) both;
+  }
+
+  /* TAB SWITCH */
+  .tab-switch {
     display: flex;
     gap: 4px;
     background: var(--bg);
     padding: 4px;
-    border-radius: 12px;
+    border-radius: 14px;
     margin-bottom: 16px;
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     overflow-x: auto;
+    scrollbar-width: none;
+    animation: fade-in-up .4s var(--ease-out) both;
   }
-  .tab-p {
+  .tab-switch::-webkit-scrollbar { display: none; }
+  .tsw {
     flex: 1;
-    min-width: 90px;
-    padding: 10px 6px;
+    min-width: 84px;
+    padding: 11px 8px;
     text-align: center;
     font-size: 12px;
     font-weight: 700;
     color: var(--muted);
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     border: none;
     background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 5px;
     white-space: nowrap;
+    transition: all .15s;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
   }
-  .tab-p.active {
+  .tsw.active {
     background: var(--surface);
     color: var(--maroon);
-    box-shadow: var(--sh-sm);
+    box-shadow: 0 2px 8px rgba(125,29,58,.08);
   }
 
+  /* ITEM SEKOLAH */
   .item-sekolah {
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    padding: 14px;
-    margin-bottom: 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: all .2s var(--ease-out);
+    animation: fade-in-up .4s var(--ease-out) both;
+    position: relative;
+    overflow: hidden;
   }
+  .item-sekolah:hover {
+    border-color: var(--maroon-light);
+    box-shadow: 0 8px 20px rgba(125,29,58,.08);
+    transform: translateY(-2px);
+  }
+
   .item-head {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 8px;
+    gap: 12px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .item-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    transition: transform .2s var(--ease-out);
+  }
+  .item-sekolah:hover .item-icon {
+    transform: scale(1.05);
+  }
+  .item-icon.prestasi {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
+  }
+  .item-icon.pembiasaan {
+    background: linear-gradient(135deg, #22C55E 0%, #15803D 100%);
+    color: white;
+  }
+  .item-icon.kegiatan {
+    background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+    color: white;
   }
   .item-info { flex: 1; min-width: 0; }
-  .item-title { font-weight: 700; font-size: 13.5px; margin-bottom: 3px; }
-  .item-sub { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  .item-title {
+    font-weight: 800;
+    font-size: 14px;
+    margin-bottom: 4px;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .item-sub {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 600;
+    line-height: 1.5;
+  }
 
   .status-pill {
     font-size: 9.5px;
     font-weight: 800;
-    padding: 3px 8px;
+    padding: 4px 9px;
     border-radius: 999px;
     text-transform: uppercase;
     white-space: nowrap;
     flex-shrink: 0;
+    letter-spacing: 0.4px;
   }
   .st-menunggu { background: var(--warning-soft); color: var(--warning); }
   .st-disetujui { background: var(--success-soft); color: var(--success); }
   .st-ditolak { background: var(--danger-soft); color: var(--danger); }
 
+  .poin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    box-shadow: 0 3px 8px rgba(201,169,97,.25);
+    margin-top: 8px;
+  }
+
   .item-actions {
     display: flex;
-    gap: 6px;
-    padding-top: 10px;
-    margin-top: 10px;
+    gap: 8px;
+    padding-top: 12px;
+    margin-top: 12px;
     border-top: 1px dashed var(--border);
   }
   .item-actions .btn { flex: 1; }
 
   .catatan-box {
-    background: var(--danger-soft);
+    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
     color: var(--danger);
-    padding: 8px 10px;
-    border-radius: 8px;
+    padding: 10px 12px;
+    border-radius: 12px;
     font-size: 12px;
-    margin-top: 8px;
-    line-height: 1.5;
+    margin-top: 10px;
+    line-height: 1.55;
+    font-weight: 600;
+    border: 1px solid rgba(185,28,28,.15);
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  /* EMPTY */
+  .empty-panel {
+    text-align: center;
+    padding: 44px 20px;
+  }
+  .empty-panel .big-icon {
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    position: relative;
+  }
+  .empty-panel .big-icon svg { width: 36px; height: 36px; }
+  .empty-panel h3 {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .empty-panel p {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 300px;
+    margin: 0 auto;
   }
 </style>
 </head>
@@ -205,15 +351,17 @@
       <div class="app-header-sub">NAKULAKU</div>
     </div>
   </div>
+  <button class="header-btn" data-act="logout">
+    <span data-icon="logOut"></span>
+  </button>
 </header>
 
 <main class="container page" style="max-width:720px;padding-top:16px;">
 
+  <!-- HERO SEKOLAH -->
   <div id="heroSekolah" class="hero-sekolah hidden">
     <div class="hero-top">
-      <div class="hero-logo-wrap" id="heroLogoWrap">
-        <!-- Logo diisi via JS -->
-      </div>
+      <div class="hero-logo-wrap" id="heroLogoWrap"></div>
       <div class="hero-info-wrap">
         <div class="hero-label">
           <span data-icon="home" class="icon-sm"></span>
@@ -239,40 +387,49 @@
     </div>
   </div>
 
-  <!-- PILIH SEKOLAH (kalau lebih dari 1) -->
-  <div id="pilihSekolahWrap" class="hidden" style="margin-bottom:16px;">
+  <!-- PILIH SEKOLAH -->
+  <div id="pilihSekolahWrap" class="pilih-sekolah-wrap hidden">
     <label class="label">Pilih Sekolah</label>
     <select id="pilihSekolah" class="input"></select>
   </div>
 
+  <!-- TOMBOL TAMBAH -->
   <button class="btn btn-primary btn-full" id="btnTambah" style="margin-bottom:16px;">
     <span data-icon="plus"></span> Tambah Data
   </button>
 
-  <div class="tab-row">
-    <button class="tab-p active" data-tab="prestasi">
+  <!-- TAB SWITCH -->
+  <div class="tab-switch">
+    <button class="tsw active" data-tab="prestasi">
       <span data-icon="award" class="icon-sm"></span> Prestasi
     </button>
-    <button class="tab-p" data-tab="pembiasaan">
+    <button class="tsw" data-tab="pembiasaan">
       <span data-icon="sparkles" class="icon-sm"></span> Pembiasaan
     </button>
-    <button class="tab-p" data-tab="kegiatan">
+    <button class="tsw" data-tab="kegiatan">
       <span data-icon="calendar" class="icon-sm"></span> Kegiatan
     </button>
-    <button class="tab-p" data-tab="pelapor">
+    <button class="tsw" data-tab="pelapor">
       <span data-icon="users" class="icon-sm"></span> Pelapor
     </button>
   </div>
 
   <div id="listItem">
-    <div class="skeleton" style="height:120px;border-radius:16px;margin-bottom:10px;"></div>
-    <div class="skeleton" style="height:120px;border-radius:16px;"></div>
+    <div class="skeleton" style="height:120px;border-radius:18px;margin-bottom:10px;"></div>
+    <div class="skeleton" style="height:120px;border-radius:18px;"></div>
   </div>
 
-  <!-- File input tersembunyi -->
-  <input type="file" id="fileLogo" accept="image/*" style="display:none;" />
-
 </main>
+
+<input type="file" id="fileLogo" accept="image/*" style="display:none;" />
+
+<nav class="bottom-nav">
+  <a class="nav-item" data-nav="beranda" href="../beranda.html"><span data-icon="home"></span> Beranda</a>
+  <a class="nav-item" data-nav="pertemuan" href="../beranda.html#sectionPertemuan"><span data-icon="calendar"></span> Pertemuan</a>
+  <a class="nav-item" data-nav="galeri" href="../galeri.html"><span data-icon="grid"></span> Galeri</a>
+  <a class="nav-item" data-nav="aktivitas" href="../aktivitas.html"><span data-icon="activity"></span> Aktivitas</a>
+  <a class="nav-item" data-nav="profil" href="../profil.html"><span data-icon="user"></span> Profil</a>
+</nav>
 
 <script src="../assets/js/icons.js"></script>
 <script src="../assets/js/api.js"></script>
@@ -282,6 +439,7 @@ document.querySelectorAll('[data-icon]').forEach(el => {
   el.innerHTML = Icons.get(el.dataset.icon);
   el.style.display = 'contents';
 });
+UI.bindLogout();
 
 let profile;
 let daftarSekolah = [];
@@ -297,12 +455,10 @@ let daftarItem = [];
   const isPanitia = peran.includes('pengurus') || peran.includes('super_admin');
   const isKS = peran.includes('ks');
 
-  // Tentukan sekolah yang bisa diakses
   if (isPanitia) {
     const res = await Api.call('sekolah.list');
     if (res.ok) daftarSekolah = res.data || [];
   } else if (isKS) {
-    // KS: sekolah induk + PLT
     const ksSekolah = profile.ks_sekolah || [];
     if (ksSekolah.length > 0) {
       daftarSekolah = ksSekolah
@@ -320,7 +476,6 @@ let daftarItem = [];
       }];
     }
   } else {
-    // Cek sebagai pelapor
     const res = await Api.callSekolah('pelapor.list_saya');
     if (res.ok && res.data && res.data.length > 0) {
       daftarSekolah = res.data.map(x => x.sekolah).filter(Boolean);
@@ -334,7 +489,6 @@ let daftarItem = [];
     return;
   }
 
-  // Kalau lebih dari 1, tampilkan pilihan
   if (daftarSekolah.length > 1) {
     document.getElementById('pilihSekolahWrap').classList.remove('hidden');
     const sel = document.getElementById('pilihSekolah');
@@ -348,18 +502,16 @@ let daftarItem = [];
   sekolahAktif = daftarSekolah[0];
   refresh();
 
-  // Tab switching
-  document.querySelectorAll('.tab-p').forEach(t => {
+  document.querySelectorAll('.tsw').forEach(t => {
     t.addEventListener('click', () => {
       tabAktif = t.dataset.tab;
-      document.querySelectorAll('.tab-p').forEach(x => x.classList.toggle('active', x === t));
+      document.querySelectorAll('.tsw').forEach(x => x.classList.toggle('active', x === t));
       loadTab();
     });
   });
 
   document.getElementById('btnTambah').addEventListener('click', tambahData);
 
-  // Upload logo
   document.getElementById('fileLogo').addEventListener('change', (e) => {
     if (e.target.files[0]) handleUploadLogo(e.target.files[0]);
     e.target.value = '';
@@ -373,16 +525,19 @@ async function refresh() {
   document.getElementById('heroNpsn').textContent = 'NPSN ' + (sekolahAktif.npsn || '-');
   document.getElementById('heroSekolah').classList.remove('hidden');
 
-  // Render logo hero
   renderLogoHero(sekolahAktif);
 
-  // Load ringkasan
   const res = await Api.callSekolahPublik('sekolah.profil', { sekolah_id: sekolahAktif.id });
   if (res.ok && res.data) {
     const r = res.data.ringkasan;
     document.getElementById('statPrestasi').textContent = r.jumlah_prestasi;
     document.getElementById('statPembiasaan').textContent = r.jumlah_pembiasaan;
     document.getElementById('statKegiatan').textContent = r.jumlah_kegiatan;
+
+    // Update logo_updated_at dari response
+    if (res.data.sekolah?.logo_updated_at !== undefined) {
+      sekolahAktif.logo_updated_at = res.data.sekolah.logo_updated_at;
+    }
   }
 
   await loadTab();
@@ -401,15 +556,14 @@ function renderLogoHero(sekolah) {
 
   wrap.innerHTML = `
     ${url
-      ? `<img src="${url}" alt="${sekolah.nama}" onerror="this.remove(); this.parentElement.querySelector('.fallback').style.display='flex';" />`
+      ? `<img src="${url}" alt="${UI.escapeHtml(sekolah.nama)}"
+           onerror="this.remove(); this.parentElement.querySelector('.fallback').style.display='flex';" />`
       : ''}
     <div class="fallback" style="${url ? 'display:none;' : ''}">${init}</div>
     <div class="edit-badge">${Icons.get('camera', { class: 'icon-sm' })}</div>
   `;
 
-  // Klik → buka file picker
   wrap.onclick = () => {
-    // Cek hak akses
     const peran = profile.peran || [];
     const isPanitia = peran.includes('pengurus') || peran.includes('super_admin');
     const isKS = peran.includes('ks');
@@ -461,14 +615,10 @@ async function handleUploadLogo(file) {
 
     UI.sukses('Logo berhasil diunggah (' + res.data.size_kb + ' KB)');
 
-    // Update data lokal
     sekolahAktif.logo_updated_at = res.data.logo_updated_at;
-
-    // Update di semuaSekolah juga
     const idx = daftarSekolah.findIndex(s => s.id === sekolahAktif.id);
     if (idx >= 0) daftarSekolah[idx].logo_updated_at = res.data.logo_updated_at;
 
-    // Re-render
     renderLogoHero(sekolahAktif);
   } catch (err) {
     console.error(err);
@@ -476,45 +626,26 @@ async function handleUploadLogo(file) {
   }
 }
 
-// ============================================================
-// KOMPRES LOGO (square, 200×200, webp)
-// ============================================================
 function kompresLogo(file, maxSize, quality) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (ev) => {
       const img = new Image();
       img.onload = () => {
-        let w = img.width;
-        let h = img.height;
-        const ratio = Math.min(maxSize / w, maxSize / h, 1);
-        w = Math.round(w * ratio);
-        h = Math.round(h * ratio);
-
         const canvas = document.createElement('canvas');
         canvas.width = maxSize;
         canvas.height = maxSize;
         const ctx = canvas.getContext('2d');
 
-        // Background putih (untuk PNG transparan)
+        // Background putih
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, 0, maxSize, maxSize);
 
         // Center crop ke persegi
-        const size = Math.min(w, h);
-        const sx = (img.width - size * (w / w)) / 2 * (img.width / w);
-        // Hitung proper crop dari gambar asli
-        const cx = (img.width - size * (img.width / w)) / 2;
-        const cy = (img.height - size * (img.height / h)) / 2;
-
-        ctx.drawImage(
-          img,
-          (img.width - size * (img.width / w)) / 2,
-          (img.height - size * (img.height / h)) / 2,
-          size * (img.width / w),
-          size * (img.height / h),
-          0, 0, maxSize, maxSize
-        );
+        const size = Math.min(img.width, img.height);
+        const sx = (img.width - size) / 2;
+        const sy = (img.height - size) / 2;
+        ctx.drawImage(img, sx, sy, size, size, 0, 0, maxSize, maxSize);
 
         const out = canvas.toDataURL('image/webp', quality);
         resolve(out);
@@ -527,6 +658,9 @@ function kompresLogo(file, maxSize, quality) {
   });
 }
 
+// ============================================================
+// LOAD TAB
+// ============================================================
 async function loadTab() {
   if (tabAktif === 'pelapor') {
     await loadPelapor();
@@ -534,7 +668,7 @@ async function loadTab() {
   }
 
   const el = document.getElementById('listItem');
-  el.innerHTML = '<div class="skeleton" style="height:120px;border-radius:16px;"></div>';
+  el.innerHTML = '<div class="skeleton" style="height:120px;border-radius:18px;"></div>';
 
   const actionMap = {
     prestasi: 'prestasi.list',
@@ -550,13 +684,19 @@ async function loadTab() {
   daftarItem = res.data || [];
 
   if (daftarItem.length === 0) {
-    el.innerHTML = UI.emptyHtml('inbox', 'Belum ada data', 'Klik tombol Tambah Data untuk mulai.');
+    const label = { prestasi: 'prestasi', pembiasaan: 'pembiasaan', kegiatan: 'kegiatan' }[tabAktif];
+    el.innerHTML = `
+      <div class="empty-panel">
+        <div class="big-icon">${Icons.get('inbox', { class: 'icon-lg' })}</div>
+        <h3>Belum Ada ${label.charAt(0).toUpperCase() + label.slice(1)}</h3>
+        <p>Klik tombol Tambah Data di atas untuk mulai mengisi.</p>
+      </div>
+    `;
     return;
   }
 
-  el.innerHTML = daftarItem.map(it => renderItem(it)).join('');
+  el.innerHTML = daftarItem.map((it, idx) => renderItem(it, idx)).join('');
 
-  // Wire actions
   el.querySelectorAll('[data-act="edit"]').forEach(b => {
     b.addEventListener('click', () => tambahData(Number(b.dataset.id)));
   });
@@ -565,7 +705,7 @@ async function loadTab() {
   });
 }
 
-function renderItem(it) {
+function renderItem(it, idx) {
   const statusLabel = {
     menunggu: 'Menunggu',
     disetujui: 'Disetujui',
@@ -574,6 +714,8 @@ function renderItem(it) {
 
   let judul = '';
   let sub = '';
+  let iconName = 'award';
+  let iconCls = 'prestasi';
 
   if (tabAktif === 'prestasi') {
     judul = it.nama_lomba;
@@ -584,27 +726,37 @@ function renderItem(it) {
     const peringkatLabel = {
       juara_1: 'Juara 1', juara_2: 'Juara 2', juara_3: 'Juara 3', harapan: 'Harapan',
     }[it.peringkat] || it.peringkat;
-    sub = `${it.nama_siswa} · ${tingkatLabel} ${peringkatLabel}`;
+    sub = `${it.nama_siswa}${it.kelas ? ' · ' + it.kelas : ''} · ${tingkatLabel} ${peringkatLabel}`;
+    iconName = 'award';
+    iconCls = 'prestasi';
   } else if (tabAktif === 'pembiasaan') {
     judul = it.nama;
-    sub = `${it.frekuensi || '-'} · ${it.bulan || '-'}/${it.tahun}`;
+    sub = `${it.frekuensi || '-'}${it.bulan ? ' · Bulan ' + it.bulan : ''} ${it.tahun}`;
+    iconName = 'sparkles';
+    iconCls = 'pembiasaan';
   } else if (tabAktif === 'kegiatan') {
     judul = it.nama;
-    sub = `${it.tanggal} · ${it.tempat || '-'}`;
+    sub = `${UI.formatTanggalPendek(it.tanggal)}${it.tempat ? ' · ' + it.tempat : ''}`;
+    iconName = 'calendar';
+    iconCls = 'kegiatan';
   }
 
   const bisaEdit = it.status === 'menunggu';
   const poinHtml = it.status === 'disetujui' && it.poin > 0
-    ? `<span style="color:var(--maroon);font-weight:800;font-size:12px;">+${it.poin} poin</span>`
+    ? `<span class="poin-badge">${Icons.get('award', { class: 'icon-sm' })} +${it.poin} poin</span>`
     : '';
 
   const catatanHtml = it.status === 'ditolak' && it.catatan_verifikator
-    ? `<div class="catatan-box">❌ ${UI.escapeHtml(it.catatan_verifikator)}</div>`
+    ? `<div class="catatan-box">
+         ${Icons.get('alertCircle', { class: 'icon-sm' })}
+         <span>${UI.escapeHtml(it.catatan_verifikator)}</span>
+       </div>`
     : '';
 
   return `
-    <div class="item-sekolah">
+    <div class="item-sekolah" style="animation-delay:${idx * 0.04}s">
       <div class="item-head">
+        <div class="item-icon ${iconCls}">${Icons.get(iconName, { class: 'icon-sm' })}</div>
         <div class="item-info">
           <div class="item-title">${UI.escapeHtml(judul)}</div>
           <div class="item-sub">${UI.escapeHtml(sub)}</div>
@@ -614,8 +766,10 @@ function renderItem(it) {
       </div>
 
       ${it.bukti_url ? `
-        <a href="${UI.escapeHtml(it.bukti_url)}" target="_blank" rel="noopener" style="font-size:12px;font-weight:700;color:var(--maroon);display:inline-flex;align-items:center;gap:4px;">
-          ${Icons.get('externalLink', { class: 'icon-sm' })} Lihat Bukti
+        <a href="${UI.escapeHtml(it.bukti_url)}" target="_blank" rel="noopener"
+          style="font-size:12px;font-weight:700;color:var(--maroon);display:inline-flex;align-items:center;gap:4px;text-decoration:none;">
+          ${Icons.get('externalLink', { class: 'icon-sm' })}
+          Lihat Bukti
         </a>
       ` : ''}
 
@@ -640,7 +794,7 @@ function renderItem(it) {
 // ============================================================
 async function loadPelapor() {
   const el = document.getElementById('listItem');
-  el.innerHTML = '<div class="skeleton" style="height:80px;border-radius:16px;"></div>';
+  el.innerHTML = '<div class="skeleton" style="height:88px;border-radius:18px;"></div>';
 
   const res = await Api.callSekolah('pelapor.list', { sekolah_id: sekolahAktif.id });
   if (!res.ok) { el.innerHTML = UI.errorHtml(res.error); return; }
@@ -648,20 +802,32 @@ async function loadPelapor() {
   const list = res.data || [];
 
   let html = `
-    <div class="card" style="margin-bottom:12px;font-size:12px;line-height:1.5;color:var(--muted);">
-      Pelapor adalah guru yang ditunjuk untuk membantu KS menginput data prestasi, pembiasaan, dan kegiatan sekolah. Maksimal 3 guru + KS.
+    <div class="item-sekolah" style="background:linear-gradient(135deg,var(--maroon-soft) 0%,#F9DDE6 100%);border-color:var(--maroon-soft);">
+      <div style="font-size:12.5px;line-height:1.6;color:var(--ink);font-weight:500;">
+        ${Icons.get('info', { class: 'icon-sm' })}
+        Pelapor adalah guru yang ditunjuk untuk membantu KS menginput data prestasi, pembiasaan, dan kegiatan. Maksimal 3 guru + KS.
+      </div>
     </div>
     <button class="btn btn-primary btn-full" id="btnTambahPelapor" style="margin-bottom:12px;">
-      <span data-icon="plus"></span> Tunjuk Pelapor
+      ${Icons.get('plus', { class: 'icon-sm' })} Tunjuk Pelapor
     </button>
   `;
 
   if (list.length === 0) {
-    html += UI.emptyHtml('users', 'Belum ada pelapor', 'Klik tombol di atas untuk menunjuk guru.');
+    html += `
+      <div class="empty-panel">
+        <div class="big-icon">${Icons.get('users', { class: 'icon-lg' })}</div>
+        <h3>Belum Ada Pelapor</h3>
+        <p>Klik tombol di atas untuk menunjuk guru sebagai pelapor.</p>
+      </div>
+    `;
   } else {
-    html += list.map(p => `
-      <div class="item-sekolah">
+    html += list.map((p, idx) => `
+      <div class="item-sekolah" style="animation-delay:${idx * 0.04}s">
         <div class="item-head">
+          <div class="item-icon" style="background:linear-gradient(135deg,var(--maroon) 0%,var(--maroon-mid) 100%);color:white;">
+            ${Icons.get('user', { class: 'icon-sm' })}
+          </div>
           <div class="item-info">
             <div class="item-title">${UI.escapeHtml(p.user?.nama_lengkap || '-')}</div>
             <div class="item-sub">${UI.escapeHtml(p.user?.jabatan || '-')}</div>
@@ -692,11 +858,11 @@ async function tambahPelapor() {
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
   overlay.innerHTML = `
-    <div style="background:white;border-radius:20px;padding:24px;max-width:480px;width:100%;max-height:85vh;display:flex;flex-direction:column;box-shadow:var(--sh-xl);">
-      <h3 style="font-size:17px;color:var(--maroon);margin:0 0 14px;">Tunjuk Pelapor</h3>
-      <div style="flex:1;overflow-y:auto;border:1px solid var(--border);border-radius:12px;padding:6px;margin-bottom:14px;min-height:200px;">
+    <div style="background:white;border-radius:22px;padding:24px;max-width:480px;width:100%;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(125,29,58,.25);">
+      <h3 style="font-size:17px;color:var(--maroon);margin:0 0 14px;font-weight:800;">Tunjuk Pelapor</h3>
+      <div style="flex:1;overflow-y:auto;border:1.5px solid var(--border);border-radius:14px;padding:6px;margin-bottom:14px;min-height:200px;">
         ${guruList.map(g => `
-          <label style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;">
+          <label style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">
             <input type="radio" name="pilihGuru" value="${g.id}" style="width:18px;height:18px;accent-color:var(--maroon);" />
             <div style="flex:1;min-width:0;">
               <div style="font-weight:700;font-size:13px;">${UI.escapeHtml(g.nama_lengkap)}</div>
@@ -747,7 +913,7 @@ async function hapusPelapor(id) {
 }
 
 // ============================================================
-// TAMBAH DATA (FORM)
+// TAMBAH DATA
 // ============================================================
 async function tambahData(id = null) {
   const item = id ? daftarItem.find(x => x.id === id) : null;
@@ -755,39 +921,33 @@ async function tambahData(id = null) {
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
   overlay.innerHTML = `
-    <div style="background:white;border-radius:20px;padding:24px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--sh-xl);">
+    <div style="background:white;border-radius:22px;padding:24px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(125,29,58,.25);">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <h3 style="font-size:17px;color:var(--maroon);margin:0;">${id ? 'Edit' : 'Tambah'} ${tabAktif.charAt(0).toUpperCase() + tabAktif.slice(1)}</h3>
+        <h3 style="font-size:17px;color:var(--maroon);margin:0;font-weight:800;">${id ? 'Edit' : 'Tambah'} ${tabAktif.charAt(0).toUpperCase() + tabAktif.slice(1)}</h3>
         <button class="btn-icon" id="btnX">${Icons.get('x')}</button>
       </div>
       <div id="formContent"></div>
-      <div style="display:flex;gap:8px;margin-top:16px;">
-        <button class="btn btn-secondary" id="btnBatal" style="flex:1;">Batal</button>
-        <button class="btn btn-primary" id="btnSimpan" style="flex:2;">Simpan</button>
+      <div style="display:flex;gap:8px;margin-top:18px;">
+        <button class="btn btn-secondary" id="btnBatalForm" style="flex:1;">Batal</button>
+        <button class="btn btn-primary" id="btnSimpanData" style="flex:2;">Simpan</button>
       </div>
     </div>
   `;
   document.body.appendChild(overlay);
 
-  // Render form sesuai tab
   const formEl = overlay.querySelector('#formContent');
-  if (tabAktif === 'prestasi') {
-    formEl.innerHTML = formPrestasi(item);
-  } else if (tabAktif === 'pembiasaan') {
-    formEl.innerHTML = formPembiasaan(item);
-  } else if (tabAktif === 'kegiatan') {
-    formEl.innerHTML = formKegiatan(item);
-  }
+  if (tabAktif === 'prestasi') formEl.innerHTML = formPrestasi(item);
+  else if (tabAktif === 'pembiasaan') formEl.innerHTML = formPembiasaan(item);
+  else if (tabAktif === 'kegiatan') formEl.innerHTML = formKegiatan(item);
 
   const close = () => overlay.remove();
   overlay.querySelector('#btnX').addEventListener('click', close);
-  overlay.querySelector('#btnBatal').addEventListener('click', close);
+  overlay.querySelector('#btnBatalForm').addEventListener('click', close);
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
 
-  overlay.querySelector('#btnSimpan').addEventListener('click', async () => {
-    const btn = overlay.querySelector('#btnSimpan');
+  overlay.querySelector('#btnSimpanData').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnSimpanData');
     const data = collectForm(overlay, id);
-
     if (!data) return;
 
     UI.btnLoading(btn, 'Menyimpan…');
