@@ -387,11 +387,7 @@
     </div>
   </div>
 
-  <!-- PILIH SEKOLAH -->
-  <div id="pilihSekolahWrap" class="pilih-sekolah-wrap hidden">
-    <label class="label">Pilih Sekolah</label>
-    <select id="pilihSekolah" class="input"></select>
-  </div>
+  <!-- PILIH SEKOLAH — dihapus, KS hanya kelola sekolah induknya -->
 
   <!-- TOMBOL TAMBAH -->
   <button class="btn btn-primary btn-full" id="btnTambah" style="margin-bottom:16px;">
@@ -489,16 +485,7 @@ let daftarItem = [];
     return;
   }
 
-  if (daftarSekolah.length > 1) {
-    document.getElementById('pilihSekolahWrap').classList.remove('hidden');
-    const sel = document.getElementById('pilihSekolah');
-    sel.innerHTML = daftarSekolah.map(s => `<option value="${s.id}">${UI.escapeHtml(s.nama)}</option>`).join('');
-    sel.addEventListener('change', () => {
-      sekolahAktif = daftarSekolah.find(s => s.id === Number(sel.value));
-      refresh();
-    });
-  }
-
+  // KS hanya kelola sekolah induknya (daftar pertama) — tidak ada dropdown
   sekolahAktif = daftarSekolah[0];
   refresh();
 
@@ -557,7 +544,7 @@ function renderLogoHero(sekolah) {
   wrap.innerHTML = `
     ${url
       ? `<img src="${url}" alt="${UI.escapeHtml(sekolah.nama)}"
-           onerror="this.remove(); this.parentElement.querySelector('.fallback').style.display='flex';" />`
+           onerror="UI.fotoError(this)" />`
       : ''}
     <div class="fallback" style="${url ? 'display:none;' : ''}">${init}</div>
     <div class="edit-badge">${Icons.get('camera', { class: 'icon-sm' })}</div>
