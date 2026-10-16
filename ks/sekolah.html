@@ -248,9 +248,19 @@ let daftarItem = [];
     // KS: sekolah induk + PLT
     const ksSekolah = profile.ks_sekolah || [];
     if (ksSekolah.length > 0) {
-      daftarSekolah = ksSekolah.map(k => k.sekolah).filter(Boolean);
+      daftarSekolah = ksSekolah
+        .map(k => ({
+          id: k.sekolah_id,
+          nama: k.sekolah?.nama || '-',
+          npsn: k.sekolah?.npsn || '-',
+        }))
+        .filter(s => s.id);
     } else if (profile.sekolah) {
-      daftarSekolah = [profile.sekolah];
+      daftarSekolah = [{
+        id: profile.sekolah.id,
+        nama: profile.sekolah.nama,
+        npsn: profile.sekolah.npsn,
+      }];
     }
   } else {
     // Cek sebagai pelapor
