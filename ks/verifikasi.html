@@ -389,6 +389,229 @@
     max-width: 300px;
     margin: 0 auto;
   }
+
+  /* PEMILIH PERTEMUAN */
+  .picker-box {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 14px;
+    animation: fade-in-up .4s var(--ease-out) both;
+  }
+  .picker-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .picker-select {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-size: 13.5px;
+    font-weight: 700;
+    font-family: inherit;
+    color: var(--ink);
+    cursor: pointer;
+    outline: none;
+    transition: all .15s;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%237D1D3A' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m4 6 3 3 3-3'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 38px;
+  }
+  .picker-select:focus {
+    border-color: var(--maroon);
+    background-color: var(--surface);
+    box-shadow: 0 0 0 3px rgba(125,29,58,.08);
+  }
+
+  /* GURU BELUM PRESENSI */
+  .guru-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 8px;
+    transition: all .15s;
+  }
+  .guru-row:hover {
+    border-color: var(--maroon-light);
+    box-shadow: 0 4px 12px rgba(125,29,58,.06);
+  }
+  .guru-row.sudah {
+    background: linear-gradient(135deg, #F5FDF9 0%, #ECFDF5 100%);
+    border-color: rgba(21,128,61,.2);
+  }
+  .guru-avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 15px;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .guru-avatar img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .guru-info { flex: 1; min-width: 0; }
+  .guru-nama {
+    font-weight: 800;
+    font-size: 13.5px;
+    color: var(--ink);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .guru-jabatan {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .guru-status {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 999px;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .guru-status.belum {
+    background: var(--warning-soft);
+    color: var(--warning);
+  }
+  .guru-status.hadir {
+    background: var(--success-soft);
+    color: var(--success);
+  }
+  .guru-status.izin {
+    background: var(--info-soft);
+    color: var(--info);
+  }
+  .guru-status.alfa {
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+  .guru-btn {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: none;
+    background: var(--maroon);
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all .15s;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .guru-btn:hover { background: var(--maroon-dark); }
+  .guru-btn:active { transform: scale(.96); }
+
+  /* MODAL OVERRIDE */
+  .ov-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(28,20,20,.55);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fade-in .2s both;
+  }
+  .ov-modal-inner {
+    background: var(--surface);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 24px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.3);
+    animation: slide-up .3s var(--ease-out) both;
+  }
+  .ov-modal-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--maroon);
+    margin-bottom: 4px;
+  }
+  .ov-modal-sub {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 18px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .ov-field {
+    margin-bottom: 14px;
+  }
+  .ov-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .ov-status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+  }
+  .ov-status-opt {
+    padding: 10px 6px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    text-align: center;
+    transition: all .15s;
+    font-family: inherit;
+  }
+  .ov-status-opt.active {
+    background: var(--maroon);
+    color: white;
+    border-color: var(--maroon);
+  }
+  .ov-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .ov-actions .btn { flex: 1; }
 </style>
 </head>
 <body>
@@ -424,7 +647,7 @@
     <div class="hero-stats">
       <div class="hero-stat">
         <div class="n" id="statTotal">—</div>
-        <div class="l">Presensi</div>
+        <div class="l">Belum Presensi</div>
       </div>
       <div class="hero-stat izin">
         <div class="n" id="statIzin">—</div>
@@ -436,7 +659,7 @@
   <!-- TAB -->
   <div class="tab-switch">
     <button class="tsw active" data-tipe="presensi">
-      <span data-icon="mapPin" class="icon-sm"></span>
+      <span data-icon="userCheck" class="icon-sm"></span>
       Presensi
       <span class="tsw-count" id="countPresensi">0</span>
     </button>
@@ -445,6 +668,17 @@
       Ajuan Izin
       <span class="tsw-count" id="countIzin">0</span>
     </button>
+  </div>
+
+  <!-- Pemilih Pertemuan (khusus tab presensi) -->
+  <div class="picker-box" id="pickerBox">
+    <div class="picker-label">
+      <span data-icon="calendar" class="icon-sm"></span>
+      Pilih Pertemuan
+    </div>
+    <select class="picker-select" id="pilihPertemuan">
+      <option value="">— Memuat pertemuan… —</option>
+    </select>
   </div>
 
   <div id="listVerif">
@@ -474,8 +708,10 @@ UI.bindLogout();
 
 let profile;
 let tabAktif = 'presensi';
-let daftarPresensi = [];
+let daftarGuruSekolah = [];   // hasil presensi.guru_sekolah
 let daftarIzin = [];
+let pertemuanList = [];
+let pertemuanDipilih = null;
 
 (async () => {
   profile = await Api.requireLogin();
@@ -496,8 +732,19 @@ let daftarIzin = [];
     t.addEventListener('click', () => {
       tabAktif = t.dataset.tipe;
       document.querySelectorAll('.tsw').forEach(x => x.classList.toggle('active', x === t));
+      // Sembunyikan picker pertemuan kalau tab izin
+      document.getElementById('pickerBox').style.display =
+        (tabAktif === 'presensi') ? 'block' : 'none';
       renderList();
     });
+  });
+
+  // Handler dropdown pertemuan
+  document.getElementById('pilihPertemuan').addEventListener('change', async (e) => {
+    const pid = Number(e.target.value);
+    if (!pid) return;
+    pertemuanDipilih = pid;
+    await loadGuruSekolah();
   });
 })();
 
@@ -505,18 +752,62 @@ async function loadSemua() {
   const el = document.getElementById('listVerif');
   el.innerHTML = '<div class="skeleton" style="height:220px;border-radius:20px;"></div>';
 
-  const [resPresensi, resIzin] = await Promise.all([
-    Api.call('presensi.menunggu_ks'),
+  // Load pertemuan list + izin pending secara paralel
+  const [resPertemuan, resIzin] = await Promise.all([
+    Api.call('pertemuan.list'),
     Api.call('izin.menunggu_ks'),
   ]);
 
-  daftarPresensi = resPresensi.ok ? (resPresensi.data || []) : [];
+  pertemuanList = resPertemuan.ok ? (resPertemuan.data || []) : [];
   daftarIzin = resIzin.ok ? (resIzin.data || []) : [];
 
-  document.getElementById('statTotal').textContent = daftarPresensi.length;
   document.getElementById('statIzin').textContent = daftarIzin.length;
-  document.getElementById('countPresensi').textContent = daftarPresensi.length;
   document.getElementById('countIzin').textContent = daftarIzin.length;
+
+  // Populate dropdown pertemuan (terbaru dulu)
+  const sel = document.getElementById('pilihPertemuan');
+  if (pertemuanList.length === 0) {
+    sel.innerHTML = '<option value="">— Belum ada pertemuan —</option>';
+    document.getElementById('statTotal').textContent = '0';
+    document.getElementById('countPresensi').textContent = '0';
+    renderList();
+    return;
+  }
+
+  const listSorted = [...pertemuanList].sort((a, b) => b.urutan - a.urutan);
+  sel.innerHTML = '<option value="">— Pilih Pertemuan —</option>' +
+    listSorted.map(p => {
+      const tgl = p.tanggal ? UI.formatTanggalPendek(p.tanggal) : '';
+      return `<option value="${p.id}">#${p.urutan} · ${UI.escapeHtml(p.judul)}${tgl ? ' (' + tgl + ')' : ''}</option>`;
+    }).join('');
+
+  // Auto-pilih pertemuan paling baru
+  const autoId = listSorted[0].id;
+  sel.value = String(autoId);
+  pertemuanDipilih = autoId;
+
+  // Auto-load guru sekolah untuk pertemuan itu
+  await loadGuruSekolah();
+}
+
+async function loadGuruSekolah() {
+  if (!pertemuanDipilih) return;
+
+  const el = document.getElementById('listVerif');
+  el.innerHTML = '<div class="skeleton" style="height:180px;border-radius:20px;margin-bottom:10px;"></div><div class="skeleton" style="height:180px;border-radius:20px;"></div>';
+
+  const res = await Api.call('presensi.guru_sekolah', { pertemuan_id: pertemuanDipilih });
+
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat data guru.');
+    return;
+  }
+
+  daftarGuruSekolah = res.data?.data || [];
+  const belum = daftarGuruSekolah.filter(g => !g.presensi).length;
+
+  document.getElementById('statTotal').textContent = belum;
+  document.getElementById('countPresensi').textContent = belum;
 
   renderList();
 }
@@ -525,24 +816,60 @@ function renderList() {
   const el = document.getElementById('listVerif');
 
   if (tabAktif === 'presensi') {
-    if (daftarPresensi.length === 0) {
+    if (daftarGuruSekolah.length === 0) {
       el.innerHTML = `
         <div class="empty-panel">
-          <div class="big-icon">${Icons.get('checkCircle', { class: 'icon-lg' })}</div>
-          <h3>Semua Presensi Sudah Diverifikasi</h3>
-          <p>Tidak ada presensi yang menunggu verifikasi Anda.</p>
+          <div class="big-icon">${Icons.get('users', { class: 'icon-lg' })}</div>
+          <h3>Tidak Ada Data Guru</h3>
+          <p>Belum ada guru terdaftar di sekolah Anda.</p>
         </div>
       `;
       return;
     }
-    el.innerHTML = daftarPresensi.map((v, idx) => renderPresensiItem(v, idx)).join('');
-    daftarPresensi.forEach(v => {
-      const item = document.getElementById('verif-' + v.id);
-      if (!item) return;
-      item.querySelector('[data-act="setuju"]').addEventListener('click', () => verifikasiPresensi(v.id, 'disetujui'));
-      item.querySelector('[data-act="tolak"]').addEventListener('click', () => verifikasiPresensi(v.id, 'ditolak'));
-      item.querySelector('[data-act="foto"]')?.addEventListener('click', () => showFoto(v.foto_thumb_url));
+
+    // Urutkan: belum presensi dulu, lalu sudah
+    const sorted = [...daftarGuruSekolah].sort((a, b) => {
+      if (!a.presensi && b.presensi) return -1;
+      if (a.presensi && !b.presensi) return 1;
+      return (a.nama_lengkap || '').localeCompare(b.nama_lengkap || '');
     });
+
+    const belumList = sorted.filter(g => !g.presensi);
+    const sudahList = sorted.filter(g => g.presensi);
+
+    let html = '';
+
+    if (belumList.length > 0) {
+      html += `
+        <div style="font-size:11px;font-weight:800;color:var(--warning);text-transform:uppercase;letter-spacing:0.5px;margin:8px 4px 10px;display:flex;align-items:center;gap:6px;">
+          ${Icons.get('alertCircle', { class: 'icon-sm' })}
+          Belum Presensi (${belumList.length})
+        </div>
+      `;
+      html += belumList.map(g => renderGuruRow(g, true)).join('');
+    }
+
+    if (sudahList.length > 0) {
+      html += `
+        <div style="font-size:11px;font-weight:800;color:var(--success);text-transform:uppercase;letter-spacing:0.5px;margin:18px 4px 10px;display:flex;align-items:center;gap:6px;">
+          ${Icons.get('checkCircle', { class: 'icon-sm' })}
+          Sudah Presensi (${sudahList.length})
+        </div>
+      `;
+      html += sudahList.map(g => renderGuruRow(g, false)).join('');
+    }
+
+    el.innerHTML = html;
+
+    // Bind override buttons
+    el.querySelectorAll('[data-ov]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const uid = Number(btn.dataset.ov);
+        const guru = daftarGuruSekolah.find(g => g.user_id === uid);
+        if (guru) bukaModalOverride(guru);
+      });
+    });
+
   } else {
     if (daftarIzin.length === 0) {
       el.innerHTML = `
@@ -564,61 +891,48 @@ function renderList() {
   }
 }
 
-function renderPresensiItem(v, idx) {
-  const init = (v.user?.nama_lengkap || '?').charAt(0).toUpperCase();
-  const fotoUrl = v.foto_thumb_url;
-  const waktu = UI.formatTanggalJam(v.waktu_submit);
-  const pertemuanInfo = v.pertemuan
-    ? `Pertemuan #${v.pertemuan.urutan} · ${UI.escapeHtml(v.pertemuan.judul)}`
-    : 'Pertemuan tidak diketahui';
+function renderGuruRow(g, belumPresensi) {
+  const init = (g.nama_lengkap || '?').charAt(0).toUpperCase();
+  const fotoUrl = Api.fotoUrl(g.user_id, 't');
+
+  let statusBadge = '';
+  if (g.presensi) {
+    const statusMap = {
+      tepat_waktu:       { label: 'Tepat',   cls: 'hadir' },
+      terlambat:         { label: 'Telat',   cls: 'hadir' },
+      luar_radius:       { label: 'Luar',    cls: 'izin' },
+      izin_pribadi:      { label: 'Izin',    cls: 'izin' },
+      sakit:             { label: 'Sakit',   cls: 'izin' },
+      sakit_tanpa_surat: { label: 'Sakit',   cls: 'izin' },
+      dinas_luar:        { label: 'Dinas',   cls: 'izin' },
+      cuti_melahirkan:   { label: 'Cuti',    cls: 'izin' },
+      ijin:              { label: 'Ijin',    cls: 'izin' },
+      cuti:              { label: 'Cuti',    cls: 'izin' },
+      alfa:              { label: 'Alfa',    cls: 'alfa' },
+    };
+    const s = statusMap[g.presensi.status] || { label: g.presensi.status, cls: 'hadir' };
+    statusBadge = `<span class="guru-status ${s.cls}">${s.label}</span>`;
+  } else {
+    statusBadge = `<span class="guru-status belum">Belum</span>`;
+  }
 
   return `
-    <div class="verif-item" id="verif-${v.id}" style="animation-delay:${idx * 0.05}s">
-      <div class="verif-head">
-        <div class="verif-avatar"><span>${init}</span></div>
-        <div class="verif-info">
-          <div class="verif-name">${UI.escapeHtml(v.user?.nama_lengkap || '-')}</div>
-          <div class="verif-meta">${UI.escapeHtml(v.user?.sekolah?.nama || '-')}</div>
-          <div class="verif-meta">${UI.escapeHtml(v.user?.jabatan || '-')}</div>
-        </div>
-        <span class="jenis-badge luar">
-          ${Icons.get('alertTriangle', { class: 'icon-sm' })}
-          Luar Radius
-        </span>
+    <div class="guru-row ${belumPresensi ? '' : 'sudah'}">
+      <div class="guru-avatar">
+        <span>${init}</span>
+        ${fotoUrl ? `<img src="${fotoUrl}" loading="lazy" alt="" onerror="this.remove()">` : ''}
       </div>
-
-      ${fotoUrl ? `
-        <img class="verif-foto" data-act="foto" src="${fotoUrl}" alt="Foto presensi" loading="lazy" />
+      <div class="guru-info">
+        <div class="guru-nama">${UI.escapeHtml(g.nama_lengkap || '-')}</div>
+        <div class="guru-jabatan">${UI.escapeHtml(g.jabatan || '-')}</div>
+      </div>
+      ${statusBadge}
+      ${belumPresensi ? `
+        <button class="guru-btn" data-ov="${g.user_id}">
+          ${Icons.get('userCheck', { class: 'icon-sm' })}
+          Override
+        </button>
       ` : ''}
-
-      <div class="verif-detail">
-        <div class="verif-detail-row">
-          <span class="lbl">Pertemuan</span>
-          <span class="val" style="font-size:11.5px;">${pertemuanInfo}</span>
-        </div>
-        <div class="verif-detail-row">
-          <span class="lbl">Waktu Submit</span>
-          <span class="val">${waktu}</span>
-        </div>
-        <div class="verif-detail-row">
-          <span class="lbl">Jarak dari Lokasi</span>
-          <span class="val warn">
-            ${Icons.get('target', { class: 'icon-sm' })}
-            ${v.jarak_meter !== null ? v.jarak_meter + ' m' : '—'}
-          </span>
-        </div>
-      </div>
-
-      <div class="verif-actions">
-        <button class="btn btn-secondary" data-act="tolak">
-          ${Icons.get('x', { class: 'icon-sm' })}
-          Tolak
-        </button>
-        <button class="btn btn-primary" data-act="setuju">
-          ${Icons.get('check', { class: 'icon-sm' })}
-          Setujui
-        </button>
-      </div>
     </div>
   `;
 }
@@ -626,9 +940,36 @@ function renderPresensiItem(v, idx) {
 function renderIzinItem(v, idx) {
   const init = (v.user?.nama_lengkap || '?').charAt(0).toUpperCase();
   const waktu = UI.formatTanggalJam(v.waktu);
-  const jenisLabel = { ijin: 'Ijin', sakit: 'Sakit', cuti: 'Cuti' }[v.jenis] || v.jenis;
-  const jenisIcon = { ijin: 'fileText', sakit: 'heartPulse', cuti: 'calendar' }[v.jenis] || 'fileText';
-  const jenisCls = { ijin: 'izin', sakit: 'sakit', cuti: 'cuti' }[v.jenis] || 'izin';
+  const kode = v.kategori_kode || v.jenis;
+  const jenisLabel = {
+    ijin: 'Ijin',
+    izin_pribadi: 'Izin Pribadi',
+    sakit: 'Sakit',
+    sakit_tanpa_surat: 'Sakit (tanpa surat)',
+    dinas_luar: 'Dinas Luar',
+    cuti: 'Cuti',
+    cuti_melahirkan: 'Cuti Melahirkan',
+  }[kode] || kode;
+
+  const jenisIcon = {
+    ijin: 'fileText',
+    izin_pribadi: 'userX',
+    sakit: 'heartPulse',
+    sakit_tanpa_surat: 'heart',
+    dinas_luar: 'briefcase',
+    cuti: 'calendar',
+    cuti_melahirkan: 'baby',
+  }[kode] || 'fileText';
+
+  const jenisCls = {
+    ijin: 'izin',
+    izin_pribadi: 'izin',
+    sakit: 'sakit',
+    sakit_tanpa_surat: 'sakit',
+    dinas_luar: 'izin',
+    cuti: 'cuti',
+    cuti_melahirkan: 'cuti',
+  }[kode] || 'izin';
   const pertemuanInfo = v.pertemuan
     ? `Pertemuan #${v.pertemuan.urutan} · ${UI.escapeHtml(v.pertemuan.judul)}`
     : '-';
@@ -687,32 +1028,113 @@ function renderIzinItem(v, idx) {
   `;
 }
 
-async function verifikasiPresensi(presensiId, keputusan) {
-  const item = daftarPresensi.find(v => v.id === presensiId);
-  const nama = item?.user?.nama_lengkap || 'guru';
-  const pesan = keputusan === 'disetujui'
-    ? `Setujui presensi ${nama}? Poin akan diubah menjadi 70.`
-    : `Tolak presensi ${nama}? Poin akan diubah menjadi 0 (alfa).`;
+// ============================================================
+// MODAL OVERRIDE PRESENSI
+// ============================================================
+function bukaModalOverride(guru) {
+  let statusDipilih = 'tepat_waktu';
 
-  const ok = await UI.konfirmasi(
-    keputusan === 'disetujui' ? 'Setujui Presensi' : 'Tolak Presensi',
-    pesan,
-    { okText: keputusan === 'disetujui' ? 'Setujui' : 'Tolak', danger: keputusan === 'ditolak' }
-  );
-  if (!ok) return;
+  const overlay = document.createElement('div');
+  overlay.className = 'ov-modal';
+  overlay.innerHTML = `
+    <div class="ov-modal-inner">
+      <div class="ov-modal-title">Override Presensi</div>
+      <div class="ov-modal-sub">
+        Tandai <strong>${UI.escapeHtml(guru.nama_lengkap)}</strong> sebagai hadir manual.
+        Gunakan hanya untuk kasus HP rusak, GPS error, atau kendala teknis.
+      </div>
 
-  const res = await Api.call('presensi.verifikasi', { presensi_id: presensiId, keputusan });
-  if (!res.ok) { UI.gagal(res.error); return; }
-  UI.sukses(keputusan === 'disetujui' ? 'Presensi disetujui.' : 'Presensi ditolak.');
-  await loadSemua();
+      <div class="ov-field">
+        <label class="ov-label">Status Kehadiran</label>
+        <div class="ov-status-grid">
+          <button type="button" class="ov-status-opt active" data-status="tepat_waktu">Tepat Waktu</button>
+          <button type="button" class="ov-status-opt" data-status="terlambat">Terlambat</button>
+          <button type="button" class="ov-status-opt" data-status="luar_radius">Luar Radius</button>
+        </div>
+      </div>
+
+      <div class="ov-field">
+        <label class="ov-label">Alasan Override *</label>
+        <textarea id="ovAlasan" class="input" rows="3" placeholder="Contoh: HP guru rusak, tidak bisa akses kamera. Dikonfirmasi hadir di lokasi." style="width:100%;resize:vertical;font-family:inherit;padding:12px;border:1.5px solid var(--border);border-radius:12px;font-size:13.5px;line-height:1.5;outline:none;"></textarea>
+      </div>
+
+      <div class="ov-actions">
+        <button class="btn btn-secondary" data-cancel>Batal</button>
+        <button class="btn btn-primary" id="ovSimpan">
+          ${Icons.get('check', { class: 'icon-sm' })}
+          Tandai Hadir
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+
+  // Bind status picker
+  overlay.querySelectorAll('.ov-status-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      overlay.querySelectorAll('.ov-status-opt').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      statusDipilih = btn.dataset.status;
+    });
+  });
+
+  overlay.querySelector('[data-cancel]').addEventListener('click', close);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+
+  // Focus textarea
+  setTimeout(() => overlay.querySelector('#ovAlasan').focus(), 150);
+
+  // Simpan
+  overlay.querySelector('#ovSimpan').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#ovSimpan');
+    const alasan = overlay.querySelector('#ovAlasan').value.trim();
+
+    if (!alasan) {
+      UI.gagal('Alasan override wajib diisi.');
+      return;
+    }
+
+    UI.btnLoading(btn, 'Menyimpan…');
+
+    const res = await Api.call('presensi.override', {
+      user_id: guru.user_id,
+      pertemuan_id: pertemuanDipilih,
+      status: statusDipilih,
+      alasan,
+    });
+
+    UI.btnReset(btn);
+
+    if (!res.ok) {
+      UI.gagal(res.error || 'Gagal override.');
+      return;
+    }
+
+    UI.sukses(res.data.pesan || 'Presensi di-override.');
+    close();
+    await loadGuruSekolah();
+  });
 }
 
 async function verifikasiIzin(pengajuanId, keputusan) {
   const item = daftarIzin.find(v => v.id === pengajuanId);
   const nama = item?.user?.nama_lengkap || 'guru';
+  const kode = item?.kategori_kode || item?.jenis;
+  const label = {
+    ijin: 'Ijin',
+    izin_pribadi: 'Izin Pribadi',
+    sakit: 'Sakit',
+    sakit_tanpa_surat: 'Sakit (tanpa surat)',
+    dinas_luar: 'Dinas Luar',
+    cuti: 'Cuti',
+    cuti_melahirkan: 'Cuti Melahirkan',
+  }[kode] || kode;
   const pesan = keputusan === 'disetujui'
-    ? `Setujui ajuan ${item?.jenis} dari ${nama}? Poin presensi akan menjadi 50.`
-    : `Tolak ajuan ${item?.jenis} dari ${nama}?`;
+    ? `Setujui ajuan "${label}" dari ${nama}? Poin akan diberikan sesuai kategori.`
+    : `Tolak ajuan "${label}" dari ${nama}?`;
 
   const ok = await UI.konfirmasi(
     keputusan === 'disetujui' ? 'Setujui Ajuan' : 'Tolak Ajuan',
