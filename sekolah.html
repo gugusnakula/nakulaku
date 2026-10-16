@@ -479,6 +479,61 @@
     display: inline-block;
   }
 
+  /* KARYA GURU */
+  .badge-jenis {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 999px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    margin-right: 5px;
+    margin-bottom: 4px;
+  }
+  .badge-jenis.inovasi {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
+  }
+  .badge-jenis.implementasi {
+    background: linear-gradient(135deg, #22C55E 0%, #15803D 100%);
+    color: white;
+  }
+  .karya-author {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 700;
+    margin-top: 4px;
+  }
+  .karya-author .av {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 800;
+    overflow: hidden;
+    position: relative;
+  }
+  .karya-author .av img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .item-thumb.inovasi .fallback-icon {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  }
+  .item-thumb.implementasi .fallback-icon {
+    background: linear-gradient(135deg, #22C55E 0%, #15803D 100%);
+  }
+
   .link-bukti {
     display: inline-flex;
     align-items: center;
@@ -650,6 +705,9 @@
       <button class="tab-p" data-tab="pembiasaan">
         <span data-icon="sparkles" class="icon-sm"></span> Pembiasaan
       </button>
+      <button class="tab-p" data-tab="karya">
+        <span data-icon="sparkles" class="icon-sm"></span> Karya Guru
+      </button>
     </div>
 
     <div id="listItem"></div>
@@ -794,18 +852,33 @@ async function renderTab() {
     <div class="skeleton" style="height:120px;border-radius:16px;"></div>
   `;
 
-  const res = await Api.callSekolahPublik('sekolah.galeri', {
-    jenis: tabAktif,
-    sekolah_id: sekolahAktif.id,
-    limit: 100,
-  });
+  let data = [];
 
-  if (!res.ok) {
-    el.innerHTML = UI.errorHtml(res.error);
-    return;
+  if (tabAktif === 'karya') {
+    // Karya guru (Inovasi & Aksi Nyata) — action khusus
+    const res = await Api.callSekolahPublik('karya.publik', {
+      sekolah_id: sekolahAktif.id,
+      limit: 100,
+    });
+    if (!res.ok) {
+      el.innerHTML = UI.errorHtml(res.error);
+      return;
+    }
+    data = res.data.data || [];
+  } else {
+    // Prestasi / Kegiatan / Pembiasaan
+    const res = await Api.callSekolahPublik('sekolah.galeri', {
+      jenis: tabAktif,
+      sekolah_id: sekolahAktif.id,
+      limit: 100,
+    });
+    if (!res.ok) {
+      el.innerHTML = UI.errorHtml(res.error);
+      return;
+    }
+    data = res.data.data || [];
   }
 
-  const data = res.data.data || [];
   cacheItems[cacheKey] = data;
   renderList(data);
 }
@@ -814,18 +887,31 @@ function renderList(list) {
   const el = document.getElementById('listItem');
 
   if (list.length === 0) {
-    const label = { prestasi: 'prestasi', pembiasaan: 'pembiasaan', kegiatan: 'kegiatan' }[tabAktif] || 'data';
+    const label = {
+      prestasi: 'prestasi',
+      pembiasaan: 'pembiasaan',
+      kegiatan: 'kegiatan',
+      karya: 'karya guru',
+    }[tabAktif] || 'data';
+
+    const desc = tabAktif === 'karya'
+      ? 'Karya inovasi & aksi nyata guru akan muncul di sini setelah diverifikasi.'
+      : 'Data akan muncul setelah panitia verifikasi.';
+
     el.innerHTML = `
       <div class="empty-state">
         <div class="big-icon">${Icons.get('inbox', { class: 'icon-xl' })}</div>
         <div class="title">Belum Ada ${label.charAt(0).toUpperCase() + label.slice(1)}</div>
-        <div class="desc">Data akan muncul setelah panitia verifikasi.</div>
+        <div class="desc">${desc}</div>
       </div>
     `;
     return;
   }
 
-  el.innerHTML = list.map((it, idx) => renderItem(it, idx)).join('');
+  el.innerHTML = list.map((it, idx) => {
+    if (tabAktif === 'karya') return renderKaryaItem(it, idx);
+    return renderItem(it, idx);
+  }).join('');
 
   // Bind lightbox thumbnail
   el.querySelectorAll('[data-thumb]').forEach(thumb => {
@@ -911,7 +997,80 @@ function renderItem(it, idx) {
     </div>
   `;
 }
+// ============================================================
+// RENDER KARYA GURU (Inovasi & Aksi Nyata)
+// ============================================================
+function renderKaryaItem(k, idx) {
+  const jenis = k.jenis;
+  const user = k.user || {};
+  const isYT = k.link_url && /youtube\.com|youtu\.be/.test(k.link_url);
+  const thumbUrl = UI.thumbnail(k.link_url);
+  const iconName = jenis === 'inovasi' ? 'sparkles' : 'target';
 
+  const jenisLabel = jenis === 'inovasi' ? 'Inovasi' : 'Aksi Nyata';
+
+  const kategoriLabel = {
+    media:   'Media Pembelajaran',
+    metode:  'Metode Mengajar',
+    modul:   'Modul Ajar',
+    alat:    'Alat Peraga',
+    video:   'Video Pembelajaran',
+    lainnya: 'Lainnya',
+  }[k.kategori] || '';
+
+  let extra = `<span class="badge-jenis ${jenis}">${jenisLabel}</span>`;
+  if (jenis === 'inovasi' && kategoriLabel) {
+    extra += `<span class="badge-tingkat kabupaten">${kategoriLabel}</span>`;
+  }
+  if (jenis === 'implementasi' && k.pertemuan_id) {
+    extra += `<span class="badge-tingkat kecamatan">Materi KKG</span>`;
+  }
+
+  // Author
+  const init = (user.nama_lengkap || '?').charAt(0).toUpperCase();
+  const fotoUrl = user.id ? Api.fotoUrl(user.id, 't') : null;
+  const authorHtml = `
+    <div class="karya-author">
+      <span class="av">
+        ${init}
+        ${fotoUrl ? `<img src="${fotoUrl}" loading="lazy" alt="" onerror="UI.fotoError(this)">` : ''}
+      </span>
+      <span>${UI.escapeHtml(user.nama_lengkap || '-')}${user.jabatan ? ' · ' + UI.escapeHtml(user.jabatan) : ''}</span>
+    </div>
+  `;
+
+  const thumbHtml = `
+    <div class="item-thumb ${jenis}"
+         ${thumbUrl && !isYT ? `data-thumb data-fullurl="${UI.escapeHtml(k.link_url)}"` : ''}>
+      ${thumbUrl
+        ? `<img src="${thumbUrl}" alt="" loading="lazy" onerror="UI.fotoError(this)" />
+           <div class="fallback-icon" style="display:none;">${Icons.get(iconName)}</div>
+           ${isYT ? `<div class="play-badge">${Icons.get('play')}</div>` : ''}`
+        : `<div class="fallback-icon">${Icons.get(iconName)}</div>`}
+    </div>
+  `;
+
+  const buktiHtml = k.link_url
+    ? `<a href="${UI.escapeHtml(k.link_url)}" target="_blank" rel="noopener" class="link-bukti">
+         ${Icons.get('externalLink', { class: 'icon-sm' })} Lihat Karya
+       </a>`
+    : '';
+
+  return `
+    <div class="item-publik ${jenis}" style="animation-delay:${idx * 0.04}s">
+      <div class="item-head">
+        ${thumbHtml}
+        <div class="item-info">
+          <div class="item-title">${UI.escapeHtml(k.judul)}</div>
+          ${k.deskripsi ? `<div class="item-sub" style="margin-top:4px;">${UI.escapeHtml(k.deskripsi)}</div>` : ''}
+          <div class="item-extra" style="margin-top:6px;">${extra}</div>
+          ${authorHtml}
+        </div>
+      </div>
+      ${buktiHtml ? `<div style="margin-top:10px;">${buktiHtml}</div>` : ''}
+    </div>
+  `;
+}
 function showLightbox(url) {
   const lb = document.createElement('div');
   lb.className = 'lightbox';
