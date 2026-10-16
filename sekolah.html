@@ -772,7 +772,7 @@ function renderLogoHero(sekolah) {
   wrap.innerHTML = `
     ${url
       ? `<img src="${url}" alt="${UI.escapeHtml(sekolah.nama)}"
-           onerror="this.remove(); this.parentElement.querySelector('.fallback').style.display='flex';" />`
+           onerror="UI.fotoError(this)" />`
       : ''}
     <div class="fallback" style="${url ? 'display:none;' : ''}">${init}</div>
   `;
