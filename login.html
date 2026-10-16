@@ -14,6 +14,363 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
 <link rel="stylesheet" href="assets/css/nakula.css" />
+
+<style>
+  /* ============================================
+     LOGIN PAGE — Premium
+     ============================================ */
+  .login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Pattern background — motif batik halus */
+  .login-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(125,29,58,.04) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(201,169,97,.05) 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(125,29,58,.02) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* Ornamen sudut kiri atas */
+  .login-page::after {
+    content: '';
+    position: absolute;
+    top: -120px;
+    left: -120px;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(125,29,58,.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .login-box {
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    z-index: 1;
+    animation: fade-in-up .5s var(--ease-out) both;
+  }
+
+  /* Logo */
+  .login-logo-wrap {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 24px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: scale-in .6s var(--ease-spring) .1s both;
+  }
+  .login-logo-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 12px 28px rgba(97,19,41,.28));
+    position: relative;
+    z-index: 1;
+  }
+  .login-logo-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    opacity: 0.35;
+    animation: pulse-soft 3s ease-in-out infinite;
+  }
+  .login-logo-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,169,97,.15) 0%, transparent 65%);
+    z-index: 0;
+  }
+
+  @keyframes pulse-soft {
+    0%, 100% { transform: scale(1); opacity: 0.35; }
+    50% { transform: scale(1.06); opacity: 0.5; }
+  }
+
+  .login-title {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--maroon);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    animation: fade-in-up .5s var(--ease-out) .15s both;
+  }
+  .login-subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 32px;
+    letter-spacing: 0.3px;
+    animation: fade-in-up .5s var(--ease-out) .2s both;
+  }
+
+  /* Card Form */
+  .login-card {
+    background: var(--surface);
+    border-radius: 24px;
+    padding: 28px 24px;
+    box-shadow:
+      0 4px 16px rgba(125,29,58,.06),
+      0 20px 48px rgba(125,29,58,.1),
+      inset 0 0 0 1px rgba(201,169,97,.15);
+    animation: fade-in-up .5s var(--ease-out) .25s both;
+    position: relative;
+  }
+
+  .login-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    border-radius: 0 0 3px 3px;
+  }
+
+  .login-form { display: flex; flex-direction: column; gap: 18px; }
+
+  /* Field dengan icon berubah warna saat focus */
+  .login-field {
+    position: relative;
+  }
+  .login-field .field-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted-soft);
+    transition: all .2s var(--ease-out);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .login-field:focus-within .field-icon {
+    color: var(--maroon);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .login-input {
+    width: 100%;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 15px 16px 15px 48px;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    background: var(--bg);
+    color: var(--ink);
+    transition: all .2s var(--ease-out);
+    font-family: inherit;
+  }
+  .login-input::placeholder {
+    color: var(--muted-soft);
+    font-weight: 500;
+  }
+  .login-input:focus {
+    outline: none;
+    border-color: var(--maroon);
+    background: var(--surface);
+    box-shadow: 0 0 0 4px rgba(125,29,58,.08);
+  }
+  .login-input.error {
+    border-color: var(--danger);
+    background: var(--danger-soft);
+  }
+
+  /* Label */
+  .login-label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 7px;
+    letter-spacing: 0.3px;
+  }
+
+  /* Tombol PIN show/hide */
+  .btn-toggle-pin {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .15s;
+    z-index: 2;
+  }
+  .btn-toggle-pin:hover {
+    background: var(--maroon-soft);
+    color: var(--maroon);
+  }
+
+  /* Tombol Submit Premium */
+  .btn-login {
+    width: 100%;
+    padding: 15px 20px;
+    border-radius: 14px;
+    border: none;
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+    color: white;
+    font-size: 14.5px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all .2s var(--ease-out);
+    box-shadow:
+      0 6px 16px rgba(125,29,58,.25),
+      inset 0 0 0 1px rgba(201,169,97,.35);
+    position: relative;
+    overflow: hidden;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-login::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,.15) 50%, transparent 100%);
+    transform: translateX(-100%);
+    transition: transform .6s var(--ease-out);
+  }
+  .btn-login:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow:
+      0 10px 24px rgba(125,29,58,.32),
+      inset 0 0 0 1px rgba(201,169,97,.5);
+  }
+  .btn-login:hover:not(:disabled)::before {
+    transform: translateX(100%);
+  }
+  .btn-login:active:not(:disabled) {
+    transform: translateY(0) scale(.98);
+  }
+  .btn-login:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  /* Alert error yang lebih baik */
+  .login-alert {
+    display: none;
+    padding: 13px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    align-items: center;
+    gap: 10px;
+    animation: slide-down .3s var(--ease-spring) both;
+  }
+  .login-alert.show { display: flex; }
+  .login-alert.error {
+    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+    color: var(--danger);
+    border: 1.5px solid rgba(185,28,28,.15);
+  }
+  .login-alert.success {
+    background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+    color: var(--success);
+    border: 1.5px solid rgba(21,128,61,.15);
+  }
+  .login-alert .icon {
+    flex-shrink: 0;
+  }
+
+  /* Footer */
+  .login-footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 22px;
+    font-weight: 600;
+    animation: fade-in-up .5s var(--ease-out) .35s both;
+  }
+  .login-footer strong {
+    color: var(--maroon);
+    font-weight: 800;
+  }
+  .login-footer a {
+    color: var(--maroon);
+    font-weight: 800;
+    text-decoration: none;
+    border-bottom: 1px dashed var(--maroon-light);
+    transition: all .15s;
+  }
+  .login-footer a:hover {
+    border-bottom-style: solid;
+  }
+
+  /* Divider */
+  .login-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--muted-soft);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin: 28px 0 0;
+    animation: fade-in-up .5s var(--ease-out) .4s both;
+  }
+  .login-divider::before, .login-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  /* Info koneksi */
+  .login-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10.5px;
+    color: var(--muted);
+    font-weight: 700;
+    margin-top: 8px;
+  }
+  .login-status .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 0 3px rgba(21,128,61,.15);
+  }
+  .login-status.offline .dot {
+    background: var(--danger);
+    box-shadow: 0 0 0 3px rgba(185,28,28,.15);
+  }
+</style>
 </head>
 <body class="login-page">
 
@@ -28,58 +385,80 @@
     <h1 class="login-title">NAKULAKU</h1>
     <p class="login-subtitle">Ekosistem KKG Gugus Nakula</p>
 
-    <!-- Form -->
-    <form id="formLogin" class="login-form" autocomplete="off" novalidate>
+    <!-- Card Form -->
+    <div class="login-card">
+      <form id="formLogin" class="login-form" autocomplete="off" novalidate>
 
-      <div class="field">
-        <label class="label" for="email">Email</label>
-        <div class="input-wrap">
-          <span data-icon="mail"></span>
-          <input
-            type="email"
-            id="email"
-            class="input with-icon"
-            placeholder="nama@email.com"
-            autocomplete="email"
-            required
-          />
+        <!-- Email -->
+        <div>
+          <label class="login-label" for="email">Email</label>
+          <div class="login-field">
+            <span class="field-icon" data-icon="mail"></span>
+            <input
+              type="email"
+              id="email"
+              class="login-input"
+              placeholder="nama@email.com"
+              autocomplete="email"
+              required
+            />
+          </div>
         </div>
-      </div>
 
-      <div class="field">
-        <label class="label" for="pin">PIN</label>
-        <div class="input-wrap">
-          <span data-icon="lock"></span>
-          <input
-            type="password"
-            id="pin"
-            class="input with-icon"
-            placeholder="•••••"
-            inputmode="numeric"
-            maxlength="6"
-            autocomplete="current-password"
-            required
-          />
-          <button type="button" id="togglePin" class="input-suffix" aria-label="Tampilkan PIN">
-            <span data-icon="eye"></span>
-          </button>
+        <!-- PIN -->
+        <div>
+          <label class="login-label" for="pin">PIN</label>
+          <div class="login-field">
+            <span class="field-icon" data-icon="lock"></span>
+            <input
+              type="password"
+              id="pin"
+              class="login-input"
+              placeholder="•••••"
+              inputmode="numeric"
+              maxlength="6"
+              autocomplete="current-password"
+              required
+              style="padding-right: 52px; letter-spacing: 4px;"
+            />
+            <button
+              type="button"
+              id="togglePin"
+              class="btn-toggle-pin"
+              aria-label="Tampilkan PIN"
+            >
+              <span data-icon="eye"></span>
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div id="alert" class="alert alert-error"></div>
+        <!-- Alert -->
+        <div id="alert" class="login-alert"></div>
 
-      <button type="submit" id="btnMasuk" class="btn btn-primary btn-full" style="margin-top:8px;">
-        <span data-icon="logIn"></span>
-        <span>Masuk</span>
-      </button>
+        <!-- Tombol -->
+        <button type="submit" id="btnMasuk" class="btn-login">
+          <span data-icon="logIn"></span>
+          <span>Masuk</span>
+        </button>
 
-    </form>
+      </form>
+    </div>
 
+    <!-- Footer -->
     <p class="login-footer">
-      Lupa PIN? Hubungi <strong>admin KKG</strong> untuk reset.
+      Lupa PIN? Hubungi <strong>admin KKG</strong><br>
+      <span style="opacity:.7;font-size:11px;">atau buka <a href="#">Pemulihan Akun</a></span>
     </p>
 
-    <div class="divider">GUGUS NAKULA</div>
+    <div class="login-divider">GUGUS NAKULA</div>
+
+    <!-- Status koneksi -->
+    <div style="text-align:center;">
+      <span class="login-status" id="statusKoneksi">
+        <span class="dot"></span>
+        <span>Terhubung</span>
+      </span>
+    </div>
 
   </div>
 
@@ -87,13 +466,17 @@
   <script src="assets/js/api.js"></script>
   <script src="assets/js/ui.js"></script>
   <script>
-    // ---------- Pasang ikon ke elemen [data-icon] ----------
+    // ============================================================
+    // PASANG IKON
+    // ============================================================
     document.querySelectorAll('[data-icon]').forEach(el => {
       el.innerHTML = Icons.get(el.dataset.icon);
       el.style.display = 'contents';
     });
 
-    // ---------- Auto-redirect kalau sudah login ----------
+    // ============================================================
+    // AUTO-REDIRECT KALAU SUDAH LOGIN
+    // ============================================================
     (async () => {
       const token = Api.getToken();
       if (!token) return;
@@ -106,7 +489,22 @@
       }
     })();
 
-    // ---------- Toggle show/hide PIN ----------
+    // ============================================================
+    // STATUS KONEKSI
+    // ============================================================
+    function updateStatusKoneksi() {
+      const el = document.getElementById('statusKoneksi');
+      const online = navigator.onLine;
+      el.classList.toggle('offline', !online);
+      el.querySelector('span:last-child').textContent = online ? 'Terhubung' : 'Offline';
+    }
+    window.addEventListener('online', updateStatusKoneksi);
+    window.addEventListener('offline', updateStatusKoneksi);
+    updateStatusKoneksi();
+
+    // ============================================================
+    // TOGGLE PIN
+    // ============================================================
     const pinEl = document.getElementById('pin');
     const toggleBtn = document.getElementById('togglePin');
     let pinVisible = false;
@@ -117,28 +515,53 @@
       toggleBtn.innerHTML = Icons.get(pinVisible ? 'eyeOff' : 'eye');
     });
 
-    // ---------- Submit form ----------
-    const form = document.getElementById('formLogin');
+    // ============================================================
+    // ALERT HANDLER
+    // ============================================================
     const alertBox = document.getElementById('alert');
-    const btnMasuk = document.getElementById('btnMasuk');
 
-    function showAlert(pesan, tipe = 'error') {
-      alertBox.textContent = pesan;
-      alertBox.className = 'alert alert-' + tipe + ' show';
+    function showAlert(pesan, tipe) {
+      const iconMap = {
+        error: 'alertCircle',
+        success: 'checkCircle',
+      };
+      const iconSvg = Icons.get(iconMap[tipe] || 'info', { class: 'icon' });
+      alertBox.innerHTML = iconSvg + '<span>' + UI.escapeHtml(pesan) + '</span>';
+      alertBox.className = 'login-alert show ' + (tipe || 'error');
     }
+
     function hideAlert() {
-      alertBox.className = 'alert';
+      alertBox.className = 'login-alert';
     }
+
+    // ============================================================
+    // SUBMIT FORM
+    // ============================================================
+    const form = document.getElementById('formLogin');
+    const btnMasuk = document.getElementById('btnMasuk');
+    const emailEl = document.getElementById('email');
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       hideAlert();
 
-      const email = document.getElementById('email').value.trim();
+      const email = emailEl.value.trim();
       const pin = pinEl.value.trim();
 
-      if (!email || !pin) {
-        showAlert('Email dan PIN wajib diisi.');
+      // Reset error state
+      emailEl.classList.remove('error');
+      pinEl.classList.remove('error');
+
+      if (!email) {
+        emailEl.classList.add('error');
+        emailEl.focus();
+        showAlert('Email wajib diisi.', 'error');
+        return;
+      }
+      if (!pin) {
+        pinEl.classList.add('error');
+        pinEl.focus();
+        showAlert('PIN wajib diisi.', 'error');
         return;
       }
 
@@ -148,28 +571,33 @@
         const res = await Api.login(email, pin);
 
         if (!res || res.error) {
-          showAlert(res?.error || 'Login gagal.');
+          showAlert(res && res.error ? res.error : 'Login gagal.', 'error');
+          pinEl.classList.add('error');
+          pinEl.focus();
           return;
         }
 
         if (!res.token) {
-          showAlert('Login gagal: server tidak mengirim token.');
+          showAlert('Server tidak mengirim token.', 'error');
           return;
         }
 
         Api.setSession(res.token, res.profile);
         showAlert('Berhasil! Mengalihkan…', 'success');
+
         setTimeout(() => window.location.replace('beranda.html'), 500);
 
       } catch (err) {
         console.error(err);
-        showAlert('Tidak bisa terhubung ke server. Cek koneksi internet.');
+        showAlert('Tidak bisa terhubung ke server. Cek koneksi internet.', 'error');
       } finally {
         UI.btnReset(btnMasuk);
       }
     });
 
-    // Enter di field PIN → submit
+    // ============================================================
+    // ENTER DI FIELD PIN → SUBMIT
+    // ============================================================
     pinEl.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -177,10 +605,23 @@
       }
     });
 
-    // Fokus otomatis
+    // ============================================================
+    // CLEAR ERROR SAAT USER MENGETIK
+    // ============================================================
+    emailEl.addEventListener('input', () => {
+      emailEl.classList.remove('error');
+      hideAlert();
+    });
+    pinEl.addEventListener('input', () => {
+      pinEl.classList.remove('error');
+      hideAlert();
+    });
+
+    // ============================================================
+    // AUTOFOCUS
+    // ============================================================
     window.addEventListener('load', () => {
-      const emailEl = document.getElementById('email');
-      if (emailEl && !emailEl.value) emailEl.focus();
+      if (!emailEl.value) emailEl.focus();
     });
   </script>
 
