@@ -110,6 +110,115 @@
     display: flex; gap: 6px; margin-top: 10px;
     padding-top: 10px; border-top: 1px solid var(--border);
   }
+
+  /* ============================================
+     TAB BADGE
+     ============================================ */
+  .tab { position: relative; }
+  .tab-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--danger);
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  /* ============================================
+     VERIFIKASI LUAR RADIUS
+     ============================================ */
+  .verif-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 14px;
+    margin-bottom: 12px;
+    animation: fade-in-up .35s var(--ease-out) both;
+  }
+  .verif-card-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .verif-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 16px;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .verif-avatar img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .verif-info { flex: 1; min-width: 0; }
+  .verif-nama {
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+  .verif-sub {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .verif-foto {
+    width: 100%;
+    aspect-ratio: 4/3;
+    border-radius: 12px;
+    background: var(--bg);
+    object-fit: cover;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+  .verif-detail {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    font-size: 12px;
+  }
+  .verif-detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    gap: 8px;
+  }
+  .verif-detail-row .lbl {
+    color: var(--muted);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .verif-detail-row .val {
+    font-weight: 700;
+    color: var(--ink);
+    text-align: right;
+  }
+  .verif-detail-row .val.warn { color: var(--warning); }
+  .verif-actions {
+    display: flex;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+  }
+  .verif-actions .btn { flex: 1; }
 </style>
 </head>
 <body>
@@ -137,6 +246,10 @@
     <div class="hero-card" id="hero"></div>
 
     <div class="tabs">
+      <button class="tab" data-tab="verifikasi">
+        <span data-icon="alertTriangle"></span> Verifikasi
+        <span class="tab-badge hidden" id="badgeVerifikasi">0</span>
+      </button>
       <button class="tab active" data-tab="materi"><span data-icon="book"></span> Materi</button>
       <button class="tab" data-tab="tugas"><span data-icon="clipboard"></span> Tugas</button>
       <button class="tab" data-tab="pengamat"><span data-icon="users"></span> Pengamat</button>
@@ -157,6 +270,37 @@
       <div id="listTugas"></div>
     </div>
 
+    <div class="panel" data-panel="verifikasi">
+      <div class="card" style="margin-bottom:12px;font-size:12.5px;color:var(--muted);line-height:1.5;">
+        Daftar presensi <strong>luar radius</strong> yang menunggu verifikasi admin. Cek foto & jarak, lalu putuskan: setujui (dapat 50 poin) atau tolak (jadi alfa).
+      </div>
+      <div id="listVerifikasi"></div>
+    </div>
+
+    <div class="panel active" data-panel="materi">
+      <button class="btn btn-primary btn-full" id="btnTambahMateri" style="margin-bottom:12px;">
+        <span data-icon="plus"></span> Tambah Materi
+      </button>
+      <div id="listMateri"></div>
+    </div>
+
+    <div class="panel" data-panel="tugas">
+      <button class="btn btn-primary btn-full" id="btnTambahTugas" style="margin-bottom:12px;">
+        <span data-icon="plus"></span> Tambah Tugas
+      </button>
+      <div id="listTugas"></div>
+    </div>
+
+    <div class="panel" data-panel="pengamat">
+      <div class="card" style="margin-bottom:12px;font-size:12.5px;color:var(--muted);line-height:1.5;">
+        Pengamat adalah guru yang ditunjuk untuk mengamati jalannya pertemuan. Mereka akan mencatat keaktifan peserta dan kekompakan sekolah, yang nanti dipakai untuk penilaian NAKULAKU AWARD.
+      </div>
+      <button class="btn btn-primary btn-full" id="btnTunjukPengamat" style="margin-bottom:12px;">
+        <span data-icon="users"></span> Tunjuk Pengamat
+      </button>
+      <div id="listPengamat"></div>
+    </div>
+
     <div class="panel" data-panel="akses">
       <div class="card" style="margin-bottom:12px;font-size:12.5px;color:var(--muted);line-height:1.5;">
         Buka akses pertemuan ini untuk guru tertentu, meski mereka belum menyelesaikan pertemuan sebelumnya. Berguna untuk kasus khusus (sakit lama, mutasi, dsb.).
@@ -165,15 +309,6 @@
         <span data-icon="plus"></span> Buka Akses untuk Guru
       </button>
       <div id="listAksesKhusus"></div>
-    </div>
-
-      <div class="card" style="margin-bottom:12px;font-size:12.5px;color:var(--muted);line-height:1.5;">
-        Pengamat adalah guru yang ditunjuk untuk mengamati jalannya pertemuan. Mereka akan mencatat keaktifan peserta dan kekompakan sekolah, yang nanti dipakai untuk penilaian NAKULAKU AWARD.
-      </div>
-      <button class="btn btn-primary btn-full" id="btnTunjukPengamat" style="margin-bottom:12px;">
-        <span data-icon="users"></span> Tunjuk Pengamat
-      </button>
-      <div id="listPengamat"></div>
     </div>
   </div>
 
@@ -205,6 +340,7 @@ let data = { pertemuan: null, materi: [], tugas: [] };
   if (!pertemuanId) { UI.gagal('Pertemuan tidak ditentukan.'); return; }
 
   await load();
+  await loadVerifikasi(); // ← BARU
 
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -217,6 +353,153 @@ let data = { pertemuan: null, materi: [], tugas: [] };
   document.getElementById('btnTambahMateri').addEventListener('click', () => formMateri(null));
   document.getElementById('btnTambahTugas').addEventListener('click', () => formTugas(null));
 })();
+
+// ============================================================
+// VERIFIKASI LUAR RADIUS
+// ============================================================
+let daftarVerifikasi = [];
+
+async function loadVerifikasi() {
+  const el = document.getElementById('listVerifikasi');
+  if (!el) return;
+
+  el.innerHTML = '<div class="skeleton" style="height:180px;border-radius:16px;margin-bottom:10px;"></div>';
+
+  const res = await Api.call('presensi.menunggu_luar_radius', { pertemuan_id: pertemuanId });
+
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat.');
+    return;
+  }
+
+  daftarVerifikasi = res.data || [];
+
+  // Update badge di tab
+  const badge = document.getElementById('badgeVerifikasi');
+  if (badge) {
+    if (daftarVerifikasi.length > 0) {
+      badge.textContent = daftarVerifikasi.length;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  }
+
+  renderVerifikasi();
+}
+
+function renderVerifikasi() {
+  const el = document.getElementById('listVerifikasi');
+
+  if (daftarVerifikasi.length === 0) {
+    el.innerHTML = `
+      <div class="empty" style="padding:50px 20px;text-align:center;">
+        <div class="empty-icon" style="width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,var(--success-soft) 0%,#D1FAE5 100%);color:var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+          ${Icons.get('checkCircle', { class: 'icon-lg' })}
+        </div>
+        <div style="font-weight:800;font-size:15px;margin-bottom:6px;">Tidak Ada Presensi Luar Radius</div>
+        <div style="font-size:12.5px;color:var(--muted);max-width:300px;margin:0 auto;">Semua presensi luar radius sudah diverifikasi.</div>
+      </div>
+    `;
+    return;
+  }
+
+  el.innerHTML = daftarVerifikasi.map((v, idx) => {
+    const init = (v.user?.nama_lengkap || '?').charAt(0).toUpperCase();
+    const fotoUrl = v.foto_thumb_url;
+    const fotoProfil = v.user?.id ? Api.fotoUrl(v.user.id, 't') : null;
+    const waktu = UI.formatTanggalJam(v.waktu_submit);
+
+    return `
+      <div class="verif-card" style="animation-delay:${idx * 0.05}s" data-id="${v.id}">
+        <div class="verif-card-head">
+          <div class="verif-avatar">
+            <span>${init}</span>
+            ${fotoProfil ? `<img src="${fotoProfil}" loading="lazy" alt="" onerror="this.remove()">` : ''}
+          </div>
+          <div class="verif-info">
+            <div class="verif-nama">${UI.escapeHtml(v.user?.nama_lengkap || '-')}</div>
+            <div class="verif-sub">${UI.escapeHtml(v.user?.sekolah?.nama || '-')}</div>
+            <div class="verif-sub">${UI.escapeHtml(v.user?.jabatan || '-')}</div>
+          </div>
+        </div>
+
+        ${fotoUrl ? `
+          <img class="verif-foto" src="${fotoUrl}" alt="Foto presensi" loading="lazy"
+            onclick="window.open('${fotoUrl}','_blank')" />
+        ` : ''}
+
+        <div class="verif-detail">
+          <div class="verif-detail-row">
+            <span class="lbl">Waktu Submit</span>
+            <span class="val">${waktu}</span>
+          </div>
+          <div class="verif-detail-row">
+            <span class="lbl">Jarak dari Lokasi</span>
+            <span class="val warn">${v.jarak_meter !== null ? v.jarak_meter + ' m' : '—'}</span>
+          </div>
+          <div class="verif-detail-row">
+            <span class="lbl">Radius Diizinkan</span>
+            <span class="val">${v.pertemuan?.radius_meter || 100} m</span>
+          </div>
+        </div>
+
+        <div class="verif-actions">
+          <button class="btn btn-secondary" data-act="tolak" data-id="${v.id}">
+            ${Icons.get('x', { class: 'icon-sm' })}
+            Tolak
+          </button>
+          <button class="btn btn-primary" data-act="setuju" data-id="${v.id}">
+            ${Icons.get('check', { class: 'icon-sm' })}
+            Setujui
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Bind actions
+  el.querySelectorAll('[data-act]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = Number(btn.dataset.id);
+      const act = btn.dataset.act;
+      verifikasiLuarRadius(id, act === 'setuju' ? 'disetujui' : 'ditolak');
+    });
+  });
+}
+
+async function verifikasiLuarRadius(presensiId, keputusan) {
+  const item = daftarVerifikasi.find(v => v.id === presensiId);
+  const nama = item?.user?.nama_lengkap || 'guru';
+
+  const pesan = keputusan === 'disetujui'
+    ? `Setujui presensi luar radius ${nama}? Poin menjadi 50.`
+    : `Tolak presensi luar radius ${nama}? Status berubah jadi alfa, poin 0.`;
+
+  const ok = await UI.konfirmasi(
+    keputusan === 'disetujui' ? 'Setujui Presensi' : 'Tolak Presensi',
+    pesan,
+    {
+      okText: keputusan === 'disetujui' ? 'Setujui' : 'Tolak',
+      danger: keputusan === 'ditolak',
+    }
+  );
+  if (!ok) return;
+
+  const res = await Api.call('presensi.verifikasi_luar_radius', {
+    presensi_id: presensiId,
+    keputusan,
+  });
+
+  if (!res.ok) {
+    UI.gagal(res.error || 'Gagal memproses.');
+    return;
+  }
+
+  UI.sukses(keputusan === 'disetujui' ? 'Presensi disetujui (50 poin).' : 'Presensi ditolak (alfa).');
+  await loadVerifikasi();
+  await load(); // refresh statistik hero
+}
 
 async function load() {
   const res = await Api.call('admin.pertemuan.detail', { pertemuan_id: pertemuanId });
