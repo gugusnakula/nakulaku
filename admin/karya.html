@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>Verifikasi Karya — NAKULAKU Admin</title>
+
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/nakula.css" />
+<link rel="stylesheet" href="layout.css" />
+
+<style>
+  .filter-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .filter-bar::-webkit-scrollbar { display: none; }
+  .fchip {
+    flex-shrink: 0;
+    padding: 9px 16px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all .2s var(--ease-out);
+    white-space: nowrap;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .fchip:hover { border-color: var(--maroon-light); color: var(--maroon); }
+  .fchip.active {
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+    border-color: var(--maroon);
+    color: white;
+    box-shadow: 0 4px 12px rgba(125,29,58,.25);
+  }
+  .fchip .cnt {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--border);
+    color: var(--muted);
+    font-weight: 800;
+    min-width: 18px;
+    text-align: center;
+  }
+  .fchip.active .cnt {
+    background: rgba(255,255,255,.25);
+    color: white;
+  }
+
+  .karya-item {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: all .2s var(--ease-out);
+    animation: fade-in-up .4s var(--ease-out) both;
+  }
+  .karya-item:hover {
+    border-color: var(--maroon-light);
+    box-shadow: 0 8px 20px rgba(125,29,58,.08);
+  }
+  .karya-item-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .karya-thumb {
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: var(--bg);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .karya-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .karya-thumb .fb {
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+  .karya-thumb .fb svg { width: 26px; height: 26px; }
+  .karya-thumb.inovasi .fb {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  }
+  .karya-thumb.implementasi .fb {
+    background: linear-gradient(135deg, #22C55E 0%, #15803D 100%);
+  }
+  .karya-thumb .play-badge {
+    position: absolute;
+    bottom: 4px; right: 4px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: rgba(0,0,0,.7);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .karya-thumb .play-badge svg { width: 10px; height: 10px; }
+
+  .karya-body { flex: 1; min-width: 0; }
+  .karya-judul {
+    font-weight: 800;
+    font-size: 14.5px;
+    color: var(--ink);
+    line-height: 1.4;
+    margin-bottom: 4px;
+  }
+  .karya-meta {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .karya-author {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 700;
+    margin-top: 6px;
+  }
+  .karya-author .av {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 800;
+    overflow: hidden;
+    position: relative;
+  }
+  .karya-author .av img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+
+  .status-pill {
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 4px 9px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 0.4px;
+  }
+  .st-menunggu { background: var(--warning-soft); color: var(--warning); }
+  .st-disetujui { background: var(--success-soft); color: var(--success); }
+  .st-ditolak { background: var(--danger-soft); color: var(--danger); }
+
+  .badge-jenis {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 999px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    margin-right: 5px;
+    margin-bottom: 4px;
+  }
+  .badge-jenis.inovasi {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
+  }
+  .badge-jenis.implementasi {
+    background: linear-gradient(135deg, #22C55E 0%, #15803D 100%);
+    color: white;
+  }
+
+  .karya-detail {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    font-size: 12.5px;
+    line-height: 1.6;
+  }
+
+  .karya-actions {
+    display: flex;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+  }
+  .karya-actions .btn { flex: 1; }
+
+  /* MODAL */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(28,20,20,.55);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fade-in .2s both;
+  }
+  .modal {
+    background: var(--surface);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 22px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.3);
+    animation: slide-up-sm .3s var(--ease-out) both;
+  }
+  @keyframes slide-up-sm {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--maroon);
+    margin-bottom: 6px;
+  }
+  .modal-sub {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .form-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .form-label .req { color: var(--danger); }
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .modal-actions .btn { flex: 1; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body class="admin-body">
+
+<!-- HEADER MOBILE -->
+<header class="admin-header">
+  <div class="admin-header-left">
+    <a href="index.html" class="admin-header-btn" aria-label="Kembali">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="admin-header-title">
+      <div class="admin-header-title-1">VERIFIKASI KARYA</div>
+      <div class="admin-header-title-2">Admin NAKULAKU</div>
+    </div>
+  </div>
+  <button class="admin-header-btn" data-act="logout" aria-label="Keluar">
+    <span data-icon="logOut"></span>
+  </button>
+</header>
+
+<div class="admin-layout">
+
+  <!-- SIDEBAR DESKTOP -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <div class="admin-sidebar-logo">
+        <img src="../assets/img/logo-mark.svg" alt="Nakula" />
+      </div>
+      <div>
+        <div class="admin-sidebar-name">NAKULAKU</div>
+        <div class="admin-sidebar-sub">Admin Panel</div>
+      </div>
+    </div>
+
+    <nav class="admin-sidebar-menu">
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Dashboard</div>
+        <a class="admin-sidebar-item" data-nav="dashboard" href="index.html">
+          <span data-icon="layoutDashboard"></span> Dashboard
+        </a>
+      </div>
+
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Data</div>
+        <a class="admin-sidebar-item" data-nav="guru" href="guru.html">
+          <span data-icon="users"></span> Data Guru
+        </a>
+        <a class="admin-sidebar-item" data-nav="impor" href="impor.html">
+          <span data-icon="upload"></span> Impor CSV
+        </a>
+      </div>
+
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Kegiatan</div>
+        <a class="admin-sidebar-item" data-nav="periode" href="periode.html">
+          <span data-icon="calendar"></span> Kelola Periode
+        </a>
+        <a class="admin-sidebar-item" data-nav="pertemuan" href="pertemuan.html">
+          <span data-icon="calendar"></span> Kelola Pertemuan
+        </a>
+        <a class="admin-sidebar-item" data-nav="pengumuman" href="pengumuman.html">
+          <span data-icon="megaphone"></span> Pengumuman
+        </a>
+      </div>
+
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Evaluasi</div>
+        <a class="admin-sidebar-item" data-nav="verifikasi-sekolah" href="verifikasi-sekolah.html">
+          <span data-icon="sparkles"></span> Verifikasi Sekolah
+        </a>
+        <a class="admin-sidebar-item active" data-nav="karya" href="karya.html">
+          <span data-icon="sparkles"></span> Verifikasi Karya
+        </a>
+        <a class="admin-sidebar-item" data-nav="verifikasi-presensi" href="../ks/verifikasi.html">
+          <span data-icon="checkCircle"></span> Verifikasi Presensi
+        </a>
+        <a class="admin-sidebar-item" data-nav="feedback" href="feedback.html">
+          <span data-icon="messageSquare"></span> Rekap Feedback
+        </a>
+        <a class="admin-sidebar-item" data-nav="award" href="award.html">
+          <span data-icon="award"></span> Kelola Award
+        </a>
+        <a class="admin-sidebar-item" data-nav="sertifikat" href="sertifikat.html">
+          <span data-icon="fileText"></span> Sertifikat
+        </a>
+      </div>
+
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Laporan</div>
+        <a class="admin-sidebar-item" data-nav="analitik" href="analitik.html">
+          <span data-icon="activity"></span> Analitik
+        </a>
+        <a class="admin-sidebar-item" data-nav="laporan" href="laporan.html">
+          <span data-icon="download"></span> Export Laporan
+        </a>
+      </div>
+
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Sistem</div>
+        <a class="admin-sidebar-item" data-nav="kategori-ajuan" href="kategori-ajuan.html">
+          <span data-icon="tag"></span> Kategori Ajuan
+        </a>
+        <a class="admin-sidebar-item" data-nav="log" href="log.html">
+          <span data-icon="list"></span> Log Aktivitas
+        </a>
+        <a class="admin-sidebar-item" data-nav="pengaturan" href="pengaturan.html">
+          <span data-icon="settings"></span> Pengaturan
+        </a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+
+    <div class="admin-topbar">
+      <h1 class="admin-topbar-title">Verifikasi Karya</h1>
+      <div class="admin-topbar-right">
+        <div class="admin-user-chip" id="userChip"></div>
+        <button class="btn-icon" data-act="logout" aria-label="Keluar" title="Keluar">
+          <span data-icon="logOut"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <div class="alert alert-info" style="margin-bottom:16px;display:flex;gap:10px;align-items:flex-start;">
+        <span data-icon="info" class="icon-sm" style="flex-shrink:0;margin-top:2px;"></span>
+        <div style="font-size:12.5px;line-height:1.6;">
+          Verifikasi karya <strong>Inovasi</strong> (+15 poin) dan <strong>Aksi Nyata</strong> (+10 poin) dari guru.
+          Karya yang disetujui akan muncul di <strong>Portofolio Digital Sekolah</strong>.
+        </div>
+      </div>
+
+      <!-- Ringkasan -->
+      <div id="ringkasan" class="admin-stat-grid" style="margin-bottom:16px;">
+        <div class="admin-stat-card">
+          <div class="icon-wrap"><span data-icon="inbox" class="icon-lg"></span></div>
+          <div class="admin-stat-value" id="statTotal">—</div>
+          <div class="admin-stat-label">Total</div>
+        </div>
+        <div class="admin-stat-card gold">
+          <div class="icon-wrap"><span data-icon="clock" class="icon-lg"></span></div>
+          <div class="admin-stat-value" id="statMenunggu">—</div>
+          <div class="admin-stat-label">Menunggu</div>
+        </div>
+        <div class="admin-stat-card green">
+          <div class="icon-wrap"><span data-icon="checkCircle" class="icon-lg"></span></div>
+          <div class="admin-stat-value" id="statDisetujui">—</div>
+          <div class="admin-stat-label">Disetujui</div>
+        </div>
+        <div class="admin-stat-card blue">
+          <div class="icon-wrap"><span data-icon="x" class="icon-lg"></span></div>
+          <div class="admin-stat-value" id="statDitolak">—</div>
+          <div class="admin-stat-label">Ditolak</div>
+        </div>
+      </div>
+
+      <!-- Filter -->
+      <div class="filter-bar" id="filterBar">
+        <button class="fchip active" data-status="menunggu">
+          <span data-icon="clock" class="icon-sm"></span>
+          Menunggu
+          <span class="cnt" id="cntMenunggu">0</span>
+        </button>
+        <button class="fchip" data-status="disetujui">
+          <span data-icon="checkCircle" class="icon-sm"></span>
+          Disetujui
+          <span class="cnt" id="cntDisetujui">0</span>
+        </button>
+        <button class="fchip" data-status="ditolak">
+          <span data-icon="x" class="icon-sm"></span>
+          Ditolak
+          <span class="cnt" id="cntDitolak">0</span>
+        </button>
+        <button class="fchip" data-status="">
+          <span data-icon="list" class="icon-sm"></span>
+          Semua
+        </button>
+      </div>
+
+      <div id="listKarya">
+        <div class="skeleton" style="height:140px;border-radius:18px;margin-bottom:10px;"></div>
+        <div class="skeleton" style="height:140px;border-radius:18px;"></div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- BOTTOM NAV MOBILE -->
+<nav class="admin-bottom-nav">
+  <a class="admin-nav-item" data-nav="dashboard" href="index.html">
+    <span data-icon="layoutDashboard"></span> Dashboard
+  </a>
+  <a class="admin-nav-item" data-nav="guru" href="guru.html">
+    <span data-icon="users"></span> Guru
+  </a>
+  <a class="admin-nav-item" data-nav="pertemuan" href="pertemuan.html">
+    <span data-icon="calendar"></span> Pertemuan
+  </a>
+  <a class="admin-nav-item" data-nav="verifikasi" href="verifikasi-sekolah.html">
+    <span data-icon="checkCircle"></span> Verifikasi
+  </a>
+  <button class="admin-nav-item" id="btnLainnya">
+    <span data-icon="menu"></span> Lainnya
+  </button>
+</nav>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+// ============================================================
+// LAYOUT HELPER
+// ============================================================
+(function () {
+  document.querySelectorAll('[data-icon]').forEach(el => {
+    el.innerHTML = Icons.get(el.dataset.icon);
+    el.style.display = 'contents';
+  });
+
+  UI.bindLogout();
+
+  // Bottom sheet Lainnya
+  document.getElementById('btnLainnya')?.addEventListener('click', () => {
+    const overlay = document.createElement('div');
+    overlay.className = 'admin-sheet-overlay';
+    overlay.innerHTML = `
+      <div class="admin-sheet">
+        <div class="admin-sheet-handle"></div>
+
+        <div class="admin-sheet-title">Data</div>
+        <div class="admin-sheet-grid">
+          <a class="admin-sheet-item" href="guru.html">
+            <div class="icon-wrap">${Icons.get('users', { class: 'icon-sm' })}</div>
+            <span>Data Guru</span>
+          </a>
+          <a class="admin-sheet-item" href="impor.html">
+            <div class="icon-wrap">${Icons.get('upload', { class: 'icon-sm' })}</div>
+            <span>Impor CSV</span>
+          </a>
+        </div>
+
+        <div class="admin-sheet-title">Evaluasi</div>
+        <div class="admin-sheet-grid">
+          <a class="admin-sheet-item" href="verifikasi-sekolah.html">
+            <div class="icon-wrap">${Icons.get('sparkles', { class: 'icon-sm' })}</div>
+            <span>Verifikasi Sekolah</span>
+          </a>
+          <a class="admin-sheet-item" href="karya.html">
+            <div class="icon-wrap">${Icons.get('sparkles', { class: 'icon-sm' })}</div>
+            <span>Verifikasi Karya</span>
+          </a>
+          <a class="admin-sheet-item" href="../ks/verifikasi.html">
+            <div class="icon-wrap">${Icons.get('checkCircle', { class: 'icon-sm' })}</div>
+            <span>Verifikasi Presensi</span>
+          </a>
+          <a class="admin-sheet-item" href="feedback.html">
+            <div class="icon-wrap">${Icons.get('messageSquare', { class: 'icon-sm' })}</div>
+            <span>Rekap Feedback</span>
+          </a>
+          <a class="admin-sheet-item gold" href="award.html">
+            <div class="icon-wrap">${Icons.get('award', { class: 'icon-sm' })}</div>
+            <span>Kelola Award</span>
+          </a>
+          <a class="admin-sheet-item gold" href="sertifikat.html">
+            <div class="icon-wrap">${Icons.get('fileText', { class: 'icon-sm' })}</div>
+            <span>Sertifikat</span>
+          </a>
+        </div>
+
+        <button class="btn btn-primary btn-full" id="btnTutupSheet" style="margin-top:16px;">Tutup</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    const close = () => overlay.remove();
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+    overlay.querySelector('#btnTutupSheet').addEventListener('click', close);
+  });
+
+  // User chip
+  window.addEventListener('load', async () => {
+    const profile = Api.getProfile();
+    if (!profile) return;
+    const chip = document.getElementById('userChip');
+    if (chip) {
+      const init = (profile.nama || 'A').charAt(0).toUpperCase();
+      const fotoUrl = Api.fotoSayaUrl('t');
+      chip.innerHTML = `
+        <div class="avatar">
+          ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.parentElement.textContent='${init}'">` : init}
+        </div>
+        <span>${UI.escapeHtml(profile.nama || '-')}</span>
+      `;
+    }
+  });
+})();
+
+// ============================================================
+// STATE
+// ============================================================
+let statusAktif = 'menunggu';
+let semuaKarya = [];
+
+// ============================================================
+// INIT
+// ============================================================
+(async () => {
+  const profile = await Api.requireLogin();
+  if (!profile) return;
+
+  if (!Api.hasAnyPeran(['super_admin', 'pengurus'])) {
+    document.querySelector('.admin-content').innerHTML = UI.errorHtml(
+      'Halaman ini hanya untuk admin/pengurus.',
+      '<a href="../beranda.html" class="btn btn-primary btn-sm">Ke Beranda</a>'
+    );
+    return;
+  }
+
+  await loadKarya();
+
+  document.querySelectorAll('.fchip').forEach(c => {
+    c.addEventListener('click', () => {
+      statusAktif = c.dataset.status;
+      document.querySelectorAll('.fchip').forEach(x => x.classList.toggle('active', x === c));
+      renderList();
+    });
+  });
+})();
+
+// ============================================================
+// LOAD
+// ============================================================
+async function loadKarya() {
+  const el = document.getElementById('listKarya');
+  el.innerHTML = '<div class="skeleton" style="height:140px;border-radius:18px;"></div>';
+
+  const res = await Api.call('admin.karya.list', { limit: 200 });
+
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat.');
+    return;
+  }
+
+  semuaKarya = res.data.list || [];
+  const r = res.data.ringkasan;
+
+  document.getElementById('statTotal').textContent = r.total;
+  document.getElementById('statMenunggu').textContent = r.menunggu;
+  document.getElementById('statDisetujui').textContent = r.disetujui;
+  document.getElementById('statDitolak').textContent = r.ditolak;
+  document.getElementById('cntMenunggu').textContent = r.menunggu;
+  document.getElementById('cntDisetujui').textContent = r.disetujui;
+  document.getElementById('cntDitolak').textContent = r.ditolak;
+
+  renderList();
+}
+
+// ============================================================
+// RENDER LIST
+// ============================================================
+function renderList() {
+  const el = document.getElementById('listKarya');
+
+  const filtered = statusAktif
+    ? semuaKarya.filter(k => k.status === statusAktif)
+    : semuaKarya;
+
+  if (filtered.length === 0) {
+    const label = statusAktif || 'semua';
+    el.innerHTML = `
+      <div class="empty" style="padding:50px 20px;text-align:center;">
+        <div class="empty-icon" style="width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,var(--success-soft) 0%,#D1FAE5 100%);color:var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+          ${Icons.get('checkCircle', { class: 'icon-lg' })}
+        </div>
+        <div style="font-weight:800;font-size:15px;margin-bottom:6px;">Tidak Ada Karya ${label.charAt(0).toUpperCase() + label.slice(1)}</div>
+        <div style="font-size:12.5px;color:var(--muted);">Semua karya dengan status ini sudah diproses.</div>
+      </div>
+    `;
+    return;
+  }
+
+  el.innerHTML = filtered.map((k, idx) => renderKarya(k, idx)).join('');
+
+  el.querySelectorAll('[data-approve]').forEach(b => {
+    b.addEventListener('click', () => verifikasi(Number(b.dataset.approve), 'disetujui'));
+  });
+  el.querySelectorAll('[data-reject]').forEach(b => {
+    b.addEventListener('click', () => verifikasi(Number(b.dataset.reject), 'ditolak'));
+  });
+}
+
+function renderKarya(k, idx) {
+  const user = k.user || {};
+  const statusLabel = {
+    menunggu: 'Menunggu',
+    disetujui: 'Disetujui',
+    ditolak: 'Ditolak',
+  }[k.status] || k.status;
+
+  const jenisLabel = k.jenis === 'inovasi' ? 'Inovasi' : 'Aksi Nyata';
+  const iconName = k.jenis === 'inovasi' ? 'sparkles' : 'target';
+
+  const isYT = k.link_url && /youtube\.com|youtu\.be/.test(k.link_url);
+  const thumbUrl = UI.thumbnail(k.link_url);
+
+  const init = (user.nama_lengkap || '?').charAt(0).toUpperCase();
+  const fotoUrl = user.id ? Api.fotoUrl(user.id, 't') : null;
+
+  // Poin info
+  const poinPreview = k.jenis === 'inovasi' ? 15 : 10;
+  const poinHtml = k.status === 'disetujui'
+    ? `<span style="color:var(--success);font-weight:800;">+${k.poin} poin</span>`
+    : `<span style="color:var(--muted);font-weight:700;">+${poinPreview} poin jika disetujui</span>`;
+
+  return `
+    <div class="karya-item" style="animation-delay:${idx * 0.03}s">
+      <div class="karya-item-head">
+        <div class="karya-thumb ${k.jenis}">
+          ${thumbUrl
+            ? `<img src="${thumbUrl}" alt="" loading="lazy" onerror="UI.fotoError(this)" />
+               <div class="fb" style="display:none;">${Icons.get(iconName)}</div>
+               ${isYT ? `<div class="play-badge">${Icons.get('play')}</div>` : ''}`
+            : `<div class="fb">${Icons.get(iconName)}</div>`}
+        </div>
+        <div class="karya-body">
+          <div class="karya-judul">${UI.escapeHtml(k.judul)}</div>
+          <div class="karya-meta">
+            <span class="badge-jenis ${k.jenis}">${jenisLabel}</span>
+            ${k.kategori ? `<span style="font-size:11px;color:var(--muted);">${UI.escapeHtml(k.kategori)}</span>` : ''}
+          </div>
+          <div class="karya-author">
+            <span class="av">
+              ${init}
+              ${fotoUrl ? `<img src="${fotoUrl}" loading="lazy" alt="" onerror="UI.fotoError(this)">` : ''}
+            </span>
+            <span>${UI.escapeHtml(user.nama_lengkap || '-')}${user.sekolah?.nama ? ' · ' + UI.escapeHtml(user.sekolah.nama) : ''}</span>
+          </div>
+        </div>
+        <span class="status-pill st-${k.status}">${statusLabel}</span>
+      </div>
+
+      ${k.deskripsi ? `
+        <div class="karya-detail">
+          <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;">Deskripsi</div>
+          <div style="color:var(--ink);">${UI.escapeHtml(k.deskripsi)}</div>
+        </div>
+      ` : ''}
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:11.5px;gap:10px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:6px;color:var(--muted);font-weight:700;">
+          ${Icons.get('calendar', { class: 'icon-sm' })}
+          ${UI.formatTanggalPendek(k.tanggal)}
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
+          ${Icons.get('award', { class: 'icon-sm' })}
+          ${poinHtml}
+        </div>
+      </div>
+
+      ${k.link_url ? `
+        <a href="${UI.escapeHtml(k.link_url)}" target="_blank" rel="noopener"
+           style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;color:var(--maroon);text-decoration:none;padding:6px 12px;border-radius:999px;border:1.5px solid var(--maroon-soft);margin-bottom:12px;">
+          ${Icons.get('externalLink', { class: 'icon-sm' })}
+          Lihat Karya
+        </a>
+      ` : ''}
+
+      ${k.status === 'menunggu' ? `
+        <div class="karya-actions">
+          <button class="btn btn-secondary" data-reject="${k.id}">
+            ${Icons.get('x', { class: 'icon-sm' })}
+            Tolak
+          </button>
+          <button class="btn btn-primary" data-approve="${k.id}">
+            ${Icons.get('check', { class: 'icon-sm' })}
+            Setujui (+${poinPreview})
+          </button>
+        </div>
+      ` : ''}
+
+      ${k.catatan_verifikator ? `
+        <div style="background:var(--bg);border-radius:10px;padding:10px 12px;margin-top:10px;font-size:11.5px;color:var(--muted);">
+          <strong style="color:${k.status === 'disetujui' ? 'var(--success)' : 'var(--danger)'};">
+            ${k.status === 'disetujui' ? 'Catatan' : 'Alasan ditolak'}:
+          </strong>
+          ${UI.escapeHtml(k.catatan_verifikator)}
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+// ============================================================
+// VERIFIKASI
+// ============================================================
+async function verifikasi(karyaId, keputusan) {
+  const k = semuaKarya.find(x => x.id === karyaId);
+  if (!k) return;
+
+  const namaGuru = k.user?.nama_lengkap || 'guru';
+  const poin = k.jenis === 'inovasi' ? 15 : 10;
+
+  const pesan = keputusan === 'disetujui'
+    ? `Setujui karya "${k.judul}" dari ${namaGuru}? Poin kontribusi +${poin}.`
+    : `Tolak karya "${k.judul}" dari ${namaGuru}? Wajib isi alasan.`;
+
+  const ok = await UI.konfirmasi(
+    keputusan === 'disetujui' ? 'Setujui Karya' : 'Tolak Karya',
+    pesan,
+    {
+      okText: keputusan === 'disetujui' ? 'Setujui' : 'Lanjut',
+      danger: keputusan === 'ditolak',
+    }
+  );
+  if (!ok) return;
+
+  if (keputusan === 'disetujui') {
+    const res = await Api.call('admin.karya.verifikasi', {
+      karya_id: karyaId,
+      keputusan: 'disetujui',
+    });
+    if (!res.ok) { UI.gagal(res.error); return; }
+    UI.sukses(`Karya disetujui. +${res.data.poin} poin.`);
+    await loadKarya();
+  } else {
+    // Tolak — minta alasan
+    bukaModalTolak(karyaId, k.judul, namaGuru);
+  }
+}
+
+function bukaModalTolak(karyaId, judul, namaGuru) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-backdrop';
+  overlay.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">Tolak Karya</div>
+      <div class="modal-sub">
+        Tolak karya <strong>"${UI.escapeHtml(judul)}"</strong> dari <strong>${UI.escapeHtml(namaGuru)}</strong>?
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Alasan Penolakan <span class="req">*</span></label>
+        <textarea id="alasanTolak" class="input" rows="4" style="resize:vertical;" placeholder="Jelaskan alasan penolakan agar guru bisa memperbaiki…"></textarea>
+      </div>
+
+      <div id="formAlert" class="alert alert-error hidden" style="margin-top:10px;"></div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" data-close>Batal</button>
+        <button class="btn btn-danger" id="btnTolakFinal">
+          ${Icons.get('x', { class: 'icon-sm' })}
+          Tolak
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnTolakFinal').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnTolakFinal');
+    const alasan = overlay.querySelector('#alasanTolak').value.trim();
+    const alertEl = overlay.querySelector('#formAlert');
+
+    if (!alasan) {
+      alertEl.textContent = 'Alasan wajib diisi.';
+      alertEl.classList.remove('hidden');
+      return;
+    }
+
+    UI.btnLoading(btn, 'Memproses…');
+    const res = await Api.call('admin.karya.verifikasi', {
+      karya_id: karyaId,
+      keputusan: 'ditolak',
+      catatan: alasan,
+    });
+    UI.btnReset(btn);
+
+    if (!res.ok) {
+      alertEl.textContent = res.error || 'Gagal.';
+      alertEl.classList.remove('hidden');
+      return;
+    }
+
+    UI.sukses('Karya ditolak.');
+    close();
+    await loadKarya();
+  });
+}
+</script>
+
+</body>
+</html>
