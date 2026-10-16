@@ -16,10 +16,6 @@
 <link rel="stylesheet" href="assets/css/nakula.css" />
 
 <style>
-  /* ============================================
-     BERANDA — Premium
-     ============================================ */
-
   /* HERO PROFIL */
   .hero-profil {
     background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 50%, #9B2649 100%);
@@ -29,9 +25,7 @@
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
-    box-shadow:
-      0 12px 32px rgba(125,29,58,.28),
-      inset 0 0 0 1px rgba(201,169,97,.15);
+    box-shadow: 0 12px 32px rgba(125,29,58,.28);
     animation: fade-in-up .5s var(--ease-out) both;
   }
   .hero-profil::before {
@@ -96,11 +90,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .hero-badges {
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-  }
+  .hero-badges { display: flex; gap: 5px; flex-wrap: wrap; }
   .hero-badges .badge {
     background: rgba(255,255,255,.15);
     color: white;
@@ -109,30 +99,31 @@
     padding: 3px 9px;
   }
 
-  /* KARTU PROGRES PREMIUM */
+  /* KARTU PROGRES */
   .progress-card {
-    background: linear-gradient(135deg, #FFFFFF 0%, #FCFAF7 100%);
+    background: var(--surface);
     border: 1.5px solid rgba(125,29,58,.12);
     border-radius: 20px;
     padding: 20px;
     margin-bottom: 20px;
-    position: relative;
-    overflow: hidden;
     box-shadow: 0 4px 16px rgba(125,29,58,.06);
     animation: fade-in-up .5s var(--ease-out) .05s both;
+    position: relative;
   }
   .progress-card::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 4px;
+    height: 3px;
     background: linear-gradient(90deg, var(--maroon) 0%, var(--gold) 100%);
+    border-radius: 20px 20px 0 0;
   }
   .progress-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
+    gap: 12px;
   }
   .progress-title {
     display: flex;
@@ -145,20 +136,22 @@
     text-transform: uppercase;
   }
   .progress-count {
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 800;
     color: var(--maroon);
     background: var(--maroon-soft);
-    padding: 4px 10px;
+    padding: 5px 12px;
     border-radius: 999px;
     letter-spacing: 0.3px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   .progress-bar-wrap {
-    height: 12px;
-    background: linear-gradient(90deg, var(--bg), #F0EAEA);
+    height: 10px;
+    background: var(--bg);
     border-radius: 999px;
     overflow: hidden;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     position: relative;
     box-shadow: inset 0 1px 3px rgba(125,29,58,.08);
   }
@@ -174,31 +167,21 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.4) 50%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.35) 50%, transparent 100%);
     animation: shimmer 2s infinite;
     background-size: 200% 100%;
-  }
-  .progress-persen {
-    position: absolute;
-    right: 10px;
-    top: -30px;
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--maroon);
-    line-height: 1;
   }
   .progress-info {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     font-size: 13px;
     font-weight: 700;
     color: var(--ink);
-    margin-bottom: 4px;
   }
   .progress-info-icon {
-    width: 28px; height: 28px;
-    border-radius: 8px;
+    width: 30px; height: 30px;
+    border-radius: 9px;
     background: var(--gold-soft);
     color: var(--gold-dark);
     display: flex;
@@ -231,7 +214,7 @@
   }
   .progress-cta:active { transform: translateY(0) scale(.98); }
 
-  /* MENU KHUSUS GRID PREMIUM */
+  /* MENU KHUSUS GRID */
   .menu-khusus-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -248,32 +231,14 @@
     flex-direction: column;
     gap: 10px;
     transition: all .2s var(--ease-out);
-    position: relative;
-    overflow: hidden;
     -webkit-tap-highlight-color: transparent;
-  }
-  .menu-khusus-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--maroon);
-    transform: scaleY(0);
-    transform-origin: top;
-    transition: transform .3s var(--ease-out);
   }
   .menu-khusus-card:hover {
     border-color: var(--maroon-light);
     box-shadow: 0 8px 20px rgba(125,29,58,.1);
-    transform: translateY(-3px);
-  }
-  .menu-khusus-card:hover::before {
-    transform: scaleY(1);
+    transform: translateY(-2px);
   }
   .menu-khusus-card:active { transform: translateY(0) scale(.98); }
-
-  .menu-khusus-card.gold::before { background: var(--gold); }
   .menu-khusus-card.gold:hover { border-color: var(--gold); }
 
   .menu-khusus-icon {
@@ -289,7 +254,7 @@
     transition: transform .2s var(--ease-out);
   }
   .menu-khusus-card:hover .menu-khusus-icon {
-    transform: scale(1.08) rotate(-3deg);
+    transform: scale(1.08);
   }
   .menu-khusus-card.gold .menu-khusus-icon {
     background: var(--gold-soft);
@@ -306,15 +271,15 @@
     color: var(--muted);
     font-weight: 600;
     line-height: 1.4;
+    margin-top: 3px;
   }
 
-  /* SECTION HEAD PREMIUM */
+  /* SECTION HEAD */
   .section-head-premium {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 14px;
-    animation: fade-in-up .4s var(--ease-out) both;
   }
   .section-head-premium h3 {
     display: flex;
@@ -326,8 +291,7 @@
     letter-spacing: 0.3px;
   }
   .section-head-premium h3 .icon-wrap {
-    width: 28px;
-    height: 28px;
+    width: 28px; height: 28px;
     border-radius: 8px;
     background: var(--maroon-soft);
     display: flex;
@@ -343,7 +307,7 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 4px 10px;
+    padding: 5px 10px;
     border-radius: 999px;
     background: var(--bg);
     transition: all .15s;
@@ -353,7 +317,7 @@
     color: var(--maroon);
   }
 
-  /* PENGUMUMAN PREMIUM */
+  /* PENGUMUMAN */
   .announce-premium {
     background: var(--surface);
     border-radius: 16px;
@@ -363,8 +327,6 @@
     margin-bottom: 10px;
     transition: all .2s var(--ease-out);
     animation: fade-in-up .4s var(--ease-out) both;
-    position: relative;
-    overflow: hidden;
   }
   .announce-premium:hover {
     border-color: var(--maroon-light);
@@ -374,14 +336,6 @@
   .announce-premium.penting {
     border-color: var(--gold);
     background: linear-gradient(135deg, #FFFFFF 0%, #FBF4E0 100%);
-  }
-  .announce-premium.penting::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--gold);
   }
   .announce-head-premium {
     display: flex;
@@ -411,7 +365,7 @@
     gap: 4px;
   }
 
-  /* PERTEMUAN ITEM PREMIUM */
+  /* PERTEMUAN ITEM */
   .pertemuan-premium {
     background: var(--surface);
     border-radius: 16px;
@@ -426,28 +380,13 @@
     transition: all .2s var(--ease-out);
     -webkit-tap-highlight-color: transparent;
     animation: fade-in-up .4s var(--ease-out) both;
-    position: relative;
-  }
-  .pertemuan-premium::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--maroon);
-    transform: scaleY(0);
-    transform-origin: top;
-    transition: transform .3s var(--ease-out);
-    border-radius: 16px 0 0 16px;
   }
   .pertemuan-premium:hover {
     border-color: var(--maroon-light);
     transform: translateY(-2px);
     box-shadow: 0 10px 24px rgba(125,29,58,.1);
   }
-  .pertemuan-premium:hover::before { transform: scaleY(1); }
   .pertemuan-premium:active { transform: translateY(0) scale(.99); }
-
   .pertemuan-premium.locked {
     opacity: 0.55;
     cursor: not-allowed;
@@ -458,7 +397,6 @@
     transform: none;
     box-shadow: 0 2px 8px rgba(125,29,58,.04);
   }
-  .pertemuan-premium.locked:hover::before { transform: scaleY(0); }
 
   .pertemuan-num-premium {
     width: 52px;
@@ -473,6 +411,7 @@
     font-weight: 800;
     flex-shrink: 0;
     border: 1.5px solid rgba(125,29,58,.1);
+    overflow: hidden;
   }
   .pertemuan-premium.selesai .pertemuan-num-premium {
     background: linear-gradient(135deg, var(--success-soft) 0%, #D1FAE5 100%);
@@ -485,15 +424,8 @@
     border-color: var(--border);
   }
   .pertemuan-num-premium .n {
-    font-size: 20px;
+    font-size: 22px;
     line-height: 1;
-  }
-  .pertemuan-num-premium .l {
-    font-size: 7.5px;
-    letter-spacing: 0.5px;
-    font-weight: 800;
-    opacity: 0.7;
-    margin-top: 1px;
   }
 
   .pertemuan-body-premium { flex: 1; min-width: 0; }
@@ -526,13 +458,13 @@
     color: var(--maroon);
     transform: translateX(4px);
   }
-
-  /* CARD SECTION WRAP */
-  .content-section {
-    margin-bottom: 26px;
+  .pertemuan-premium.locked:hover .chevron-premium {
+    transform: none;
+    color: #C8BFC3;
   }
 
-  /* SIDEBAR desktop premium */
+  .content-section { margin-bottom: 26px; }
+
   @media (min-width: 900px) {
     .menu-khusus-grid {
       grid-template-columns: repeat(3, 1fr);
@@ -545,7 +477,7 @@
 </head>
 <body>
 
-<!-- ============================ MOBILE HEADER ============================ -->
+<!-- MOBILE HEADER -->
 <header class="app-header">
   <div class="app-header-brand">
     <div class="app-header-logo">
@@ -561,7 +493,6 @@
   </button>
 </header>
 
-<!-- ============================ LAYOUT ============================ -->
 <div class="desktop-layout">
 
   <!-- SIDEBAR DESKTOP -->
@@ -580,14 +511,8 @@
       <a class="sidebar-item active" data-nav="beranda" href="beranda.html">
         <span data-icon="home"></span> Beranda
       </a>
-      <a class="sidebar-item" data-nav="pengumuman" href="#sectionPengumuman">
-        <span data-icon="megaphone"></span> Pengumuman
-      </a>
       <a class="sidebar-item" data-nav="pertemuan" href="#sectionPertemuan">
         <span data-icon="calendar"></span> Pertemuan
-      </a>
-      <a class="sidebar-item" data-nav="award" href="award.html">
-        <span data-icon="award"></span> Papan Juara
       </a>
       <a class="sidebar-item" data-nav="galeri" href="galeri.html">
         <span data-icon="grid"></span> Galeri Sekolah
@@ -601,7 +526,7 @@
     </nav>
   </aside>
 
-  <!-- MAIN CONTENT -->
+  <!-- MAIN -->
   <main class="desktop-main">
 
     <div class="desktop-topbar">
@@ -616,7 +541,6 @@
 
     <div class="container page" style="padding-top:20px;">
 
-      <!-- HERO PROFIL -->
       <section class="hero-profil">
         <div class="hero-profil-inner">
           <div class="hero-avatar" id="heroAvatar">?</div>
@@ -628,7 +552,6 @@
         </div>
       </section>
 
-      <!-- KARTU PROGRES -->
       <section id="kartuProgres" class="progress-card hidden">
         <div class="progress-head">
           <div class="progress-title">
@@ -637,11 +560,8 @@
           </div>
           <div class="progress-count" id="progressCount">0/0</div>
         </div>
-        <div style="position:relative;">
-          <div class="progress-bar-wrap">
-            <div id="progressFill" style="width:0%"></div>
-          </div>
-          <div class="progress-persen" id="progressPercent">0%</div>
+        <div class="progress-bar-wrap">
+          <div id="progressFill" style="width:0%"></div>
         </div>
         <div class="progress-info" id="progressInfo">
           <div class="progress-info-icon" id="progressIconWrap">
@@ -655,7 +575,6 @@
         </a>
       </section>
 
-      <!-- MENU KHUSUS -->
       <section id="panelKhusus" class="hidden content-section" style="scroll-margin-top:80px;">
         <div class="section-head-premium">
           <h3>
@@ -666,7 +585,6 @@
         <div id="listMenuKhusus" class="menu-khusus-grid"></div>
       </section>
 
-      <!-- PENGUMUMAN -->
       <section id="sectionPengumuman" class="content-section" style="scroll-margin-top:80px;">
         <div class="section-head-premium">
           <h3>
@@ -681,7 +599,6 @@
         <div id="listPengumuman"></div>
       </section>
 
-      <!-- PERTEMUAN -->
       <section id="sectionPertemuan" class="content-section" style="scroll-margin-top:80px;">
         <div class="section-head-premium">
           <h3>
@@ -700,7 +617,7 @@
   </main>
 </div>
 
-<!-- BOTTOM NAV MOBILE -->
+<!-- BOTTOM NAV — 5 item konsisten -->
 <nav class="bottom-nav">
   <a class="nav-item active" data-nav="beranda" href="beranda.html">
     <span data-icon="home"></span> Beranda
@@ -708,11 +625,11 @@
   <a class="nav-item" data-nav="pertemuan" href="#sectionPertemuan">
     <span data-icon="calendar"></span> Pertemuan
   </a>
-  <a class="nav-item" data-nav="award" href="award.html">
-    <span data-icon="award"></span> Award
-  </a>
   <a class="nav-item" data-nav="galeri" href="galeri.html">
     <span data-icon="grid"></span> Galeri
+  </a>
+  <a class="nav-item" data-nav="aktivitas" href="aktivitas.html">
+    <span data-icon="activity"></span> Aktivitas
   </a>
   <a class="nav-item" data-nav="profil" href="profil.html">
     <span data-icon="user"></span> Profil
@@ -723,9 +640,6 @@
 <script src="assets/js/api.js"></script>
 <script src="assets/js/ui.js"></script>
 <script>
-// ============================================================
-// PASANG IKON
-// ============================================================
 document.querySelectorAll('[data-icon]').forEach(el => {
   el.innerHTML = Icons.get(el.dataset.icon);
   el.style.display = 'contents';
@@ -733,9 +647,6 @@ document.querySelectorAll('[data-icon]').forEach(el => {
 
 UI.bindLogout();
 
-// ============================================================
-// SMOOTH SCROLL
-// ============================================================
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', (e) => {
     const targetId = a.getAttribute('href');
@@ -753,15 +664,9 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   });
 });
 
-// ============================================================
-// STATE
-// ============================================================
 let daftarPertemuan = [];
 let totalPertemuan = 0;
 
-// ============================================================
-// INIT
-// ============================================================
 (async () => {
   const profile = await Api.requireLogin();
   if (!profile) return;
@@ -774,9 +679,6 @@ let totalPertemuan = 0;
   loadPertemuan();
 })();
 
-// ============================================================
-// RENDER PROFIL
-// ============================================================
 function renderProfil(p) {
   const avatarEl = document.getElementById('heroAvatar');
   const fotoUrl = Api.fotoSayaUrl('t');
@@ -803,14 +705,10 @@ function renderProfil(p) {
   }).join('');
 }
 
-// ============================================================
-// MENU KHUSUS (GRID PREMIUM)
-// ============================================================
 function renderMenuKhusus(p) {
   const menu = [];
   const peranList = p.peran || [];
 
-  // Semua user
   menu.push({
     icon: 'award',
     title: 'Papan Juara',
@@ -833,7 +731,6 @@ function renderMenuKhusus(p) {
     warna: 'gold',
   });
 
-  // KS
   if (peranList.includes('ks')) {
     menu.push({
       icon: 'home',
@@ -851,7 +748,6 @@ function renderMenuKhusus(p) {
     });
   }
 
-  // Pengurus/Admin
   if (peranList.includes('pengurus') || peranList.includes('super_admin')) {
     menu.push({
       icon: 'users',
@@ -925,7 +821,6 @@ function renderMenuKhusus(p) {
     });
   }
 
-  // Cek tugas pengamat (async)
   cekTugasPengamat();
 
   if (menu.length === 0) {
@@ -956,9 +851,6 @@ function renderMenuList(menu) {
   document.getElementById('panelKhusus').classList.remove('hidden');
 }
 
-// ============================================================
-// CEK TUGAS PENGAMAT
-// ============================================================
 async function cekTugasPengamat() {
   const res = await Api.call('pengamat.tugas_saya');
   if (!res.ok || !res.data || res.data.length === 0) return;
@@ -993,9 +885,6 @@ async function cekTugasPengamat() {
   }
 }
 
-// ============================================================
-// PENGUMUMAN
-// ============================================================
 async function loadPengumuman() {
   const el = document.getElementById('listPengumuman');
   el.innerHTML = UI.skeletonList(2, 90);
@@ -1026,9 +915,6 @@ async function loadPengumuman() {
   `).join('');
 }
 
-// ============================================================
-// PERTEMUAN + PROGRES
-// ============================================================
 async function loadPertemuan() {
   const el = document.getElementById('listPertemuan');
   el.innerHTML = UI.skeletonList(2, 72);
@@ -1063,14 +949,12 @@ function renderKartuProgres() {
   const card = document.getElementById('kartuProgres');
   card.classList.remove('hidden');
 
-  document.getElementById('progressCount').textContent = `${selesai}/${total}`;
-  document.getElementById('progressPercent').textContent = persen + '%';
+  document.getElementById('progressCount').textContent = `${selesai}/${total} · ${persen}%`;
 
   setTimeout(() => {
     document.getElementById('progressFill').style.width = persen + '%';
   }, 100);
 
-  const info = document.getElementById('progressInfo');
   const infoIcon = document.getElementById('progressIconWrap');
   const infoText = document.getElementById('progressText');
   const cta = document.getElementById('progressCta');
@@ -1129,7 +1013,6 @@ function renderListPertemuan() {
            onclick="${locked ? 'showLocked(' + p.id + ')' : 'bukaPertemuan(' + p.id + ')'}">
         <div class="pertemuan-num-premium">
           <div class="n">${locked ? Icons.get('lock', { class: 'icon-sm' }) : p.urutan}</div>
-          ${!locked ? `<div class="l">PERTEMUAN</div>` : ''}
         </div>
         <div class="pertemuan-body-premium">
           <div class="pertemuan-title-premium">${UI.escapeHtml(p.judul)}</div>
@@ -1151,9 +1034,6 @@ function renderListPertemuan() {
   }).join('');
 }
 
-// ============================================================
-// NAVIGASI
-// ============================================================
 function bukaPertemuan(id) {
   window.location.href = 'pertemuan.html?id=' + id;
 }
