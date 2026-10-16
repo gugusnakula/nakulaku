@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>Galeri Sekolah — NAKULAKU</title>
+
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/nakula.css" />
+
+<style>
+  .public-header {
+    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon) 100%);
+    color: white;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 2px 12px rgba(97,19,41,.15);
+  }
+  .public-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: white;
+  }
+  .public-header-logo {
+    width: 40px; height: 40px;
+    background: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--gold);
+    padding: 3px;
+    flex-shrink: 0;
+  }
+  .public-header-logo img { width: 100%; height: 100%; object-fit: contain; }
+
+  .hero-galeri {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 0 20px;
+  }
+  .hero-galeri .icon-big {
+    width: 72px; height: 72px;
+    margin: 0 auto 14px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(125,29,58,.3);
+  }
+  .hero-galeri h1 {
+    font-size: 22px;
+    color: var(--maroon);
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+  .hero-galeri p {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .filter-chip {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .filter-chip:hover { border-color: var(--maroon-light); color: var(--maroon); }
+  .filter-chip.active {
+    background: var(--maroon);
+    border-color: var(--maroon);
+    color: white;
+    box-shadow: 0 4px 12px rgba(125,29,58,.25);
+  }
+
+  .item-publik {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 14px;
+    margin-bottom: 10px;
+    transition: all .15s;
+  }
+  .item-publik:hover {
+    border-color: var(--maroon);
+    box-shadow: var(--sh-md);
+    transform: translateY(-1px);
+  }
+  .item-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .item-icon.prestasi { background: var(--gold-soft); color: var(--gold-dark); }
+  .item-icon.pembiasaan { background: var(--success-soft); color: var(--success); }
+  .item-icon.kegiatan { background: var(--info-soft); color: var(--info); }
+  .item-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .item-info { flex: 1; min-width: 0; }
+  .item-title { font-weight: 800; font-size: 14px; margin-bottom: 3px; line-height: 1.4; }
+  .item-sub { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+
+  .item-sekolah {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 8px;
+    padding: 4px 10px;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .item-sekolah:hover { background: var(--maroon); color: white; }
+
+  .link-bukti {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--maroon);
+    margin-top: 8px;
+    margin-left: 8px;
+  }
+
+  .badge-tingkat {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+  .badge-tingkat.sekolah { background: var(--border); color: var(--muted); }
+  .badge-tingkat.kecamatan { background: var(--info-soft); color: var(--info); }
+  .badge-tingkat.kabupaten { background: var(--warning-soft); color: var(--warning); }
+  .badge-tingkat.provinsi { background: var(--gold-soft); color: var(--gold-dark); }
+  .badge-tingkat.nasional { background: var(--maroon-soft); color: var(--maroon); }
+  .badge-tingkat.internasional { background: linear-gradient(135deg, var(--gold), var(--maroon)); color: white; }
+</style>
+</head>
+<body>
+
+<header class="public-header">
+  <a href="beranda.html" class="public-header-brand">
+    <div class="public-header-logo">
+      <img src="assets/img/logo-mark.svg" alt="Nakula" />
+    </div>
+    <div>
+      <div style="font-weight:800;font-size:14px;letter-spacing:.5px;">NAKULAKU</div>
+      <div style="font-size:10px;opacity:.8;">KKG Gugus Nakula</div>
+    </div>
+  </a>
+  <a href="sekolah.html" style="color:white;font-size:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);padding:8px 12px;border-radius:10px;">
+    <span data-icon="home" class="icon-sm"></span> Profil
+  </a>
+</header>
+
+<main class="container page" style="max-width:720px;padding-top:20px;">
+
+  <div class="hero-galeri">
+    <div class="icon-big">
+      <span data-icon="grid" class="icon-xl"></span>
+    </div>
+    <h1>GALERI SEKOLAH</h1>
+    <p>Prestasi siswa, kegiatan, dan pembiasaan<br />dari 10 sekolah KKG Gugus Nakula</p>
+  </div>
+
+  <div class="filter-row" id="filterJenis">
+    <button class="filter-chip active" data-jenis="">
+      <span data-icon="grid" class="icon-sm"></span> Semua
+    </button>
+    <button class="filter-chip" data-jenis="prestasi">
+      <span data-icon="award" class="icon-sm"></span> Prestasi
+    </button>
+    <button class="filter-chip" data-jenis="kegiatan">
+      <span data-icon="calendar" class="icon-sm"></span> Kegiatan
+    </button>
+    <button class="filter-chip" data-jenis="pembiasaan">
+      <span data-icon="sparkles" class="icon-sm"></span> Pembiasaan
+    </button>
+  </div>
+
+  <div id="infoHasil" style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">
+    Memuat…
+  </div>
+
+  <div id="listItem">
+    <div class="skeleton" style="height:120px;border-radius:16px;margin-bottom:10px;"></div>
+    <div class="skeleton" style="height:120px;border-radius:16px;"></div>
+  </div>
+
+  <div style="height:40px;"></div>
+
+</main>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+
+let jenisAktif = '';
+let cacheGaleri = {};
+
+(async () => {
+  await loadGaleri();
+
+  document.querySelectorAll('.filter-chip').forEach(c => {
+    c.addEventListener('click', () => {
+      jenisAktif = c.dataset.jenis;
+      document.querySelectorAll('.filter-chip').forEach(x => x.classList.toggle('active', x === c));
+      loadGaleri();
+    });
+  });
+})();
+
+async function loadGaleri() {
+  const el = document.getElementById('listItem');
+
+  // Cek cache
+  if (cacheGaleri[jenisAktif]) {
+    renderList(cacheGaleri[jenisAktif]);
+    return;
+  }
+
+  el.innerHTML = '<div class="skeleton" style="height:120px;border-radius:16px;"></div>';
+
+  const res = await Api.callSekolahPublik('sekolah.galeri', {
+    jenis: jenisAktif || undefined,
+    limit: 100,
+  });
+
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error);
+    document.getElementById('infoHasil').textContent = '';
+    return;
+  }
+
+  const data = res.data.data || [];
+  cacheGaleri[jenisAktif] = data;
+  renderList(data);
+}
+
+function renderList(list) {
+  const el = document.getElementById('listItem');
+
+  document.getElementById('infoHasil').textContent =
+    `Menampilkan ${list.length} item terbaru`;
+
+  if (list.length === 0) {
+    el.innerHTML = UI.emptyHtml('inbox', 'Belum ada data', 'Galeri akan muncul setelah panitia verifikasi.');
+    return;
+  }
+
+  el.innerHTML = list.map(it => renderItem(it)).join('');
+}
+
+function renderItem(it) {
+  const jenis = it._jenis;
+  const sekolah = it.sekolah || {};
+  const sekolahId = sekolah.id || '';
+
+  let judul = '';
+  let sub = '';
+  let extra = '';
+
+  if (jenis === 'prestasi') {
+    judul = it.nama_lomba;
+    const tingkatLabel = {
+      sekolah: 'Sekolah', kecamatan: 'Kecamatan', kabupaten: 'Kabupaten',
+      provinsi: 'Provinsi', nasional: 'Nasional', internasional: 'Internasional',
+    }[it.tingkat] || it.tingkat;
+    const peringkatLabel = {
+      juara_1: 'Juara 1', juara_2: 'Juara 2', juara_3: 'Juara 3', harapan: 'Harapan',
+    }[it.peringkat] || it.peringkat;
+    sub = `${it.nama_siswa}${it.kelas ? ' (' + it.kelas + ')' : ''} · ${UI.formatTanggalPendek(it.tanggal)}`;
+    extra = `
+      <div style="margin-top:6px;">
+        <span class="badge-tingkat ${it.tingkat}">${tingkatLabel}</span>
+        <span class="badge-tingkat" style="background:var(--maroon);color:white;">${peringkatLabel}</span>
+      </div>
+    `;
+  } else if (jenis === 'kegiatan') {
+    judul = it.nama;
+    const skalaLabel = {
+      internal: 'Internal', orang_tua: 'Orang Tua',
+      komunitas: 'Komunitas', kecamatan: 'Kecamatan', kabupaten_plus: 'Kabupaten+',
+    }[it.skala] || it.skala;
+    sub = `${UI.formatTanggalPendek(it.tanggal)}${it.tempat ? ' · ' + it.tempat : ''}`;
+    extra = `<div style="margin-top:6px;"><span class="badge-tingkat kecamatan">${skalaLabel}</span></div>`;
+  } else if (jenis === 'pembiasaan') {
+    judul = it.nama;
+    sub = `${it.frekuensi || '-'}${it.bulan ? ' · Bulan ' + it.bulan : ''} ${it.tahun}`;
+    extra = it.deskripsi ? `<div style="margin-top:6px;font-size:12.5px;color:var(--muted);line-height:1.5;">${UI.escapeHtml(it.deskripsi)}</div>` : '';
+  }
+
+  const sekolahLink = sekolahId
+    ? `<a href="sekolah.html?id=${sekolahId}" class="item-sekolah">
+         ${Icons.get('home', { class: 'icon-sm' })} ${UI.escapeHtml(sekolah.nama || '-')}
+       </a>`
+    : `<span class="item-sekolah">${Icons.get('home', { class: 'icon-sm' })} ${UI.escapeHtml(sekolah.nama || '-')}</span>`;
+
+  const buktiHtml = it.bukti_url
+    ? `<a href="${UI.escapeHtml(it.bukti_url)}" target="_blank" rel="noopener" class="link-bukti">
+         ${Icons.get('externalLink', { class: 'icon-sm' })} Bukti
+       </a>`
+    : '';
+
+  return `
+    <div class="item-publik">
+      <div class="item-head">
+        <div class="item-icon ${jenis}">${Icons.get(jenis === 'prestasi' ? 'award' : jenis === 'kegiatan' ? 'calendar' : 'sparkles', { class: 'icon-sm' })}</div>
+        <div class="item-info">
+          <div class="item-title">${UI.escapeHtml(judul)}</div>
+          <div class="item-sub">${UI.escapeHtml(sub)}</div>
+          ${extra}
+        </div>
+      </div>
+      <div style="margin-top:8px;">
+        ${sekolahLink}
+        ${buktiHtml}
+      </div>
+    </div>
+  `;
+}
+</script>
+
+</body>
+</html>
