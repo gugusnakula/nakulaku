@@ -4,503 +4,602 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#611329" />
-<title>Dashboard Admin — NAKULAKU</title>
+<title>Dashboard — NAKULAKU Admin</title>
 
 <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="../assets/css/nakula.css" />
+<link rel="stylesheet" href="_layout.css" />
 
 <style>
-  .admin-hero {
-    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon-mid) 100%);
+  .hero-admin {
+    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 50%, #9B2649 100%);
     color: white;
-    border-radius: var(--r-xl);
+    border-radius: 24px;
     padding: 24px 20px;
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 12px 32px rgba(125,29,58,.3);
+    box-shadow: 0 12px 32px rgba(125,29,58,.28);
+    animation: fade-in-up .5s var(--ease-out) both;
   }
-  .admin-hero::before {
+  .hero-admin::before {
     content: '';
     position: absolute;
-    top: -60px; right: -60px;
-    width: 200px; height: 200px;
+    top: -80px; right: -60px;
+    width: 220px; height: 220px;
     border-radius: 50%;
-    background: var(--gold);
-    opacity: 0.12;
+    background: radial-gradient(circle, rgba(201,169,97,.22) 0%, transparent 70%);
+    pointer-events: none;
   }
-  .admin-hero::after {
+  .hero-admin::after {
     content: '';
     position: absolute;
-    bottom: -40px; left: -40px;
-    width: 120px; height: 120px;
+    bottom: -60px; left: -40px;
+    width: 160px; height: 160px;
     border-radius: 50%;
-    background: var(--gold);
-    opacity: 0.08;
+    background: radial-gradient(circle, rgba(201,169,97,.15) 0%, transparent 70%);
+    pointer-events: none;
   }
-  .admin-hero-top {
+  .hero-admin-head {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: 14px;
+    margin-bottom: 16px;
     position: relative;
+    z-index: 1;
   }
-  .admin-hero-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
+  .hero-admin-icon {
+    width: 56px; height: 56px;
+    border-radius: 16px;
     background: rgba(255,255,255,.15);
-    border: 1.5px solid var(--gold);
+    border: 2px solid var(--gold);
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--gold);
     flex-shrink: 0;
+    box-shadow: 0 8px 20px rgba(0,0,0,.2);
   }
-  .admin-hero-info { flex: 1; min-width: 0; }
-  .admin-hero-info .h1 {
-    font-size: 18px;
+  .hero-admin-info { flex: 1; min-width: 0; }
+  .hero-admin-title {
+    font-size: 17px;
     font-weight: 800;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
+    letter-spacing: 0.3px;
   }
-  .admin-hero-info .h2 {
+  .hero-admin-sub {
     font-size: 12px;
     opacity: 0.85;
     font-weight: 600;
   }
-  .admin-hero-stats {
+  .hero-admin-peran {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .hero-admin-peran .badge {
+    background: rgba(255,255,255,.15);
+    color: white;
+    border: 1px solid rgba(201,169,97,.4);
+    font-size: 10px;
+    padding: 3px 10px;
+  }
+  .hero-admin-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    position: relative;
-    margin-top: 16px;
     padding-top: 16px;
     border-top: 1px solid rgba(255,255,255,.15);
+    position: relative;
+    z-index: 1;
   }
-  .hero-stat { text-align: center; }
-  .hero-stat .n {
-    font-size: 20px;
+  .hero-admin-stat { text-align: center; }
+  .hero-admin-stat .n {
+    font-size: 24px;
     font-weight: 800;
     line-height: 1;
+    letter-spacing: -0.5px;
   }
-  .hero-stat .l {
-    font-size: 9.5px;
-    opacity: 0.75;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-    margin-top: 4px;
-    text-transform: uppercase;
-  }
-
-  .section-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
+  .hero-admin-stat .l {
+    font-size: 9px;
+    opacity: 0.8;
     font-weight: 800;
-    color: var(--maroon);
     letter-spacing: 0.5px;
+    margin-top: 5px;
     text-transform: uppercase;
-    margin-bottom: 12px;
-    margin-top: 24px;
-  }
-  .section-title:first-of-type { margin-top: 0; }
-  .section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-    margin-left: 8px;
-  }
-
-  .menu-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-  .menu-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    padding: 16px 14px;
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    transition: all .15s;
-    position: relative;
-    overflow: hidden;
-  }
-  .menu-card:hover {
-    border-color: var(--maroon);
-    box-shadow: var(--sh-md);
-    transform: translateY(-2px);
-    text-decoration: none;
-  }
-  .menu-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .menu-icon.maroon { background: var(--maroon-soft); color: var(--maroon); }
-  .menu-icon.gold { background: var(--gold-soft); color: var(--gold-dark); }
-  .menu-icon.green { background: var(--success-soft); color: var(--success); }
-  .menu-icon.blue { background: var(--info-soft); color: var(--info); }
-  .menu-title {
-    font-weight: 800;
-    font-size: 13.5px;
-    line-height: 1.3;
-  }
-  .menu-desc {
-    font-size: 11px;
-    color: var(--muted);
-    font-weight: 600;
-    line-height: 1.4;
-  }
-  .menu-badge {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    min-width: 20px;
-    height: 20px;
-    padding: 0 6px;
-    border-radius: 999px;
-    background: var(--danger);
-    color: white;
-    font-size: 10px;
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .quick-list {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    overflow: hidden;
-  }
-  .quick-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    text-decoration: none;
-    color: inherit;
-    border-bottom: 1px solid var(--border);
-    transition: background .15s;
-  }
-  .quick-row:last-child { border-bottom: none; }
-  .quick-row:hover { background: var(--bg); text-decoration: none; }
-  .quick-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    background: var(--maroon-soft);
-    color: var(--maroon);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .quick-info { flex: 1; min-width: 0; }
-  .quick-title {
-    font-size: 13.5px;
-    font-weight: 700;
-    margin-bottom: 2px;
-  }
-  .quick-sub {
-    font-size: 11px;
-    color: var(--muted);
-    font-weight: 600;
   }
 </style>
 </head>
-<body>
+<body class="admin-body">
 
-<header class="app-header">
-  <div class="app-header-brand">
-    <a href="../beranda.html" class="header-btn" style="text-decoration:none;">
-      <span data-icon="home"></span>
-    </a>
-    <div class="app-header-text">
-      <div class="app-header-title">Dashboard Admin</div>
-      <div class="app-header-sub">NAKULAKU</div>
+<!-- HEADER MOBILE -->
+<header class="admin-header">
+  <div class="admin-header-left">
+    <div class="admin-header-btn" style="background:transparent;">
+      <span data-icon="shield"></span>
+    </div>
+    <div class="admin-header-title">
+      <div class="admin-header-title-1">DASHBOARD</div>
+      <div class="admin-header-title-2">Admin NAKULAKU</div>
     </div>
   </div>
-  <button class="header-btn" data-act="logout">
+  <button class="admin-header-btn" data-act="logout">
     <span data-icon="logOut"></span>
   </button>
 </header>
 
-<main class="container page" style="max-width:720px;padding-top:16px;">
+<div class="admin-layout">
 
-  <!-- Hero Profil -->
-  <div class="admin-hero">
-    <div class="admin-hero-top">
-      <div class="admin-hero-icon">
-        <span data-icon="shield" class="icon-lg"></span>
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <div class="admin-sidebar-logo">
+        <img src="../assets/img/logo-mark.svg" alt="Nakula" />
       </div>
-      <div class="admin-hero-info">
-        <div class="h1" id="heroNama">Memuat…</div>
-        <div class="h2" id="heroSekolah">—</div>
-        <div class="h2" id="heroPeran" style="margin-top:4px;">—</div>
+      <div>
+        <div class="admin-sidebar-name">NAKULAKU</div>
+        <div class="admin-sidebar-sub">Admin Panel</div>
       </div>
     </div>
-    <div class="admin-hero-stats">
-      <div class="hero-stat">
-        <div class="n" id="statGuru">—</div>
-        <div class="l">Guru</div>
+
+    <nav class="admin-sidebar-menu">
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Dashboard</div>
+        <a class="admin-sidebar-item" data-nav="dashboard" href="index.html">
+          <span data-icon="layoutDashboard"></span> Dashboard
+        </a>
       </div>
-      <div class="hero-stat">
-        <div class="n" id="statPertemuan">—</div>
-        <div class="l">Pertemuan</div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Data</div>
+        <a class="admin-sidebar-item" data-nav="guru" href="guru.html">
+          <span data-icon="users"></span> Data Guru
+        </a>
+        <a class="admin-sidebar-item" data-nav="impor" href="impor.html">
+          <span data-icon="upload"></span> Impor CSV
+        </a>
       </div>
-      <div class="hero-stat">
-        <div class="n" id="statPending">—</div>
-        <div class="l">Perlu Verifikasi</div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Kegiatan</div>
+        <a class="admin-sidebar-item" data-nav="periode" href="periode.html">
+          <span data-icon="calendar"></span> Kelola Periode
+        </a>
+        <a class="admin-sidebar-item" data-nav="pertemuan" href="pertemuan.html">
+          <span data-icon="calendar"></span> Kelola Pertemuan
+        </a>
+        <a class="admin-sidebar-item" data-nav="pengumuman" href="pengumuman.html">
+          <span data-icon="megaphone"></span> Pengumuman
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Evaluasi</div>
+        <a class="admin-sidebar-item" data-nav="verifikasi-sekolah" href="verifikasi-sekolah.html">
+          <span data-icon="sparkles"></span> Verifikasi Sekolah
+        </a>
+        <a class="admin-sidebar-item" data-nav="verifikasi-presensi" href="../ks/verifikasi.html">
+          <span data-icon="checkCircle"></span> Verifikasi Presensi
+        </a>
+        <a class="admin-sidebar-item" data-nav="feedback" href="feedback.html">
+          <span data-icon="messageSquare"></span> Rekap Feedback
+        </a>
+        <a class="admin-sidebar-item" data-nav="award" href="award.html">
+          <span data-icon="award"></span> Kelola Award
+        </a>
+        <a class="admin-sidebar-item" data-nav="sertifikat" href="sertifikat.html">
+          <span data-icon="fileText"></span> Sertifikat
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Laporan</div>
+        <a class="admin-sidebar-item" data-nav="analitik" href="analitik.html">
+          <span data-icon="activity"></span> Analitik
+        </a>
+        <a class="admin-sidebar-item" data-nav="laporan" href="laporan.html">
+          <span data-icon="download"></span> Export Laporan
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Sistem</div>
+        <a class="admin-sidebar-item" data-nav="log" href="log.html">
+          <span data-icon="list"></span> Log Aktivitas
+        </a>
+        <a class="admin-sidebar-item" data-nav="pengaturan" href="pengaturan.html">
+          <span data-icon="settings"></span> Pengaturan
+        </a>
+      </div>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-topbar-title">Dashboard</h1>
+      <div class="admin-topbar-right">
+        <div class="admin-user-chip" id="userChip"></div>
+        <button class="btn-icon" data-act="logout" aria-label="Keluar" title="Keluar">
+          <span data-icon="logOut"></span>
+        </button>
       </div>
     </div>
-  </div>
 
-  <!-- Manajemen Data -->
-  <div class="section-title">
-    <span data-icon="database" class="icon-sm"></span>
-    Manajemen Data
-  </div>
-  <div class="menu-grid">
-    <a href="guru.html" class="menu-card">
-      <div class="menu-icon maroon"><span data-icon="users" class="icon-lg"></span></div>
-      <div class="menu-title">Data Guru</div>
-      <div class="menu-desc">Lihat & kelola profil guru</div>
-    </a>
-    <a href="impor.html" class="menu-card">
-      <div class="menu-icon gold"><span data-icon="upload" class="icon-lg"></span></div>
-      <div class="menu-title">Impor CSV</div>
-      <div class="menu-desc">Tambah guru massal</div>
-    </a>
-    <a href="log.html" class="menu-card">
-      <div class="menu-icon blue"><span data-icon="activity" class="icon-lg"></span></div>
-      <div class="menu-title">Log Aktivitas</div>
-      <div class="menu-desc">Riwayat aksi admin</div>
-    </a>
-    <a href="laporan.html" class="menu-card">
-      <div class="menu-icon green"><span data-icon="download" class="icon-lg"></span></div>
-      <div class="menu-title">Export Laporan</div>
-      <div class="menu-desc">Unduh data ke CSV/Excel</div>
-    </a>
-    <a href="pengaturan.html" class="menu-card">
-      <div class="menu-icon maroon"><span data-icon="settings" class="icon-lg"></span></div>
-      <div class="menu-title">Pengaturan</div>
-      <div class="menu-desc">Backup & transfer admin</div>
-    </a>
-  </div>
+    <div class="admin-content">
 
-  <!-- Kegiatan -->
-  <div class="section-title">
-    <span data-icon="calendar" class="icon-sm"></span>
-    Kegiatan
-  </div>
-  <div class="menu-grid">
-    <a href="periode.html" class="menu-card">
-      <div class="menu-icon blue"><span data-icon="calendar" class="icon-lg"></span></div>
-      <div class="menu-title">Kelola Periode</div>
-      <div class="menu-desc">Buat periode & arsip</div>
-    </a>
-    <a href="pertemuan.html" class="menu-card">
-      <div class="menu-icon maroon"><span data-icon="calendar" class="icon-lg"></span></div>
-      <div class="menu-title">Kelola Pertemuan</div>
-      <div class="menu-desc">Jadwal, materi & tugas</div>
-    </a>
-    <a href="pengumuman.html" class="menu-card">
-      <div class="menu-icon green"><span data-icon="megaphone" class="icon-lg"></span></div>
-      <div class="menu-title">Pengumuman</div>
-      <div class="menu-desc">Broadcast ke semua guru</div>
-    </a>
-    <a href="feedback.html" class="menu-card">
-      <div class="menu-icon blue"><span data-icon="messageSquare" class="icon-lg"></span></div>
-      <div class="menu-title">Rekap Feedback</div>
-      <div class="menu-desc">Penilaian peserta</div>
-    </a>
-    <a href="analitik.html" class="menu-card">
-      <div class="menu-icon maroon"><span data-icon="activity" class="icon-lg"></span></div>
-      <div class="menu-title">Analitik</div>
-      <div class="menu-desc">Grafik & statistik</div>
-    </a>
-  </div>
-
-  <!-- Evaluasi & Penghargaan -->
-  <div class="section-title">
-    <span data-icon="award" class="icon-sm"></span>
-    Evaluasi & Penghargaan
-  </div>
-  <div class="menu-grid">
-    <a href="award.html" class="menu-card">
-      <div class="menu-icon gold"><span data-icon="award" class="icon-lg"></span></div>
-      <div class="menu-title">Kelola Award</div>
-      <div class="menu-desc">Nominasi & juara</div>
-    </a>
-    <a href="sertifikat.html" class="menu-card">
-      <div class="menu-icon gold"><span data-icon="fileText" class="icon-lg"></span></div>
-      <div class="menu-title">Sertifikat</div>
-      <div class="menu-desc">Impor & kelola sertifikat</div>
-    </a>
-    <a href="verifikasi-sekolah.html" class="menu-card">
-      <div class="menu-icon green"><span data-icon="sparkles" class="icon-lg"></span></div>
-      <div class="menu-title">Verifikasi Sekolah</div>
-      <div class="menu-desc">Prestasi, kegiatan, pembiasaan</div>
-    </a>
-    <a href="../award.html" class="menu-card">
-      <div class="menu-icon gold"><span data-icon="trophy" class="icon-lg"></span></div>
-      <div class="menu-title">Papan Juara</div>
-      <div class="menu-desc">Tampilan hasil award</div>
-    </a>
-  </div>
-
-  <!-- Informasi Sistem -->
-  <div class="section-title">
-    <span data-icon="info" class="icon-sm"></span>
-    Informasi Sistem
-  </div>
-  <div class="quick-list">
-    <a href="../beranda.html" class="quick-row">
-      <div class="quick-icon"><span data-icon="home" class="icon-sm"></span></div>
-      <div class="quick-info">
-        <div class="quick-title">Beranda Guru</div>
-        <div class="quick-sub">Tampilan sebagai peserta</div>
+      <!-- HERO -->
+      <div class="hero-admin">
+        <div class="hero-admin-head">
+          <div class="hero-admin-icon">
+            <span data-icon="shield" class="icon-lg"></span>
+          </div>
+          <div class="hero-admin-info">
+            <div class="hero-admin-title" id="heroNama">Memuat…</div>
+            <div class="hero-admin-sub" id="heroSekolah">—</div>
+            <div class="hero-admin-peran" id="heroPeran"></div>
+          </div>
+        </div>
+        <div class="hero-admin-stats">
+          <div class="hero-admin-stat">
+            <div class="n" id="statGuru">—</div>
+            <div class="l">Guru</div>
+          </div>
+          <div class="hero-admin-stat">
+            <div class="n" id="statPertemuan">—</div>
+            <div class="l">Pertemuan</div>
+          </div>
+          <div class="hero-admin-stat">
+            <div class="n" id="statPending">—</div>
+            <div class="l">Perlu Aksi</div>
+          </div>
+        </div>
       </div>
-    </a>
-    <a href="../aktivitas.html" class="quick-row">
-      <div class="quick-icon"><span data-icon="activity" class="icon-sm"></span></div>
-      <div class="quick-info">
-        <div class="quick-title">Aktivitas Saya</div>
-        <div class="quick-sub">Rapor digital Anda</div>
-      </div>
-    </a>
-    <a href="../profil.html" class="quick-row">
-      <div class="quick-icon"><span data-icon="user" class="icon-sm"></span></div>
-      <div class="quick-info">
-        <div class="quick-title">Profil Saya</div>
-        <div class="quick-sub">Ganti PIN & foto</div>
-      </div>
-    </a>
-  </div>
 
-  <div style="height:40px;"></div>
+      <!-- MANAJEMEN DATA -->
+      <div class="admin-section-title">
+        <span class="icon-wrap"><span data-icon="users" class="icon-sm"></span></span>
+        Manajemen Data
+      </div>
+      <div class="admin-menu-grid">
+        <a href="guru.html" class="admin-menu-card">
+          <div class="admin-menu-icon">${''}<span data-icon="users" class="icon-lg"></span></div>
+          <div>
+            <div class="admin-menu-title">Data Guru</div>
+            <div class="admin-menu-desc">Lihat & kelola profil guru</div>
+          </div>
+        </a>
+        <a href="impor.html" class="admin-menu-card gold">
+          <div class="admin-menu-icon"><span data-icon="upload" class="icon-lg"></span></div>
+          <div>
+            <div class="admin-menu-title">Impor CSV</div>
+            <div class="admin-menu-desc">Tambah guru massal</div>
+          </div>
+        </a>
+      </div>
 
-</main>
+      <!-- KEGIATAN -->
+      <div class="admin-section-title">
+        <span class="icon-wrap"><span data-icon="calendar" class="icon-sm"></span></span>
+        Kegiatan
+      </div>
+      <div class="admin-menu-grid">
+        <a href="periode.html" class="admin-menu-card blue">
+          <div class="admin-menu-icon"><span data-icon="calendar" class="icon-lg"></span></div>
+          <div>
+            <div class="admin-menu-title">Kelola Periode</div>
+            <div class="admin-menu-desc">Buat periode & arsip</div>
+          </div>
+        </a>
+        <a href="pertemuan.html" class="admin-menu-card">
+          <div class="admin-menu-icon"><span data-icon="calendar" class="icon-lg"></span></div>
+          <div>
+            <div class="admin-menu-title">Kelola Pertemuan</div>
+            <div class="admin-menu-desc">Jadwal, materi & tugas</div>
+          </div>
+        </a>
+        <a href="pengumuman.html" class="admin-menu-card green">
+          <div class="admin-menu-icon"><span data-icon="megaphone" class="icon-lg"></span></div>
+          <div>
+            <div class="admin-menu-title">Pengumuman</div>
+            <div class="admin-menu-desc">Broadcast ke semua guru</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- EVALUASI -->
+      <div class="admin-section-title">
+        <span class="icon-wrap"><span data-icon="checkCircle" class="icon-sm"></span></span>
+        Evaluasi & Penghargaan
+      </div>
+      <div class="admin-menu-grid">
+        <a href="verifikasi-sekolah.html" class="admin-menu-card">
+          <div class="admin-menu-icon"><span data-icon="sparkles" class="icon-lg"></span></div>
+          <div>
+            <div class="admin-menu-title">Verifikasi Sekolah</div>
+            <div class="admin-menu-desc">Prestasi, kegiatan, pembiasaan</div>
+          </div>
+        </a>
+        <a href="../ks/verifikasi.html" class="admin-menu-card" id="cardVerifikasi">
+          <div class="admin-menu-icon"><span data-icon="checkCircle" class="icon-lg"></span></div>
+          <div>
+            <div class="admin-menu-title">Verifikasi Presensi</div>
+            <div class="admin-menu-desc">Presensi & izin</div>
+          </div>
+        </a>
+        <a href="feedback.html" class="admin-menu-card blue">
+          <div class="admin-menu-icon"><span data-icon="messageSquare" class="icon-lg"></span></div>
+          <div>
+            <div class="admin-menu-title">Rekap Feedback</div>
+            <div class="admin-menu-desc">Penilaian peserta</div>
+          </div>
+        </a>
+        <a href="award.html" class="admin-menu-card gold">
+          <div class="admin-menu-icon"><span data-icon="award" class="icon-lg"></span></div>
+          <div>
+            <div class="admin-menu-title">Kelola Award</div>
+            <div class="admin-menu-desc">Nominasi & juara</div>
+          </div>
+        </a>
+        <a href="sertifikat.html" class="admin-menu-card gold">
+          <div class="admin-menu-icon"><span data-icon="fileText" class="icon-lg"></span></div>
+          <div>
+            <div class="admin-menu-title">Sertifikat</div>
+            <div class="admin-menu-desc">Impor & kelola sertifikat</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- LAPORAN & SISTEM -->
+      <div class="admin-section-title">
+        <span class="icon-wrap"><span data-icon="activity" class="icon-sm"></span></span>
+        Laporan & Sistem
+      </div>
+      <div class="admin-menu-grid">
+        <a href="analitik.html" class="admin-menu-card blue">
+          <div class="admin-menu-icon"><span data-icon="activity" class="icon-lg"></span></div>
+          <div>
+            <div class="admin-menu-title">Analitik</div>
+            <div class="admin-menu-desc">Grafik & statistik</div>
+          </div>
+        </a>
+        <a href="laporan.html" class="admin-menu-card green">
+          <div class="admin-menu-icon"><span data-icon="download" class="icon-lg"></span></div>
+          <div>
+            <div class="admin-menu-title">Export Laporan</div>
+            <div class="admin-menu-desc">Unduh data ke CSV</div>
+          </div>
+        </a>
+        <a href="log.html" class="admin-menu-card">
+          <div class="admin-menu-icon"><span data-icon="list" class="icon-lg"></span></div>
+          <div>
+            <div class="admin-menu-title">Log Aktivitas</div>
+            <div class="admin-menu-desc">Riwayat aksi admin</div>
+          </div>
+        </a>
+        <a href="pengaturan.html" class="admin-menu-card">
+          <div class="admin-menu-icon"><span data-icon="settings" class="icon-lg"></span></div>
+          <div>
+            <div class="admin-menu-title">Pengaturan</div>
+            <div class="admin-menu-desc">Backup & transfer admin</div>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<nav class="admin-bottom-nav">
+  <a class="admin-nav-item" data-nav="dashboard" href="index.html">
+    <span data-icon="layoutDashboard"></span> Dashboard
+  </a>
+  <a class="admin-nav-item" data-nav="guru" href="guru.html">
+    <span data-icon="users"></span> Guru
+  </a>
+  <a class="admin-nav-item" data-nav="pertemuan" href="pertemuan.html">
+    <span data-icon="calendar"></span> Pertemuan
+  </a>
+  <a class="admin-nav-item" data-nav="verifikasi" href="verifikasi-sekolah.html">
+    <span data-icon="checkCircle"></span> Verifikasi
+  </a>
+  <button class="admin-nav-item" id="btnLainnya">
+    <span data-icon="menu"></span> Lainnya
+  </button>
+</nav>
 
 <script src="../assets/js/icons.js"></script>
 <script src="../assets/js/api.js"></script>
 <script src="../assets/js/ui.js"></script>
 <script>
-document.querySelectorAll('[data-icon]').forEach(el => {
-  el.innerHTML = Icons.get(el.dataset.icon);
-  el.style.display = 'contents';
-});
-UI.bindLogout();
+// ============================================================
+// LAYOUT HELPER
+// ============================================================
+(function () {
+  document.querySelectorAll('[data-icon]').forEach(el => {
+    el.innerHTML = Icons.get(el.dataset.icon);
+    el.style.display = 'contents';
+  });
 
-let profile;
+  UI.bindLogout();
 
+  // Set nav aktif
+  function setNavAktif() {
+    const path = window.location.pathname.split('/').pop().replace('.html', '');
+    const map = {
+      'index': 'dashboard',
+      'guru': 'guru',
+      'impor': 'impor',
+      'periode': 'periode',
+      'pertemuan': 'pertemuan',
+      'pertemuan-detail': 'pertemuan',
+      'pengumuman': 'pengumuman',
+      'verifikasi-sekolah': 'verifikasi-sekolah',
+      'verifikasi': 'verifikasi-presensi',
+      'feedback': 'feedback',
+      'award': 'award',
+      'sertifikat': 'sertifikat',
+      'analitik': 'analitik',
+      'laporan': 'laporan',
+      'log': 'log',
+      'pengaturan': 'pengaturan',
+    };
+    const aktif = map[path] || path;
+    document.querySelectorAll('[data-nav]').forEach(el => {
+      el.classList.toggle('active', el.dataset.nav === aktif);
+    });
+  }
+  setNavAktif();
+
+  // Bottom sheet
+  document.getElementById('btnLainnya')?.addEventListener('click', () => {
+    const overlay = document.createElement('div');
+    overlay.className = 'admin-sheet-overlay';
+    overlay.innerHTML = `
+      <div class="admin-sheet">
+        <div class="admin-sheet-handle"></div>
+        <div class="admin-sheet-title">Data</div>
+        <div class="admin-sheet-grid">
+          <a class="admin-sheet-item" href="guru.html">
+            <div class="icon-wrap">${Icons.get('users', { class: 'icon-sm' })}</div>
+            <span>Data Guru</span>
+          </a>
+          <a class="admin-sheet-item" href="impor.html">
+            <div class="icon-wrap">${Icons.get('upload', { class: 'icon-sm' })}</div>
+            <span>Impor CSV</span>
+          </a>
+        </div>
+        <div class="admin-sheet-title">Kegiatan</div>
+        <div class="admin-sheet-grid">
+          <a class="admin-sheet-item" href="periode.html">
+            <div class="icon-wrap">${Icons.get('calendar', { class: 'icon-sm' })}</div>
+            <span>Kelola Periode</span>
+          </a>
+          <a class="admin-sheet-item" href="pertemuan.html">
+            <div class="icon-wrap">${Icons.get('calendar', { class: 'icon-sm' })}</div>
+            <span>Kelola Pertemuan</span>
+          </a>
+          <a class="admin-sheet-item" href="pengumuman.html">
+            <div class="icon-wrap">${Icons.get('megaphone', { class: 'icon-sm' })}</div>
+            <span>Pengumuman</span>
+          </a>
+        </div>
+        <div class="admin-sheet-title">Evaluasi</div>
+        <div class="admin-sheet-grid">
+          <a class="admin-sheet-item" href="verifikasi-sekolah.html">
+            <div class="icon-wrap">${Icons.get('sparkles', { class: 'icon-sm' })}</div>
+            <span>Verifikasi Sekolah</span>
+          </a>
+          <a class="admin-sheet-item" href="../ks/verifikasi.html">
+            <div class="icon-wrap">${Icons.get('checkCircle', { class: 'icon-sm' })}</div>
+            <span>Verifikasi Presensi</span>
+          </a>
+          <a class="admin-sheet-item" href="feedback.html">
+            <div class="icon-wrap">${Icons.get('messageSquare', { class: 'icon-sm' })}</div>
+            <span>Rekap Feedback</span>
+          </a>
+          <a class="admin-sheet-item gold" href="award.html">
+            <div class="icon-wrap">${Icons.get('award', { class: 'icon-sm' })}</div>
+            <span>Kelola Award</span>
+          </a>
+          <a class="admin-sheet-item gold" href="sertifikat.html">
+            <div class="icon-wrap">${Icons.get('fileText', { class: 'icon-sm' })}</div>
+            <span>Sertifikat</span>
+          </a>
+        </div>
+        <div class="admin-sheet-title">Laporan & Sistem</div>
+        <div class="admin-sheet-grid">
+          <a class="admin-sheet-item blue" href="analitik.html">
+            <div class="icon-wrap">${Icons.get('activity', { class: 'icon-sm' })}</div>
+            <span>Analitik</span>
+          </a>
+          <a class="admin-sheet-item green" href="laporan.html">
+            <div class="icon-wrap">${Icons.get('download', { class: 'icon-sm' })}</div>
+            <span>Export Laporan</span>
+          </a>
+          <a class="admin-sheet-item" href="log.html">
+            <div class="icon-wrap">${Icons.get('list', { class: 'icon-sm' })}</div>
+            <span>Log Aktivitas</span>
+          </a>
+          <a class="admin-sheet-item" href="pengaturan.html">
+            <div class="icon-wrap">${Icons.get('settings', { class: 'icon-sm' })}</div>
+            <span>Pengaturan</span>
+          </a>
+        </div>
+        <button class="btn btn-primary btn-full" id="btnTutupSheet" style="margin-top:16px;">Tutup</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    const close = () => overlay.remove();
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+    overlay.querySelector('#btnTutupSheet').addEventListener('click', close);
+  });
+
+  // User chip
+  window.addEventListener('load', async () => {
+    const profile = Api.getProfile();
+    if (!profile) return;
+    const chip = document.getElementById('userChip');
+    if (chip) {
+      const init = (profile.nama || 'A').charAt(0).toUpperCase();
+      const fotoUrl = Api.fotoSayaUrl('t');
+      chip.innerHTML = `
+        <div class="avatar">
+          ${fotoUrl
+            ? `<img src="${fotoUrl}" onerror="this.parentElement.textContent='${init}'">`
+            : init}
+        </div>
+        <span>${UI.escapeHtml(profile.nama || '-')}</span>
+      `;
+    }
+  });
+})();
+
+// ============================================================
+// INIT DASHBOARD
+// ============================================================
 (async () => {
-  profile = await Api.requireLogin();
+  const profile = await Api.requireLogin();
   if (!profile) return;
 
   const peran = profile.peran || [];
   if (!peran.includes('pengurus') && !peran.includes('super_admin') && !peran.includes('ks')) {
-    document.querySelector('main').innerHTML = UI.errorHtml(
-      'Halaman ini hanya untuk pengurus/KS.',
-      '<a href="../beranda.html" class="btn btn-primary btn-sm" style="margin-top:12px;">Kembali</a>'
-    );
+    document.querySelector('main').innerHTML = UI.errorHtml('Halaman ini hanya untuk pengurus/KS.');
     return;
   }
 
-  // Sembunyikan menu yang tidak relevan untuk KS
-  if (!peran.includes('pengurus') && !peran.includes('super_admin')) {
-    // KS hanya bisa Verifikasi
-    document.querySelectorAll('.menu-card').forEach(card => {
-      const href = card.getAttribute('href');
-      if (href !== '../ks/verifikasi.html' && href !== '../award.html' && href !== '../beranda.html') {
-        if (!href || href === '#' || href.includes('admin/')) {
-          card.style.display = 'none';
-        }
-      }
-    });
-    // Sembunyikan section-title yang kosong
-    document.querySelectorAll('.section-title').forEach((title, idx) => {
-      const nextGrid = title.nextElementSibling;
-      if (nextGrid && nextGrid.classList.contains('menu-grid')) {
-        const visibleCards = Array.from(nextGrid.querySelectorAll('.menu-card'))
-          .filter(c => c.style.display !== 'none');
-        if (visibleCards.length === 0) {
-          title.style.display = 'none';
-          nextGrid.style.display = 'none';
-        }
-      }
-    });
-  }
-
-  // Render hero
+  // Hero
   document.getElementById('heroNama').textContent = profile.nama || '-';
   document.getElementById('heroSekolah').textContent = profile.sekolah?.nama || '-';
   document.getElementById('heroPeran').innerHTML = peran.map(r =>
-    `<span style="display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(201,169,97,.4);color:white;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;margin-right:4px;">${UI.escapeHtml(r.replace(/_/g,' '))}</span>`
+    `<span class="badge">${UI.escapeHtml(r.replace(/_/g, ' '))}</span>`
   ).join('');
 
-  // Load statistik
-  loadStatistik();
-})();
-
-async function loadStatistik() {
-  // Total guru
+  // Statistik
   try {
     const resG = await Api.call('users.list', { limit: 1 });
-    if (resG.ok) {
-      document.getElementById('statGuru').textContent = resG.data.total || 0;
-    }
-  } catch {}
+    if (resG.ok) document.getElementById('statGuru').textContent = resG.data.total || 0;
 
-  // Total pertemuan
-  try {
     const resP = await Api.call('pertemuan.list');
-    if (resP.ok) {
-      document.getElementById('statPertemuan').textContent = (resP.data || []).length;
-    }
-  } catch {}
+    if (resP.ok) document.getElementById('statPertemuan').textContent = (resP.data || []).length;
 
-  // Pending verifikasi
-  try {
-    let total = 0;
-
-    if (profile.peran.includes('ks') || profile.peran.includes('pengurus') || profile.peran.includes('super_admin')) {
+    let pending = 0;
+    if (peran.includes('ks') || peran.includes('pengurus') || peran.includes('super_admin')) {
       const resA = await Api.call('presensi.menunggu_ks');
-      if (resA.ok) total += (resA.data || []).length;
-
+      if (resA.ok) pending += (resA.data || []).length;
       const resB = await Api.call('izin.menunggu_ks');
-      if (resB.ok) total += (resB.data || []).length;
+      if (resB.ok) pending += (resB.data || []).length;
     }
-
-    document.getElementById('statPending').textContent = total;
-
-    if (total > 0) {
-      const el = document.getElementById('menuVerifikasi');
-      if (el && !el.querySelector('.menu-badge')) {
-        const badge = document.createElement('div');
-        badge.className = 'menu-badge';
-        badge.textContent = total;
-        el.appendChild(badge);
+    document.getElementById('statPending').textContent = pending;
+    if (pending > 0) {
+      const card = document.getElementById('cardVerifikasi');
+      if (card && !card.querySelector('.admin-menu-badge')) {
+        const b = document.createElement('div');
+        b.className = 'admin-menu-badge';
+        b.textContent = pending;
+        card.style.position = 'relative';
+        card.appendChild(b);
       }
     }
   } catch {}
-}
+})();
 </script>
 
 </body>
