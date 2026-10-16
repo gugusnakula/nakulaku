@@ -21,9 +21,13 @@
     border-radius: var(--r-md);
     margin: 20px 0 16px;
     border: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
   }
+  .tabs::-webkit-scrollbar { display: none; }
   .tab {
     flex: 1;
+    min-width: 90px;
     padding: 10px;
     text-align: center;
     font-size: 13px;
@@ -33,12 +37,37 @@
     cursor: pointer;
     border: none;
     background: transparent;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+    position: relative;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    transition: all .15s;
   }
   .tab.active {
     background: var(--surface);
     color: var(--maroon);
     box-shadow: var(--sh-sm);
+  }
+  .tab-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--danger);
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
   }
   .panel { display: none; }
   .panel.active { display: block; }
@@ -97,6 +126,8 @@
     color: var(--maroon);
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
   }
   .mini-body { flex: 1; min-width: 0; }
   .mini-title { font-weight: 700; font-size: 13.5px; margin-bottom: 3px; }
@@ -109,28 +140,6 @@
   .mini-actions {
     display: flex; gap: 6px; margin-top: 10px;
     padding-top: 10px; border-top: 1px solid var(--border);
-  }
-
-  /* ============================================
-     TAB BADGE
-     ============================================ */
-  .tab { position: relative; }
-  .tab-badge {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 5px;
-    border-radius: 999px;
-    background: var(--danger);
-    color: white;
-    font-size: 10px;
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
   }
 
   /* ============================================
@@ -187,7 +196,9 @@
     object-fit: cover;
     margin-bottom: 12px;
     cursor: pointer;
+    transition: transform .15s;
   }
+  .verif-foto:hover { transform: scale(1.01); }
   .verif-detail {
     background: var(--bg);
     border-radius: 12px;
@@ -219,6 +230,35 @@
     border-top: 1px dashed var(--border);
   }
   .verif-actions .btn { flex: 1; }
+
+  .empty-panel {
+    text-align: center;
+    padding: 50px 20px;
+  }
+  .empty-panel .big-icon {
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--success-soft) 0%, #D1FAE5 100%);
+    color: var(--success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+  }
+  .empty-panel .big-icon svg { width: 36px; height: 36px; }
+  .empty-panel h3 {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .empty-panel p {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 300px;
+    margin: 0 auto;
+  }
 </style>
 </head>
 <body>
@@ -256,27 +296,15 @@
       <button class="tab" data-tab="akses"><span data-icon="lock"></span> Akses</button>
     </div>
 
-    <div class="panel active" data-panel="materi">
-      <button class="btn btn-primary btn-full" id="btnTambahMateri" style="margin-bottom:12px;">
-        <span data-icon="plus"></span> Tambah Materi
-      </button>
-      <div id="listMateri"></div>
-    </div>
-
-    <div class="panel" data-panel="tugas">
-      <button class="btn btn-primary btn-full" id="btnTambahTugas" style="margin-bottom:12px;">
-        <span data-icon="plus"></span> Tambah Tugas
-      </button>
-      <div id="listTugas"></div>
-    </div>
-
+    <!-- Panel: Verifikasi Luar Radius -->
     <div class="panel" data-panel="verifikasi">
       <div class="card" style="margin-bottom:12px;font-size:12.5px;color:var(--muted);line-height:1.5;">
-        Daftar presensi <strong>luar radius</strong> yang menunggu verifikasi admin. Cek foto & jarak, lalu putuskan: setujui (dapat 50 poin) atau tolak (jadi alfa).
+        Daftar presensi <strong>luar radius</strong> yang menunggu verifikasi admin. Cek foto &amp; jarak, lalu putuskan: setujui (dapat 50 poin) atau tolak (jadi alfa).
       </div>
       <div id="listVerifikasi"></div>
     </div>
 
+    <!-- Panel: Materi -->
     <div class="panel active" data-panel="materi">
       <button class="btn btn-primary btn-full" id="btnTambahMateri" style="margin-bottom:12px;">
         <span data-icon="plus"></span> Tambah Materi
@@ -284,6 +312,7 @@
       <div id="listMateri"></div>
     </div>
 
+    <!-- Panel: Tugas -->
     <div class="panel" data-panel="tugas">
       <button class="btn btn-primary btn-full" id="btnTambahTugas" style="margin-bottom:12px;">
         <span data-icon="plus"></span> Tambah Tugas
@@ -291,6 +320,7 @@
       <div id="listTugas"></div>
     </div>
 
+    <!-- Panel: Pengamat -->
     <div class="panel" data-panel="pengamat">
       <div class="card" style="margin-bottom:12px;font-size:12.5px;color:var(--muted);line-height:1.5;">
         Pengamat adalah guru yang ditunjuk untuk mengamati jalannya pertemuan. Mereka akan mencatat keaktifan peserta dan kekompakan sekolah, yang nanti dipakai untuk penilaian NAKULAKU AWARD.
@@ -301,6 +331,7 @@
       <div id="listPengamat"></div>
     </div>
 
+    <!-- Panel: Akses Khusus -->
     <div class="panel" data-panel="akses">
       <div class="card" style="margin-bottom:12px;font-size:12.5px;color:var(--muted);line-height:1.5;">
         Buka akses pertemuan ini untuk guru tertentu, meski mereka belum menyelesaikan pertemuan sebelumnya. Berguna untuk kasus khusus (sakit lama, mutasi, dsb.).
@@ -340,7 +371,7 @@ let data = { pertemuan: null, materi: [], tugas: [] };
   if (!pertemuanId) { UI.gagal('Pertemuan tidak ditentukan.'); return; }
 
   await load();
-  await loadVerifikasi(); // ← BARU
+  await loadVerifikasi();
 
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -353,153 +384,6 @@ let data = { pertemuan: null, materi: [], tugas: [] };
   document.getElementById('btnTambahMateri').addEventListener('click', () => formMateri(null));
   document.getElementById('btnTambahTugas').addEventListener('click', () => formTugas(null));
 })();
-
-// ============================================================
-// VERIFIKASI LUAR RADIUS
-// ============================================================
-let daftarVerifikasi = [];
-
-async function loadVerifikasi() {
-  const el = document.getElementById('listVerifikasi');
-  if (!el) return;
-
-  el.innerHTML = '<div class="skeleton" style="height:180px;border-radius:16px;margin-bottom:10px;"></div>';
-
-  const res = await Api.call('presensi.menunggu_luar_radius', { pertemuan_id: pertemuanId });
-
-  if (!res.ok) {
-    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat.');
-    return;
-  }
-
-  daftarVerifikasi = res.data || [];
-
-  // Update badge di tab
-  const badge = document.getElementById('badgeVerifikasi');
-  if (badge) {
-    if (daftarVerifikasi.length > 0) {
-      badge.textContent = daftarVerifikasi.length;
-      badge.classList.remove('hidden');
-    } else {
-      badge.classList.add('hidden');
-    }
-  }
-
-  renderVerifikasi();
-}
-
-function renderVerifikasi() {
-  const el = document.getElementById('listVerifikasi');
-
-  if (daftarVerifikasi.length === 0) {
-    el.innerHTML = `
-      <div class="empty" style="padding:50px 20px;text-align:center;">
-        <div class="empty-icon" style="width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,var(--success-soft) 0%,#D1FAE5 100%);color:var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-          ${Icons.get('checkCircle', { class: 'icon-lg' })}
-        </div>
-        <div style="font-weight:800;font-size:15px;margin-bottom:6px;">Tidak Ada Presensi Luar Radius</div>
-        <div style="font-size:12.5px;color:var(--muted);max-width:300px;margin:0 auto;">Semua presensi luar radius sudah diverifikasi.</div>
-      </div>
-    `;
-    return;
-  }
-
-  el.innerHTML = daftarVerifikasi.map((v, idx) => {
-    const init = (v.user?.nama_lengkap || '?').charAt(0).toUpperCase();
-    const fotoUrl = v.foto_thumb_url;
-    const fotoProfil = v.user?.id ? Api.fotoUrl(v.user.id, 't') : null;
-    const waktu = UI.formatTanggalJam(v.waktu_submit);
-
-    return `
-      <div class="verif-card" style="animation-delay:${idx * 0.05}s" data-id="${v.id}">
-        <div class="verif-card-head">
-          <div class="verif-avatar">
-            <span>${init}</span>
-            ${fotoProfil ? `<img src="${fotoProfil}" loading="lazy" alt="" onerror="this.remove()">` : ''}
-          </div>
-          <div class="verif-info">
-            <div class="verif-nama">${UI.escapeHtml(v.user?.nama_lengkap || '-')}</div>
-            <div class="verif-sub">${UI.escapeHtml(v.user?.sekolah?.nama || '-')}</div>
-            <div class="verif-sub">${UI.escapeHtml(v.user?.jabatan || '-')}</div>
-          </div>
-        </div>
-
-        ${fotoUrl ? `
-          <img class="verif-foto" src="${fotoUrl}" alt="Foto presensi" loading="lazy"
-            onclick="window.open('${fotoUrl}','_blank')" />
-        ` : ''}
-
-        <div class="verif-detail">
-          <div class="verif-detail-row">
-            <span class="lbl">Waktu Submit</span>
-            <span class="val">${waktu}</span>
-          </div>
-          <div class="verif-detail-row">
-            <span class="lbl">Jarak dari Lokasi</span>
-            <span class="val warn">${v.jarak_meter !== null ? v.jarak_meter + ' m' : '—'}</span>
-          </div>
-          <div class="verif-detail-row">
-            <span class="lbl">Radius Diizinkan</span>
-            <span class="val">${v.pertemuan?.radius_meter || 100} m</span>
-          </div>
-        </div>
-
-        <div class="verif-actions">
-          <button class="btn btn-secondary" data-act="tolak" data-id="${v.id}">
-            ${Icons.get('x', { class: 'icon-sm' })}
-            Tolak
-          </button>
-          <button class="btn btn-primary" data-act="setuju" data-id="${v.id}">
-            ${Icons.get('check', { class: 'icon-sm' })}
-            Setujui
-          </button>
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  // Bind actions
-  el.querySelectorAll('[data-act]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = Number(btn.dataset.id);
-      const act = btn.dataset.act;
-      verifikasiLuarRadius(id, act === 'setuju' ? 'disetujui' : 'ditolak');
-    });
-  });
-}
-
-async function verifikasiLuarRadius(presensiId, keputusan) {
-  const item = daftarVerifikasi.find(v => v.id === presensiId);
-  const nama = item?.user?.nama_lengkap || 'guru';
-
-  const pesan = keputusan === 'disetujui'
-    ? `Setujui presensi luar radius ${nama}? Poin menjadi 50.`
-    : `Tolak presensi luar radius ${nama}? Status berubah jadi alfa, poin 0.`;
-
-  const ok = await UI.konfirmasi(
-    keputusan === 'disetujui' ? 'Setujui Presensi' : 'Tolak Presensi',
-    pesan,
-    {
-      okText: keputusan === 'disetujui' ? 'Setujui' : 'Tolak',
-      danger: keputusan === 'ditolak',
-    }
-  );
-  if (!ok) return;
-
-  const res = await Api.call('presensi.verifikasi_luar_radius', {
-    presensi_id: presensiId,
-    keputusan,
-  });
-
-  if (!res.ok) {
-    UI.gagal(res.error || 'Gagal memproses.');
-    return;
-  }
-
-  UI.sukses(keputusan === 'disetujui' ? 'Presensi disetujui (50 poin).' : 'Presensi ditolak (alfa).');
-  await loadVerifikasi();
-  await load(); // refresh statistik hero
-}
 
 async function load() {
   const res = await Api.call('admin.pertemuan.detail', { pertemuan_id: pertemuanId });
@@ -793,6 +677,149 @@ async function hapusTugas(id) {
 }
 
 // ============================================================
+// VERIFIKASI LUAR RADIUS
+// ============================================================
+let daftarVerifikasi = [];
+
+async function loadVerifikasi() {
+  const el = document.getElementById('listVerifikasi');
+  if (!el) return;
+
+  el.innerHTML = '<div class="skeleton" style="height:180px;border-radius:16px;margin-bottom:10px;"></div>';
+
+  const res = await Api.call('presensi.menunggu_luar_radius', { pertemuan_id: pertemuanId });
+
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat.');
+    return;
+  }
+
+  daftarVerifikasi = res.data || [];
+
+  const badge = document.getElementById('badgeVerifikasi');
+  if (badge) {
+    if (daftarVerifikasi.length > 0) {
+      badge.textContent = daftarVerifikasi.length;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+  }
+
+  renderVerifikasi();
+}
+
+function renderVerifikasi() {
+  const el = document.getElementById('listVerifikasi');
+
+  if (daftarVerifikasi.length === 0) {
+    el.innerHTML = `
+      <div class="empty-panel">
+        <div class="big-icon">${Icons.get('checkCircle', { class: 'icon-lg' })}</div>
+        <h3>Tidak Ada Presensi Luar Radius</h3>
+        <p>Semua presensi luar radius sudah diverifikasi.</p>
+      </div>
+    `;
+    return;
+  }
+
+  el.innerHTML = daftarVerifikasi.map((v, idx) => {
+    const init = (v.user?.nama_lengkap || '?').charAt(0).toUpperCase();
+    const fotoUrl = v.foto_thumb_url;
+    const fotoProfil = v.user?.id ? Api.fotoUrl(v.user.id, 't') : null;
+    const waktu = UI.formatTanggalJam(v.waktu_submit);
+
+    return `
+      <div class="verif-card" style="animation-delay:${idx * 0.05}s" data-id="${v.id}">
+        <div class="verif-card-head">
+          <div class="verif-avatar">
+            <span>${init}</span>
+            ${fotoProfil ? `<img src="${fotoProfil}" loading="lazy" alt="" onerror="this.remove()">` : ''}
+          </div>
+          <div class="verif-info">
+            <div class="verif-nama">${UI.escapeHtml(v.user?.nama_lengkap || '-')}</div>
+            <div class="verif-sub">${UI.escapeHtml(v.user?.sekolah?.nama || '-')}</div>
+            <div class="verif-sub">${UI.escapeHtml(v.user?.jabatan || '-')}</div>
+          </div>
+        </div>
+
+        ${fotoUrl ? `
+          <img class="verif-foto" src="${fotoUrl}" alt="Foto presensi" loading="lazy"
+            onclick="window.open('${fotoUrl}','_blank')" />
+        ` : ''}
+
+        <div class="verif-detail">
+          <div class="verif-detail-row">
+            <span class="lbl">Waktu Submit</span>
+            <span class="val">${waktu}</span>
+          </div>
+          <div class="verif-detail-row">
+            <span class="lbl">Jarak dari Lokasi</span>
+            <span class="val warn">${v.jarak_meter !== null ? v.jarak_meter + ' m' : '—'}</span>
+          </div>
+          <div class="verif-detail-row">
+            <span class="lbl">Radius Diizinkan</span>
+            <span class="val">${v.pertemuan?.radius_meter || 100} m</span>
+          </div>
+        </div>
+
+        <div class="verif-actions">
+          <button class="btn btn-secondary" data-act="tolak" data-id="${v.id}">
+            ${Icons.get('x', { class: 'icon-sm' })}
+            Tolak
+          </button>
+          <button class="btn btn-primary" data-act="setuju" data-id="${v.id}">
+            ${Icons.get('check', { class: 'icon-sm' })}
+            Setujui
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  el.querySelectorAll('[data-act]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = Number(btn.dataset.id);
+      const act = btn.dataset.act;
+      verifikasiLuarRadius(id, act === 'setuju' ? 'disetujui' : 'ditolak');
+    });
+  });
+}
+
+async function verifikasiLuarRadius(presensiId, keputusan) {
+  const item = daftarVerifikasi.find(v => v.id === presensiId);
+  const nama = item?.user?.nama_lengkap || 'guru';
+
+  const pesan = keputusan === 'disetujui'
+    ? `Setujui presensi luar radius ${nama}? Poin menjadi 50.`
+    : `Tolak presensi luar radius ${nama}? Status berubah jadi alfa, poin 0.`;
+
+  const ok = await UI.konfirmasi(
+    keputusan === 'disetujui' ? 'Setujui Presensi' : 'Tolak Presensi',
+    pesan,
+    {
+      okText: keputusan === 'disetujui' ? 'Setujui' : 'Tolak',
+      danger: keputusan === 'ditolak',
+    }
+  );
+  if (!ok) return;
+
+  const res = await Api.call('presensi.verifikasi_luar_radius', {
+    presensi_id: presensiId,
+    keputusan,
+  });
+
+  if (!res.ok) {
+    UI.gagal(res.error || 'Gagal memproses.');
+    return;
+  }
+
+  UI.sukses(keputusan === 'disetujui' ? 'Presensi disetujui (50 poin).' : 'Presensi ditolak (alfa).');
+  await loadVerifikasi();
+  await load();
+}
+
+// ============================================================
 // AKSES KHUSUS
 // ============================================================
 async function loadAksesKhusus() {
@@ -814,7 +841,7 @@ async function loadAksesKhusus() {
     return `
       <div class="mini-item">
         <div class="mini-item-head">
-          <div class="mini-icon" style="overflow:hidden;position:relative;">
+          <div class="mini-icon">
             <span>${init}</span>
           </div>
           <div class="mini-body">
@@ -970,7 +997,7 @@ async function loadPengamat() {
     return `
       <div class="mini-item">
         <div class="mini-item-head">
-          <div class="mini-icon" style="overflow:hidden;position:relative;">
+          <div class="mini-icon">
             <span>${init}</span>
             ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.remove()" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">` : ''}
           </div>
@@ -988,7 +1015,6 @@ async function loadPengamat() {
 document.getElementById('btnTunjukPengamat').addEventListener('click', formTunjukPengamat);
 
 async function formTunjukPengamat() {
-  // Ambil semua guru aktif
   const res = await Api.call('users.list', { limit: 500 });
   if (!res.ok) { UI.gagal(res.error); return; }
 
@@ -1032,7 +1058,7 @@ async function formTunjukPengamat() {
     daftarEl.innerHTML = list.map(g => {
       const checked = terpilih.has(g.id) ? 'checked' : '';
       return `
-        <label style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">
+        <label style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;cursor:pointer;">
           <input type="checkbox" data-uid="${g.id}" ${checked} style="width:18px;height:18px;accent-color:var(--maroon);" />
           <div style="flex:1;min-width:0;">
             <div style="font-weight:700;font-size:13px;">${UI.escapeHtml(g.nama_lengkap)}</div>
@@ -1062,21 +1088,20 @@ async function formTunjukPengamat() {
     const btn = overlay.querySelector('#btnSimpanPengamat');
     UI.btnLoading(btn, 'Menyimpan…');
 
-    const res = await Api.call('admin.pengamat.simpan', {
+    const res2 = await Api.call('admin.pengamat.simpan', {
       pertemuan_id: pertemuanId,
       user_ids: Array.from(terpilih),
     });
 
     UI.btnReset(btn);
 
-    if (!res.ok) { UI.gagal(res.error); return; }
+    if (!res2.ok) { UI.gagal(res2.error); return; }
 
     UI.sukses('Pengamat disimpan.');
     close();
     await loadPengamat();
   });
 }
-
 </script>
 
 </body>
