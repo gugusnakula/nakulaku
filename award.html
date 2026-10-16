@@ -448,6 +448,10 @@ function renderAwardSection(a, nominasi) {
   const kategoriLabel = {
     sekolah: 'Sekolah', guru: 'Guru', narsum: 'Narasumber',
     pengamat: 'Pengamat', penyelenggara: 'Penyelenggara',
+    prestasi_siswa: 'Sekolah dengan Prestasi Siswa Terbanyak',
+    pembiasaan: 'Sekolah dengan Pembiasaan Terbaik',
+    event_sekolah: 'Sekolah dengan Event Terbaik',
+    sekolah_overall: 'Sekolah Terbaik Overall',
   }[a.kategori] || a.kategori;
 
   // Urutkan by peringkat
@@ -466,7 +470,7 @@ function renderAwardSection(a, nominasi) {
   return `
     <div class="award-section">
       <div class="award-section-head">
-        <div class="award-section-icon">${Icons.get('award', { class: 'icon-lg' })}</div>
+        <div class="award-section-icon">${Icons.get(awardIcon(a.kategori), { class: 'icon-lg' })}</div>
         <div class="award-section-title">
           <h2>${UI.escapeHtml(a.nama)}</h2>
           <p>Kategori ${kategoriLabel} · ${nominasi.length} nominasi</p>
@@ -532,6 +536,20 @@ function renderNomMini(n) {
       <div class="nom-mini-skor">${n.skor_total}</div>
     </div>
   `;
+}
+function awardIcon(kategori) {
+  const map = {
+    sekolah: 'home',
+    guru: 'users',
+    narsum: 'user',
+    pengamat: 'eye',
+    penyelenggara: 'clipboard',
+    prestasi_siswa: 'trophy',
+    pembiasaan: 'sparkles',
+    event_sekolah: 'calendar',
+    sekolah_overall: 'award',
+  };
+  return map[kategori] || 'award';
 }
 </script>
 
