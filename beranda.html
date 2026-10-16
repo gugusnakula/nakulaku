@@ -110,14 +110,7 @@
     animation: fade-in-up .5s var(--ease-out) .05s both;
     position: relative;
   }
-  .progress-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--maroon) 0%, var(--gold) 100%);
-    border-radius: 20px 20px 0 0;
-  }
+
   .progress-head {
     display: flex;
     align-items: center;
@@ -336,6 +329,7 @@
   .announce-premium.penting {
     border-color: var(--gold);
     background: linear-gradient(135deg, #FFFFFF 0%, #FBF4E0 100%);
+    box-shadow: 0 4px 16px rgba(201,169,97,.15);
   }
   .announce-head-premium {
     display: flex;
