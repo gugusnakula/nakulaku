@@ -459,6 +459,105 @@
 
   .content-section { margin-bottom: 26px; }
 
+  /* ============================================
+     KARTU AKSI DIBUTUHKAN
+     ============================================ */
+  .aksi-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 18px;
+    margin-bottom: 12px;
+    border: 1.5px solid;
+    animation: fade-in-up .45s var(--ease-out) both;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: all .2s var(--ease-out);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .aksi-card:hover {
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .aksi-card.urgent {
+    background: linear-gradient(135deg, #FFFCF3 0%, #FEF3C7 100%);
+    border-color: rgba(180,83,9,.25);
+  }
+  .aksi-card.urgent:hover {
+    border-color: var(--warning);
+    box-shadow: 0 8px 20px rgba(180,83,9,.15);
+  }
+  .aksi-card.danger {
+    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+    border-color: rgba(185,28,28,.2);
+  }
+  .aksi-card.danger:hover {
+    border-color: var(--danger);
+    box-shadow: 0 8px 20px rgba(185,28,28,.15);
+  }
+  .aksi-icon {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .aksi-card.urgent .aksi-icon {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
+    box-shadow: 0 6px 16px rgba(201,169,97,.35);
+  }
+  .aksi-card.danger .aksi-icon {
+    background: linear-gradient(135deg, var(--danger) 0%, #991B1B 100%);
+    color: white;
+    box-shadow: 0 6px 16px rgba(185,28,28,.3);
+  }
+  .aksi-icon svg { width: 22px; height: 22px; }
+  .aksi-body { flex: 1; min-width: 0; }
+  .aksi-title {
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--ink);
+    margin-bottom: 3px;
+    letter-spacing: 0.2px;
+  }
+  .aksi-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+    font-weight: 600;
+  }
+  .aksi-chevron {
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: transform .2s;
+  }
+  .aksi-card:hover .aksi-chevron {
+    transform: translateX(4px);
+    color: var(--maroon);
+  }
+
+  .aksi-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 7px;
+    border-radius: 999px;
+    background: var(--danger);
+    color: white;
+    font-size: 10.5px;
+    font-weight: 800;
+    margin-left: 8px;
+    vertical-align: middle;
+    letter-spacing: 0.2px;
+  }
+
   @media (min-width: 900px) {
     .menu-khusus-grid {
       grid-template-columns: repeat(3, 1fr);
@@ -544,6 +643,10 @@
             <div class="hero-badges" id="heroBadges"></div>
           </div>
         </div>
+      </section>
+
+      <section id="sectionAksi" class="content-section hidden" style="margin-bottom:20px;">
+        <div id="listAksi"></div>
       </section>
 
       <section id="kartuProgres" class="progress-card hidden">
@@ -929,6 +1032,7 @@ async function loadPertemuan() {
   totalPertemuan = daftarPertemuan.length;
 
   renderKartuProgres();
+  renderAksiDibutuhkan();   // ← BARU
   renderListPertemuan();
 }
 
@@ -1036,6 +1140,83 @@ function showLocked(id) {
   const p = daftarPertemuan.find(x => x.id === id);
   if (!p) return;
   UI.toast(p.alasan || 'Pertemuan ini masih terkunci', 'warning', 3500);
+}
+
+// ============================================================
+// AKSI DIBUTUHKAN (Kartu peringatan)
+// ============================================================
+function renderAksiDibutuhkan() {
+  const section = document.getElementById('sectionAksi');
+  const el = document.getElementById('listAksi');
+
+  // Filter pertemuan yang perlu tindakan
+  const perluPresensiBuka = daftarPertemuan.filter(p =>
+    p.presensi_status === 'buka' && !(p.progres?.ada_presensi)
+  );
+
+  const perluPresensiTutup = daftarPertemuan.filter(p =>
+    p.presensi_status === 'tutup' && !(p.progres?.ada_presensi) && !p.selesai
+  );
+
+  const kartuList = [];
+
+  // Kartu 1: Presensi sedang dibuka (paling urgent)
+  perluPresensiBuka.forEach(p => {
+    const tutupStr = p.presensi_tutup
+      ? new Date(p.presensi_tutup).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+      : '';
+
+    kartuList.push(`
+      <a href="presensi.html?id=${p.id}" class="aksi-card urgent">
+        <div class="aksi-icon">
+          ${Icons.get('camera')}
+        </div>
+        <div class="aksi-body">
+          <div class="aksi-title">
+            Presensi Sedang Dibuka
+            <span class="aksi-badge">!</span>
+          </div>
+          <div class="aksi-desc">
+            Pertemuan #${p.urutan} — ${UI.escapeHtml(p.judul)}${tutupStr ? ` · Tutup pukul ${tutupStr} WIB` : ''}
+          </div>
+        </div>
+        <span class="aksi-chevron">${Icons.get('chevronRight')}</span>
+      </a>
+    `);
+  });
+
+  // Kartu 2: Window sudah tutup & belum presensi (perlu ajukan izin)
+  perluPresensiTutup.forEach(p => {
+    kartuList.push(`
+      <a href="ajukan.html?id=${p.id}" class="aksi-card danger">
+        <div class="aksi-icon">
+          ${Icons.get('fileText')}
+        </div>
+        <div class="aksi-body">
+          <div class="aksi-title">Presensi Terlewat</div>
+          <div class="aksi-desc">
+            Pertemuan #${p.urutan} — ${UI.escapeHtml(p.judul)} · Ajukan izin kalau berhalangan
+          </div>
+        </div>
+        <span class="aksi-chevron">${Icons.get('chevronRight')}</span>
+      </a>
+    `);
+  });
+
+  if (kartuList.length === 0) {
+    section.classList.add('hidden');
+    el.innerHTML = '';
+    return;
+  }
+
+  el.innerHTML = kartuList.join('');
+  section.classList.remove('hidden');
+
+  // Re-render ikon yang baru disisipkan
+  el.querySelectorAll('[data-icon]').forEach(ic => {
+    ic.innerHTML = Icons.get(ic.dataset.icon);
+    ic.style.display = 'contents';
+  });
 }
 </script>
 
