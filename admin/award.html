@@ -258,8 +258,15 @@ async function loadAwards() {
 function renderAward(a) {
   const nominasi = nominasiMap[a.id] || [];
   const kategoriLabel = {
-    sekolah: 'Sekolah', guru: 'Guru', narsum: 'Narasumber',
-    pengamat: 'Pengamat', penyelenggara: 'Penyelenggara',
+    sekolah: 'Sekolah (Kehadiran Guru)',
+    guru: 'Guru',
+    narsum: 'Narasumber',
+    pengamat: 'Pengamat',
+    penyelenggara: 'Penyelenggara',
+    prestasi_siswa: 'Prestasi Siswa',
+    pembiasaan: 'Pembiasaan',
+    event_sekolah: 'Event Sekolah',
+    sekolah_overall: 'Sekolah Terbaik Overall',
   }[a.kategori] || a.kategori;
 
   return `
@@ -379,6 +386,10 @@ async function setJuara(nominasiId, juara) {
 // HITUNG
 // ============================================================
 async function hitungAward(awardId) {
+  // Cari award untuk tahu kategorinya
+  const award = awards.find(a => a.id === awardId);
+  if (!award) return;
+
   const ok = await UI.konfirmasi(
     'Hitung Nominasi',
     'Sistem akan menghitung ulang semua nominasi. Data lama akan diganti. Lanjutkan?',
@@ -387,7 +398,17 @@ async function hitungAward(awardId) {
   if (!ok) return;
 
   UI.toast('Menghitung…', 'info');
-  const res = await Api.call('award.hitung', { award_id: awardId });
+
+  // Routing: kategori sekolah baru → pakai nakula-sekolah
+  const kategoriSekolah = ['prestasi_siswa', 'pembiasaan', 'event_sekolah', 'sekolah_overall'];
+  let res;
+
+  if (kategoriSekolah.includes(award.kategori)) {
+    res = await Api.callSekolah('admin.award.hitung_sekolah', { award_id: awardId });
+  } else {
+    res = await Api.call('award.hitung', { award_id: awardId });
+  }
+
   if (!res.ok) { UI.gagal(res.error); return; }
   UI.sukses(`${res.data.jumlah_nominasi} nominasi dihitung.`);
   await loadAwards();
@@ -430,11 +451,19 @@ function formAward(award) {
         <div class="field">
           <label class="label">Kategori *</label>
           <select id="aKategori" class="input" ${isEdit ? 'disabled' : ''}>
-            <option value="sekolah" ${a.kategori === 'sekolah' ? 'selected' : ''}>Sekolah</option>
-            <option value="guru" ${a.kategori === 'guru' ? 'selected' : ''}>Guru</option>
-            <option value="narsum" ${a.kategori === 'narsum' ? 'selected' : ''}>Narasumber</option>
-            <option value="pengamat" ${a.kategori === 'pengamat' ? 'selected' : ''}>Pengamat</option>
-            <option value="penyelenggara" ${a.kategori === 'penyelenggara' ? 'selected' : ''}>Penyelenggara</option>
+            <optgroup label="— Umum —">
+              <option value="sekolah" ${a.kategori === 'sekolah' ? 'selected' : ''}>Sekolah (Kehadiran Guru)</option>
+              <option value="guru" ${a.kategori === 'guru' ? 'selected' : ''}>Guru</option>
+              <option value="narsum" ${a.kategori === 'narsum' ? 'selected' : ''}>Narasumber</option>
+              <option value="pengamat" ${a.kategori === 'pengamat' ? 'selected' : ''}>Pengamat</option>
+              <option value="penyelenggara" ${a.kategori === 'penyelenggara' ? 'selected' : ''}>Penyelenggara</option>
+            </optgroup>
+            <optgroup label="— Profil Sekolah —">
+              <option value="prestasi_siswa" ${a.kategori === 'prestasi_siswa' ? 'selected' : ''}>Prestasi Siswa Terbanyak</option>
+              <option value="pembiasaan" ${a.kategori === 'pembiasaan' ? 'selected' : ''}>Pembiasaan Terbaik</option>
+              <option value="event_sekolah" ${a.kategori === 'event_sekolah' ? 'selected' : ''}>Event Terbaik</option>
+              <option value="sekolah_overall" ${a.kategori === 'sekolah_overall' ? 'selected' : ''}>Sekolah Terbaik Overall</option>
+            </optgroup>
           </select>
           ${isEdit ? '<div style="font-size:11px;color:var(--muted);margin-top:4px;">Kategori tidak bisa diubah.</div>' : ''}
         </div>
