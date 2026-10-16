@@ -742,9 +742,7 @@ function renderItem(it, idx) {
   }
 
   const bisaEdit = it.status === 'menunggu';
-  const poinHtml = it.status === 'disetujui' && it.poin > 0
-    ? `<span class="poin-badge">${Icons.get('award', { class: 'icon-sm' })} +${it.poin} poin</span>`
-    : '';
+  // Poin TIDAK ditampilkan — hanya admin yang tahu (rahasia di balik layar)
 
   const catatanHtml = it.status === 'ditolak' && it.catatan_verifikator
     ? `<div class="catatan-box">
@@ -760,7 +758,6 @@ function renderItem(it, idx) {
         <div class="item-info">
           <div class="item-title">${UI.escapeHtml(judul)}</div>
           <div class="item-sub">${UI.escapeHtml(sub)}</div>
-          ${poinHtml}
         </div>
         <span class="status-pill st-${it.status}">${statusLabel}</span>
       </div>
