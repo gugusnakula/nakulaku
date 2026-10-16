@@ -11,6 +11,7 @@
     LOGIN_URL:    'https://qkcskwappwpdbiaotewp.supabase.co/functions/v1/nakula-login',
     VERIFY_URL:   'https://qkcskwappwpdbiaotewp.supabase.co/functions/v1/nakula-verify',
     API_URL:      'https://qkcskwappwpdbiaotewp.supabase.co/functions/v1/nakula-api',
+    SEKOLAH_URL:  'https://qkcskwappwpdbiaotewp.supabase.co/functions/v1/nakula-sekolah',
     TOKEN_KEY:    'nakula_token',
     PROFILE_KEY:  'nakula_profile',
     FOTO_BASE:    'https://qkcskwappwpdbiaotewp.supabase.co/storage/v1/object/public/nakula-foto',
@@ -90,6 +91,59 @@
       });
 
       // Handle error server / network
+      if (!r.ok) {
+        let body = {};
+        try { body = await r.json(); } catch {}
+        return {
+          ok: false,
+          error: body.error || `Server error (${r.status})`,
+          status: r.status,
+        };
+      }
+      return r.json();
+    },
+
+    /**
+     * Panggil action di nakula-sekolah (fitur Profil Sekolah).
+     * Butuh token — untuk guru/KS/panitia.
+     */
+    async callSekolah(action, extra = {}) {
+      const token = this.getToken();
+      const r = await fetch(CONFIG.SEKOLAH_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': CONFIG.ANON_KEY,
+        },
+        body: JSON.stringify({ action, token, ...extra }),
+      });
+
+      if (!r.ok) {
+        let body = {};
+        try { body = await r.json(); } catch {}
+        return {
+          ok: false,
+          error: body.error || `Server error (${r.status})`,
+          status: r.status,
+        };
+      }
+      return r.json();
+    },
+
+    /**
+     * Panggil action publik di nakula-sekolah (tanpa token).
+     * Untuk galeri & profil sekolah.
+     */
+    async callSekolahPublik(action, extra = {}) {
+      const r = await fetch(CONFIG.SEKOLAH_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': CONFIG.ANON_KEY,
+        },
+        body: JSON.stringify({ action, ...extra }),
+      });
+
       if (!r.ok) {
         let body = {};
         try { body = await r.json(); } catch {}
