@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#611329" />
-<title>Kategori Ajuan — Admin NAKULAKU</title>
+<title>Kategori Ajuan — NAKULAKU Admin</title>
 
 <link rel="icon" type="image/png" href="../assets/img/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -21,6 +21,7 @@
     padding: 14px; background: var(--surface);
     border: 1.5px solid var(--border); border-radius: 16px;
     transition: all .15s;
+    animation: fade-in-up .35s var(--ease-out) both;
   }
   .kat-item:hover { border-color: var(--maroon); box-shadow: 0 4px 12px rgba(125,29,58,.08); }
   .kat-item.nonaktif { opacity: 0.55; background: var(--bg); }
@@ -28,9 +29,9 @@
   .kat-icon-box {
     width: 48px; height: 48px; border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; color: white; position: relative;
+    flex-shrink: 0; color: white;
   }
-  .kat-icon-box svg { width: 22px; height: 22px; stroke-width: 2; }
+  .kat-icon-box svg { width: 22px; height: 22px; }
 
   .kat-body { flex: 1; min-width: 0; }
   .kat-nama {
@@ -56,15 +57,15 @@
     font-size: 11px; font-weight: 800; flex-shrink: 0;
   }
   .kat-actions { display: flex; gap: 6px; flex-shrink: 0; }
-  .btn-icon-sm {
+  .kat-btn {
     width: 34px; height: 34px; border-radius: 10px;
     border: 1.5px solid var(--border); background: var(--surface);
     color: var(--muted); display: flex; align-items: center;
     justify-content: center; cursor: pointer; transition: all .15s; padding: 0;
   }
-  .btn-icon-sm svg { width: 16px; height: 16px; }
-  .btn-icon-sm:hover { border-color: var(--maroon); color: var(--maroon); background: var(--maroon-soft); }
-  .btn-icon-sm.danger:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-soft); }
+  .kat-btn svg { width: 16px; height: 16px; }
+  .kat-btn:hover { border-color: var(--maroon); color: var(--maroon); background: var(--maroon-soft); }
+  .kat-btn.danger:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-soft); }
 
   .badge-sistem, .badge-nonaktif {
     display: inline-flex; align-items: center; gap: 3px;
@@ -83,7 +84,7 @@
   .form-label { font-size: 12px; font-weight: 800; color: var(--ink); letter-spacing: 0.3px; }
   .form-label .req { color: var(--danger); }
   .form-help { font-size: 11px; color: var(--muted); font-weight: 500; line-height: 1.5; }
-  .form-help code { background: var(--bg); padding: 1px 4px; border-radius: 3px; font-size: 10px; }
+  .form-help code { background: var(--bg); padding: 1px 4px; border-radius: 3px; font-size: 10px; font-family: monospace; }
 
   .color-pick { display: flex; gap: 6px; flex-wrap: wrap; }
   .color-dot {
@@ -182,6 +183,15 @@
     background: var(--bg); border-radius: 0 0 20px 20px;
   }
 
+  /* ─── Tombol halaman ─── */
+  .page-toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .page-toolbar .btn { flex-shrink: 0; }
+
   .hidden { display: none !important; }
 </style>
 </head>
@@ -192,29 +202,28 @@
      ============================================================ -->
 <header class="admin-header">
   <div class="admin-header-left">
-    <a href="index.html" class="admin-header-btn" aria-label="Kembali">
-      <span data-icon="chevronLeft"></span>
-    </a>
+    <div class="admin-header-btn" style="background:transparent;">
+      <span data-icon="tag"></span>
+    </div>
     <div class="admin-header-title">
-      <div class="admin-header-title-1">Kategori Ajuan</div>
+      <div class="admin-header-title-1">KATEGORI AJUAN</div>
       <div class="admin-header-title-2">Admin NAKULAKU</div>
     </div>
   </div>
-  <button class="admin-header-btn" data-act="logout" aria-label="Keluar">
+  <button class="admin-header-btn" data-act="logout">
     <span data-icon="logOut"></span>
   </button>
 </header>
 
-<!-- ============================================================
-     LAYOUT
-     ============================================================ -->
 <div class="admin-layout">
 
-  <!-- SIDEBAR (desktop) -->
+  <!-- ============================================================
+       SIDEBAR DESKTOP
+       ============================================================ -->
   <aside class="admin-sidebar">
     <div class="admin-sidebar-brand">
       <div class="admin-sidebar-logo">
-        <img src="../assets/img/logo.svg" alt="NAKULAKU" onerror="this.style.display='none'">
+        <img src="../assets/img/logo-mark.svg" alt="Nakula" />
       </div>
       <div>
         <div class="admin-sidebar-name">NAKULAKU</div>
@@ -222,85 +231,97 @@
       </div>
     </div>
 
-    <div class="admin-sidebar-menu">
+    <nav class="admin-sidebar-menu">
       <div class="admin-sidebar-group">
-        <div class="admin-sidebar-group-title">Utama</div>
-        <a class="admin-sidebar-item" href="index.html">
+        <div class="admin-sidebar-group-title">Dashboard</div>
+        <a class="admin-sidebar-item" data-nav="dashboard" href="index.html">
           <span data-icon="layoutDashboard"></span> Dashboard
         </a>
-        <a class="admin-sidebar-item" href="guru.html">
+      </div>
+
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Data</div>
+        <a class="admin-sidebar-item" data-nav="guru" href="guru.html">
           <span data-icon="users"></span> Data Guru
         </a>
-        <a class="admin-sidebar-item" href="impor.html">
-          <span data-icon="upload"></span> Impor
+        <a class="admin-sidebar-item" data-nav="impor" href="impor.html">
+          <span data-icon="upload"></span> Impor CSV
         </a>
       </div>
 
       <div class="admin-sidebar-group">
         <div class="admin-sidebar-group-title">Kegiatan</div>
-        <a class="admin-sidebar-item" href="periode.html">
-          <span data-icon="calendar"></span> Periode
+        <a class="admin-sidebar-item" data-nav="periode" href="periode.html">
+          <span data-icon="calendar"></span> Kelola Periode
         </a>
-        <a class="admin-sidebar-item" href="pertemuan.html">
-          <span data-icon="list"></span> Pertemuan
+        <a class="admin-sidebar-item" data-nav="pertemuan" href="pertemuan.html">
+          <span data-icon="calendar"></span> Kelola Pertemuan
         </a>
-        <a class="admin-sidebar-item" href="pengumuman.html">
+        <a class="admin-sidebar-item" data-nav="pengumuman" href="pengumuman.html">
           <span data-icon="megaphone"></span> Pengumuman
         </a>
       </div>
 
       <div class="admin-sidebar-group">
-        <div class="admin-sidebar-group-title">Pengaturan</div>
-        <a class="admin-sidebar-item active" href="kategori-ajuan.html">
-          <span data-icon="tag"></span> Kategori Ajuan
+        <div class="admin-sidebar-group-title">Evaluasi</div>
+        <a class="admin-sidebar-item" data-nav="verifikasi-sekolah" href="verifikasi-sekolah.html">
+          <span data-icon="sparkles"></span> Verifikasi Sekolah
         </a>
-        <a class="admin-sidebar-item" href="verifikasi-sekolah.html">
-          <span data-icon="shield"></span> Verifikasi
+        <a class="admin-sidebar-item" data-nav="verifikasi-presensi" href="../ks/verifikasi.html">
+          <span data-icon="checkCircle"></span> Verifikasi Presensi
         </a>
-        <a class="admin-sidebar-item" href="feedback.html">
-          <span data-icon="messageSquare"></span> Feedback
+        <a class="admin-sidebar-item" data-nav="feedback" href="feedback.html">
+          <span data-icon="messageSquare"></span> Rekap Feedback
+        </a>
+        <a class="admin-sidebar-item" data-nav="award" href="award.html">
+          <span data-icon="award"></span> Kelola Award
+        </a>
+        <a class="admin-sidebar-item" data-nav="sertifikat" href="sertifikat.html">
+          <span data-icon="fileText"></span> Sertifikat
         </a>
       </div>
 
       <div class="admin-sidebar-group">
         <div class="admin-sidebar-group-title">Laporan</div>
-        <a class="admin-sidebar-item" href="award.html">
-          <span data-icon="award"></span> Award
-        </a>
-        <a class="admin-sidebar-item" href="sertifikat.html">
-          <span data-icon="fileText"></span> Sertifikat
-        </a>
-        <a class="admin-sidebar-item" href="analitik.html">
+        <a class="admin-sidebar-item" data-nav="analitik" href="analitik.html">
           <span data-icon="activity"></span> Analitik
         </a>
-        <a class="admin-sidebar-item" href="laporan.html">
-          <span data-icon="download"></span> Laporan
+        <a class="admin-sidebar-item" data-nav="laporan" href="laporan.html">
+          <span data-icon="download"></span> Export Laporan
         </a>
-        <a class="admin-sidebar-item" href="log.html">
-          <span data-icon="list"></span> Log
+      </div>
+
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Sistem</div>
+        <a class="admin-sidebar-item active" data-nav="kategori-ajuan" href="kategori-ajuan.html">
+          <span data-icon="tag"></span> Kategori Ajuan
         </a>
-        <a class="admin-sidebar-item" href="pengaturan.html">
+        <a class="admin-sidebar-item" data-nav="log" href="log.html">
+          <span data-icon="list"></span> Log Aktivitas
+        </a>
+        <a class="admin-sidebar-item" data-nav="pengaturan" href="pengaturan.html">
           <span data-icon="settings"></span> Pengaturan
         </a>
       </div>
-    </div>
+    </nav>
   </aside>
 
-  <!-- MAIN -->
-  <div class="admin-main">
+  <!-- ============================================================
+       MAIN
+       ============================================================ -->
+  <main class="admin-main">
 
-    <!-- Topbar desktop -->
     <div class="admin-topbar">
       <h1 class="admin-topbar-title">Kategori Ajuan</h1>
       <div class="admin-topbar-right">
-        <button class="btn btn-primary" id="btnTambahDesktop">
-          <span data-icon="plus" class="icon-sm"></span>
-          Kategori Baru
+        <div class="admin-user-chip" id="userChip"></div>
+        <button class="btn-icon" data-act="logout" aria-label="Keluar" title="Keluar">
+          <span data-icon="logOut"></span>
         </button>
       </div>
     </div>
 
-    <main class="admin-content">
+    <div class="admin-content">
 
       <!-- Info banner -->
       <div class="alert alert-info" style="margin-bottom:16px;display:flex;gap:10px;align-items:flex-start;">
@@ -311,11 +332,13 @@
         </div>
       </div>
 
-      <!-- Tombol tambah (mobile) -->
-      <button class="btn btn-primary btn-full" id="btnTambahMobile" style="margin-bottom:16px;">
-        <span data-icon="plus" class="icon-sm"></span>
-        Tambah Kategori Baru
-      </button>
+      <!-- Toolbar -->
+      <div class="page-toolbar">
+        <button class="btn btn-primary" id="btnTambah">
+          <span data-icon="plus" class="icon-sm"></span>
+          Kategori Baru
+        </button>
+      </div>
 
       <!-- Loading -->
       <div id="loading" class="skeleton" style="height:400px;border-radius:16px;"></div>
@@ -334,33 +357,28 @@
         <div style="font-size:13px;color:var(--muted);margin-bottom:16px;">Klik "Kategori Baru" untuk menambahkan.</div>
       </div>
 
-    </main>
-  </div>
+    </div>
+  </main>
 </div>
 
 <!-- ============================================================
-     BOTTOM NAV (mobile)
+     BOTTOM NAV MOBILE
      ============================================================ -->
 <nav class="admin-bottom-nav">
-  <a class="admin-nav-item" href="index.html">
-    <span data-icon="layoutDashboard"></span>
-    <span>Dashboard</span>
+  <a class="admin-nav-item" data-nav="dashboard" href="index.html">
+    <span data-icon="layoutDashboard"></span> Dashboard
   </a>
-  <a class="admin-nav-item" href="guru.html">
-    <span data-icon="users"></span>
-    <span>Guru</span>
+  <a class="admin-nav-item" data-nav="guru" href="guru.html">
+    <span data-icon="users"></span> Guru
   </a>
-  <a class="admin-nav-item" href="pertemuan.html">
-    <span data-icon="list"></span>
-    <span>Pertemuan</span>
+  <a class="admin-nav-item" data-nav="pertemuan" href="pertemuan.html">
+    <span data-icon="calendar"></span> Pertemuan
   </a>
-  <a class="admin-nav-item" href="award.html">
-    <span data-icon="award"></span>
-    <span>Award</span>
+  <a class="admin-nav-item" data-nav="verifikasi" href="verifikasi-sekolah.html">
+    <span data-icon="checkCircle"></span> Verifikasi
   </a>
-  <button class="admin-nav-item" id="btnMoreNav" style="background:none;border:none;font-family:inherit;">
-    <span data-icon="menu"></span>
-    <span>Lainnya</span>
+  <button class="admin-nav-item" id="btnLainnya">
+    <span data-icon="menu"></span> Lainnya
   </button>
 </nav>
 
@@ -374,7 +392,7 @@
         <div class="modal-title" id="modalTitle">Kategori Baru</div>
         <div class="modal-sub" id="modalSub">Isi data kategori ajuan</div>
       </div>
-      <button class="btn-icon-sm" data-close-modal aria-label="Tutup">
+      <button class="btn-icon" data-close-modal aria-label="Tutup">
         <span data-icon="x"></span>
       </button>
     </div>
@@ -479,13 +497,13 @@
 </div>
 
 <!-- ============================================================
-     MODAL KONFIRMASI HAPUS
+     MODAL KONFIRMASI NONAKTIFKAN
      ============================================================ -->
 <div id="modalHapus" class="modal-backdrop hidden">
   <div class="modal" style="max-width:400px;">
     <div class="modal-header">
       <div class="modal-title">Nonaktifkan Kategori?</div>
-      <button class="btn-icon-sm" data-close-modal aria-label="Tutup">
+      <button class="btn-icon" data-close-modal aria-label="Tutup">
         <span data-icon="x"></span>
       </button>
     </div>
@@ -509,71 +527,165 @@
   </div>
 </div>
 
-<!-- ============================================================
-     BOTTOM SHEET "Lainnya"
-     ============================================================ -->
-<div id="sheetMore" class="admin-sheet-overlay hidden">
-  <div class="admin-sheet">
-    <div class="admin-sheet-handle"></div>
-    <div class="admin-sheet-title">Menu Lainnya</div>
-    <div class="admin-sheet-grid">
-      <a class="admin-sheet-item" href="impor.html">
-        <span class="icon-wrap"><span data-icon="upload"></span></span>
-        <span>Impor</span>
-      </a>
-      <a class="admin-sheet-item" href="periode.html">
-        <span class="icon-wrap"><span data-icon="calendar"></span></span>
-        <span>Periode</span>
-      </a>
-      <a class="admin-sheet-item" href="pengumuman.html">
-        <span class="icon-wrap"><span data-icon="megaphone"></span></span>
-        <span>Pengumuman</span>
-      </a>
-      <a class="admin-sheet-item" href="kategori-ajuan.html">
-        <span class="icon-wrap"><span data-icon="tag"></span></span>
-        <span>Kategori</span>
-      </a>
-      <a class="admin-sheet-item" href="verifikasi-sekolah.html">
-        <span class="icon-wrap"><span data-icon="shield"></span></span>
-        <span>Verifikasi</span>
-      </a>
-      <a class="admin-sheet-item" href="feedback.html">
-        <span class="icon-wrap"><span data-icon="messageSquare"></span></span>
-        <span>Feedback</span>
-      </a>
-      <a class="admin-sheet-item gold" href="sertifikat.html">
-        <span class="icon-wrap"><span data-icon="fileText"></span></span>
-        <span>Sertifikat</span>
-      </a>
-      <a class="admin-sheet-item gold" href="analitik.html">
-        <span class="icon-wrap"><span data-icon="activity"></span></span>
-        <span>Analitik</span>
-      </a>
-      <a class="admin-sheet-item gold" href="laporan.html">
-        <span class="icon-wrap"><span data-icon="download"></span></span>
-        <span>Laporan</span>
-      </a>
-    </div>
-  </div>
-</div>
-
 <script src="../assets/js/icons.js"></script>
 <script src="../assets/js/api.js"></script>
 <script src="../assets/js/ui.js"></script>
 <script>
 // ============================================================
-// INIT ICONS
+// LAYOUT HELPER — disalin dari index.html
 // ============================================================
-function refreshIcons(root = document) {
-  root.querySelectorAll('[data-icon]').forEach(el => {
-    const nama = el.dataset.icon;
-    if (!nama) return;
-    el.innerHTML = Icons.get(nama);
-    if (el.tagName === 'SPAN') el.style.display = 'contents';
+(function () {
+  document.querySelectorAll('[data-icon]').forEach(el => {
+    el.innerHTML = Icons.get(el.dataset.icon);
+    el.style.display = 'contents';
   });
-}
-refreshIcons();
-UI.bindLogout();
+
+  UI.bindLogout();
+
+  // Set nav aktif (kategori-ajuan di-hardcode via class="active" di HTML,
+  // tapi kalau perlu dynamic, fungsi ini tersedia)
+  function setNavAktif() {
+    const path = window.location.pathname.split('/').pop().replace('.html', '');
+    const map = {
+      'index': 'dashboard',
+      'guru': 'guru',
+      'impor': 'impor',
+      'periode': 'periode',
+      'pertemuan': 'pertemuan',
+      'pertemuan-detail': 'pertemuan',
+      'pengumuman': 'pengumuman',
+      'verifikasi-sekolah': 'verifikasi-sekolah',
+      'verifikasi': 'verifikasi-presensi',
+      'feedback': 'feedback',
+      'award': 'award',
+      'sertifikat': 'sertifikat',
+      'analitik': 'analitik',
+      'laporan': 'laporan',
+      'kategori-ajuan': 'kategori-ajuan',
+      'log': 'log',
+      'pengaturan': 'pengaturan',
+    };
+    const aktif = map[path] || path;
+    document.querySelectorAll('[data-nav]').forEach(el => {
+      el.classList.toggle('active', el.dataset.nav === aktif);
+    });
+  }
+  setNavAktif();
+
+  // Bottom sheet "Lainnya"
+  document.getElementById('btnLainnya')?.addEventListener('click', () => {
+    const overlay = document.createElement('div');
+    overlay.className = 'admin-sheet-overlay';
+    overlay.innerHTML = `
+      <div class="admin-sheet">
+        <div class="admin-sheet-handle"></div>
+
+        <div class="admin-sheet-title">Data</div>
+        <div class="admin-sheet-grid">
+          <a class="admin-sheet-item" href="guru.html">
+            <div class="icon-wrap">${Icons.get('users', { class: 'icon-sm' })}</div>
+            <span>Data Guru</span>
+          </a>
+          <a class="admin-sheet-item" href="impor.html">
+            <div class="icon-wrap">${Icons.get('upload', { class: 'icon-sm' })}</div>
+            <span>Impor CSV</span>
+          </a>
+        </div>
+
+        <div class="admin-sheet-title">Kegiatan</div>
+        <div class="admin-sheet-grid">
+          <a class="admin-sheet-item" href="periode.html">
+            <div class="icon-wrap">${Icons.get('calendar', { class: 'icon-sm' })}</div>
+            <span>Kelola Periode</span>
+          </a>
+          <a class="admin-sheet-item" href="pertemuan.html">
+            <div class="icon-wrap">${Icons.get('calendar', { class: 'icon-sm' })}</div>
+            <span>Kelola Pertemuan</span>
+          </a>
+          <a class="admin-sheet-item" href="pengumuman.html">
+            <div class="icon-wrap">${Icons.get('megaphone', { class: 'icon-sm' })}</div>
+            <span>Pengumuman</span>
+          </a>
+        </div>
+
+        <div class="admin-sheet-title">Evaluasi</div>
+        <div class="admin-sheet-grid">
+          <a class="admin-sheet-item" href="verifikasi-sekolah.html">
+            <div class="icon-wrap">${Icons.get('sparkles', { class: 'icon-sm' })}</div>
+            <span>Verifikasi Sekolah</span>
+          </a>
+          <a class="admin-sheet-item" href="../ks/verifikasi.html">
+            <div class="icon-wrap">${Icons.get('checkCircle', { class: 'icon-sm' })}</div>
+            <span>Verifikasi Presensi</span>
+          </a>
+          <a class="admin-sheet-item" href="feedback.html">
+            <div class="icon-wrap">${Icons.get('messageSquare', { class: 'icon-sm' })}</div>
+            <span>Rekap Feedback</span>
+          </a>
+          <a class="admin-sheet-item gold" href="award.html">
+            <div class="icon-wrap">${Icons.get('award', { class: 'icon-sm' })}</div>
+            <span>Kelola Award</span>
+          </a>
+          <a class="admin-sheet-item gold" href="sertifikat.html">
+            <div class="icon-wrap">${Icons.get('fileText', { class: 'icon-sm' })}</div>
+            <span>Sertifikat</span>
+          </a>
+        </div>
+
+        <div class="admin-sheet-title">Laporan & Sistem</div>
+        <div class="admin-sheet-grid">
+          <a class="admin-sheet-item blue" href="analitik.html">
+            <div class="icon-wrap">${Icons.get('activity', { class: 'icon-sm' })}</div>
+            <span>Analitik</span>
+          </a>
+          <a class="admin-sheet-item green" href="laporan.html">
+            <div class="icon-wrap">${Icons.get('download', { class: 'icon-sm' })}</div>
+            <span>Export Laporan</span>
+          </a>
+          <a class="admin-sheet-item" href="kategori-ajuan.html">
+            <div class="icon-wrap">${Icons.get('tag', { class: 'icon-sm' })}</div>
+            <span>Kategori Ajuan</span>
+          </a>
+          <a class="admin-sheet-item" href="log.html">
+            <div class="icon-wrap">${Icons.get('list', { class: 'icon-sm' })}</div>
+            <span>Log Aktivitas</span>
+          </a>
+          <a class="admin-sheet-item" href="pengaturan.html">
+            <div class="icon-wrap">${Icons.get('settings', { class: 'icon-sm' })}</div>
+            <span>Pengaturan</span>
+          </a>
+        </div>
+
+        <button class="btn btn-primary btn-full" id="btnTutupSheet" style="margin-top:16px;">
+          Tutup
+        </button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    const close = () => overlay.remove();
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+    overlay.querySelector('#btnTutupSheet').addEventListener('click', close);
+  });
+
+  // User chip
+  window.addEventListener('load', async () => {
+    const profile = Api.getProfile();
+    if (!profile) return;
+    const chip = document.getElementById('userChip');
+    if (chip) {
+      const init = (profile.nama || 'A').charAt(0).toUpperCase();
+      const fotoUrl = Api.fotoSayaUrl('t');
+      chip.innerHTML = `
+        <div class="avatar">
+          ${fotoUrl
+            ? `<img src="${fotoUrl}" onerror="this.parentElement.textContent='${init}'">`
+            : init}
+        </div>
+        <span>${UI.escapeHtml(profile.nama || '-')}</span>
+      `;
+    }
+  });
+})();
 
 // ============================================================
 // KONSTANTA
@@ -622,6 +734,10 @@ async function loadKategori() {
   if (!res.ok) {
     UI.gagal(res.error || 'Gagal memuat kategori.');
     document.getElementById('empty').classList.remove('hidden');
+    document.querySelectorAll('#empty [data-icon]').forEach(el => {
+      el.innerHTML = Icons.get(el.dataset.icon);
+      el.style.display = 'contents';
+    });
     return;
   }
 
@@ -629,7 +745,10 @@ async function loadKategori() {
 
   if (kategoriData.length === 0) {
     document.getElementById('empty').classList.remove('hidden');
-    refreshIcons(document.getElementById('empty'));
+    document.querySelectorAll('#empty [data-icon]').forEach(el => {
+      el.innerHTML = Icons.get(el.dataset.icon);
+      el.style.display = 'contents';
+    });
     return;
   }
 
@@ -657,8 +776,7 @@ function renderList() {
           <div class="kat-kode">${UI.escapeHtml(k.kode)}</div>
           <div class="kat-meta">
             <span class="kat-meta-item">
-              ${Icons.get('hash')}
-              Urutan ${k.urutan}
+              ${Icons.get('hash')} Urutan ${k.urutan}
             </span>
             ${k.butuh_lampiran ? `<span class="kat-meta-item">${Icons.get('link')} Wajib lampiran</span>` : ''}
             ${k.multi_hari ? `<span class="kat-meta-item">${Icons.get('calendar')} Multi-hari</span>` : ''}
@@ -666,16 +784,16 @@ function renderList() {
         </div>
         <div class="kat-poin">${k.poin} poin</div>
         <div class="kat-actions">
-          <button class="btn-icon-sm" data-act="edit" data-id="${k.id}" title="${isSistem ? 'Lihat' : 'Edit'}">
+          <button class="kat-btn" data-act="edit" data-id="${k.id}" title="${isSistem ? 'Lihat' : 'Edit'}">
             ${Icons.get(isSistem ? 'eye' : 'edit')}
           </button>
           ${!isSistem && k.aktif ? `
-            <button class="btn-icon-sm danger" data-act="hapus" data-id="${k.id}" title="Nonaktifkan">
+            <button class="kat-btn danger" data-act="hapus" data-id="${k.id}" title="Nonaktifkan">
               ${Icons.get('power')}
             </button>
           ` : ''}
           ${!isSistem && !k.aktif ? `
-            <button class="btn-icon-sm" data-act="aktifkan" data-id="${k.id}" title="Aktifkan">
+            <button class="kat-btn" data-act="aktifkan" data-id="${k.id}" title="Aktifkan">
               ${Icons.get('checkCircle')}
             </button>
           ` : ''}
@@ -686,7 +804,6 @@ function renderList() {
 
   document.getElementById('listWrap').classList.remove('hidden');
 
-  // Bind actions
   el.querySelectorAll('[data-act]').forEach(btn => {
     btn.addEventListener('click', () => {
       const act = btn.dataset.act;
@@ -699,10 +816,9 @@ function renderList() {
 }
 
 // ============================================================
-// TOMBOL TAMBAH (mobile + desktop)
+// TOMBOL TAMBAH
 // ============================================================
-document.getElementById('btnTambahMobile').addEventListener('click', () => bukaModal(null));
-document.getElementById('btnTambahDesktop').addEventListener('click', () => bukaModal(null));
+document.getElementById('btnTambah').addEventListener('click', () => bukaModal(null));
 
 // ============================================================
 // MODAL FORM — BUKA
@@ -727,7 +843,8 @@ function bukaModal(id) {
   warnaDipilih = k ? (k.warna || '#7D1D3A') : '#7D1D3A';
   ikonDipilih = k ? (k.ikon || 'fileText') : 'fileText';
 
-  document.getElementById('modalTitle').textContent = isSistem ? 'Lihat Kategori Sistem' : (k ? 'Edit Kategori' : 'Kategori Baru');
+  document.getElementById('modalTitle').textContent =
+    isSistem ? 'Lihat Kategori Sistem' : (k ? 'Edit Kategori' : 'Kategori Baru');
   document.getElementById('modalSub').textContent = k ? k.kode : 'Isi data kategori ajuan';
 
   ['inputKode', 'inputNama', 'inputPoin', 'inputUrutan',
@@ -821,7 +938,7 @@ function updatePreview() {
   document.getElementById(id).addEventListener('input', updatePreview);
 });
 
-// Auto-generate kode
+// Auto-generate kode dari nama
 document.getElementById('inputNama').addEventListener('input', e => {
   const kodeEl = document.getElementById('inputKode');
   if (!kodeEl.dataset.touched) {
@@ -936,18 +1053,6 @@ async function aktifkanKategori(id) {
   UI.sukses('Kategori diaktifkan.');
   await loadKategori();
 }
-
-// ============================================================
-// BOTTOM SHEET "LAINNYA"
-// ============================================================
-document.getElementById('btnMoreNav').addEventListener('click', () => {
-  document.getElementById('sheetMore').classList.remove('hidden');
-});
-document.getElementById('sheetMore').addEventListener('click', e => {
-  if (e.target.id === 'sheetMore') {
-    document.getElementById('sheetMore').classList.add('hidden');
-  }
-});
 
 // ============================================================
 // START
