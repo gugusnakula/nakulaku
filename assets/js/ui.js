@@ -84,6 +84,39 @@
       return `${this.formatTanggalPendek(d)} · ${this.formatJam(d)}`;
     },
 
+    /**
+     * Extract thumbnail dari URL (YouTube, Google Drive, atau image langsung).
+     * Return URL gambar atau null kalau tidak bisa.
+     */
+    thumbnail(url) {
+      if (!url || typeof url !== 'string') return null;
+      try {
+        // YouTube: youtube.com/watch?v=X, youtu.be/X, youtube.com/shorts/X, embed/X
+        const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([^&?/#]+)/);
+        if (yt && yt[1]) {
+          return `https://img.youtube.com/vi/${yt[1]}/mqdefault.jpg`;
+        }
+
+        // Google Drive: drive.google.com/file/d/FILE_ID/...
+        const gd = url.match(/\/d\/([^/?#]+)/);
+        if (gd && gd[1]) {
+          return `https://drive.google.com/thumbnail?id=${gd[1]}&sz=w400`;
+        }
+        // Google Drive: drive.google.com/open?id=FILE_ID
+        const gdOpen = url.match(/[?&]id=([^&]+)/);
+        if (gdOpen && url.includes('drive.google.com') && gdOpen[1]) {
+          return `https://drive.google.com/thumbnail?id=${gdOpen[1]}&sz=w400`;
+        }
+
+        // Direct image
+        if (/\.(jpg|jpeg|png|webp|gif|avif)(\?.*)?$/i.test(url)) return url;
+
+        // Google Photos (thumbnail) — kadang bisa
+        // Skip karena biasanya butuh auth
+      } catch {}
+      return null;
+    },
+
     // ==================== KEAMANAN ====================
     escapeHtml(s) {
       return String(s ?? '').replace(/[&<>"']/g, c => ({
