@@ -371,7 +371,15 @@ async function renderPresensi(presensi, pertemuan, data) {
     const izin = res.ok ? res.data : null;
 
     if (izin) {
-      const jenisLabel = { ijin: 'Ijin', sakit: 'Sakit', cuti: 'Cuti' }[izin.jenis] || izin.jenis;
+      const jenisLabel = {
+        ijin: 'Ijin',
+        izin_pribadi: 'Izin Pribadi',
+        sakit: 'Sakit',
+        sakit_tanpa_surat: 'Sakit (tanpa surat)',
+        dinas_luar: 'Dinas Luar',
+        cuti: 'Cuti',
+        cuti_melahirkan: 'Cuti Melahirkan',
+      }[izin.kategori_kode || izin.jenis] || izin.kategori_kode || izin.jenis;
       const statusInfo = izin.status_ks === 'menunggu'
         ? { cls: 'badge-warning', text: 'Menunggu Verifikasi KS' }
         : izin.status_ks === 'disetujui'
@@ -428,13 +436,17 @@ async function renderPresensi(presensi, pertemuan, data) {
   }
 
   const statusMap = {
-    tepat_waktu: { label: 'Tepat Waktu', cls: 'badge-success', icon: 'checkCircle' },
-    terlambat: { label: 'Terlambat', cls: 'badge-warning', icon: 'clock' },
-    luar_radius: { label: 'Luar Radius', cls: 'badge-warning', icon: 'alertTriangle' },
-    ijin: { label: 'Ijin', cls: 'badge-info', icon: 'fileText' },
-    sakit: { label: 'Sakit', cls: 'badge-info', icon: 'fileText' },
-    cuti: { label: 'Cuti', cls: 'badge-info', icon: 'fileText' },
-    alfa: { label: 'Alfa', cls: 'badge-danger', icon: 'x' },
+    tepat_waktu:       { label: 'Tepat Waktu',        cls: 'badge-success', icon: 'checkCircle' },
+    terlambat:         { label: 'Terlambat',           cls: 'badge-warning', icon: 'clock' },
+    luar_radius:       { label: 'Luar Radius',         cls: 'badge-warning', icon: 'alertTriangle' },
+    izin_pribadi:      { label: 'Izin Pribadi',        cls: 'badge-info',    icon: 'fileText' },
+    sakit:             { label: 'Sakit',               cls: 'badge-info',    icon: 'fileText' },
+    sakit_tanpa_surat: { label: 'Sakit (tanpa surat)', cls: 'badge-info',    icon: 'fileText' },
+    dinas_luar:        { label: 'Dinas Luar',          cls: 'badge-info',    icon: 'briefcase' },
+    cuti_melahirkan:   { label: 'Cuti Melahirkan',     cls: 'badge-info',    icon: 'heart' },
+    ijin:              { label: 'Ijin',                cls: 'badge-info',    icon: 'fileText' },  // legacy
+    cuti:              { label: 'Cuti',                cls: 'badge-info',    icon: 'fileText' },  // legacy
+    alfa:              { label: 'Alfa',                cls: 'badge-danger',  icon: 'x' },
   };
   const s = statusMap[presensi.status] || statusMap.alfa;
 
@@ -453,9 +465,19 @@ async function renderPresensi(presensi, pertemuan, data) {
         ${Icons.get('clock', { class: 'icon-sm' })} 
         ${UI.formatTanggalJam(presensi.waktu_submit)}
       </div>
-      ${presensi.verifikasi_ks && presensi.verifikasi_ks !== 'menunggu' ? `
-        <div class="text-xs ${presensi.verifikasi_ks === 'disetujui' ? '' : 'text-danger'}" style="margin-top:8px;">
-          ${presensi.verifikasi_ks === 'disetujui' ? '✓ Diverifikasi KS' : '✗ Ditolak KS'}
+      ${presensi.verifikasi_ks === 'menunggu' ? `
+        <div class="text-xs text-muted" style="margin-top:8px;padding:8px 10px;background:var(--warning-soft);border-radius:8px;">
+          ⏳ Menunggu verifikasi admin
+        </div>
+      ` : ''}
+      ${presensi.verifikasi_ks === 'disetujui' ? `
+        <div class="text-xs" style="margin-top:8px;color:var(--success);">
+          ✓ Diverifikasi
+        </div>
+      ` : ''}
+      ${presensi.verifikasi_ks === 'ditolak' ? `
+        <div class="text-xs text-danger" style="margin-top:8px;">
+          ✗ Ditolak — tidak dihitung
         </div>
       ` : ''}
     </div>
@@ -759,94 +781,14 @@ function lihatTugas(id) {
 
 function ajukanIzin() {
   const params = new URLSearchParams(window.location.search);
-  const id = Number(params.get('id'));
-
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
-  overlay.innerHTML = `
-    <div style="background:white;border-radius:20px;padding:24px;max-width:480px;width:100%;box-shadow:var(--sh-xl);max-height:90vh;overflow-y:auto;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-        <h3 style="font-size:17px;color:var(--maroon);margin:0;">Ajukan Ijin / Sakit / Cuti</h3>
-        <button data-close class="btn-icon">${Icons.get('x')}</button>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div class="field">
-          <label class="label">Jenis *</label>
-          <select id="izinJenis" class="input">
-            <option value="">— Pilih —</option>
-            <option value="ijin">Ijin</option>
-            <option value="sakit">Sakit</option>
-            <option value="cuti">Cuti</option>
-          </select>
-        </div>
-        <div class="field">
-          <label class="label">Alasan *</label>
-          <textarea id="izinAlasan" class="input" rows="3" style="resize:vertical;" placeholder="Jelaskan alasan Anda…"></textarea>
-        </div>
-        <div class="field">
-          <label class="label">Lampiran (opsional)</label>
-          <input type="url" id="izinLampiran" class="input" placeholder="https://drive.google.com/…" />
-        </div>
-      </div>
-
-      <div id="izinAlert" class="alert alert-error" style="margin-top:14px;"></div>
-
-      <div style="display:flex;gap:8px;margin-top:20px;">
-        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
-        <button class="btn btn-primary" id="btnKirimIzin" style="flex:2;">Kirim Ajuan</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-
-  const close = () => overlay.remove();
-  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
-  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
-
-  overlay.querySelector('#btnKirimIzin').addEventListener('click', async () => {
-    const btn = overlay.querySelector('#btnKirimIzin');
-    const alertBox = overlay.querySelector('#izinAlert');
-    alertBox.classList.remove('show');
-
-    const jenis = overlay.querySelector('#izinJenis').value;
-    const alasan = overlay.querySelector('#izinAlasan').value.trim();
-    const lampiran = overlay.querySelector('#izinLampiran').value.trim();
-
-    if (!jenis) { alertBox.textContent = 'Pilih jenis ajuan.'; alertBox.classList.add('show'); return; }
-    if (!alasan) { alertBox.textContent = 'Alasan wajib diisi.'; alertBox.classList.add('show'); return; }
-
-    UI.btnLoading(btn, 'Mengirim…');
-    const res = await Api.call('izin.ajukan', {
-      pertemuan_id: id,
-      jenis,
-      alasan,
-      lampiran_url: lampiran,
-    });
-    UI.btnReset(btn);
-
-    if (!res.ok) {
-      alertBox.textContent = res.error || 'Gagal mengirim.';
-      alertBox.classList.add('show');
-      return;
-    }
-
-    UI.sukses('Ajuan terkirim. Menunggu verifikasi KS.');
-    close();
-
-    const resDetail = await Api.call('pertemuan.detail', { pertemuan_id: id });
-    if (resDetail.ok) {
-      renderPresensi(resDetail.data.presensi_saya, resDetail.data.pertemuan, resDetail.data);
-    }
-  });
+  const id = params.get('id');
+  // Redirect ke halaman wizard ajukan.html
+  window.location.href = 'ajukan.html?id=' + id;
 }
 
 function batalkanIzin() {
-  UI.konfirmasi(
-    'Ubah Ajuan',
-    'Ajuan lama akan diganti. Anda bisa memilih jenis dan alasan baru.',
-    { okText: 'Lanjut' }
-  ).then(ok => { if (ok) ajukanIzin(); });
+  // Ajuan lama otomatis diganti saat guru submit ulang di ajukan.html
+  ajukanIzin();
 }
 </script>
 
