@@ -13,129 +13,346 @@
 <link rel="stylesheet" href="assets/css/nakula.css" />
 
 <style>
-  .profile-hero {
-    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon) 100%);
+  /* ============================================
+     HERO PROFIL
+     ============================================ */
+  .hero-profil {
+    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 50%, #9B2649 100%);
     color: white;
-    border-radius: var(--r-xl);
-    padding: 28px 20px;
+    border-radius: 24px;
+    padding: 32px 20px 24px;
     text-align: center;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 8px 24px rgba(125,29,58,.25);
+    box-shadow: 0 12px 32px rgba(125,29,58,.28);
     margin-bottom: 20px;
+    animation: fade-in-up .5s var(--ease-out) both;
   }
-  .profile-hero::before {
+  .hero-profil::before {
     content: '';
     position: absolute;
-    top: -80px; right: -80px;
+    top: -100px; right: -80px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,169,97,.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-profil::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -60px;
     width: 220px; height: 220px;
     border-radius: 50%;
-    background: var(--gold);
-    opacity: 0.08;
+    background: radial-gradient(circle, rgba(201,169,97,.18) 0%, transparent 70%);
+    pointer-events: none;
   }
-  .avatar-wrap {
-    width: 92px;
-    height: 92px;
-    border-radius: 50%;
-    background: rgba(255,255,255,.18);
-    border: 3px solid var(--gold);
-    margin: 0 auto 14px;
+
+  .hero-avatar-wrap {
+    width: 108px;
+    height: 108px;
+    margin: 0 auto 16px;
     position: relative;
-    overflow: hidden;
+    z-index: 1;
+  }
+  .hero-avatar {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: rgba(255,255,255,.2);
+    border: 4px solid var(--gold);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 34px;
+    font-size: 42px;
     font-weight: 800;
     color: white;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 12px 28px rgba(0,0,0,.25),
+      0 0 0 8px rgba(201,169,97,.12);
     cursor: pointer;
-    transition: transform .15s;
+    transition: transform .2s var(--ease-out);
   }
-  .avatar-wrap:hover { transform: scale(1.03); }
-  .avatar-wrap img {
-    position: absolute;
-    inset: 0;
+  .hero-avatar:hover {
+    transform: scale(1.03);
+  }
+  .hero-avatar img {
+    position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover;
   }
-  .avatar-edit {
+  .hero-avatar .camera-badge {
     position: absolute;
-    bottom: 0; right: 0;
-    width: 28px; height: 28px;
+    bottom: -4px;
+    right: -4px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background: var(--gold);
-    color: var(--maroon);
-    display: flex; align-items: center; justify-content: center;
-    border: 2px solid var(--maroon);
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--maroon);
     z-index: 2;
+    box-shadow: 0 4px 12px rgba(0,0,0,.25);
   }
-  .profile-hero .nama {
-    font-size: 18px;
+  .hero-avatar .camera-badge svg {
+    width: 16px; height: 16px;
+    stroke-width: 2.5;
+  }
+
+  .hero-nama {
+    font-size: 20px;
     font-weight: 800;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     position: relative;
+    z-index: 1;
+    line-height: 1.3;
+    letter-spacing: 0.2px;
   }
-  .profile-hero .sekolah {
+  .hero-sekolah {
     font-size: 13px;
     opacity: 0.85;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
+    font-weight: 600;
     position: relative;
+    z-index: 1;
   }
-  .profile-hero .badges {
+  .hero-peran {
     display: flex;
     gap: 6px;
     justify-content: center;
     flex-wrap: wrap;
     position: relative;
+    z-index: 1;
   }
-  .profile-hero .badges .badge {
-    background: rgba(255,255,255,.18);
+  .hero-peran .badge {
+    background: rgba(255,255,255,.15);
     color: white;
     border: 1px solid rgba(201,169,97,.4);
+    font-size: 10px;
+    padding: 4px 11px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
   }
 
+  /* ============================================
+     INFO CARD
+     ============================================ */
   .info-card {
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    padding: 16px 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 20px;
     margin-bottom: 14px;
+    animation: fade-in-up .5s var(--ease-out) both;
   }
   .info-card-title {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
     color: var(--maroon);
     text-transform: uppercase;
-    letter-spacing: .5px;
-    margin-bottom: 12px;
+    letter-spacing: 0.8px;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
+  .info-card-title .icon-wrap {
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    background: var(--maroon-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .info-row {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding: 8px 0;
+    padding: 11px 0;
     border-bottom: 1px solid var(--border);
+    gap: 16px;
     font-size: 13px;
-    gap: 12px;
   }
-  .info-row:last-child { border-bottom: none; }
+  .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .info-row:first-of-type { padding-top: 0; }
   .info-row .lbl {
     color: var(--muted);
-    font-weight: 600;
+    font-weight: 700;
     flex-shrink: 0;
-    min-width: 110px;
+    min-width: 100px;
+    font-size: 12px;
   }
   .info-row .val {
     font-weight: 700;
     text-align: right;
     word-break: break-word;
+    color: var(--ink);
     flex: 1;
   }
 
-  .file-input-hidden { display: none; }
+  /* ============================================
+     FORM PIN
+     ============================================ */
+  .pin-desc {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .input-pin-wrap {
+    position: relative;
+    margin-bottom: 12px;
+  }
+  .input-pin-wrap .field-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted-soft);
+    pointer-events: none;
+    z-index: 2;
+    transition: color .2s;
+  }
+  .input-pin-wrap:focus-within .field-icon {
+    color: var(--maroon);
+  }
+  .input-pin {
+    width: 100%;
+    padding: 14px 48px 14px 46px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 6px;
+    background: var(--surface);
+    color: var(--ink);
+    transition: all .15s;
+  }
+  .input-pin::placeholder {
+    letter-spacing: 2px;
+    font-weight: 500;
+    color: var(--muted-soft);
+  }
+  .input-pin:focus {
+    outline: none;
+    border-color: var(--maroon);
+    box-shadow: 0 0 0 4px rgba(125,29,58,.08);
+  }
+  .input-pin-toggle {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .15s;
+    z-index: 2;
+  }
+  .input-pin-toggle:hover {
+    background: var(--maroon-soft);
+    color: var(--maroon);
+  }
+
+  /* ============================================
+     TENTANG
+     ============================================ */
+  .about-box {
+    text-align: center;
+    padding: 8px 0;
+  }
+  .about-box .logo {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 14px;
+    background: white;
+    border-radius: 20px;
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(125,29,58,.1);
+  }
+  .about-box .logo img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transform: scale(1.15);
+  }
+  .about-box .nama {
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--maroon);
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+  }
+  .about-box .sub {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .about-box .versi {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    padding: 5px 12px;
+    background: var(--bg);
+    border-radius: 999px;
+    color: var(--muted);
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .about-box .versi::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 0 3px rgba(21,128,61,.15);
+  }
+
+  /* ============================================
+     ALERT
+     ============================================ */
+  .form-alert {
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: 12.5px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    animation: slide-down .3s var(--ease-spring) both;
+  }
+  .form-alert.show { display: flex; }
+  .form-alert.error {
+    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+    color: var(--danger);
+    border: 1.5px solid rgba(185,28,28,.15);
+  }
+  .form-alert.success {
+    background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+    color: var(--success);
+    border: 1.5px solid rgba(21,128,61,.15);
+  }
 </style>
 </head>
 <body>
@@ -152,71 +369,86 @@
   </div>
 </header>
 
-<main class="container page" style="max-width:720px;padding-top:16px;">
+<main class="container page" style="max-width:720px;padding-top:16px;padding-bottom:40px;">
 
   <div id="loading">
-    <div class="skeleton" style="height:220px;border-radius:24px;margin-bottom:20px;"></div>
-    <div class="skeleton" style="height:180px;border-radius:16px;margin-bottom:14px;"></div>
-    <div class="skeleton" style="height:200px;border-radius:16px;"></div>
+    <div class="skeleton" style="height:280px;border-radius:24px;margin-bottom:20px;"></div>
+    <div class="skeleton" style="height:200px;border-radius:18px;margin-bottom:14px;"></div>
+    <div class="skeleton" style="height:240px;border-radius:18px;"></div>
   </div>
 
   <div id="content" class="hidden">
 
-    <!-- Hero -->
-    <div class="profile-hero" id="hero"></div>
+    <!-- HERO PROFIL -->
+    <div class="hero-profil">
+      <div class="hero-avatar-wrap">
+        <div class="hero-avatar" id="heroAvatar">?</div>
+      </div>
+      <div class="hero-nama" id="heroNama">—</div>
+      <div class="hero-sekolah" id="heroSekolah">—</div>
+      <div class="hero-peran" id="heroPeran"></div>
+    </div>
 
-    <!-- Info Diri -->
+    <!-- DATA DIRI -->
     <div class="info-card">
       <div class="info-card-title">
-        <span data-icon="user" class="icon-sm"></span>
+        <span class="icon-wrap"><span data-icon="user" class="icon-sm"></span></span>
         Data Diri
       </div>
       <div id="infoDiri"></div>
     </div>
 
-    <!-- Ganti PIN -->
+    <!-- GANTI PIN -->
     <div class="info-card">
       <div class="info-card-title">
-        <span data-icon="lock" class="icon-sm"></span>
+        <span class="icon-wrap"><span data-icon="lock" class="icon-sm"></span></span>
         Ganti PIN
       </div>
-      <p class="text-sm text-muted" style="margin-bottom:14px;">
-        PIN digunakan untuk login. Setelah ganti PIN, Anda akan diminta login ulang.
-      </p>
 
-      <div class="field" style="margin-bottom:12px;">
-        <label class="label">PIN Lama</label>
-        <input type="password" id="pinLama" class="input" inputmode="numeric" maxlength="6" placeholder="•••••" />
-      </div>
-      <div class="field" style="margin-bottom:12px;">
-        <label class="label">PIN Baru</label>
-        <input type="password" id="pinBaru" class="input" inputmode="numeric" maxlength="6" placeholder="5–6 digit angka" />
-      </div>
-      <div class="field" style="margin-bottom:16px;">
-        <label class="label">Ulangi PIN Baru</label>
-        <input type="password" id="pinUlang" class="input" inputmode="numeric" maxlength="6" placeholder="Ulangi PIN baru" />
+      <div class="pin-desc">
+        PIN digunakan untuk login. Setelah ganti PIN, Anda akan diminta login ulang di semua perangkat.
       </div>
 
-      <div id="alertPin" class="alert alert-error" style="margin-bottom:12px;"></div>
+      <div class="input-pin-wrap">
+        <span class="field-icon" data-icon="lock"></span>
+        <input type="password" id="pinLama" class="input-pin" inputmode="numeric" maxlength="6" placeholder="PIN LAMA" />
+      </div>
 
-      <button class="btn btn-primary btn-full" id="btnGantiPin">
+      <div class="input-pin-wrap">
+        <span class="field-icon" data-icon="keyRound"></span>
+        <input type="password" id="pinBaru" class="input-pin" inputmode="numeric" maxlength="6" placeholder="PIN BARU (5-6 DIGIT)" />
+      </div>
+
+      <div class="input-pin-wrap">
+        <span class="field-icon" data-icon="checkCircle"></span>
+        <input type="password" id="pinUlang" class="input-pin" inputmode="numeric" maxlength="6" placeholder="ULANGI PIN BARU" />
+      </div>
+
+      <div id="alertPin" class="form-alert"></div>
+
+      <button class="btn btn-primary btn-full" id="btnGantiPin" style="margin-top:6px;">
         <span data-icon="check"></span>
         Simpan PIN Baru
       </button>
     </div>
 
-    <!-- Info Sistem -->
+    <!-- TENTANG -->
     <div class="info-card">
       <div class="info-card-title">
-        <span data-icon="info" class="icon-sm"></span>
-        Tentang
+        <span class="icon-wrap"><span data-icon="info" class="icon-sm"></span></span>
+        Tentang Aplikasi
       </div>
-      <div class="text-sm text-muted" style="line-height:1.6;">
-        <strong>NAKULAKU EKOSISTEM</strong><br />
-        Sistem Informasi KKG Gugus Nakula, Kecamatan Selogiri.<br />
-        Versi 1.0
+
+      <div class="about-box">
+        <div class="logo">
+          <img src="assets/img/logo.svg" alt="Nakula" />
+        </div>
+        <div class="nama">NAKULAKU EKOSISTEM</div>
+        <div class="sub">Sistem Informasi KKG Gugus Nakula<br>Kecamatan Selogiri</div>
+        <div class="versi">Versi 1.0</div>
       </div>
-      <button class="btn btn-secondary btn-full" id="btnLogout" style="margin-top:16px;">
+
+      <button class="btn btn-secondary btn-full" id="btnLogout" style="margin-top:20px;color:var(--danger);border-color:var(--danger);">
         <span data-icon="logOut"></span>
         Keluar dari Akun
       </button>
@@ -224,25 +456,32 @@
 
   </div>
 
-  <input type="file" id="fileFoto" class="file-input-hidden" accept="image/*" />
+  <input type="file" id="fileFoto" style="display:none;" accept="image/*" />
 
 </main>
 
 <nav class="bottom-nav">
   <a class="nav-item" data-nav="beranda" href="beranda.html"><span data-icon="home"></span> Beranda</a>
-  <a class="nav-item" data-nav="pertemuan" href="beranda.html"><span data-icon="calendar"></span> Pertemuan</a>
-  <a class="nav-item" data-nav="tugas" href="beranda.html"><span data-icon="clipboard"></span> Tugas</a>
-  <a class="nav-item" data-nav="presensi" href="beranda.html"><span data-icon="mapPin"></span> Presensi</a>
-  <a class="nav-item active" data-nav="profil" href="#"><span data-icon="user"></span> Profil</a>
+  <a class="nav-item" data-nav="pertemuan" href="beranda.html#sectionPertemuan"><span data-icon="calendar"></span> Pertemuan</a>
+  <a class="nav-item" data-nav="galeri" href="galeri.html"><span data-icon="grid"></span> Galeri</a>
+  <a class="nav-item" data-nav="aktivitas" href="aktivitas.html"><span data-icon="activity"></span> Aktivitas</a>
+  <a class="nav-item active" data-nav="profil" href="profil.html"><span data-icon="user"></span> Profil</a>
 </nav>
 
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/ui.js"></script>
 <script>
+// ============================================================
+// PASANG IKON
+// ============================================================
 document.querySelectorAll('[data-icon]').forEach(el => {
   el.innerHTML = Icons.get(el.dataset.icon);
-  el.style.display = 'contents';
+  if (!el.classList.contains('field-icon')) {
+    el.style.display = 'contents';
+  } else {
+    el.style.display = 'flex';
+  }
 });
 
 let profile;
@@ -262,36 +501,41 @@ async function loadProfile() {
   }
 }
 
+// ============================================================
+// RENDER
+// ============================================================
 function render() {
   document.getElementById('loading').classList.add('hidden');
   document.getElementById('content').classList.remove('hidden');
 
-  // Hero
+  // AVATAR
+  const avatarEl = document.getElementById('heroAvatar');
   const init = (profile.nama || 'G').charAt(0).toUpperCase();
   const fotoUrl = Api.fotoSayaUrl('t');
 
-  document.getElementById('hero').innerHTML = `
-    <div class="avatar-wrap" id="avatarWrap">
-      <span>${init}</span>
-      ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.remove()">` : ''}
-      <div class="avatar-edit">
-        ${Icons.get('camera', { class: 'icon-sm' })}
-      </div>
-    </div>
-    <div class="nama">${UI.escapeHtml(profile.nama || '-')}</div>
-    <div class="sekolah">${UI.escapeHtml(profile.sekolah?.nama || '-')}</div>
-    <div class="badges">
-      ${(profile.peran || []).map(r =>
-        `<span class="badge">${UI.escapeHtml(r.replace(/_/g, ' '))}</span>`
-      ).join('')}
-    </div>
+  avatarEl.innerHTML = `
+    <span>${init}</span>
+    ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.remove()">` : ''}
+    <div class="camera-badge">${Icons.get('camera')}</div>
   `;
 
-  document.getElementById('avatarWrap').addEventListener('click', () => {
+  avatarEl.addEventListener('click', () => {
     document.getElementById('fileFoto').click();
   });
 
-  // Info Diri
+  // NAMA + SEKOLAH
+  document.getElementById('heroNama').textContent = profile.nama || '-';
+  document.getElementById('heroSekolah').textContent =
+    profile.sekolah ? profile.sekolah.nama : (profile.jabatan || '-');
+
+  // PERAN
+  const peran = profile.peran || [];
+  document.getElementById('heroPeran').innerHTML = peran.map(r => {
+    const label = r.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    return `<span class="badge">${UI.escapeHtml(label)}</span>`;
+  }).join('');
+
+  // DATA DIRI
   document.getElementById('infoDiri').innerHTML = `
     <div class="info-row">
       <span class="lbl">Nama Lengkap</span>
@@ -323,13 +567,42 @@ function render() {
     </div>
   `;
 
-  // Event handlers
+  // EVENTS
   document.getElementById('btnGantiPin').addEventListener('click', gantiPin);
   document.getElementById('btnLogout').addEventListener('click', async () => {
     const ok = await UI.konfirmasi('Keluar', 'Yakin ingin keluar dari akun?', { danger: true, okText: 'Keluar' });
     if (ok) Api.logout();
   });
   document.getElementById('fileFoto').addEventListener('change', uploadFoto);
+
+  // Bind toggle PIN
+  bindPinToggles();
+}
+
+// ============================================================
+// TOGGLE PIN VISIBILITY
+// ============================================================
+function bindPinToggles() {
+  ['pinLama', 'pinBaru', 'pinUlang'].forEach(id => {
+    const input = document.getElementById(id);
+    if (!input) return;
+
+    // Tambah tombol toggle kalau belum ada
+    if (!input.parentElement.querySelector('.input-pin-toggle')) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'input-pin-toggle';
+      btn.innerHTML = Icons.get('eye');
+      btn.setAttribute('aria-label', 'Tampilkan PIN');
+      input.parentElement.appendChild(btn);
+
+      btn.addEventListener('click', () => {
+        const visible = input.type === 'password';
+        input.type = visible ? 'text' : 'password';
+        btn.innerHTML = Icons.get(visible ? 'eyeOff' : 'eye');
+      });
+    }
+  });
 }
 
 // ============================================================
@@ -345,24 +618,21 @@ async function gantiPin() {
   alertEl.classList.remove('show');
 
   if (!pinLama || !pinBaru || !pinUlang) {
-    alertEl.textContent = 'Semua field wajib diisi.';
-    alertEl.classList.add('show');
+    showPinAlert('Semua field wajib diisi.', 'error');
     return;
   }
   if (!/^\d{5,6}$/.test(pinBaru)) {
-    alertEl.textContent = 'PIN baru harus 5–6 digit angka.';
-    alertEl.classList.add('show');
+    showPinAlert('PIN baru harus 5–6 digit angka.', 'error');
     return;
   }
   if (pinBaru !== pinUlang) {
-    alertEl.textContent = 'PIN baru dan ulangi tidak sama.';
-    alertEl.classList.add('show');
+    showPinAlert('PIN baru dan ulangi tidak sama.', 'error');
     return;
   }
 
   const ok = await UI.konfirmasi(
     'Ganti PIN',
-    'Setelah PIN diubah, Anda akan otomatis keluar. Lanjutkan?',
+    'Setelah PIN diubah, Anda akan otomatis keluar dari semua perangkat. Lanjutkan?',
     { okText: 'Ya, Ganti' }
   );
   if (!ok) return;
@@ -377,13 +647,19 @@ async function gantiPin() {
   UI.btnReset(btn);
 
   if (!res.ok) {
-    alertEl.textContent = res.error || 'Gagal ganti PIN.';
-    alertEl.classList.add('show');
+    showPinAlert(res.error || 'Gagal ganti PIN.', 'error');
     return;
   }
 
-  UI.sukses('PIN berhasil diubah. Login ulang…');
+  showPinAlert('PIN berhasil diubah. Login ulang…', 'success');
   setTimeout(() => Api.logout(), 1500);
+}
+
+function showPinAlert(pesan, tipe) {
+  const alertEl = document.getElementById('alertPin');
+  const iconSvg = Icons.get(tipe === 'error' ? 'alertCircle' : 'checkCircle', { class: 'icon-sm' });
+  alertEl.innerHTML = iconSvg + '<span>' + UI.escapeHtml(pesan) + '</span>';
+  alertEl.className = 'form-alert show ' + tipe;
 }
 
 // ============================================================
@@ -404,7 +680,6 @@ async function uploadFoto(e) {
   try {
     const dataUrl = await kompresGambar(file, 480, 0.75);
 
-    // Cek ukuran
     const sizeKb = Math.round((dataUrl.length * 3 / 4) / 1024);
     if (sizeKb > 200) {
       UI.gagal('Foto terlalu besar (' + sizeKb + ' KB). Coba foto lain.');
@@ -421,7 +696,6 @@ async function uploadFoto(e) {
     UI.sukses('Foto berhasil diperbarui!');
     Api.updateProfile({ foto_thumb_url: res.data.foto_url });
 
-    // Refresh tampilan
     setTimeout(() => location.reload(), 800);
 
   } catch (err) {
@@ -443,15 +717,15 @@ function kompresGambar(file, maxSize, quality) {
         h = Math.round(h * ratio);
 
         const canvas = document.createElement('canvas');
-        canvas.width = w;
-        canvas.height = h;
+        canvas.width = maxSize;
+        canvas.height = maxSize;
         const ctx = canvas.getContext('2d');
 
         // Crop center ke 1:1
-        const size = Math.min(w, h);
-        const sx = (w - size) / 2;
-        const sy = (h - size) / 2;
-        ctx.drawImage(img, sx, sy, size, size, 0, 0, size, size);
+        const size = Math.min(img.width, img.height);
+        const sx = (img.width - size) / 2;
+        const sy = (img.height - size) / 2;
+        ctx.drawImage(img, sx, sy, size, size, 0, 0, maxSize, maxSize);
 
         const out = canvas.toDataURL('image/webp', quality);
         resolve(out);
