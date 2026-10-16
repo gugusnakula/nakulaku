@@ -464,6 +464,9 @@
           <button class="tsw" data-tab="tugas">
             <span data-icon="clipboard" class="icon-sm"></span> Tugas
           </button>
+          <button class="tsw" data-tab="karya">
+            <span data-icon="sparkles" class="icon-sm"></span> Karya
+          </button>
           <button class="tsw" data-tab="sertifikat">
             <span data-icon="fileText" class="icon-sm"></span> Sertifikat
           </button>
@@ -471,6 +474,7 @@
 
         <div class="panel active" data-panel="presensi" id="panelPresensi"></div>
         <div class="panel" data-panel="tugas" id="panelTugas"></div>
+        <div class="panel" data-panel="karya" id="panelKarya"></div>
         <div class="panel" data-panel="sertifikat" id="panelSertifikat"></div>
 
       </div>
@@ -548,6 +552,7 @@ function renderAll() {
 
   renderPresensi();
   renderTugas();
+  renderKarya();     // ← BARU
   renderSertifikat();
 }
 
@@ -690,6 +695,123 @@ function renderTugas() {
       </div>
     `;
   }).join('');
+}
+
+// ============================================================
+// PANEL KARYA (Inovasi & Aksi Nyata)
+// ============================================================
+async function renderKarya() {
+  const el = document.getElementById('panelKarya');
+  el.innerHTML = '<div class="skeleton" style="height:120px;border-radius:16px;"></div>';
+
+  const res = await Api.call('karya.saya');
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat karya.');
+    return;
+  }
+
+  const list = res.data.list || [];
+  const r = res.data.ringkasan;
+
+  if (list.length === 0) {
+    el.innerHTML = `
+      <div class="empty-state">
+        <div class="big-icon">${Icons.get('sparkles', { class: 'icon-xl' })}</div>
+        <div class="title">Belum Ada Karya</div>
+        <div class="desc">Bagikan inovasi & aksi nyata Anda untuk mendapatkan poin kontribusi.</div>
+        <a href="karya.html" class="btn btn-primary btn-sm" style="margin-top:16px;display:inline-flex;gap:6px;text-decoration:none;">
+          ${Icons.get('plus', { class: 'icon-sm' })}
+          Tambah Karya
+        </a>
+      </div>
+    `;
+    return;
+  }
+
+  const statusMap = {
+    menunggu:  { label: 'Menunggu',  cls: 'st-menunggu' },
+    disetujui: { label: 'Disetujui', cls: 'st-diterima' },
+    ditolak:   { label: 'Ditolak',   cls: 'st-ditolak' },
+  };
+
+  const kategoriLabel = {
+    media:   'Media Pembelajaran',
+    metode:  'Metode Mengajar',
+    modul:   'Modul Ajar',
+    alat:    'Alat Peraga',
+    video:   'Video Pembelajaran',
+    lainnya: 'Lainnya',
+  };
+
+  // Ringkasan kecil di atas
+  let html = `
+    <div class="item-aktivitas" style="background:linear-gradient(135deg,var(--gold-soft) 0%,#FBF3D0 100%);border-color:rgba(201,169,97,.3);">
+      <div class="item-head" style="margin-bottom:0;">
+        <div class="item-num gold">${Icons.get('award', { class: 'icon-sm' })}</div>
+        <div class="item-info">
+          <div class="item-title">Total Poin Kontribusi</div>
+          <div class="item-sub">${r.inovasi} Inovasi · ${r.implementasi} Aksi Nyata · ${r.disetujui} disetujui</div>
+        </div>
+        <div style="font-size:24px;font-weight:800;color:var(--maroon);letter-spacing:-0.5px;">+${r.total_poin}</div>
+      </div>
+    </div>
+  `;
+
+  html += list.map((k, idx) => {
+    const st = statusMap[k.status] || statusMap.menunggu;
+    const jenisLabel = k.jenis === 'inovasi' ? 'Inovasi' : 'Aksi Nyata';
+    const jenisIcon = k.jenis === 'inovasi' ? 'sparkles' : 'target';
+
+    let sub = jenisLabel;
+    if (k.jenis === 'inovasi' && k.kategori && kategoriLabel[k.kategori]) {
+      sub += ' · ' + kategoriLabel[k.kategori];
+    }
+    sub += ' · ' + UI.formatTanggalPendek(k.tanggal);
+
+    const poinHtml = k.status === 'disetujui' && k.poin > 0
+      ? `<span class="val pos" style="margin-left:6px;">+${k.poin}</span>`
+      : '';
+
+    const catatanHtml = k.status === 'ditolak' && k.catatan_verifikator
+      ? `<div style="background:var(--danger-soft);color:var(--danger);padding:8px 10px;border-radius:10px;font-size:11.5px;margin-top:8px;font-weight:600;line-height:1.5;">
+           <strong>Alasan ditolak:</strong> ${UI.escapeHtml(k.catatan_verifikator)}
+         </div>`
+      : '';
+
+    const linkHtml = k.link_url
+      ? `<div class="stat-baris">
+           <span class="lbl">${Icons.get('externalLink', { class: 'icon-sm' })} Bukti</span>
+           <a href="${UI.escapeHtml(k.link_url)}" target="_blank" rel="noopener" class="val" style="color:var(--maroon);text-decoration:underline;">Lihat</a>
+         </div>`
+      : '';
+
+    return `
+      <div class="item-aktivitas" style="animation-delay:${idx * 0.03}s">
+        <div class="item-head">
+          <div class="item-num gold">${Icons.get(jenisIcon, { class: 'icon-sm' })}</div>
+          <div class="item-info">
+            <div class="item-title">${UI.escapeHtml(k.judul)}</div>
+            <div class="item-sub">${sub}</div>
+          </div>
+          <span class="status-pill ${st.cls}">${st.label}</span>
+        </div>
+        ${k.deskripsi ? `<div style="font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:4px;">${UI.escapeHtml(k.deskripsi)}</div>` : ''}
+        ${poinHtml ? `<div class="stat-baris"><span class="lbl">${Icons.get('award', { class: 'icon-sm' })} Poin</span><span class="val pos">+${k.poin}</span></div>` : ''}
+        ${linkHtml}
+        ${catatanHtml}
+      </div>
+    `;
+  }).join('');
+
+  // Tombol tambah di bawah
+  html += `
+    <a href="karya.html" class="btn btn-primary btn-full" style="margin-top:8px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px;">
+      ${Icons.get('plus', { class: 'icon-sm' })}
+      Kelola Karya
+    </a>
+  `;
+
+  el.innerHTML = html;
 }
 
 function renderSertifikat() {
