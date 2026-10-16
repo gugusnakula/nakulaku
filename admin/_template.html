@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>JUDUL — NAKULAKU Admin</title>
+
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/nakula.css" />
+<link rel="stylesheet" href="_layout.css" />
+</head>
+<body class="admin-body">
+
+<!-- HEADER MOBILE -->
+<header class="admin-header">
+  <div class="admin-header-left">
+    <a href="index.html" class="admin-header-btn">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="admin-header-title">
+      <div class="admin-header-title-1">JUDUL HALAMAN</div>
+      <div class="admin-header-title-2">Admin NAKULAKU</div>
+    </div>
+  </div>
+  <button class="admin-header-btn" data-act="logout">
+    <span data-icon="logOut"></span>
+  </button>
+</header>
+
+<!-- LAYOUT -->
+<div class="admin-layout">
+
+  <!-- SIDEBAR DESKTOP -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <div class="admin-sidebar-logo">
+        <img src="../assets/img/logo-mark.svg" alt="Nakula" />
+      </div>
+      <div>
+        <div class="admin-sidebar-name">NAKULAKU</div>
+        <div class="admin-sidebar-sub">Admin Panel</div>
+      </div>
+    </div>
+
+    <nav class="admin-sidebar-menu">
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Dashboard</div>
+        <a class="admin-sidebar-item" data-nav="dashboard" href="index.html">
+          <span data-icon="layoutDashboard"></span> Dashboard
+        </a>
+      </div>
+
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Data</div>
+        <a class="admin-sidebar-item" data-nav="guru" href="guru.html">
+          <span data-icon="users"></span> Data Guru
+        </a>
+        <a class="admin-sidebar-item" data-nav="impor" href="impor.html">
+          <span data-icon="upload"></span> Impor CSV
+        </a>
+      </div>
+
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Kegiatan</div>
+        <a class="admin-sidebar-item" data-nav="periode" href="periode.html">
+          <span data-icon="calendar"></span> Kelola Periode
+        </a>
+        <a class="admin-sidebar-item" data-nav="pertemuan" href="pertemuan.html">
+          <span data-icon="calendar"></span> Kelola Pertemuan
+        </a>
+        <a class="admin-sidebar-item" data-nav="pengumuman" href="pengumuman.html">
+          <span data-icon="megaphone"></span> Pengumuman
+        </a>
+      </div>
+
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Evaluasi</div>
+        <a class="admin-sidebar-item" data-nav="verifikasi-sekolah" href="verifikasi-sekolah.html">
+          <span data-icon="sparkles"></span> Verifikasi Sekolah
+        </a>
+        <a class="admin-sidebar-item" data-nav="verifikasi-presensi" href="../ks/verifikasi.html">
+          <span data-icon="checkCircle"></span> Verifikasi Presensi
+        </a>
+        <a class="admin-sidebar-item" data-nav="feedback" href="feedback.html">
+          <span data-icon="messageSquare"></span> Rekap Feedback
+        </a>
+        <a class="admin-sidebar-item" data-nav="award" href="award.html">
+          <span data-icon="award"></span> Kelola Award
+        </a>
+        <a class="admin-sidebar-item" data-nav="sertifikat" href="sertifikat.html">
+          <span data-icon="fileText"></span> Sertifikat
+        </a>
+      </div>
+
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Laporan</div>
+        <a class="admin-sidebar-item" data-nav="analitik" href="analitik.html">
+          <span data-icon="activity"></span> Analitik
+        </a>
+        <a class="admin-sidebar-item" data-nav="laporan" href="laporan.html">
+          <span data-icon="download"></span> Export Laporan
+        </a>
+      </div>
+
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Sistem</div>
+        <a class="admin-sidebar-item" data-nav="log" href="log.html">
+          <span data-icon="list"></span> Log Aktivitas
+        </a>
+        <a class="admin-sidebar-item" data-nav="pengaturan" href="pengaturan.html">
+          <span data-icon="settings"></span> Pengaturan
+        </a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+
+    <div class="admin-topbar">
+      <h1 class="admin-topbar-title">JUDUL HALAMAN</h1>
+      <div class="admin-topbar-right">
+        <div class="admin-user-chip" id="userChip"></div>
+        <button class="btn-icon" data-act="logout" aria-label="Keluar" title="Keluar">
+          <span data-icon="logOut"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <!-- ISI HALAMAN DI SINI -->
+    </div>
+  </main>
+</div>
+
+<!-- BOTTOM NAV MOBILE -->
+<nav class="admin-bottom-nav">
+  <a class="admin-nav-item" data-nav="dashboard" href="index.html">
+    <span data-icon="layoutDashboard"></span> Dashboard
+  </a>
+  <a class="admin-nav-item" data-nav="guru" href="guru.html">
+    <span data-icon="users"></span> Guru
+  </a>
+  <a class="admin-nav-item" data-nav="pertemuan" href="pertemuan.html">
+    <span data-icon="calendar"></span> Pertemuan
+  </a>
+  <a class="admin-nav-item" data-nav="verifikasi" href="verifikasi-sekolah.html">
+    <span data-icon="checkCircle"></span> Verifikasi
+  </a>
+  <button class="admin-nav-item" id="btnLainnya">
+    <span data-icon="menu"></span> Lainnya
+  </button>
+</nav>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+// ============================================================
+// ADMIN LAYOUT HELPER
+// ============================================================
+(function () {
+  // Pasang ikon
+  document.querySelectorAll('[data-icon]').forEach(el => {
+    el.innerHTML = Icons.get(el.dataset.icon);
+    el.style.display = 'contents';
+  });
+
+  UI.bindLogout();
+
+  // Set nav aktif berdasarkan URL
+  function setNavAktif() {
+    const path = window.location.pathname.split('/').pop().replace('.html', '');
+    const map = {
+      'index': 'dashboard',
+      'guru': 'guru',
+      'impor': 'impor',
+      'periode': 'periode',
+      'pertemuan': 'pertemuan',
+      'pertemuan-detail': 'pertemuan',
+      'pengumuman': 'pengumuman',
+      'verifikasi-sekolah': 'verifikasi-sekolah',
+      'verifikasi': 'verifikasi-presensi',
+      'feedback': 'feedback',
+      'award': 'award',
+      'sertifikat': 'sertifikat',
+      'analitik': 'analitik',
+      'laporan': 'laporan',
+      'log': 'log',
+      'pengaturan': 'pengaturan',
+    };
+    const aktif = map[path] || path;
+    document.querySelectorAll('[data-nav]').forEach(el => {
+      el.classList.toggle('active', el.dataset.nav === aktif);
+    });
+  }
+  setNavAktif();
+
+  // Bottom sheet "Lainnya"
+  document.getElementById('btnLainnya')?.addEventListener('click', () => {
+    const overlay = document.createElement('div');
+    overlay.className = 'admin-sheet-overlay';
+    overlay.innerHTML = `
+      <div class="admin-sheet">
+        <div class="admin-sheet-handle"></div>
+        <div class="admin-sheet-title">Data</div>
+        <div class="admin-sheet-grid">
+          <a class="admin-sheet-item" href="guru.html">
+            <div class="icon-wrap">${Icons.get('users', { class: 'icon-sm' })}</div>
+            <span>Data Guru</span>
+          </a>
+          <a class="admin-sheet-item" href="impor.html">
+            <div class="icon-wrap">${Icons.get('upload', { class: 'icon-sm' })}</div>
+            <span>Impor CSV</span>
+          </a>
+        </div>
+
+        <div class="admin-sheet-title">Kegiatan</div>
+        <div class="admin-sheet-grid">
+          <a class="admin-sheet-item" href="periode.html">
+            <div class="icon-wrap">${Icons.get('calendar', { class: 'icon-sm' })}</div>
+            <span>Kelola Periode</span>
+          </a>
+          <a class="admin-sheet-item" href="pertemuan.html">
+            <div class="icon-wrap">${Icons.get('calendar', { class: 'icon-sm' })}</div>
+            <span>Kelola Pertemuan</span>
+          </a>
+          <a class="admin-sheet-item" href="pengumuman.html">
+            <div class="icon-wrap">${Icons.get('megaphone', { class: 'icon-sm' })}</div>
+            <span>Pengumuman</span>
+          </a>
+        </div>
+
+        <div class="admin-sheet-title">Evaluasi</div>
+        <div class="admin-sheet-grid">
+          <a class="admin-sheet-item" href="verifikasi-sekolah.html">
+            <div class="icon-wrap">${Icons.get('sparkles', { class: 'icon-sm' })}</div>
+            <span>Verifikasi Sekolah</span>
+          </a>
+          <a class="admin-sheet-item" href="../ks/verifikasi.html">
+            <div class="icon-wrap">${Icons.get('checkCircle', { class: 'icon-sm' })}</div>
+            <span>Verifikasi Presensi</span>
+          </a>
+          <a class="admin-sheet-item" href="feedback.html">
+            <div class="icon-wrap">${Icons.get('messageSquare', { class: 'icon-sm' })}</div>
+            <span>Rekap Feedback</span>
+          </a>
+          <a class="admin-sheet-item gold" href="award.html">
+            <div class="icon-wrap">${Icons.get('award', { class: 'icon-sm' })}</div>
+            <span>Kelola Award</span>
+          </a>
+          <a class="admin-sheet-item gold" href="sertifikat.html">
+            <div class="icon-wrap">${Icons.get('fileText', { class: 'icon-sm' })}</div>
+            <span>Sertifikat</span>
+          </a>
+        </div>
+
+        <div class="admin-sheet-title">Laporan & Sistem</div>
+        <div class="admin-sheet-grid">
+          <a class="admin-sheet-item blue" href="analitik.html">
+            <div class="icon-wrap">${Icons.get('activity', { class: 'icon-sm' })}</div>
+            <span>Analitik</span>
+          </a>
+          <a class="admin-sheet-item green" href="laporan.html">
+            <div class="icon-wrap">${Icons.get('download', { class: 'icon-sm' })}</div>
+            <span>Export Laporan</span>
+          </a>
+          <a class="admin-sheet-item" href="log.html">
+            <div class="icon-wrap">${Icons.get('list', { class: 'icon-sm' })}</div>
+            <span>Log Aktivitas</span>
+          </a>
+          <a class="admin-sheet-item" href="pengaturan.html">
+            <div class="icon-wrap">${Icons.get('settings', { class: 'icon-sm' })}</div>
+            <span>Pengaturan</span>
+          </a>
+        </div>
+
+        <button class="btn btn-primary btn-full" id="btnTutupSheet" style="margin-top:16px;">
+          Tutup
+        </button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    const close = () => overlay.remove();
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+    overlay.querySelector('#btnTutupSheet').addEventListener('click', close);
+  });
+
+  // User chip di topbar
+  window.addEventListener('load', async () => {
+    const profile = Api.getProfile();
+    if (!profile) return;
+
+    const chip = document.getElementById('userChip');
+    if (chip) {
+      const init = (profile.nama || 'A').charAt(0).toUpperCase();
+      const fotoUrl = Api.fotoSayaUrl('t');
+      chip.innerHTML = `
+        <div class="avatar">
+          ${fotoUrl
+            ? `<img src="${fotoUrl}" onerror="this.parentElement.textContent='${init}'">`
+            : init}
+        </div>
+        <span>${UI.escapeHtml(profile.nama || '-')}</span>
+      `;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
