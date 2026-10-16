@@ -567,13 +567,17 @@ function renderPresensi() {
   }
 
   const statusMap = {
-    tepat_waktu: { label: 'Tepat Waktu', cls: 'st-tepat', icon: 'checkCircle' },
-    terlambat: { label: 'Terlambat', cls: 'st-terlambat', icon: 'clock' },
-    luar_radius: { label: 'Luar Radius', cls: 'st-luar', icon: 'alertTriangle' },
-    ijin: { label: 'Ijin', cls: 'st-izin', icon: 'fileText' },
-    sakit: { label: 'Sakit', cls: 'st-izin', icon: 'fileText' },
-    cuti: { label: 'Cuti', cls: 'st-izin', icon: 'fileText' },
-    alfa: { label: 'Alfa', cls: 'st-alfa', icon: 'x' },
+    tepat_waktu:       { label: 'Tepat Waktu',       cls: 'st-tepat',    icon: 'checkCircle' },
+    terlambat:         { label: 'Terlambat',         cls: 'st-terlambat', icon: 'clock' },
+    luar_radius:       { label: 'Luar Radius',       cls: 'st-luar',     icon: 'alertTriangle' },
+    izin_pribadi:      { label: 'Izin Pribadi',      cls: 'st-izin',     icon: 'userX' },
+    sakit:             { label: 'Sakit',             cls: 'st-izin',     icon: 'heartPulse' },
+    sakit_tanpa_surat: { label: 'Sakit (tanpa surat)', cls: 'st-izin',   icon: 'heart' },
+    dinas_luar:        { label: 'Dinas Luar',        cls: 'st-tepat',    icon: 'briefcase' },
+    cuti_melahirkan:   { label: 'Cuti Melahirkan',   cls: 'st-izin',     icon: 'baby' },
+    ijin:              { label: 'Ijin',              cls: 'st-izin',     icon: 'fileText' },   // legacy
+    cuti:              { label: 'Cuti',              cls: 'st-izin',     icon: 'calendarX' }, // legacy
+    alfa:              { label: 'Alfa',              cls: 'st-alfa',     icon: 'x' },
   };
 
   el.innerHTML = list.map((item, idx) => {
