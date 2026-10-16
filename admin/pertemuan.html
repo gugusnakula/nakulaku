@@ -69,6 +69,31 @@
   .status-aktif { background: var(--success-soft); color: var(--success); }
   .status-selesai { background: var(--info-soft); color: var(--info); }
 
+  /* BADGE WINDOW PRESENSI */
+  .window-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.3px;
+    margin-top: 8px;
+  }
+  .window-badge.belum {
+    background: var(--border);
+    color: var(--muted);
+  }
+  .window-badge.buka {
+    background: var(--success-soft);
+    color: var(--success);
+  }
+  .window-badge.tutup {
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+
   .fab {
     position: fixed;
     bottom: 24px;
@@ -206,6 +231,31 @@ async function loadPertemuan() {
   renderTab();
 }
 
+// ============================================================
+// BADGE WINDOW PRESENSI
+// ============================================================
+function renderBadgeWindow(p) {
+  const status = p.presensi_status;
+  if (!status || !p.presensi_buka || !p.presensi_tutup) return '';
+
+  const map = {
+    belum: { label: 'Presensi Belum Dibuka', icon: 'lock' },
+    buka:  { label: 'Presensi Dibuka',       icon: 'checkCircle' },
+    tutup: { label: 'Presensi Ditutup',      icon: 'x' },
+  };
+  const m = map[status] || map.belum;
+
+  const buka = new Date(p.presensi_buka).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+  const tutup = new Date(p.presensi_tutup).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+  return `
+    <div class="window-badge ${status}">
+      ${Icons.get(m.icon, { class: 'icon-sm' })}
+      ${m.label} · ${buka}–${tutup}
+    </div>
+  `;
+}
+
 function renderListAktif() {
   const el = document.getElementById('listPertemuan');
 
@@ -231,6 +281,7 @@ function renderListAktif() {
               ${Icons.get('mapPin', { class: 'icon-sm' })} ${UI.escapeHtml(p.lokasi_nama)}
             </div>
           ` : ''}
+          ${renderBadgeWindow(p)}
         </div>
         <span class="status-pill status-${p.status}">${p.status}</span>
       </div>
@@ -344,6 +395,9 @@ function renderListArsip() {
   });
 }
 
+// ============================================================
+// FORM TAMBAH/EDIT
+// ============================================================
 function bukaForm(pertemuan) {
   if (!periodeAktif) { UI.gagal('Belum ada periode aktif.'); return; }
 
@@ -379,6 +433,7 @@ function bukaForm(pertemuan) {
           <label class="label">Tanggal *</label>
           <input type="date" id="fTanggal" class="input" value="${p.tanggal || ''}" />
         </div>
+
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
           <div class="field">
             <label class="label">Jam Mulai</label>
@@ -393,6 +448,27 @@ function bukaForm(pertemuan) {
             <input type="time" id="fBatas" class="input" value="${p.batas_tepat_waktu || ''}" />
           </div>
         </div>
+
+        <!-- WINDOW PRESENSI -->
+        <div style="background:var(--bg);border-radius:12px;padding:12px;border:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:800;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            ${Icons.get('clock', { class: 'icon-sm' })} Window Presensi
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div class="field">
+              <label class="label">Buka</label>
+              <input type="time" id="fPresensiBuka" class="input" value="${p.presensi_buka || ''}" />
+            </div>
+            <div class="field">
+              <label class="label">Tutup</label>
+              <input type="time" id="fPresensiTutup" class="input" value="${p.presensi_tutup || ''}" />
+            </div>
+          </div>
+          <div style="font-size:10.5px;color:var(--muted);margin-top:8px;font-weight:600;line-height:1.5;">
+            Kosongkan untuk pakai default: <strong>jam mulai −2 jam</strong> s/d <strong>jam mulai +4 jam</strong>.
+          </div>
+        </div>
+
         <div class="field">
           <label class="label">Nama Lokasi</label>
           <input type="text" id="fLokasi" class="input" value="${UI.escapeHtml(p.lokasi_nama || '')}" placeholder="Mis: SD Negeri 1 Krisak" />
@@ -456,6 +532,8 @@ function bukaForm(pertemuan) {
       jam_mulai: overlay.querySelector('#fJamMulai').value || null,
       jam_selesai: overlay.querySelector('#fJamSelesai').value || null,
       batas_tepat_waktu: overlay.querySelector('#fBatas').value || null,
+      presensi_buka: overlay.querySelector('#fPresensiBuka').value || null,
+      presensi_tutup: overlay.querySelector('#fPresensiTutup').value || null,
       lokasi_nama: overlay.querySelector('#fLokasi').value.trim(),
       latitude: overlay.querySelector('#fLat').value.trim(),
       longitude: overlay.querySelector('#fLng').value.trim(),
