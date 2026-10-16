@@ -117,6 +117,23 @@
       return null;
     },
 
+    /**
+     * Handler fallback logo — dipanggil dari `onerror` di <img>.
+     * Aman dari null reference.
+     */
+    fotoError(img) {
+      try {
+        const parent = img.parentElement;
+        if (parent) {
+          const fallback = parent.querySelector('.fallback, .fallback-icon');
+          if (fallback) fallback.style.display = 'flex';
+        }
+      } catch (e) {
+        console.warn('fotoError:', e);
+      }
+      img.remove();
+    },
+
     // ==================== KEAMANAN ====================
     escapeHtml(s) {
       return String(s ?? '').replace(/[&<>"']/g, c => ({
