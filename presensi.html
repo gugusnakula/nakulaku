@@ -11,930 +11,113 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="assets/css/nakula.css" />
+<!-- LEAFLET MAP CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
 <style>
-  /* ═══════════════════════════════════════════════
-     LAYOUT BASE
-     ═══════════════════════════════════════════════ */
-  .presensi-stage {
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 16px 16px 40px;
-  }
+  /* ... (CSS SAMA SEPERTI SEBELUMNYA, PLUS TAMBAHAN DI BAWAH) ... */
+  .presensi-stage { max-width: 480px; margin: 0 auto; padding: 16px 16px 40px; }
+  .stage-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 24px; padding: 22px 20px; box-shadow: 0 8px 24px rgba(125,29,58,.06); margin-bottom: 16px; animation: fade-in-up .5s var(--ease-out) both; position: relative; overflow: hidden; }
+  .hidden { display: none !important; }
 
-  .stage-card {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 24px;
-    padding: 22px 20px;
-    box-shadow: 0 8px 24px rgba(125,29,58,.06);
-    margin-bottom: 16px;
-    animation: fade-in-up .5s var(--ease-out) both;
-    position: relative;
-    overflow: hidden;
-  }
+  /* HERO & LOADING */
+  .loading-icon { width: 80px; height: 80px; border-radius: 24px; background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%); color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; box-shadow: 0 12px 28px rgba(125,29,58,.3); }
+  .loading-icon svg { width: 36px; height: 36px; animation: spin 2s linear infinite; }
+  .stage-title { text-align: center; font-size: 18px; font-weight: 800; color: var(--maroon); margin-bottom: 6px; }
+  .stage-desc { text-align: center; font-size: 13px; color: var(--muted); font-weight: 500; max-width: 320px; margin: 0 auto; }
 
-  /* ═══════════════════════════════════════════════
-     LOADING STAGE
-     ═══════════════════════════════════════════════ */
-  .loading-icon {
-    width: 80px;
-    height: 80px;
-    border-radius: 24px;
-    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 18px;
-    box-shadow:
-      0 12px 28px rgba(125,29,58,.3),
-      inset 0 0 0 1px rgba(201,169,97,.3);
-    position: relative;
-    overflow: hidden;
-  }
-  .loading-icon::before {
-    content: '';
-    position: absolute;
-    inset: -50%;
-    background: conic-gradient(from 0deg, transparent 0%, rgba(201,169,97,.4) 50%, transparent 100%);
-    animation: spin-slow 2s linear infinite;
-  }
-  .loading-icon svg {
-    position: relative;
-    z-index: 1;
-    width: 36px; height: 36px;
-  }
-  @keyframes spin-slow {
-    to { transform: rotate(360deg); }
-  }
-  .stage-title {
-    text-align: center;
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--maroon);
-    margin-bottom: 6px;
-    letter-spacing: 0.3px;
-  }
-  .stage-desc {
-    text-align: center;
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.55;
-    font-weight: 500;
-    max-width: 320px;
-    margin: 0 auto;
-  }
-
-  /* ═══════════════════════════════════════════════
-     WINDOW STATES (BELUM / TUTUP)
-     ═══════════════════════════════════════════════ */
-  .window-card {
-    text-align: center;
-  }
-  .window-icon {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    position: relative;
-  }
-  .window-icon.belum {
-    background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
-    color: var(--warning);
-    box-shadow: 0 0 0 12px rgba(180,83,9,.08);
-  }
-  .window-icon.tutup {
-    background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
-    color: var(--danger);
-    box-shadow: 0 0 0 12px rgba(185,28,28,.08);
-  }
+  /* WINDOW STATES */
+  .window-card { text-align: center; }
+  .window-icon { width: 96px; height: 96px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+  .window-icon.belum { background: #FEF3C7; color: var(--warning); }
+  .window-icon.tutup { background: #FEE2E2; color: var(--danger); }
   .window-icon svg { width: 44px; height: 44px; }
 
-  .window-countdown {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 18px;
-    background: var(--bg);
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--maroon);
-    margin-top: 16px;
-    letter-spacing: 0.3px;
-  }
-  .window-countdown .num {
-    font-size: 20px;
-    letter-spacing: -0.5px;
-    font-variant-numeric: tabular-nums;
-  }
+  /* INFO HEADER */
+  .info-header { text-align: center; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1.5px dashed var(--border); }
+  .info-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; background: var(--maroon-soft); color: var(--maroon); border-radius: 999px; font-size: 10px; font-weight: 800; margin-bottom: 10px; text-transform: uppercase; }
+  .info-pertemuan { font-size: 17px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+  .info-sub { font-size: 12px; color: var(--muted); font-weight: 600; }
 
-  .window-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 24px;
-  }
-
-  /* ═══════════════════════════════════════════════
-     INFO HEADER (di atas kamera)
-     ═══════════════════════════════════════════════ */
-  .info-header {
-    text-align: center;
-    padding-bottom: 16px;
-    margin-bottom: 16px;
-    border-bottom: 1.5px dashed var(--border);
-    position: relative;
-  }
-  .info-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 5px 12px;
-    background: var(--maroon-soft);
-    color: var(--maroon);
-    border-radius: 999px;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-  }
-  .info-pertemuan {
-    font-size: 17px;
-    font-weight: 800;
-    color: var(--ink);
-    margin-bottom: 4px;
-    line-height: 1.3;
-  }
-  .info-sub {
-    font-size: 12px;
-    color: var(--muted);
-    font-weight: 600;
-    line-height: 1.5;
-  }
-
-  /* ═══════════════════════════════════════════════
-     GPS STATUS BAR
-     ═══════════════════════════════════════════════ */
-  .gps-status {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px;
-    border-radius: 16px;
-    margin-bottom: 12px;
-    transition: all .3s var(--ease-out);
-  }
-  .gps-status.detecting {
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-  }
-  .gps-status.good {
-    background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
-    border: 1.5px solid rgba(22,163,74,.25);
-  }
-  .gps-status.fair {
-    background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
-    border: 1.5px solid rgba(180,83,9,.25);
-  }
-  .gps-status.poor {
-    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
-    border: 1.5px solid rgba(185,28,28,.25);
-  }
-
-  .gps-icon {
-    width: 42px; height: 42px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .gps-status.detecting .gps-icon {
-    background: var(--border);
-    color: var(--muted);
-    animation: pulse-soft 1.5s ease-in-out infinite;
-  }
-  .gps-status.good .gps-icon {
-    background: #16A34A;
-    color: white;
-    box-shadow: 0 4px 12px rgba(22,163,74,.3);
-  }
-  .gps-status.fair .gps-icon {
-    background: var(--warning);
-    color: white;
-    box-shadow: 0 4px 12px rgba(180,83,9,.3);
-  }
-  .gps-status.poor .gps-icon {
-    background: var(--danger);
-    color: white;
-    box-shadow: 0 4px 12px rgba(185,28,28,.3);
-  }
-  @keyframes pulse-soft {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-  }
-
+  /* GPS & MAP SECTION */
+  .gps-status { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 16px; margin-bottom: 12px; transition: all .3s; }
+  .gps-status.detecting { background: var(--bg); border: 1.5px solid var(--border); }
+  .gps-status.good { background: #F0FDF4; border: 1.5px solid #BBF7D0; }
+  .gps-status.fair { background: #FFFBEB; border: 1.5px solid #FDE68A; }
+  .gps-status.poor { background: #FEF2F2; border: 1.5px solid #FECACA; }
+  .gps-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: white; }
+  .gps-status.detecting .gps-icon { background: var(--border-strong); animation: pulse 1.5s infinite; }
+  .gps-status.good .gps-icon { background: #16A34A; }
+  .gps-status.fair .gps-icon { background: var(--warning); }
+  .gps-status.poor .gps-icon { background: var(--danger); }
   .gps-body { flex: 1; min-width: 0; }
-  .gps-title {
-    font-size: 13px;
-    font-weight: 800;
-    margin-bottom: 2px;
-  }
+  .gps-title { font-size: 13px; font-weight: 800; margin-bottom: 2px; }
   .gps-status.detecting .gps-title { color: var(--muted); }
   .gps-status.good .gps-title { color: #15803D; }
   .gps-status.fair .gps-title { color: var(--warning); }
   .gps-status.poor .gps-title { color: var(--danger); }
-  .gps-desc {
-    font-size: 11.5px;
-    color: var(--muted);
-    font-weight: 600;
-    line-height: 1.4;
-  }
-  .gps-accuracy {
-    font-size: 10px;
-    font-weight: 800;
-    padding: 3px 8px;
-    border-radius: 999px;
-    background: rgba(255,255,255,.7);
-    color: inherit;
-    flex-shrink: 0;
-  }
+  .gps-desc { font-size: 11.5px; color: var(--muted); font-weight: 600; }
 
-  /* ═══════════════════════════════════════════════
-     DISTANCE RING
-     ═══════════════════════════════════════════════ */
-  .distance-ring-wrap {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 14px;
-    background: var(--bg);
-    border-radius: 16px;
-    margin-bottom: 14px;
-  }
-  .distance-ring {
-    position: relative;
-    width: 72px;
-    height: 72px;
-    flex-shrink: 0;
-  }
-  .distance-ring svg {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-  }
-  .distance-ring .track {
-    fill: none;
-    stroke: var(--border);
-    stroke-width: 6;
-  }
-  .distance-ring .progress {
-    fill: none;
-    stroke: #16A34A;
-    stroke-width: 6;
-    stroke-linecap: round;
-    transition: stroke-dashoffset .8s var(--ease-out), stroke .3s;
-  }
+  /* PETA LEAFLET */
+  #mapContainer { width: 100%; height: 200px; border-radius: 16px; margin-bottom: 14px; border: 1.5px solid var(--border); z-index: 1; }
+
+  /* DISTANCE RING */
+  .distance-wrap { display: flex; align-items: center; gap: 16px; padding: 14px; background: var(--bg); border-radius: 16px; margin-bottom: 14px; }
+  .distance-ring { position: relative; width: 76px; height: 76px; flex-shrink: 0; }
+  .distance-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .distance-ring circle { fill: none; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 0.8s, stroke 0.3s; }
+  .distance-ring .track { stroke: var(--border); }
+  .distance-ring .progress { stroke: #16A34A; }
   .distance-ring .progress.warn { stroke: var(--warning); }
   .distance-ring .progress.danger { stroke: var(--danger); }
-  .distance-ring .center {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-  }
-  .distance-ring .dist-val {
-    font-size: 16px;
-    font-weight: 800;
-    color: var(--ink);
-    line-height: 1;
-    letter-spacing: -0.3px;
-  }
-  .distance-ring .dist-unit {
-    font-size: 9px;
-    font-weight: 700;
-    color: var(--muted);
-    margin-top: 1px;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-  }
+  .distance-ring .center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .distance-ring .val { font-size: 18px; font-weight: 800; color: var(--ink); line-height: 1; }
+  .distance-ring .unit { font-size: 9px; font-weight: 700; color: var(--muted); margin-top: 2px; text-transform: uppercase; }
   .distance-info { flex: 1; min-width: 0; }
-  .distance-label {
-    font-size: 10.5px;
-    font-weight: 800;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    margin-bottom: 4px;
-  }
-  .distance-desc {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--ink);
-    line-height: 1.4;
-  }
+  .distance-label { font-size: 10px; font-weight: 800; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; }
+  .distance-desc { font-size: 13px; font-weight: 700; line-height: 1.4; }
   .distance-desc.good { color: #15803D; }
   .distance-desc.warn { color: var(--warning); }
   .distance-desc.danger { color: var(--danger); }
 
-  /* ═══════════════════════════════════════════════
-     KAMERA PREMIUM
-     ═══════════════════════════════════════════════ */
-  .cam-wrap {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 3/4;
-    max-height: 420px;
-    background: #0F0809;
-    border-radius: 24px;
-    overflow: hidden;
-    margin-bottom: 16px;
-    border: 2px solid var(--maroon);
-    box-shadow:
-      0 16px 40px rgba(0,0,0,.3),
-      inset 0 0 0 1px rgba(201,169,97,.15);
-  }
-  .cam-wrap video,
-  .cam-wrap img.preview {
-    width: 100%; height: 100%;
-    object-fit: cover;
-  }
+  /* KAMERA */
+  .cam-wrap { position: relative; width: 100%; aspect-ratio: 3/4; max-height: 420px; background: #0F0809; border-radius: 24px; overflow: hidden; margin-bottom: 16px; border: 2px solid var(--maroon); }
+  /* MIRROR EFFECT UNTUK VIDEO */
+  .cam-wrap video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+  .cam-wrap img.preview { width: 100%; height: 100%; object-fit: cover; }
+  
+  .cam-overlay { position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; }
+  .face-guide { width: 62%; aspect-ratio: 3/4; border: 2.5px dashed rgba(255,255,255,.55); border-radius: 50%; animation: pulse 2.5s infinite; }
+  
+  .cam-live-badge { position: absolute; top: 14px; left: 14px; background: rgba(0,0,0,.7); color: white; padding: 6px 12px; border-radius: 999px; font-size: 10.5px; font-weight: 800; display: flex; align-items: center; gap: 6px; backdrop-filter: blur(10px); z-index: 2; }
+  .cam-live-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: #EF4444; animation: pulse 1.5s infinite; }
+  .cam-clock { position: absolute; top: 14px; right: 14px; background: rgba(0,0,0,.7); color: white; padding: 6px 12px; border-radius: 999px; font-size: 11px; font-weight: 800; backdrop-filter: blur(10px); z-index: 2; }
+  .cam-watermark { position: absolute; bottom: 14px; left: 14px; right: 14px; text-align: center; color: white; font-size: 10.5px; font-weight: 700; background: rgba(0,0,0,.5); padding: 8px 12px; border-radius: 999px; backdrop-filter: blur(10px); z-index: 2; }
 
-  /* Face guide overlay */
-  .cam-overlay {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .face-guide {
-    width: 62%;
-    aspect-ratio: 3/4;
-    border: 2.5px dashed rgba(255,255,255,.55);
-    border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
-    position: relative;
-    animation: guide-pulse 2.5s ease-in-out infinite;
-  }
-  @keyframes guide-pulse {
-    0%, 100% { opacity: 0.5; transform: scale(1); }
-    50% { opacity: 0.85; transform: scale(1.02); }
-  }
-  .face-guide::before,
-  .face-guide::after {
-    content: '';
-    position: absolute;
-    width: 28px;
-    height: 28px;
-    border: 3px solid var(--gold);
-  }
-  .face-guide::before {
-    top: -4px; left: -4px;
-    border-right: none;
-    border-bottom: none;
-    border-radius: 14px 0 0 0;
-  }
-  .face-guide::after {
-    bottom: -4px; right: -4px;
-    border-left: none;
-    border-top: none;
-    border-radius: 0 0 14px 0;
-  }
+  /* SHUTTER */
+  .shutter-wrap { display: flex; justify-content: center; padding: 8px 0; }
+  .shutter { width: 78px; height: 78px; border-radius: 50%; background: var(--maroon); border: 4px solid var(--surface); box-shadow: 0 12px 28px rgba(125,29,58,.4); cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; transition: all .15s; }
+  .shutter::before { content: ''; position: absolute; inset: -10px; border-radius: 50%; border: 2px solid var(--maroon); opacity: 0.3; animation: pulse 2s infinite; }
+  .shutter:disabled { opacity: 0.4; cursor: not-allowed; }
+  .shutter svg { width: 34px; height: 34px; stroke: white; stroke-width: 2.5; }
+  .shutter.ready { background: #16A34A; }
+  .shutter.ready::before { border-color: #16A34A; }
 
-  /* Top-left live recording badge */
-  .cam-live-badge {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    background: rgba(0,0,0,.7);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 999px;
-    font-size: 10.5px;
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    backdrop-filter: blur(10px);
-    letter-spacing: 0.3px;
-    z-index: 2;
-  }
-  .cam-live-badge .dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #EF4444;
-    box-shadow: 0 0 0 3px rgba(239,68,68,.3);
-    animation: live-pulse 1.5s infinite;
-  }
-  @keyframes live-pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.8); }
-  }
-
-  /* Top-right clock */
-  .cam-clock {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    background: rgba(0,0,0,.7);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 800;
-    backdrop-filter: blur(10px);
-    letter-spacing: 0.3px;
-    z-index: 2;
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* Bottom watermark */
-  .cam-watermark {
-    position: absolute;
-    bottom: 14px;
-    left: 14px;
-    right: 14px;
-    text-align: center;
-    color: white;
-    font-size: 10.5px;
-    font-weight: 700;
-    text-shadow: 0 2px 6px rgba(0,0,0,.7);
-    letter-spacing: 0.3px;
-    background: rgba(0,0,0,.5);
-    padding: 8px 12px;
-    border-radius: 999px;
-    backdrop-filter: blur(10px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    z-index: 2;
-  }
-  .cam-watermark svg {
-    width: 12px;
-    height: 12px;
-    flex-shrink: 0;
-  }
-
-  /* Photo tips */
-  .cam-tips {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-  }
-  .cam-tip {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 10px;
-    background: var(--bg);
-    border-radius: 999px;
-    font-size: 10.5px;
-    font-weight: 700;
-    color: var(--muted);
-  }
-  .cam-tip svg {
-    width: 12px; height: 12px;
-    color: var(--success);
-  }
-
-  /* ═══════════════════════════════════════════════
-     SHUTTER BUTTON PREMIUM
-     ═══════════════════════════════════════════════ */
-  .shutter-wrap {
-    display: flex;
-    justify-content: center;
-    padding: 8px 0;
-  }
-  .shutter {
-    width: 78px;
-    height: 78px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
-    border: 4px solid var(--surface);
-    box-shadow:
-      0 12px 28px rgba(125,29,58,.4),
-      inset 0 0 0 2px rgba(201,169,97,.4);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    transition: all .15s var(--ease-out);
-    -webkit-tap-highlight-color: transparent;
-  }
-  .shutter::before {
-    content: '';
-    position: absolute;
-    inset: -10px;
-    border-radius: 50%;
-    border: 2px solid var(--maroon);
-    opacity: 0.3;
-    animation: ring-pulse 2s ease-in-out infinite;
-  }
-  @keyframes ring-pulse {
-    0%, 100% { transform: scale(1); opacity: 0.3; }
-    50% { transform: scale(1.15); opacity: 0.1; }
-  }
-  .shutter:hover:not(:disabled) {
-    transform: scale(1.05);
-    box-shadow:
-      0 16px 36px rgba(125,29,58,.5),
-      inset 0 0 0 2px rgba(201,169,97,.5);
-  }
-  .shutter:active:not(:disabled) {
-    transform: scale(0.94);
-  }
-  .shutter:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-  .shutter:disabled::before {
-    animation: none;
-    opacity: 0.15;
-  }
-  .shutter svg {
-    width: 34px; height: 34px;
-    stroke: white;
-    stroke-width: 2.5;
-  }
-
-  /* Shutter ready state */
-  .shutter.ready {
-    background: linear-gradient(135deg, #16A34A 0%, #15803D 100%);
-  }
-  .shutter.ready::before {
-    border-color: #16A34A;
-  }
-
-  /* ═══════════════════════════════════════════════
-     PREVIEW STAGE
-     ═══════════════════════════════════════════════ */
-  .preview-meta {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 14px;
-    background: var(--bg);
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--muted);
-    margin-bottom: 12px;
-  }
-  .preview-meta svg {
-    width: 14px; height: 14px;
-    color: var(--maroon);
-    flex-shrink: 0;
-  }
-  .preview-checklist {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-  .preview-check {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 14px;
-    background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
-    border-radius: 12px;
-    font-size: 12.5px;
-    font-weight: 700;
-    color: #15803D;
-  }
-  .preview-check svg {
-    width: 16px; height: 16px;
-    flex-shrink: 0;
-  }
-
-  .preview-actions {
-    display: flex;
-    gap: 10px;
-  }
-  .preview-actions .btn {
-    flex: 1;
-  }
-  .preview-actions .btn-primary {
-    flex: 1.5;
-  }
-
-  /* ═══════════════════════════════════════════════
-     SENDING STAGE
-     ═══════════════════════════════════════════════ */
-  .sending-icon {
-    width: 84px;
-    height: 84px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    position: relative;
-    box-shadow: 0 12px 28px rgba(125,29,58,.35);
-  }
-  .sending-icon::before {
-    content: '';
-    position: absolute;
-    inset: -8px;
-    border-radius: 50%;
-    border: 2px solid var(--maroon);
-    opacity: 0.3;
-    animation: sending-pulse 1.5s ease-in-out infinite;
-  }
-  @keyframes sending-pulse {
-    0%, 100% { transform: scale(1); opacity: 0.3; }
-    50% { transform: scale(1.3); opacity: 0; }
-  }
-  .sending-icon svg {
-    width: 38px; height: 38px;
-    animation: sending-bob 1s ease-in-out infinite;
-  }
-  @keyframes sending-bob {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-4px); }
-  }
-
-  .sending-steps {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
-  }
-  .sending-step {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-    background: var(--bg);
-    border-radius: 12px;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--muted);
-    transition: all .3s;
-  }
-  .sending-step.active {
-    background: var(--maroon-soft);
-    color: var(--maroon);
-    font-weight: 800;
-  }
-  .sending-step.done {
-    background: #F0FDF4;
-    color: #15803D;
-    font-weight: 700;
-  }
-  .sending-step .check {
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    border: 2px solid currentColor;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 12px;
-  }
-  .sending-step.active .check {
-    border-color: var(--maroon);
-    border-top-color: transparent;
-    animation: spin 0.8s linear infinite;
-  }
-  .sending-step.done .check {
-    background: #16A34A;
-    border-color: #16A34A;
-    color: white;
-  }
-  .sending-step.done .check svg {
-    width: 12px; height: 12px;
-  }
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
-  /* ═══════════════════════════════════════════════
-     SUCCESS STAGE
-     ═══════════════════════════════════════════════ */
-  .success-icon {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
-    color: #16A34A;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    position: relative;
-    box-shadow: 0 0 0 14px rgba(22,163,74,.08);
-    animation: success-pop .6s var(--ease-spring) both;
-  }
-  @keyframes success-pop {
-    0% { transform: scale(0.3); opacity: 0; }
-    60% { transform: scale(1.15); }
-    100% { transform: scale(1); opacity: 1; }
-  }
+  /* SUKSES / ERROR */
+  .success-icon { width: 100px; height: 100px; border-radius: 50%; background: #D1FAE5; color: #16A34A; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
   .success-icon svg { width: 52px; height: 52px; }
-  .success-icon::after {
-    content: '';
-    position: absolute;
-    inset: -14px;
-    border-radius: 50%;
-    border: 2px dashed #16A34A;
-    opacity: 0.3;
-    animation: spin-slow 20s linear infinite;
-  }
-
-  /* Confetti */
-  .confetti-wrap {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 100;
-    overflow: hidden;
-  }
-  .confetti {
-    position: absolute;
-    top: -10px;
-    width: 10px;
-    height: 10px;
-    opacity: 0;
-    animation: confetti-fall 3s ease-out forwards;
-  }
-  @keyframes confetti-fall {
-    0% {
-      opacity: 1;
-      transform: translateY(0) rotate(0deg);
-    }
-    100% {
-      opacity: 0;
-      transform: translateY(100vh) rotate(720deg);
-    }
-  }
-
-  /* Success summary */
-  .success-summary {
-    background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
-    border-radius: 16px;
-    padding: 18px;
-    margin-bottom: 16px;
-    border: 1.5px solid rgba(22,163,74,.15);
-  }
-  .success-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 0;
-    font-size: 13px;
-    gap: 12px;
-  }
-  .success-row:not(:last-child) {
-    border-bottom: 1px dashed rgba(22,163,74,.15);
-  }
-  .success-row .lbl {
-    color: var(--muted);
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .success-row .lbl svg {
-    width: 14px; height: 14px;
-    color: #16A34A;
-  }
-  .success-row .val {
-    font-weight: 800;
-    color: var(--ink);
-    text-align: right;
-  }
-
-  /* Status badge (no poin) */
-  .success-status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 800;
-    margin: 0 auto 16px;
-    letter-spacing: 0.3px;
-  }
-  .success-status-badge.tepat {
-    background: linear-gradient(135deg, #16A34A 0%, #15803D 100%);
-    color: white;
-    box-shadow: 0 6px 16px rgba(22,163,74,.3);
-  }
-  .success-status-badge.terlambat {
-    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-    color: white;
-    box-shadow: 0 6px 16px rgba(180,83,9,.3);
-  }
-  .success-status-badge.luar {
-    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-    color: white;
-    box-shadow: 0 6px 16px rgba(180,83,9,.3);
-  }
-
-  .success-note {
-    font-size: 12px;
-    color: var(--muted);
-    font-weight: 600;
-    text-align: center;
-    line-height: 1.6;
-    margin-top: 12px;
-    padding: 10px 14px;
-    background: var(--bg);
-    border-radius: 12px;
-  }
-
-  /* ═══════════════════════════════════════════════
-     ERROR STAGE
-     ═══════════════════════════════════════════════ */
-  .error-icon {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
-    color: var(--danger);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    box-shadow: 0 0 0 14px rgba(185,28,28,.08);
-  }
+  .error-icon { width: 100px; height: 100px; border-radius: 50%; background: #FEE2E2; color: var(--danger); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
   .error-icon svg { width: 52px; height: 52px; }
-  .error-title {
-    text-align: center;
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--ink);
-    margin-bottom: 8px;
-  }
-  .error-desc {
-    text-align: center;
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.55;
-    margin-bottom: 24px;
-    max-width: 320px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .error-hint {
-    display: flex;
-    gap: 8px;
-    padding: 12px 14px;
-    background: var(--bg);
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--muted);
-    line-height: 1.5;
-    margin-bottom: 20px;
-  }
-  .error-hint svg {
-    width: 16px; height: 16px;
-    color: var(--warning);
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-  .error-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
 
-  /* ═══════════════════════════════════════════════
-     UTILITIES
-     ═══════════════════════════════════════════════ */
-  .hidden { display: none !important; }
-
-  /* Responsive */
-  @media (max-width: 400px) {
-    .cam-wrap { aspect-ratio: 2.5/3.5; max-height: 360px; }
-    .stage-card { padding: 18px 16px; }
-  }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.9); } }
 </style>
 </head>
 <body>
 
 <header class="app-header">
   <div class="app-header-brand">
-    <a href="pertemuan.html?id=" class="header-btn" style="text-decoration:none;" id="btnBack">
+    <a href="beranda.html" class="header-btn" id="btnBack" style="text-decoration:none;">
       <span data-icon="chevronLeft"></span>
     </a>
     <div class="app-header-text">
@@ -942,98 +125,50 @@
       <div class="app-header-sub">KKG Gugus Nakula</div>
     </div>
   </div>
-  <button class="header-btn" data-act="logout">
-    <span data-icon="logOut"></span>
-  </button>
+  <button class="header-btn" data-act="logout"><span data-icon="logOut"></span></button>
 </header>
 
 <main class="presensi-stage">
-
   <!-- STAGE 1: LOADING -->
   <section id="stageLoading">
     <div class="stage-card">
-      <div class="loading-icon">
-        <span data-icon="mapPin"></span>
-      </div>
+      <div class="loading-icon"><span data-icon="mapPin"></span></div>
       <div class="stage-title">Menyiapkan…</div>
-      <div class="stage-desc">Mengambil data pertemuan & memeriksa lokasi GPS Anda.</div>
+      <div class="stage-desc">Mengambil data & mendeteksi GPS Anda.</div>
     </div>
   </section>
 
-  <!-- STAGE 2: WINDOW BELUM BUKA -->
-  <section id="stageBelum" class="hidden">
-    <div class="stage-card window-card">
-      <div class="window-icon belum">
-        <span data-icon="hourglass"></span>
-      </div>
-      <div class="stage-title" style="font-size:20px;">Presensi Belum Dibuka</div>
-      <div class="stage-desc" id="belumDesc">—</div>
-      <div class="window-countdown" id="belumCountdown" style="display:none;">
-        <span data-icon="clock" class="icon-sm"></span>
-        <span>Dibuka dalam</span>
-        <span class="num" id="belumTimer">—</span>
-      </div>
-      <div class="window-actions">
-        <a href="beranda.html" class="btn btn-secondary btn-full" style="text-decoration:none;text-align:center;">
-          Kembali ke Beranda
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- STAGE 3: WINDOW TUTUP -->
-  <section id="stageTutup" class="hidden">
-    <div class="stage-card window-card">
-      <div class="window-icon tutup">
-        <span data-icon="clock"></span>
-      </div>
-      <div class="stage-title" style="font-size:20px;">Presensi Sudah Ditutup</div>
-      <div class="stage-desc" id="tutupDesc">—</div>
-      <div class="window-actions">
-        <a href="#" id="btnAjukanIzinTutup" class="btn btn-primary btn-full" style="text-decoration:none;text-align:center;">
-          Ajukan Izin / Sakit / Cuti
-        </a>
-        <a href="beranda.html" class="btn btn-secondary btn-full" style="text-decoration:none;text-align:center;">
-          Kembali ke Beranda
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- STAGE 4: KAMERA -->
+  <!-- STAGE 2: KAMERA -->
   <section id="stageKamera" class="hidden">
     <div class="stage-card">
       <div class="info-header">
-        <div class="info-badge">
-          <span data-icon="camera" class="icon-sm"></span>
-          Selfie + GPS
-        </div>
+        <div class="info-badge"><span data-icon="camera" class="icon-sm"></span> SELFIE + GPS</div>
         <div class="info-pertemuan" id="judulPertemuan">Memuat…</div>
         <div class="info-sub" id="subPertemuan">—</div>
       </div>
 
       <!-- GPS Status -->
       <div class="gps-status detecting" id="gpsStatus">
-        <div class="gps-icon">
-          <span data-icon="mapPin"></span>
-        </div>
+        <div class="gps-icon"><span data-icon="mapPin"></span></div>
         <div class="gps-body">
           <div class="gps-title" id="gpsTitle">Mendeteksi lokasi…</div>
-          <div class="gps-desc" id="gpsDesc">Pastikan GPS aktif & Anda di area terbuka</div>
+          <div class="gps-desc" id="gpsDesc">Pastikan GPS aktif</div>
         </div>
       </div>
 
+      <!-- PETA LEAFLET -->
+      <div id="mapContainer" class="hidden"></div>
+
       <!-- Distance Ring -->
-      <div class="distance-ring-wrap hidden" id="distanceWrap">
+      <div class="distance-wrap hidden" id="distanceWrap">
         <div class="distance-ring">
-          <svg viewBox="0 0 72 72">
-            <circle class="track" cx="36" cy="36" r="30" />
-            <circle class="progress" id="distProgress" cx="36" cy="36" r="30"
-              stroke-dasharray="188.5" stroke-dashoffset="188.5" />
+          <svg viewBox="0 0 76 76">
+            <circle class="track" cx="38" cy="38" r="32" />
+            <circle class="progress" id="distProgress" cx="38" cy="38" r="32" stroke-dasharray="201" stroke-dashoffset="201" />
           </svg>
           <div class="center">
-            <div class="dist-val" id="distVal">—</div>
-            <div class="dist-unit" id="distUnit">meter</div>
+            <div class="val" id="distVal">—</div>
+            <div class="unit" id="distUnit">m</div>
           </div>
         </div>
         <div class="distance-info">
@@ -1042,215 +177,61 @@
         </div>
       </div>
 
-      <!-- Camera -->
+      <!-- Kamera -->
       <div class="cam-wrap">
         <video id="video" autoplay playsinline muted></video>
-        <div class="cam-overlay">
-          <div class="face-guide"></div>
-        </div>
-        <div class="cam-live-badge">
-          <span class="dot"></span>
-          <span>Kamera Aktif</span>
-        </div>
+        <div class="cam-overlay"><div class="face-guide"></div></div>
+        <div class="cam-live-badge"><span class="dot"></span> Kamera Aktif</div>
         <div class="cam-clock" id="camClock">--:--</div>
-        <div class="cam-watermark" id="camWatermark">
-          <span data-icon="mapPin" class="icon-sm"></span>
-          <span id="camWatermarkText">Menunggu lokasi…</span>
-        </div>
-      </div>
-
-      <!-- Tips -->
-      <div class="cam-tips">
-        <div class="cam-tip">
-          <span data-icon="check" class="icon-sm"></span>
-          Wajah terlihat jelas
-        </div>
-        <div class="cam-tip">
-          <span data-icon="check" class="icon-sm"></span>
-          Cahaya cukup
-        </div>
-        <div class="cam-tip">
-          <span data-icon="check" class="icon-sm"></span>
-          Tanpa penutup
-        </div>
+        <div class="cam-watermark" id="camWatermark"><span data-icon="mapPin" class="icon-sm"></span> <span id="camWatermarkText">Menunggu lokasi…</span></div>
       </div>
 
       <div id="alertKamera" class="alert alert-error hidden" style="margin-bottom:12px;"></div>
 
-      <!-- Shutter -->
       <div class="shutter-wrap">
-        <button class="shutter" id="btnAmbilFoto" disabled aria-label="Ambil Foto">
-          <span data-icon="camera"></span>
-        </button>
+        <button class="shutter" id="btnAmbilFoto" disabled><span data-icon="camera"></span></button>
       </div>
-      <div style="text-align:center;font-size:12px;color:var(--muted);font-weight:700;margin-top:8px;" id="shutterHint">
-        Menunggu GPS…
-      </div>
+      <div style="text-align:center;font-size:12px;color:var(--muted);font-weight:700;margin-top:8px;" id="shutterHint">Menunggu GPS…</div>
     </div>
   </section>
 
-  <!-- STAGE 5: PREVIEW -->
+  <!-- STAGE 3: PREVIEW -->
   <section id="stagePreview" class="hidden">
     <div class="stage-card">
       <div class="info-header">
-        <div class="info-badge" style="background:var(--gold-soft);color:var(--gold-dark);">
-          <span data-icon="checkCircle" class="icon-sm"></span>
-          Periksa Foto Anda
-        </div>
-        <div class="info-pertemuan">Pastikan wajah & lokasi terlihat jelas</div>
-        <div class="info-sub">Foto akan dikirim untuk verifikasi</div>
+        <div class="info-badge" style="background:var(--gold-soft);color:var(--gold-dark);"><span data-icon="checkCircle" class="icon-sm"></span> PERIKSA FOTO</div>
+        <div class="info-pertemuan">Pastikan wajah & lokasi jelas</div>
       </div>
-
       <div class="cam-wrap">
         <img id="previewImg" class="preview" alt="Preview" />
-        <div class="cam-live-badge" style="background:linear-gradient(135deg,#16A34A 0%,#15803D 100%);">
-          <span data-icon="check" class="icon-sm"></span>
-          <span>Foto Siap</span>
-        </div>
-        <div class="cam-watermark" id="previewWatermark">
-          <span id="previewWatermarkText">—</span>
-        </div>
+        <div class="cam-watermark" id="previewWatermark"><span id="previewWatermarkText">—</span></div>
       </div>
-
-      <!-- Preview Checklist -->
-      <div class="preview-checklist">
-        <div class="preview-check">
-          <span data-icon="checkCircle"></span>
-          Foto berhasil diambil
-        </div>
-        <div class="preview-check" id="previewCheckGps">
-          <span data-icon="checkCircle"></span>
-          GPS terdeteksi <span id="previewGpsInfo" style="margin-left:auto;font-weight:600;"></span>
-        </div>
-      </div>
-
-      <div class="preview-meta" id="previewMeta" style="display:none;">
-        <span data-icon="camera" class="icon-sm"></span>
-        <span id="previewSize">—</span>
-      </div>
-
-      <div class="preview-actions">
-        <button class="btn btn-secondary" id="btnUlang">
-          <span data-icon="rotateCcw" class="icon-sm"></span>
-          Ulangi
-        </button>
-        <button class="btn btn-primary" id="btnKirim">
-          <span data-icon="send" class="icon-sm"></span>
-          Kirim Presensi
-        </button>
+      <div class="preview-actions" style="display:flex;gap:10px;">
+        <button class="btn btn-secondary" id="btnUlang" style="flex:1;"><span data-icon="rotateCcw" class="icon-sm"></span> Ulangi</button>
+        <button class="btn btn-primary" id="btnKirim" style="flex:1.5;"><span data-icon="send" class="icon-sm"></span> Kirim Presensi</button>
       </div>
     </div>
   </section>
 
-  <!-- STAGE 6: SENDING -->
-  <section id="stageSending" class="hidden">
-    <div class="stage-card">
-      <div class="sending-icon">
-        <span data-icon="send"></span>
-      </div>
-      <div class="stage-title">Mengirim Presensi…</div>
-      <div class="stage-desc">Mohon tunggu, jangan tutup halaman ini.</div>
-
-      <div class="sending-steps">
-        <div class="sending-step" id="step1">
-          <div class="check"></div>
-          Mengompres foto
-        </div>
-        <div class="sending-step" id="step2">
-          <div class="check"></div>
-          Mengunggah
-        </div>
-        <div class="sending-step" id="step3">
-          <div class="check"></div>
-          Memverifikasi
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- STAGE 7: SUKSES -->
+  <!-- STAGE 4: SUKSES -->
   <section id="stageSukses" class="hidden">
     <div class="stage-card">
-      <div class="success-icon">
-        <span data-icon="checkCircle"></span>
-      </div>
+      <div class="success-icon"><span data-icon="checkCircle"></span></div>
       <div class="stage-title" style="font-size:22px;">Presensi Berhasil!</div>
-      <div class="stage-desc" style="margin-bottom:16px;" id="suksesDesc">—</div>
-
-      <div style="text-align:center;">
-        <div class="success-status-badge" id="suksesStatusBadge">
-          <span data-icon="checkCircle" class="icon-sm"></span>
-          <span id="suksesStatusText">—</span>
-        </div>
-      </div>
-
-      <div class="success-summary">
-        <div class="success-row">
-          <span class="lbl">
-            <span data-icon="calendar" class="icon-sm"></span>
-            Pertemuan
-          </span>
-          <span class="val" id="suksesPertemuan">—</span>
-        </div>
-        <div class="success-row">
-          <span class="lbl">
-            <span data-icon="clock" class="icon-sm"></span>
-            Waktu
-          </span>
-          <span class="val" id="suksesWaktu">—</span>
-        </div>
-        <div class="success-row" id="suksesJarakRow">
-          <span class="lbl">
-            <span data-icon="target" class="icon-sm"></span>
-            Jarak
-          </span>
-          <span class="val" id="suksesJarak">—</span>
-        </div>
-      </div>
-
-      <div class="success-note" id="suksesNote">
-        Presensi Anda telah tercatat.
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px;">
-        <a href="#" id="btnLihatPertemuan" class="btn btn-primary btn-full" style="text-decoration:none;text-align:center;">
-          Lihat Detail Pertemuan
-        </a>
-        <a href="beranda.html" class="btn btn-secondary btn-full" style="text-decoration:none;text-align:center;">
-          Kembali ke Beranda
-        </a>
-      </div>
+      <div class="stage-desc" id="suksesDesc" style="margin-bottom:20px;">—</div>
+      <a href="beranda.html" class="btn btn-primary btn-full" style="text-decoration:none;text-align:center;">Selesai</a>
     </div>
   </section>
 
-  <!-- STAGE 8: ERROR -->
+  <!-- STAGE 5: ERROR -->
   <section id="stageError" class="hidden">
     <div class="stage-card">
-      <div class="error-icon">
-        <span data-icon="alertCircle"></span>
-      </div>
-      <div class="error-title">Tidak Bisa Presensi</div>
-      <div class="error-desc" id="errorDesc">—</div>
-
-      <div class="error-hint" id="errorHint" style="display:none;">
-        <span data-icon="info"></span>
-        <span id="errorHintText">—</span>
-      </div>
-
-      <div class="error-actions">
-        <a href="#" id="btnCobaLagi" class="btn btn-primary btn-full hidden" style="text-decoration:none;text-align:center;">
-          Coba Lagi
-        </a>
-        <a href="#" id="btnAjukanIzinError" class="btn btn-secondary btn-full hidden" style="text-decoration:none;text-align:center;">
-          Ajukan Izin / Sakit / Cuti
-        </a>
-        <a href="beranda.html" class="btn btn-ghost btn-full" style="text-decoration:none;text-align:center;">
-          Kembali ke Beranda
-        </a>
-      </div>
+      <div class="error-icon"><span data-icon="alertCircle"></span></div>
+      <div class="stage-title" style="font-size:20px;">Tidak Bisa Presensi</div>
+      <div class="stage-desc" id="errorDesc" style="margin-bottom:20px;">—</div>
+      <a href="beranda.html" class="btn btn-primary btn-full" style="text-decoration:none;text-align:center;">Kembali</a>
     </div>
   </section>
-
 </main>
 
 <nav class="bottom-nav">
@@ -1264,10 +245,10 @@
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/ui.js"></script>
+<!-- LEAFLET MAP JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
-// ═══════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════
 document.querySelectorAll('[data-icon]').forEach(el => {
   el.innerHTML = Icons.get(el.dataset.icon);
   el.style.display = 'contents';
@@ -1282,572 +263,252 @@ let gps = { lat: null, lng: null, accuracy: null };
 let stream = null;
 let fotoBase64 = null;
 let clockTimer = null;
-let countdownTimer = null;
-let watchId = null;
+let map = null, markerUser = null, circleRadius = null, markerTarget = null;
 
 const params = new URLSearchParams(window.location.search);
 pertemuanId = params.get('id');
-
-// Update back button href
-if (pertemuanId) {
-  document.getElementById('btnBack').href = 'pertemuan.html?id=' + pertemuanId;
-}
+if (pertemuanId) document.getElementById('btnBack').href = 'pertemuan.html?id=' + pertemuanId;
 
 function showStage(nama) {
-  ['stageLoading', 'stageBelum', 'stageTutup', 'stageKamera', 'stagePreview', 'stageSending', 'stageSukses', 'stageError']
-    .forEach(id => document.getElementById(id).classList.toggle('hidden', id !== nama));
+  ['stageLoading', 'stageKamera', 'stagePreview', 'stageSukses', 'stageError'].forEach(id => {
+    document.getElementById(id).classList.toggle('hidden', id !== nama);
+  });
 }
 
-// ═══════════════════════════════════════════════
-// INIT APP
-// ═══════════════════════════════════════════════
 (async () => {
   profile = await Api.requireLogin();
-  if (!profile) return;
-
-  if (!pertemuanId) {
-    tampilkanError('Pertemuan tidak ditentukan.', 'Buka dari halaman detail pertemuan.');
-    return;
-  }
+  if (!profile || !pertemuanId) return;
 
   const res = await Api.call('pertemuan.detail', { pertemuan_id: Number(pertemuanId) });
   if (!res.ok || !res.data) {
-    tampilkanError(res.error || 'Gagal memuat pertemuan.', 'Coba beberapa saat lagi.');
+    showStage('stageError');
+    document.getElementById('errorDesc').textContent = res.error || 'Gagal memuat.';
     return;
   }
 
   pertemuanData = res.data.pertemuan;
   presensiData = res.data;
 
-  // Set label
-  document.getElementById('judulPertemuan').textContent = pertemuanData.judul;
-  document.getElementById('subPertemuan').textContent =
-    UI.formatTanggal(pertemuanData.tanggal) +
-    (pertemuanData.lokasi_nama ? ' · ' + pertemuanData.lokasi_nama : '');
-
-  // Set link ajukan izin
-  const linkAjukan = 'ajukan.html?id=' + pertemuanId;
-  document.getElementById('btnAjukanIzinTutup').href = linkAjukan;
-  document.getElementById('btnAjukanIzinError').href = linkAjukan;
-  document.getElementById('btnLihatPertemuan').href = 'pertemuan.html?id=' + pertemuanId;
-
-  // Cek sudah presensi?
   if (res.data.presensi_saya) {
-    tampilkanError(
-      'Anda sudah presensi di pertemuan ini (' + res.data.presensi_saya.status + ').',
-      'Presensi hanya bisa dilakukan sekali per pertemuan.'
-    );
+    showStage('stageError');
+    document.getElementById('errorDesc').textContent = 'Anda sudah presensi.';
     return;
   }
 
-  // Cek status window
-  const status = res.data.presensi_status;
+  document.getElementById('judulPertemuan').textContent = pertemuanData.judul;
+  document.getElementById('subPertemuan').textContent = UI.formatTanggal(pertemuanData.tanggal) + ' · ' + (pertemuanData.lokasi_nama || '');
 
-  if (status === 'belum') {
-    tampilkanWindowBelum(res.data);
-    return;
-  }
-
-  if (status === 'tutup') {
-    tampilkanWindowTutup(res.data);
-    return;
-  }
-
-  // Window buka — mulai GPS & kamera
-  await mulaiPresensi();
-})();
-
-// ═══════════════════════════════════════════════
-// WINDOW BELUM BUKA
-// ═══════════════════════════════════════════════
-function tampilkanWindowBelum(data) {
-  showStage('stageBelum');
-  const bukaStr = new Date(data.presensi_buka).toLocaleTimeString('id-ID', {
-    hour: '2-digit', minute: '2-digit'
-  });
-  document.getElementById('belumDesc').innerHTML =
-    `Presensi akan dibuka pukul <strong style="color:var(--maroon);">${bukaStr} WIB</strong>. Silakan kembali saat waktu yang ditentukan.`;
-
-  // Live countdown
-  const buka = new Date(data.presensi_buka).getTime();
-  document.getElementById('belumCountdown').style.display = 'inline-flex';
-  const tick = () => {
-    const sisa = Math.max(0, buka - Date.now());
-    const jam = Math.floor(sisa / 3600000);
-    const m = Math.floor((sisa % 3600000) / 60000);
-    const s = Math.floor((sisa % 60000) / 1000);
-    let text = '';
-    if (jam > 0) text = `${jam}j ${m}m`;
-    else if (m > 0) text = `${m}m ${String(s).padStart(2, '0')}s`;
-    else text = `${s} detik`;
-    document.getElementById('belumTimer').textContent = text;
-
-    if (sisa <= 0) {
-      document.getElementById('belumTimer').textContent = 'Sekarang!';
-      setTimeout(() => window.location.reload(), 1500);
-      clearInterval(countdownTimer);
-    }
-  };
-  tick();
-  countdownTimer = setInterval(tick, 1000);
-}
-
-// ═══════════════════════════════════════════════
-// WINDOW TUTUP
-// ═══════════════════════════════════════════════
-function tampilkanWindowTutup(data) {
-  showStage('stageTutup');
-  const tutupStr = new Date(data.presensi_tutup).toLocaleTimeString('id-ID', {
-    hour: '2-digit', minute: '2-digit'
-  });
-  document.getElementById('tutupDesc').innerHTML =
-    `Presensi ditutup pukul <strong style="color:var(--danger);">${tutupStr} WIB</strong>. Kalau Anda berhalangan hadir, silakan ajukan izin.`;
-}
-
-// ═══════════════════════════════════════════════
-// MULAI PRESENSI (KAMERA)
-// ═══════════════════════════════════════════════
-async function mulaiPresensi() {
   showStage('stageKamera');
   mulaiClock();
+  mulaiKamera();
   mulaiGPS();
-  await mulaiKamera();
-}
+})();
 
 function mulaiClock() {
-  const tick = () => {
-    const now = new Date();
-    const str = now.toLocaleTimeString('id-ID', {
-      hour: '2-digit', minute: '2-digit'
-    });
-    document.getElementById('camClock').textContent = str;
-  };
-  tick();
-  clockTimer = setInterval(tick, 1000);
+  const tick = () => document.getElementById('camClock').textContent = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+  tick(); clockTimer = setInterval(tick, 1000);
 }
 
-// ═══════════════════════════════════════════════
-// GPS
-// ═══════════════════════════════════════════════
+// ================= GPS & MAP =================
 function mulaiGPS() {
-  if (!navigator.geolocation) {
-    updateGpsStatus('poor', 'GPS tidak didukung', 'Browser Anda tidak mendukung GPS');
-    return;
-  }
+  if (!navigator.geolocation) return updateGpsStatus('poor', 'GPS tidak didukung', '');
 
-  watchId = navigator.geolocation.watchPosition(
+  navigator.geolocation.watchPosition(
     (pos) => {
       gps.lat = pos.coords.latitude;
       gps.lng = pos.coords.longitude;
       gps.accuracy = Math.round(pos.coords.accuracy);
 
-      updateGpsStatus('good', 'Lokasi terdeteksi', `Akurasi ±${gps.accuracy} meter`);
-      document.getElementById('camWatermarkText').textContent =
-        `${gps.lat.toFixed(5)}, ${gps.lng.toFixed(5)}`;
+      if (gps.accuracy > 100) {
+        updateGpsStatus('fair', 'Akurasi Rendah', `±${gps.accuracy}m. Pindah ke area terbuka.`);
+      } else {
+        updateGpsStatus('good', 'Lokasi Terdeteksi', `Akurasi ±${gps.accuracy}m`);
+      }
 
-      updateJarak();
+      document.getElementById('camWatermarkText').textContent = `${gps.lat.toFixed(5)}, ${gps.lng.toFixed(5)}`;
+      updatePetaDanJarak();
       perbaruiShutterState();
     },
-    (e) => {
-      let msg = 'Gagal akses GPS';
-      let hint = '';
-      if (e.code === 1) {
-        msg = 'Izin lokasi ditolak';
-        hint = 'Aktifkan izin lokasi di pengaturan browser Anda, lalu muat ulang halaman.';
-      } else if (e.code === 2) {
-        msg = 'Lokasi tidak tersedia';
-        hint = 'Pastikan GPS aktif & Anda di area terbuka.';
-      } else if (e.code === 3) {
-        msg = 'Timeout GPS';
-        hint = 'Coba pindah ke area dengan sinyal lebih baik.';
-      }
-      updateGpsStatus('poor', msg, hint);
-    },
+    (e) => updateGpsStatus('poor', 'Gagal Akses GPS', 'Pastikan izin lokasi menyala.'),
     { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
   );
 }
 
 function updateGpsStatus(level, title, desc) {
-  const el = document.getElementById('gpsStatus');
-  el.className = 'gps-status ' + level;
+  document.getElementById('gpsStatus').className = 'gps-status ' + level;
   document.getElementById('gpsTitle').textContent = title;
   document.getElementById('gpsDesc').textContent = desc;
 }
 
-function updateJarak() {
-  if (!pertemuanData || !gps.lat) return;
-
+function updatePetaDanJarak() {
+  if (!gps.lat || !pertemuanData) return;
+  
   const latP = Number(pertemuanData.latitude);
   const lngP = Number(pertemuanData.longitude);
-  if (isNaN(latP) || isNaN(lngP)) {
-    document.getElementById('distanceWrap').classList.add('hidden');
-    return;
-  }
+  if (isNaN(latP) || isNaN(lngP)) return;
 
-  const jarak = haversine(gps.lat, gps.lng, latP, lngP);
+  const jarakMeter = haversine(gps.lat, gps.lng, latP, lngP);
   const radius = Number(pertemuanData.radius_meter) || 100;
 
-  document.getElementById('distanceWrap').classList.remove('hidden');
-  document.getElementById('distVal').textContent = jarak;
-  document.getElementById('distUnit').textContent = 'meter';
-
-  // Progress ring (max 200% of radius = full circle)
-  const progressCircle = document.getElementById('distProgress');
-  const maxDist = radius * 2;
-  const ratio = Math.min(jarak / maxDist, 1);
-  const circumference = 188.5;
-  progressCircle.style.strokeDashoffset = circumference * (1 - ratio);
-
-  // Color
-  const ok = jarak <= radius;
-  const warning = !ok && jarak <= radius * 1.5;
-
-  let cls = '', desc = '';
-  if (ok) {
-    cls = 'good';
-    desc = 'Anda di dalam area presensi';
-    progressCircle.classList.remove('warn', 'danger');
-  } else if (warning) {
-    cls = 'warn';
-    desc = 'Anda di luar area — akan diverifikasi admin';
-    progressCircle.classList.remove('danger');
-    progressCircle.classList.add('warn');
+  // -- UPDATE PETA LEAFLET --
+  document.getElementById('mapContainer').classList.remove('hidden');
+  
+  if (!map) {
+    map = L.map('mapContainer', { zoomControl: false, attributionControl: false }).setView([latP, lngP], 17);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    
+    // Titik Lokasi Kegiatan & Radius
+    markerTarget = L.marker([latP, lngP]).addTo(map).bindPopup("Lokasi Kegiatan");
+    circleRadius = L.circle([latP, lngP], { radius: radius, color: '#7D1D3A', fillColor: '#7D1D3A', fillOpacity: 0.15 }).addTo(map);
+  }
+  
+  if (!markerUser) {
+    markerUser = L.circleMarker([gps.lat, gps.lng], { radius: 6, color: '#fff', weight: 2, fillColor: '#3B82F6', fillOpacity: 1 }).addTo(map);
   } else {
-    cls = 'danger';
-    desc = 'Terlalu jauh dari lokasi';
-    progressCircle.classList.remove('warn');
-    progressCircle.classList.add('danger');
+    markerUser.setLatLng([gps.lat, gps.lng]);
   }
 
-  const distDesc = document.getElementById('distDesc');
-  distDesc.className = 'distance-desc ' + cls;
-  distDesc.textContent = desc;
+  // -- UPDATE RING & ANGKA JARAK --
+  document.getElementById('distanceWrap').classList.remove('hidden');
+  
+  let displayVal = jarakMeter;
+  let displayUnit = 'm';
+  let isErrorGps = false;
+
+  if (jarakMeter > 50000) { // Jika > 50km, hampir pasti GPS error/ngawur
+    displayVal = '!';
+    displayUnit = 'GPS';
+    isErrorGps = true;
+  } else if (jarakMeter >= 1000) {
+    displayVal = (jarakMeter / 1000).toFixed(1);
+    displayUnit = 'km';
+  }
+
+  document.getElementById('distVal').textContent = displayVal;
+  document.getElementById('distUnit').textContent = displayUnit;
+
+  const progressCircle = document.getElementById('distProgress');
+  const maxDist = radius * 2; // Full circle if distance == 2x radius
+  const ratio = Math.min(jarakMeter / maxDist, 1);
+  progressCircle.style.strokeDashoffset = 201 * (1 - ratio);
+
+  const descEl = document.getElementById('distDesc');
+  descEl.className = 'distance-desc';
+
+  if (isErrorGps) {
+    descEl.classList.add('danger');
+    descEl.textContent = 'Sinyal GPS Error';
+    progressCircle.classList.add('danger');
+  } else if (jarakMeter <= radius) {
+    descEl.classList.add('good');
+    descEl.textContent = 'Di dalam area';
+    progressCircle.classList.remove('warn', 'danger');
+  } else {
+    descEl.classList.add('danger');
+    descEl.textContent = 'Terlalu jauh dari lokasi';
+    progressCircle.classList.remove('good', 'warn');
+    progressCircle.classList.add('danger');
+  }
 }
 
 function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371000;
-  const toRad = d => d * Math.PI / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
+  const R = 6371000; const toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1); const dLon = toRad(lon2 - lon1);
   const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
   return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
 }
 
-// ═══════════════════════════════════════════════
-// KAMERA
-// ═══════════════════════════════════════════════
+// ================= KAMERA =================
 async function mulaiKamera() {
   try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: 'user',
-        width: { ideal: 720 },
-        height: { ideal: 960 },
-      },
-      audio: false,
-    });
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
     document.getElementById('video').srcObject = stream;
   } catch (e) {
-    let msg = 'Tidak bisa akses kamera. ';
-    if (e.name === 'NotAllowedError') msg += 'Izin kamera ditolak. Aktifkan di pengaturan browser.';
-    else if (e.name === 'NotFoundError') msg += 'Kamera tidak ditemukan di perangkat ini.';
-    else msg += e.message;
-    
-    const alertEl = document.getElementById('alertKamera');
-    alertEl.textContent = msg;
-    alertEl.classList.remove('hidden');
-    alertEl.classList.add('show');
-    document.getElementById('btnAmbilFoto').disabled = true;
+    document.getElementById('alertKamera').textContent = 'Gagal akses kamera.';
+    document.getElementById('alertKamera').classList.remove('hidden');
   }
 }
-
-function stopKamera() {
-  if (stream) {
-    stream.getTracks().forEach(t => t.stop());
-    stream = null;
-  }
-}
+function stopKamera() { if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; } }
 
 function perbaruiShutterState() {
   const btn = document.getElementById('btnAmbilFoto');
-  const hint = document.getElementById('shutterHint');
-
-  if (!gps.lat) {
-    btn.disabled = true;
-    btn.classList.remove('ready');
-    hint.textContent = 'Menunggu GPS…';
-    return;
-  }
-
+  if (!gps.lat) return;
   btn.disabled = false;
   btn.classList.add('ready');
-  hint.textContent = 'Ketuk untuk ambil foto';
+  document.getElementById('shutterHint').textContent = 'Ketuk untuk ambil foto';
 }
 
-// ═══════════════════════════════════════════════
-// SHUTTER
-// ═══════════════════════════════════════════════
 document.getElementById('btnAmbilFoto').addEventListener('click', () => {
-  if (!gps.lat) { UI.gagal('Tunggu GPS terdeteksi…'); return; }
-
-  // Haptic feedback
+  if (!gps.lat) return;
   if (navigator.vibrate) navigator.vibrate(50);
 
   const video = document.getElementById('video');
   const canvas = document.createElement('canvas');
-  canvas.width = 480;
-  canvas.height = 640;
+  canvas.width = 480; canvas.height = 640;
   const ctx = canvas.getContext('2d');
 
-  const vw = video.videoWidth;
-  const vh = video.videoHeight;
-  const targetR = 480 / 640;
-  const srcR = vw / vh;
+  const vw = video.videoWidth; const vh = video.videoHeight;
+  const targetR = 480 / 640; const srcR = vw / vh;
   let sx = 0, sy = 0, sw = vw, sh = vh;
   if (srcR > targetR) { sw = vh * targetR; sx = (vw - sw) / 2; }
   else { sh = vw / targetR; sy = (vh - sh) / 2; }
 
-  ctx.drawImage(video, sx, sy, sw, sh, 0, 0, 480, 640);
+  // FLIP CANVAS (KARENA KAMERA MIRROR)
+  ctx.translate(canvas.width, 0);
+  ctx.scale(-1, 1);
 
-  // Watermark pada foto
-  const now = new Date();
-  const timeStr = now.toLocaleString('id-ID', {
-    day: '2-digit', month: 'short', year: 'numeric',
-    hour: '2-digit', minute: '2-digit'
-  });
+  ctx.drawImage(video, sx, sy, sw, sh, 0, 0, 480, 640);
+  
+  // Kembalikan translasi agar text watermark tidak terbalik
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+  // Watermark
+  const timeStr = new Date().toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   const coordsStr = gps.lat.toFixed(5) + ', ' + gps.lng.toFixed(5);
   const pertemuanStr = 'Pertemuan #' + pertemuanData.urutan;
 
-  // Overlay gelap bawah
-  ctx.fillStyle = 'rgba(0,0,0,0.65)';
-  ctx.fillRect(0, 640 - 90, 480, 90);
-
-  ctx.fillStyle = 'white';
-  ctx.font = 'bold 16px system-ui, sans-serif';
-  ctx.fillText(pertemuanStr, 16, 640 - 60);
-
-  ctx.fillStyle = 'rgba(255,255,255,0.85)';
-  ctx.font = '13px system-ui, sans-serif';
-  ctx.fillText(timeStr, 16, 640 - 36);
-  ctx.fillText('📍 ' + coordsStr, 16, 640 - 14);
+  ctx.fillStyle = 'rgba(0,0,0,0.65)'; ctx.fillRect(0, 640 - 90, 480, 90);
+  ctx.fillStyle = 'white'; ctx.font = 'bold 16px system-ui, sans-serif'; ctx.fillText(pertemuanStr, 16, 640 - 60);
+  ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.font = '13px system-ui, sans-serif';
+  ctx.fillText(timeStr, 16, 640 - 36); ctx.fillText('📍 ' + coordsStr, 16, 640 - 14);
 
   fotoBase64 = canvas.toDataURL('image/webp', 0.75);
+  
   document.getElementById('previewImg').src = fotoBase64;
-
-  // Update preview watermark
-  document.getElementById('previewWatermarkText').textContent =
-    `${timeStr} · ${coordsStr}`;
-
-  // Update checklist GPS
-  const jarak = hitungJarakSekarang();
-  document.getElementById('previewGpsInfo').textContent =
-    jarak !== null ? `(${jarak}m dari lokasi)` : '';
-
-  // Ukuran foto
-  const sizeKb = Math.round((fotoBase64.length * 3 / 4) / 1024);
-  document.getElementById('previewSize').textContent = `Ukuran foto: ~${sizeKb} KB`;
-  document.getElementById('previewMeta').style.display = 'flex';
+  document.getElementById('previewWatermarkText').textContent = `${timeStr} · ${coordsStr}`;
 
   stopKamera();
   showStage('stagePreview');
 });
 
-function hitungJarakSekarang() {
-  if (!pertemuanData || !gps.lat) return null;
-  const latP = Number(pertemuanData.latitude);
-  const lngP = Number(pertemuanData.longitude);
-  if (isNaN(latP) || isNaN(lngP)) return null;
-  return haversine(gps.lat, gps.lng, latP, lngP);
-}
-
-// ═══════════════════════════════════════════════
-// PREVIEW — Ulangi
-// ═══════════════════════════════════════════════
 document.getElementById('btnUlang').addEventListener('click', () => {
   fotoBase64 = null;
   showStage('stageKamera');
   mulaiKamera();
 });
 
-// ═══════════════════════════════════════════════
-// KIRIM
-// ═══════════════════════════════════════════════
 document.getElementById('btnKirim').addEventListener('click', async () => {
-  if (!fotoBase64 || !gps.lat) {
-    UI.gagal('Data belum lengkap.');
-    return;
-  }
+  const btn = document.getElementById('btnKirim');
+  UI.btnLoading(btn, 'Mengirim…');
 
-  // Show sending stage
-  showStage('stageSending');
-  resetSendingSteps();
+  const res = await fetch(NAKULA_CONFIG.SUPABASE_URL + '/functions/v1/nakula-presensi', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': NAKULA_CONFIG.ANON_KEY },
+    body: JSON.stringify({ token: Api.getToken(), pertemuan_id: Number(pertemuanId), latitude: gps.lat, longitude: gps.lng, akurasi: gps.accuracy, foto: fotoBase64 })
+  }).then(r => r.json());
 
-  // Animate steps
-  setStep('step1', 'active');
-  await sleep(200);
-  setStep('step1', 'done');
-  setStep('step2', 'active');
+  UI.btnReset(btn);
 
-  try {
-    const res = await fetch(
-      NAKULA_CONFIG.SUPABASE_URL + '/functions/v1/nakula-presensi',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': NAKULA_CONFIG.ANON_KEY,
-        },
-        body: JSON.stringify({
-          token: Api.getToken(),
-          pertemuan_id: Number(pertemuanId),
-          latitude: gps.lat,
-          longitude: gps.lng,
-          akurasi: gps.accuracy,
-          foto: fotoBase64,
-        }),
-      }
-    ).then(r => r.json());
+  if (!res.ok) { UI.gagal(res.error || 'Gagal.'); return; }
 
-    setStep('step2', 'done');
-    setStep('step3', 'active');
-    await sleep(400);
-    setStep('step3', 'done');
-    await sleep(300);
-
-    if (!res.ok) {
-      showStage('stagePreview');
-      UI.gagal(res.error || 'Presensi gagal. Coba lagi.');
-      return;
-    }
-
-    tampilkanSukses(res.data);
-  } catch (e) {
-    console.error(e);
-    showStage('stagePreview');
-    UI.gagal('Koneksi gagal. Periksa internet Anda.');
-  }
-});
-
-function setStep(id, state) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.className = 'sending-step ' + state;
-  const check = el.querySelector('.check');
-  if (state === 'done') {
-    check.innerHTML = Icons.get('check');
-  } else {
-    check.innerHTML = '';
-  }
-}
-
-function resetSendingSteps() {
-  ['step1', 'step2', 'step3'].forEach(id => {
-    const el = document.getElementById(id);
-    el.className = 'sending-step';
-    el.querySelector('.check').innerHTML = '';
-  });
-}
-
-function sleep(ms) {
-  return new Promise(r => setTimeout(r, ms));
-}
-
-// ═══════════════════════════════════════════════
-// SUKSES
-// ═══════════════════════════════════════════════
-function tampilkanSukses(d) {
+  const d = res.data;
+  let desc = 'Presensi tercatat.';
+  if (d.status === 'luar_radius') desc = 'Tercatat di luar area. Menunggu verifikasi admin.';
+  
+  document.getElementById('suksesDesc').textContent = desc;
   showStage('stageSukses');
-
-  // Confetti
-  mulaiConfetti();
-
-  // Update info
-  const statusLabels = {
-    tepat_waktu: { text: 'Tepat Waktu', cls: 'tepat', desc: 'Presensi Anda tercatat tepat waktu.' },
-    terlambat: { text: 'Terlambat', cls: 'terlambat', desc: 'Presensi Anda tercatat, namun melewati batas waktu.' },
-    luar_radius: { text: 'Menunggu Verifikasi', cls: 'luar', desc: 'Anda terdeteksi di luar area. Admin akan memverifikasi foto Anda.' },
-  };
-  const s = statusLabels[d.status] || statusLabels.tepat_waktu;
-
-  const badge = document.getElementById('suksesStatusBadge');
-  badge.className = 'success-status-badge ' + s.cls;
-  document.getElementById('suksesStatusText').textContent = s.text;
-  document.getElementById('suksesDesc').textContent = s.desc;
-  document.getElementById('suksesNote').textContent = s.desc;
-
-  // Detail
-  document.getElementById('suksesPertemuan').textContent =
-    '#' + pertemuanData.urutan + ' · ' + pertemuanData.judul;
-  document.getElementById('suksesWaktu').textContent =
-    new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-
-  if (d.jarak_meter !== null && d.jarak_meter !== undefined) {
-    document.getElementById('suksesJarak').textContent = d.jarak_meter + ' meter';
-    document.getElementById('suksesJarakRow').style.display = 'flex';
-  } else {
-    document.getElementById('suksesJarakRow').style.display = 'none';
-  }
-
-  // Cleanup
-  stopKamera();
-  if (watchId) navigator.geolocation.clearWatch(watchId);
-  if (clockTimer) clearInterval(clockTimer);
-
-  UI.sukses('Presensi berhasil!');
-}
-
-// ═══════════════════════════════════════════════
-// CONFETTI
-// ═══════════════════════════════════════════════
-function mulaiConfetti() {
-  const wrap = document.createElement('div');
-  wrap.className = 'confetti-wrap';
-  document.body.appendChild(wrap);
-
-  const colors = ['#16A34A', '#22C55E', '#C9A961', '#FCD34D', '#7D1D3A', '#F59E0B'];
-  const count = 60;
-
-  for (let i = 0; i < count; i++) {
-    const c = document.createElement('div');
-    c.className = 'confetti';
-    c.style.left = Math.random() * 100 + '%';
-    c.style.background = colors[Math.floor(Math.random() * colors.length)];
-    c.style.animationDelay = (Math.random() * 0.8) + 's';
-    c.style.animationDuration = (2.5 + Math.random() * 1.5) + 's';
-    c.style.width = (6 + Math.random() * 8) + 'px';
-    c.style.height = (6 + Math.random() * 8) + 'px';
-    c.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-    wrap.appendChild(c);
-  }
-
-  setTimeout(() => wrap.remove(), 5000);
-}
-
-// ═══════════════════════════════════════════════
-// ERROR
-// ═══════════════════════════════════════════════
-function tampilkanError(msg, hint, showRetry = false, showAjukan = false) {
-  showStage('stageError');
-  document.getElementById('errorDesc').textContent = msg;
-
-  if (hint) {
-    document.getElementById('errorHint').style.display = 'flex';
-    document.getElementById('errorHintText').textContent = hint;
-  } else {
-    document.getElementById('errorHint').style.display = 'none';
-  }
-
-  document.getElementById('btnCobaLagi').classList.toggle('hidden', !showRetry);
-  document.getElementById('btnAjukanIzinError').classList.toggle('hidden', !showAjukan);
-
-  if (showRetry) {
-    document.getElementById('btnCobaLagi').onclick = (e) => {
-      e.preventDefault();
-      window.location.reload();
-    };
-  }
-}
+  UI.sukses('Berhasil!');
+});
 </script>
-
 </body>
 </html>
