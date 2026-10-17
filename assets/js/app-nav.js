@@ -143,8 +143,8 @@
   if (isKS && !isAdmin) {
     menuItems.push(
       { href: prefix + 'ks/sekolah.html', icon: 'home', label: 'Sekolahku', key: 'ks-sekolah' },
-      { href: prefix + 'ks/verifikasi.html', icon: 'checkCircle', label: 'Verifikasi KS', key: 'ks-verif' },
-      { href: prefix + 'admin/index.html', icon: 'shield', label: 'Dashboard Admin', key: 'admin' }
+      { href: prefix + 'ks/verifikasi.html', icon: 'checkCircle', label: 'Verifikasi Izin', key: 'ks-verif' },
+      { href: prefix + 'admin/guru.html', icon: 'users', label: 'Guru Sekolah', key: 'admin-guru' }
     );
   }
 
