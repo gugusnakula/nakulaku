@@ -210,9 +210,7 @@
         <div class="info-pertemuan">Pastikan wajah & lokasi jelas</div>
       </div>
       <div class="cam-wrap">
-        <!-- object-fit: contain agar foto wide terlihat semua -->
         <img id="previewImg" class="preview" alt="Preview" />
-        <div class="cam-watermark" id="previewWatermark"><span id="previewWatermarkText">—</span></div>
       </div>
       <div class="preview-actions" style="display:flex;gap:10px;">
         <button class="btn btn-secondary" id="btnUlang" style="flex:1;"><span data-icon="rotateCcw" class="icon-sm"></span> Ulangi</button>
@@ -507,75 +505,84 @@ document.getElementById('btnAmbilFoto').addEventListener('click', () => {
   const coordsStr = gps.lat.toFixed(5) + ', ' + gps.lng.toFixed(5);
   const pertemuanStr = 'Pertemuan #' + pertemuanData.urutan;
   // ==========================================
-  // WATERMARK SECTION (DESAIN 2 KOLOM)
+  // WATERMARK SECTION (DESAIN 2 BARIS RAPI)
   // ==========================================
   const w = canvas.width;
   const h = canvas.height;
-  const boxH = Math.round(h * 0.18); // Tinggi area hitam (18% dari foto)
+  
+  // Hitung tinggi kotak proporsional (12% dari tinggi foto)
+  const boxH = Math.round(h * 0.12); 
   const y0 = h - boxH;
 
   // Latar belakang hitam transparan
   ctx.fillStyle = 'rgba(15, 8, 9, 0.85)'; 
   ctx.fillRect(0, y0, w, boxH);
 
-  // Garis emas pemisah
+  // Garis emas pemisah atas
   ctx.fillStyle = '#C9A961'; 
-  ctx.fillRect(0, y0, w, 4);
+  ctx.fillRect(0, y0, w, 3);
 
-  const pad = Math.round(w * 0.04); // Padding kiri/kanan
-  const fsTitle = Math.round(h * 0.035); // Ukuran font judul
-  const fsText = Math.round(h * 0.025);  // Ukuran font biasa
+  const pad = Math.round(w * 0.04); 
+  const fsTitle = Math.round(boxH * 0.28); // Font Besar
+  const fsText = Math.round(boxH * 0.18);  // Font Kecil
+  const fsSmall = Math.round(boxH * 0.16); // Font Sangat Kecil
+  const logoSize = Math.round(boxH * 0.40);
 
-  // --- KOLOM KIRI: LOGO + NAMA APP + PERTEMUAN ---
-  const logoSize = Math.round(fsTitle * 1.4);
+  // --- BARIS 1: LOGO & NAMA APP (KIRI) | WAKTU (KANAN) ---
+  const row1Y = y0 + (boxH * 0.35); // Posisi Y tengah atas
+
+  // 1. Logo Vektor Nakulaku
   const logoX = pad;
-  const logoY = y0 + pad;
-
-  // Gambar Logo Vektor (Lingkaran Emas)
   ctx.beginPath();
-  ctx.arc(logoX + logoSize/2, logoY + logoSize/2, logoSize/2, 0, Math.PI * 2);
+  ctx.arc(logoX + logoSize/2, row1Y, logoSize/2, 0, Math.PI * 2);
   ctx.fillStyle = '#C9A961';
   ctx.fill();
   
-  // Huruf 'N' di dalam lingkaran
+  // Huruf 'N'
   ctx.fillStyle = '#4A0D1F'; 
-  ctx.font = `900 ${logoSize * 0.6}px system-ui, sans-serif`;
+  ctx.font = `900 ${logoSize * 0.65}px system-ui, sans-serif`;
   ctx.textAlign = 'center';
-  ctx.fillText('N', logoX + logoSize/2, logoY + logoSize * 0.75);
+  ctx.textBaseline = 'middle'; // Kunci agar teks tegak tengah
+  ctx.fillText('N', logoX + logoSize/2, row1Y + (logoSize * 0.05));
 
-  // Teks NAKULAKU di samping logo
+  // 2. Teks NAKULAKU
   ctx.textAlign = 'left';
   ctx.fillStyle = '#C9A961';
   ctx.font = `800 ${fsTitle}px system-ui, sans-serif`;
-  ctx.fillText('NAKULAKU', logoX + logoSize + 12, logoY + fsTitle);
+  ctx.fillText('NAKULAKU', logoX + logoSize + 10, row1Y);
 
-  // Teks Pertemuan
+  // 3. Waktu (Kanan)
+  ctx.textAlign = 'right';
   ctx.fillStyle = '#FFFFFF';
   ctx.font = `600 ${fsText}px system-ui, sans-serif`;
-  ctx.fillText(`Pertemuan #${pertemuanData.urutan}`, logoX + logoSize + 12, logoY + fsTitle + fsText + 10);
+  ctx.fillText(timeStr, w - pad, row1Y - 2);
 
-  // --- KOLOM KANAN: WAKTU + GPS ---
-  ctx.textAlign = 'right';
-  const textX = w - pad;
+  // --- BARIS 2: PERTEMUAN (KIRI) | GPS (KANAN) ---
+  const row2Y = y0 + (boxH * 0.75); // Posisi Y tengah bawah
 
-  // Waktu
-  ctx.fillStyle = '#FFFFFF';
-  ctx.font = `bold ${fsText}px system-ui, sans-serif`;
-  ctx.fillText(timeStr, textX, logoY + fsTitle);
-
-  // GPS (Warna Emas)
-  ctx.fillStyle = '#C9A961';
-  ctx.font = `${fsText}px system-ui, sans-serif`;
-  ctx.fillText(`📍 ${coordsStr}`, textX, logoY + fsTitle + fsText + 10);
-
-  // Reset align untuk jaga-jaga
+  // 4. Pertemuan (Kiri)
   ctx.textAlign = 'left';
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = `600 ${fsSmall}px system-ui, sans-serif`;
+  ctx.fillText(pertemuanStr, logoX + logoSize + 10, row2Y);
+
+  // 5. GPS (Kanan)
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#C9A961'; // Warna emas
+  ctx.font = `${fsSmall}px system-ui, sans-serif`;
+  ctx.fillText(`📍 ${coordsStr}`, w - pad, row2Y);
+
+  // Reset align
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
   // ==========================================
 
   fotoBase64 = canvas.toDataURL('image/webp', 0.75);
   
   document.getElementById('previewImg').src = fotoBase64;
-  document.getElementById('previewWatermarkText').textContent = `${timeStr} · ${coordsStr}`;
+
+  // Hapus baris ini karena elemennya sudah dihapus di HTML
+  // document.getElementById('previewWatermarkText').textContent = `${timeStr} · ${coordsStr}`;
 
   stopKamera();
   showStage('stagePreview');
