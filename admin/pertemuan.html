@@ -165,6 +165,28 @@ let daftarPertemuan = [];
 let daftarArsip = [];
 let tabAktif = 'aktif';
 
+// ═══════════════════════════════════════════════
+// HELPER: Format jam untuk <input type="time">
+// ═══════════════════════════════════════════════
+function formatJamInput(val) {
+  if (!val) return '';
+  const str = String(val);
+
+  // Sudah format "HH:mm" atau "HH:mm:ss" → potong jadi HH:mm
+  if (/^\d{2}:\d{2}/.test(str)) return str.slice(0, 5);
+
+  // Format ISO datetime ("2026-10-17T07:49:00.000Z") → konversi ke jam lokal
+  try {
+    const d = new Date(str);
+    if (isNaN(d.getTime())) return '';
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    return `${hh}:${mm}`;
+  } catch {
+    return '';
+  }
+}
+
 (async () => {
   profile = await Api.requireLogin();
   if (!profile) return;
@@ -437,15 +459,15 @@ function bukaForm(pertemuan) {
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
           <div class="field">
             <label class="label">Jam Mulai</label>
-            <input type="time" id="fJamMulai" class="input" value="${p.jam_mulai || ''}" />
+            <input type="time" id="fJamMulai" class="input" value="${formatJamInput(p.jam_mulai)}" />
           </div>
           <div class="field">
             <label class="label">Jam Selesai</label>
-            <input type="time" id="fJamSelesai" class="input" value="${p.jam_selesai || ''}" />
+            <input type="time" id="fJamSelesai" class="input" value="${formatJamInput(p.jam_selesai)}" />
           </div>
           <div class="field">
             <label class="label">Batas Tepat</label>
-            <input type="time" id="fBatas" class="input" value="${p.batas_tepat_waktu || ''}" />
+            <input type="time" id="fBatas" class="input" value="${formatJamInput(p.batas_tepat_waktu)}" />
           </div>
         </div>
 
@@ -457,11 +479,11 @@ function bukaForm(pertemuan) {
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
             <div class="field">
               <label class="label">Buka</label>
-              <input type="time" id="fPresensiBuka" class="input" value="${p.presensi_buka || ''}" />
+              <input type="time" id="fPresensiBuka" class="input" value="${formatJamInput(p.presensi_buka)}" />
             </div>
             <div class="field">
               <label class="label">Tutup</label>
-              <input type="time" id="fPresensiTutup" class="input" value="${p.presensi_tutup || ''}" />
+              <input type="time" id="fPresensiTutup" class="input" value="${formatJamInput(p.presensi_tutup)}" />
             </div>
           </div>
           <div style="font-size:10.5px;color:var(--muted);margin-top:8px;font-weight:600;line-height:1.5;">
