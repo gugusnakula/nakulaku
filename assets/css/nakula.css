@@ -299,3 +299,102 @@ h1, h2, h3, h4 { font-weight: 800; line-height: 1.2; color: var(--ink); letter-s
 
   .desktop-content { padding: 24px 32px; max-width: 1200px; margin: 0 auto; }
 }
+/* ============================================
+   APP DRAWER (HAMBURGER MENU MOBILE)
+   ============================================ */
+.hamburger-btn {
+  width: 38px; height: 38px;
+  border-radius: var(--r-md);
+  background: rgba(255,255,255,.1);
+  border: none; color: white;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  margin-right: 6px;
+  transition: all var(--t-fast);
+}
+.hamburger-btn:active { transform: scale(.92); }
+
+.app-drawer-overlay {
+  position: fixed; inset: 0;
+  background: rgba(28,20,20,.5);
+  backdrop-filter: blur(2px);
+  z-index: 998;
+  opacity: 0; visibility: hidden;
+  transition: all .25s var(--ease-out);
+}
+.app-drawer-overlay.open { opacity: 1; visibility: visible; }
+
+.app-drawer {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 280px; max-width: 85vw;
+  background: linear-gradient(180deg, #4A0D1F 0%, var(--maroon) 100%);
+  color: white;
+  z-index: 999;
+  transform: translateX(-100%);
+  transition: transform .3s var(--ease-out);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+  box-shadow: 4px 0 24px rgba(0,0,0,.25);
+}
+.app-drawer.open { transform: translateX(0); }
+
+.drawer-header {
+  padding: calc(20px + env(safe-area-inset-top)) 16px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  flex-shrink: 0;
+}
+.drawer-brand { display: flex; align-items: center; gap: 12px; }
+.drawer-brand-logo {
+  width: 42px; height: 42px; background: white;
+  border: 1.5px solid var(--gold); border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.drawer-brand-logo img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.25); }
+.drawer-brand-name { font-size: 14px; font-weight: 800; letter-spacing: 0.5px; }
+.drawer-brand-sub { font-size: 10px; opacity: 0.7; }
+
+.drawer-close {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,255,255,.1); border: none; color: white;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+
+.drawer-menu {
+  flex: 1; padding: 16px 12px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.drawer-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: var(--r-md);
+  color: rgba(255,255,255,.75); font-size: 13.5px; font-weight: 600;
+  text-decoration: none; transition: all .15s; cursor: pointer;
+}
+.drawer-item:hover { background: rgba(255,255,255,.08); color: white; }
+.drawer-item.active {
+  background: rgba(255,255,255,.15); color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15); font-weight: 700;
+}
+
+.drawer-footer {
+  padding: 16px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(255,255,255,.1);
+  flex-shrink: 0;
+}
+.drawer-user { display: flex; align-items: center; gap: 12px; }
+.drawer-user-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,.15); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 15px; overflow: hidden;
+  border: 2px solid var(--gold);
+}
+.drawer-user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.drawer-user-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.drawer-user-role { font-size: 10px; opacity: 0.7; }
+
+/* Sembunyikan bottom-nav saat drawer aktif di halaman yg pakai app-nav.js */
+body.app-nav-active .bottom-nav { display: none !important; }
+body.app-nav-active .page { padding-bottom: calc(24px + env(safe-area-inset-bottom)) !important; }
