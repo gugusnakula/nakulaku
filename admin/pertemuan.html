@@ -273,13 +273,18 @@ function renderBadgeWindow(p) {
   };
   const m = map[status] || map.belum;
 
-  const buka = new Date(p.presensi_buka).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-  const tutup = new Date(p.presensi_tutup).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+  // Ambil dari ISO, konversi ke WIB explicit
+  const bukaStr = new Date(p.presensi_buka).toLocaleTimeString('id-ID', { 
+    hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jakarta' 
+  });
+  const tutupStr = new Date(p.presensi_tutup).toLocaleTimeString('id-ID', { 
+    hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jakarta' 
+  });
 
   return `
     <div class="window-badge ${status}">
       ${Icons.get(m.icon, { class: 'icon-sm' })}
-      ${m.label} · ${buka}–${tutup}
+      ${m.label} · ${bukaStr}–${tutupStr}
     </div>
   `;
 }
