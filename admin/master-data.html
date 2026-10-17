@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>Master Data — NAKULAKU Admin</title>
+
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/nakula.css" />
+<link rel="stylesheet" href="layout.css" />
+
+<style>
+  .tab-switch {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    padding: 4px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    border: 1.5px solid var(--border);
+    animation: fade-in-up .4s var(--ease-out) .05s both;
+  }
+  .tsw {
+    flex: 1;
+    padding: 12px 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all .15s;
+    font-family: inherit;
+  }
+  .tsw.active {
+    background: var(--surface);
+    color: var(--maroon);
+    box-shadow: 0 2px 8px rgba(125,29,58,.08);
+  }
+
+  .data-list { display: flex; flex-direction: column; gap: 10px; }
+  .data-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px; background: var(--surface);
+    border: 1.5px solid var(--border); border-radius: 16px;
+    transition: all .15s;
+  }
+  .data-item:hover { border-color: var(--maroon); box-shadow: 0 4px 12px rgba(125,29,58,.08); }
+  .data-item.nonaktif { opacity: 0.55; background: var(--bg); }
+
+  .data-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; background: var(--maroon-soft); color: var(--maroon);
+    font-weight: 800; font-size: 16px;
+  }
+  .data-icon.jabatan { background: var(--gold-soft); color: var(--gold-dark); }
+
+  .data-body { flex: 1; min-width: 0; }
+  .data-title { font-weight: 800; font-size: 14px; color: var(--ink); margin-bottom: 2px; }
+  .data-sub { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+
+  .badge-count {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; background: var(--bg);
+    color: var(--muted); border-radius: 999px;
+    font-size: 11px; font-weight: 800; flex-shrink: 0;
+  }
+  .badge-nonaktif {
+    font-size: 9.5px; font-weight: 800; padding: 2px 7px;
+    background: var(--danger-soft); color: var(--danger);
+    border-radius: 999px; text-transform: uppercase;
+  }
+
+  .data-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .btn-icon-sm {
+    width: 34px; height: 34px; border-radius: 10px;
+    border: 1.5px solid var(--border); background: var(--surface);
+    color: var(--muted); display: flex; align-items: center;
+    justify-content: center; cursor: pointer; transition: all .15s; padding: 0;
+  }
+  .btn-icon-sm svg { width: 16px; height: 16px; }
+  .btn-icon-sm:hover { border-color: var(--maroon); color: var(--maroon); background: var(--maroon-soft); }
+  .btn-icon-sm.danger:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-soft); }
+
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(28,20,20,.55);
+    z-index: 1000; display: flex; align-items: center; justify-content: center;
+    padding: 16px; animation: fade-in .2s both;
+  }
+  .modal {
+    background: var(--surface); border-radius: 20px;
+    width: 100%; max-width: 480px; padding: 22px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.3);
+    animation: slide-up-sm .3s var(--ease-out) both;
+  }
+  @keyframes slide-up-sm {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-title { font-size: 17px; font-weight: 800; color: var(--maroon); margin-bottom: 16px; }
+  .form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .form-label { font-size: 12px; font-weight: 800; color: var(--ink); }
+  .form-label .req { color: var(--danger); }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .modal-actions .btn { flex: 1; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body class="admin-body">
+
+<!-- HEADER MOBILE -->
+<header class="admin-header">
+  <div class="admin-header-left">
+    <a href="index.html" class="admin-header-btn" aria-label="Kembali">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="admin-header-title">
+      <div class="admin-header-title-1">MASTER DATA</div>
+      <div class="admin-header-title-2">Admin NAKULAKU</div>
+    </div>
+  </div>
+  <button class="admin-header-btn" data-act="logout" aria-label="Keluar">
+    <span data-icon="logOut"></span>
+  </button>
+</header>
+
+<div class="admin-layout">
+  <!-- SIDEBAR (disalin dari index.html) -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <div class="admin-sidebar-logo"><img src="../assets/img/logo-mark.svg" alt="Nakula" /></div>
+      <div>
+        <div class="admin-sidebar-name">NAKULAKU</div>
+        <div class="admin-sidebar-sub">Admin Panel</div>
+      </div>
+    </div>
+    <nav class="admin-sidebar-menu">
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Dashboard</div>
+        <a class="admin-sidebar-item" data-nav="dashboard" href="index.html">
+          <span data-icon="layoutDashboard"></span> Dashboard
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Data</div>
+        <a class="admin-sidebar-item" data-nav="guru" href="guru.html">
+          <span data-icon="users"></span> Data Guru
+        </a>
+        <a class="admin-sidebar-item" data-nav="impor" href="impor.html">
+          <span data-icon="upload"></span> Impor CSV
+        </a>
+        <a class="admin-sidebar-item active" data-nav="master" href="master-data.html">
+          <span data-icon="database"></span> Master Data
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Kegiatan</div>
+        <a class="admin-sidebar-item" data-nav="periode" href="periode.html">
+          <span data-icon="calendar"></span> Kelola Periode
+        </a>
+        <a class="admin-sidebar-item" data-nav="pertemuan" href="pertemuan.html">
+          <span data-icon="calendar"></span> Kelola Pertemuan
+        </a>
+        <a class="admin-sidebar-item" data-nav="pengumuman" href="pengumuman.html">
+          <span data-icon="megaphone"></span> Pengumuman
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Evaluasi</div>
+        <a class="admin-sidebar-item" data-nav="verifikasi-sekolah" href="verifikasi-sekolah.html">
+          <span data-icon="sparkles"></span> Verifikasi Sekolah
+        </a>
+        <a class="admin-sidebar-item" data-nav="karya" href="karya.html">
+          <span data-icon="sparkles"></span> Verifikasi Karya
+        </a>
+        <a class="admin-sidebar-item" data-nav="verifikasi-presensi" href="../ks/verifikasi.html">
+          <span data-icon="checkCircle"></span> Verifikasi Presensi
+        </a>
+        <a class="admin-sidebar-item" data-nav="alihkan" href="alihkan-verifikasi.html">
+          <span data-icon="refreshCw"></span> Alihkan Verifikasi
+        </a>
+        <a class="admin-sidebar-item" data-nav="feedback" href="feedback.html">
+          <span data-icon="messageSquare"></span> Rekap Feedback
+        </a>
+        <a class="admin-sidebar-item" data-nav="award" href="award.html">
+          <span data-icon="award"></span> Kelola Award
+        </a>
+        <a class="admin-sidebar-item" data-nav="sertifikat" href="sertifikat.html">
+          <span data-icon="fileText"></span> Sertifikat
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Laporan</div>
+        <a class="admin-sidebar-item" data-nav="analitik" href="analitik.html">
+          <span data-icon="activity"></span> Analitik
+        </a>
+        <a class="admin-sidebar-item" data-nav="laporan" href="laporan.html">
+          <span data-icon="download"></span> Export Laporan
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Sistem</div>
+        <a class="admin-sidebar-item" data-nav="kategori-ajuan" href="kategori-ajuan.html">
+          <span data-icon="tag"></span> Kategori Ajuan
+        </a>
+        <a class="admin-sidebar-item" data-nav="log" href="log.html">
+          <span data-icon="list"></span> Log Aktivitas
+        </a>
+        <a class="admin-sidebar-item" data-nav="pengaturan" href="pengaturan.html">
+          <span data-icon="settings"></span> Pengaturan
+        </a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-topbar-title">Master Data</h1>
+      <div class="admin-topbar-right">
+        <div class="admin-user-chip" id="userChip"></div>
+        <button class="btn-icon" data-act="logout" aria-label="Keluar" title="Keluar">
+          <span data-icon="logOut"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      
+      <div class="alert alert-info" style="margin-bottom:16px;display:flex;gap:10px;align-items:flex-start;">
+        <span data-icon="info" class="icon-sm" style="flex-shrink:0;margin-top:2px;"></span>
+        <div style="font-size:12.5px;line-height:1.6;">
+          Kelola data referensi sekolah dan jabatan. Data ini digunakan di form input guru, laporan, dan fitur lainnya.
+        </div>
+      </div>
+
+      <div class="tab-switch">
+        <button class="tsw active" data-tab="sekolah">
+          <span data-icon="home" class="icon-sm"></span> Sekolah
+        </button>
+        <button class="tsw" data-tab="jabatan">
+          <span data-icon="briefcase" class="icon-sm"></span> Jabatan
+        </button>
+      </div>
+
+      <div class="panel active" data-panel="sekolah" id="panelSekolah">
+        <button class="btn btn-primary btn-full" id="btnTambahSekolah" style="margin-bottom:16px;">
+          <span data-icon="plus" class="icon-sm"></span> Tambah Sekolah
+        </button>
+        <div id="listSekolah" class="data-list"></div>
+      </div>
+
+      <div class="panel hidden" data-panel="jabatan" id="panelJabatan">
+        <button class="btn btn-primary btn-full" id="btnTambahJabatan" style="margin-bottom:16px;">
+          <span data-icon="plus" class="icon-sm"></span> Tambah Jabatan
+        </button>
+        <div id="listJabatan" class="data-list"></div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- BOTTOM NAV MOBILE -->
+<nav class="admin-bottom-nav">
+  <a class="admin-nav-item" data-nav="dashboard" href="index.html">
+    <span data-icon="layoutDashboard"></span> Dashboard
+  </a>
+  <a class="admin-nav-item" data-nav="guru" href="guru.html">
+    <span data-icon="users"></span> Guru
+  </a>
+  <a class="admin-nav-item" data-nav="pertemuan" href="pertemuan.html">
+    <span data-icon="calendar"></span> Pertemuan
+  </a>
+  <a class="admin-nav-item" data-nav="verifikasi" href="verifikasi-sekolah.html">
+    <span data-icon="checkCircle"></span> Verifikasi
+  </a>
+  <button class="admin-nav-item" id="btnLainnya">
+    <span data-icon="menu"></span> Lainnya
+  </button>
+</nav>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+// Layout Helper (Sama seperti halaman admin lain)
+(function () {
+  document.querySelectorAll('[data-icon]').forEach(el => {
+    el.innerHTML = Icons.get(el.dataset.icon);
+    el.style.display = 'contents';
+  });
+  UI.bindLogout();
+
+  document.getElementById('btnLainnya')?.addEventListener('click', () => {
+    const overlay = document.createElement('div');
+    overlay.className = 'admin-sheet-overlay';
+    overlay.innerHTML = `<div class="admin-sheet"><div class="admin-sheet-handle"></div><div class="admin-sheet-title">Data</div><div class="admin-sheet-grid"><a class="admin-sheet-item" href="master-data.html"><div class="icon-wrap">${Icons.get('database', { class: 'icon-sm' })}</div><span>Master Data</span></a></div><button class="btn btn-primary btn-full" id="btnTutupSheet" style="margin-top:16px;">Tutup</button></div>`;
+    document.body.appendChild(overlay);
+    const close = () => overlay.remove();
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+    overlay.querySelector('#btnTutupSheet').addEventListener('click', close);
+  });
+
+  window.addEventListener('load', async () => {
+    const profile = Api.getProfile();
+    if (!profile) return;
+    const chip = document.getElementById('userChip');
+    if (chip) {
+      const init = (profile.nama || 'A').charAt(0).toUpperCase();
+      const fotoUrl = Api.fotoSayaUrl('t');
+      chip.innerHTML = `<div class="avatar">${fotoUrl ? `<img src="${fotoUrl}" onerror="this.parentElement.textContent='${init}'">` : init}</div><span>${UI.escapeHtml(profile.nama || '-')}</span>`;
+    }
+  });
+})();
+
+// ============================================================
+// LOGIC MASTER DATA
+// ============================================================
+let dataSekolah = [];
+let dataJabatan = [];
+let editSekolahId = null;
+let editJabatanId = null;
+
+(async () => {
+  const profile = await Api.requireLogin();
+  if (!profile) return;
+
+  if (!Api.hasAnyPeran(['super_admin', 'pengurus'])) {
+    document.querySelector('.admin-content').innerHTML = UI.errorHtml('Halaman ini hanya untuk admin/pengurus.');
+    return;
+  }
+
+  // Tab switching
+  document.querySelectorAll('.tsw').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.tsw').forEach(x => x.classList.toggle('active', x === t));
+      document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.dataset.panel === t.dataset.tab));
+    });
+  });
+
+  document.getElementById('btnTambahSekolah').addEventListener('click', () => bukaFormSekolah(null));
+  document.getElementById('btnTambahJabatan').addEventListener('click', () => bukaFormJabatan(null));
+
+  await loadSemua();
+})();
+
+async function loadSemua() {
+  const [resSekolah, resJabatan] = await Promise.all([
+    Api.call('admin.sekolah.list'),
+    Api.call('admin.jabatan.list')
+  ]);
+
+  if (resSekolah.ok) {
+    dataSekolah = resSekolah.data || [];
+    renderSekolah();
+  } else {
+    document.getElementById('listSekolah').innerHTML = UI.errorHtml(resSekolah.error);
+  }
+
+  if (resJabatan.ok) {
+    dataJabatan = resJabatan.data || [];
+    renderJabatan();
+  } else {
+    document.getElementById('listJabatan').innerHTML = UI.errorHtml(resJabatan.error);
+  }
+}
+
+// --- RENDER SEKOLAH ---
+function renderSekolah() {
+  const el = document.getElementById('listSekolah');
+  if (dataSekolah.length === 0) {
+    el.innerHTML = UI.emptyHtml('home', 'Belum ada sekolah');
+    return;
+  }
+  el.innerHTML = dataSekolah.map(s => {
+    const init = Api.inisialSekolah(s.nama);
+    const isNonaktif = !s.aktif;
+    return `
+      <div class="data-item ${isNonaktif ? 'nonaktif' : ''}">
+        <div class="data-icon">${init}</div>
+        <div class="data-body">
+          <div class="data-title">
+            ${UI.escapeHtml(s.nama)}
+            ${isNonaktif ? '<span class="badge-nonaktif">Nonaktif</span>' : ''}
+          </div>
+          <div class="data-sub">NPSN: ${UI.escapeHtml(s.npsn || '-')} · ${UI.escapeHtml(s.jenjang || 'SD')}</div>
+        </div>
+        <div class="badge-count">${s.jumlah_guru || 0} guru</div>
+        <div class="data-actions">
+          <button class="btn-icon-sm" onclick="bukaFormSekolah(${s.id})">${Icons.get('edit')}</button>
+          <button class="btn-icon-sm danger" onclick="toggleSekolah(${s.id})" title="${s.aktif ? 'Nonaktifkan' : 'Aktifkan'}">${Icons.get(s.aktif ? 'power' : 'checkCircle')}</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// --- RENDER JABATAN ---
+function renderJabatan() {
+  const el = document.getElementById('listJabatan');
+  if (dataJabatan.length === 0) {
+    el.innerHTML = UI.emptyHtml('briefcase', 'Belum ada jabatan');
+    return;
+  }
+  el.innerHTML = dataJabatan.map(j => {
+    const isNonaktif = !j.aktif;
+    return `
+      <div class="data-item ${isNonaktif ? 'nonaktif' : ''}">
+        <div class="data-icon jabatan">${Icons.get('briefcase')}</div>
+        <div class="data-body">
+          <div class="data-title">
+            ${UI.escapeHtml(j.nama)}
+            ${isNonaktif ? '<span class="badge-nonaktif">Nonaktif</span>' : ''}
+          </div>
+          <div class="data-sub">Urutan: ${j.urutan}</div>
+        </div>
+        <div class="data-actions">
+          <button class="btn-icon-sm" onclick="bukaFormJabatan(${j.id})">${Icons.get('edit')}</button>
+          ${j.aktif ? `<button class="btn-icon-sm danger" onclick="hapusJabatan(${j.id})" title="Nonaktifkan">${Icons.get('power')}</button>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// --- FORM SEKOLAH ---
+function bukaFormSekolah(id) {
+  editSekolahId = id;
+  const s = id ? dataSekolah.find(x => x.id === id) : { nama: '', npsn: '', jenjang: 'SD', alamat: '', kecamatan: 'Selogiri', aktif: true };
+  
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-backdrop';
+  overlay.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">${id ? 'Edit' : 'Tambah'} Sekolah</div>
+      <div class="form-field"><label class="form-label">Nama Sekolah <span class="req">*</span></label><input type="text" id="fNama" class="input" value="${UI.escapeHtml(s.nama)}"></div>
+      <div class="form-field"><label class="form-label">NPSN</label><input type="text" id="fNpsn" class="input" value="${UI.escapeHtml(s.npsn || '')}"></div>
+      <div class="form-field"><label class="form-label">Jenjang</label><select id="fJenjang" class="input"><option value="SD" ${s.jenjang === 'SD' ? 'selected' : ''}>SD</option><option value="SMP" ${s.jenjang === 'SMP' ? 'selected' : ''}>SMP</option></select></div>
+      <div class="form-field"><label class="form-label">Alamat</label><input type="text" id="fAlamat" class="input" value="${UI.escapeHtml(s.alamat || '')}"></div>
+      <div class="form-field"><label class="form-label">Kecamatan</label><input type="text" id="fKecamatan" class="input" value="${UI.escapeHtml(s.kecamatan || '')}"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" data-close>Batal</button>
+        <button class="btn btn-primary" id="btnSimpanSekolah">Simpan</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  const close = () => overlay.remove();
+  overlay.querySelector('[data-close]').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnSimpanSekolah').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnSimpanSekolah');
+    const nama = overlay.querySelector('#fNama').value.trim();
+    if (!nama) { UI.gagal('Nama wajib.'); return; }
+
+    const payload = {
+      id: id || null,
+      nama,
+      npsn: overlay.querySelector('#fNpsn').value.trim(),
+      jenjang: overlay.querySelector('#fJenjang').value,
+      alamat: overlay.querySelector('#fAlamat').value.trim(),
+      kecamatan: overlay.querySelector('#fKecamatan').value.trim(),
+    };
+
+    UI.btnLoading(btn, 'Menyimpan…');
+    const res = await Api.call('admin.sekolah.simpan', { sekolah: payload });
+    UI.btnReset(btn);
+
+    if (!res.ok) { UI.gagal(res.error); return; }
+    UI.sukses('Tersimpan.');
+    close();
+    await loadSemua();
+  });
+}
+
+async function toggleSekolah(id) {
+  const s = dataSekolah.find(x => x.id === id);
+  if (!s) return;
+  const ok = await UI.konfirmasi(s.aktif ? 'Nonaktifkan Sekolah' : 'Aktifkan Sekolah', `Yakin ${s.aktif ? 'menonaktifkan' : 'mengaktifkan'} ${s.nama}?`, { danger: s.aktif });
+  if (!ok) return;
+  const res = await Api.call('admin.sekolah.toggle', { id });
+  if (res.ok) { UI.sukses('Berhasil diubah.'); await loadSemua(); }
+  else UI.gagal(res.error);
+}
+
+// --- FORM JABATAN ---
+function bukaFormJabatan(id) {
+  editJabatanId = id;
+  const j = id ? dataJabatan.find(x => x.id === id) : { nama: '', urutan: 0, aktif: true };
+
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-backdrop';
+  overlay.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">${id ? 'Edit' : 'Tambah'} Jabatan</div>
+      <div class="form-field"><label class="form-label">Nama Jabatan <span class="req">*</span></label><input type="text" id="fNama" class="input" value="${UI.escapeHtml(j.nama)}"></div>
+      <div class="form-field"><label class="form-label">Urutan Tampil</label><input type="number" id="fUrutan" class="input" value="${j.urutan}"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" data-close>Batal</button>
+        <button class="btn btn-primary" id="btnSimpanJabatan">Simpan</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  const close = () => overlay.remove();
+  overlay.querySelector('[data-close]').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnSimpanJabatan').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnSimpanJabatan');
+    const nama = overlay.querySelector('#fNama').value.trim();
+    if (!nama) { UI.gagal('Nama wajib.'); return; }
+    
+    const payload = {
+      id: id || null,
+      nama,
+      urutan: Number(overlay.querySelector('#fUrutan').value) || 0,
+    };
+
+    UI.btnLoading(btn, 'Menyimpan…');
+    const res = await Api.call('admin.jabatan.simpan', { jabatan: payload });
+    UI.btnReset(btn);
+
+    if (!res.ok) { UI.gagal(res.error); return; }
+    UI.sukses('Tersimpan.');
+    close();
+    await loadSemua();
+  });
+}
+
+async function hapusJabatan(id) {
+  const j = dataJabatan.find(x => x.id === id);
+  if (!j) return;
+  const ok = await UI.konfirmasi('Nonaktifkan Jabatan', `Yakin menonaktifkan ${j.nama}?`, { danger: true });
+  if (!ok) return;
+  const res = await Api.call('admin.jabatan.hapus', { id });
+  if (res.ok) { UI.sukses('Berhasil dinonaktifkan.'); await loadSemua(); }
+  else UI.gagal(res.error);
+}
+</script>
+</body>
+</html>
