@@ -7,7 +7,6 @@
   const profile = Api.getProfile();
   if (!profile) return;
 
-  // Deteksi lingkungan
   const isAdminFolder = window.location.pathname.includes('/admin/');
   const isKSFolder = window.location.pathname.includes('/ks/');
   const inSubfolder = isAdminFolder || isKSFolder;
@@ -17,39 +16,59 @@
   const isAdmin = peran.includes('pengurus') || peran.includes('super_admin');
   const isKS = peran.includes('ks');
 
-  // ==========================================
-  // LOGIKA UNTUK HALAMAN ADMIN (folder /admin/)
-  // ==========================================
+  // --- 1. SETUP DRAWER ELEMENTS (DOM) ---
+  let drawerHTML = `
+    <div class="app-drawer-overlay" id="appDrawerOverlay"></div>
+    <aside class="app-drawer" id="appDrawer">
+      <div class="drawer-header">
+        <div class="drawer-brand">
+          <div class="drawer-brand-logo"><img src="${prefix}assets/img/logo-mark.svg" onerror="this.style.display='none'"></div>
+          <div>
+            <div class="drawer-brand-name">NAKULAKU</div>
+            <div class="drawer-brand-sub">Menu Navigasi</div>
+          </div>
+        </div>
+        <button class="drawer-close" id="appDrawerClose">${Icons.get('x')}</button>
+      </div>
+      <div style="flex:1; overflow-y:auto;" id="appDrawerContent"></div>
+    </aside>
+  `;
+  document.body.insertAdjacentHTML('beforeend', drawerHTML);
+
+  const drawer = document.getElementById('appDrawer');
+  const overlay = document.getElementById('appDrawerOverlay');
+  const closeBtn = document.getElementById('appDrawerClose');
+  const drawerContent = document.getElementById('appDrawerContent');
+
+  function openDrawer() {
+    drawer.classList.add('open');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer() {
+    drawer.classList.remove('open');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  overlay.addEventListener('click', closeDrawer);
+  closeBtn.addEventListener('click', closeDrawer);
+
+  // --- 2. BUILD MENU BERDASARKAN ROLE & FOLDER ---
+  
+  // A. KHUSUS HALAMAN ADMIN (/admin/)
   if (isAdminFolder) {
     const header = document.querySelector('.admin-header');
     if (!header) return;
 
     // Sembunyikan bottom-nav admin
     document.querySelectorAll('.admin-bottom-nav').forEach(el => el.style.display = 'none');
-    document.body.style.paddingBottom = '0'; // Hapus space bottom nav
+    document.body.style.paddingBottom = '0';
 
     const page = window.location.pathname.split('/').pop() || 'index.html';
 
-    // Buat tombol hamburger
-    const hamburger = document.createElement('button');
-    hamburger.className = 'admin-menu-btn';
-    hamburger.style.marginRight = '8px';
-    hamburger.innerHTML = Icons.get('menu');
-    hamburger.onclick = openDrawer;
-    
-    // Sisipkan di kiri header admin
-    const headerLeft = header.querySelector('.admin-header-left');
-    if (headerLeft) headerLeft.insertBefore(hamburger, headerLeft.firstChild);
-
-    // Bangun Drawer Admin
-    const adminMenu = `
-      <div class="drawer-brand">
-        <div class="drawer-brand-logo"><img src="${prefix}assets/img/logo-mark.svg" onerror="this.style.display='none'"></div>
-        <div>
-          <div class="drawer-brand-name">NAKULAKU</div>
-          <div class="drawer-brand-sub">Admin Panel</div>
-        </div>
-      </div>
+    // Bangun Menu Admin
+    drawerContent.innerHTML = `
       <div class="drawer-menu" style="padding-top:16px;">
         <div style="font-size:10px;font-weight:800;opacity:0.5;margin:16px 0 8px 12px;text-transform:uppercase;">Utama</div>
         <a href="index.html" class="drawer-item ${page==='index.html'?'active':''}">${Icons.get('layoutDashboard')} Dashboard</a>
@@ -58,21 +77,33 @@
         <a href="verifikasi-sekolah.html" class="drawer-item ${page==='verifikasi-sekolah.html'?'active':''}">${Icons.get('checkCircle')} Verifikasi</a>
         
         <div style="font-size:10px;font-weight:800;opacity:0.5;margin:16px 0 8px 12px;text-transform:uppercase;">Lainnya</div>
-        <a href="periode.html" class="drawer-item">${Icons.get('calendar')} Periode</a>
-        <a href="pengumuman.html" class="drawer-item">${Icons.get('megaphone')} Pengumuman</a>
-        <a href="award.html" class="drawer-item">${Icons.get('award')} Award</a>
-        <a href="analitik.html" class="drawer-item">${Icons.get('activity')} Analitik</a>
-        <a href="pengaturan.html" class="drawer-item">${Icons.get('settings')} Pengaturan</a>
+        <a href="periode.html" class="drawer-item ${page==='periode.html'?'active':''}">${Icons.get('calendar')} Periode</a>
+        <a href="pengumuman.html" class="drawer-item ${page==='pengumuman.html'?'active':''}">${Icons.get('megaphone')} Pengumuman</a>
+        <a href="award.html" class="drawer-item ${page==='award.html'?'active':''}">${Icons.get('award')} Award</a>
+        <a href="analitik.html" class="drawer-item ${page==='analitik.html'?'active':''}">${Icons.get('activity')} Analitik</a>
+        <a href="pengaturan.html" class="drawer-item ${page==='pengaturan.html'?'active':''}">${Icons.get('settings')} Pengaturan</a>
       </div>
     `;
 
-    buildDrawer(hamburger, adminMenu);
+    // Buat Tombol Hamburger Admin
+    const hamburger = document.createElement('button');
+    hamburger.className = 'admin-menu-btn'; // Pastikan class ini ada di layout.css / nakula.css
+    hamburger.style.marginRight = '8px';
+    hamburger.innerHTML = Icons.get('menu');
+    hamburger.onclick = openDrawer;
+    
+    const headerLeft = header.querySelector('.admin-header-left');
+    if (headerLeft) {
+      // Sembunyikan tombol back (chevronLeft) lama karena kita sudah pakai hamburger
+      const backBtn = headerLeft.querySelector('a.admin-header-btn[href="index.html"]');
+      if (backBtn && page !== 'index.html') backBtn.style.display = 'none';
+      
+      headerLeft.insertBefore(hamburger, headerLeft.firstChild);
+    }
     return;
   }
 
-  // ==========================================
-  // LOGIKA UNTUK GURU & KS (folder root & /ks/)
-  // ==========================================
+  // B. KHUSUS GURU & KS (ROOT & /ks/)
   const header = document.querySelector('.app-header');
   if (!header) return;
 
@@ -117,24 +148,11 @@
     );
   }
 
-  const hamburger = document.createElement('button');
-  hamburger.className = 'hamburger-btn';
-  hamburger.innerHTML = Icons.get('menu');
-  hamburger.onclick = openDrawer;
-  header.insertBefore(hamburger, header.firstChild);
-
   const initial = (profile.nama || 'U').charAt(0).toUpperCase();
   const fotoUrl = Api.fotoSayaUrl ? Api.fotoSayaUrl('t') : null;
   const roleLabel = isAdmin ? 'Admin' : (isKS ? 'Kepala Sekolah' : 'Guru');
 
-  const userMenu = `
-    <div class="drawer-brand">
-      <div class="drawer-brand-logo"><img src="${prefix}assets/img/logo-mark.svg" onerror="this.style.display='none'"></div>
-      <div>
-        <div class="drawer-brand-name">NAKULAKU</div>
-        <div class="drawer-brand-sub">KKG Gugus Nakula</div>
-      </div>
-    </div>
+  drawerContent.innerHTML = `
     <nav class="drawer-menu">
       ${menuItems.map(item => `
         <a href="${item.href}" class="drawer-item ${currentKey === item.key ? 'active' : ''}">
@@ -153,46 +171,14 @@
     </div>
   `;
 
-  buildDrawer(hamburger, userMenu);
+  const hamburger = document.createElement('button');
+  hamburger.className = 'hamburger-btn';
+  hamburger.innerHTML = Icons.get('menu');
+  hamburger.onclick = openDrawer;
+  
+  // Sembunyikan tombol back/chevron kiri lama
+  const backBtn = header.querySelector('a.header-btn[href="beranda.html"]');
+  if (backBtn) backBtn.style.display = 'none';
 
-  // ==========================================
-  // FUNGSI PEMBUAT DRAWER
-  // ==========================================
-  function buildDrawer(btn, menuHtml) {
-    const drawerHTML = `
-      <div class="app-drawer-overlay" id="appDrawerOverlay"></div>
-      <aside class="app-drawer" id="appDrawer">
-        <div class="drawer-header">
-          <div class="drawer-brand">
-            <div class="drawer-brand-logo"><img src="${prefix}assets/img/logo-mark.svg" onerror="this.style.display='none'"></div>
-            <div>
-              <div class="drawer-brand-name">NAKULAKU</div>
-              <div class="drawer-brand-sub">Menu Navigasi</div>
-            </div>
-          </div>
-          <button class="drawer-close" id="appDrawerClose">${Icons.get('x')}</button>
-        </div>
-        <div style="flex:1; overflow-y:auto;">${menuHtml}</div>
-      </aside>
-    `;
-    document.body.insertAdjacentHTML('beforeend', drawerHTML);
-
-    const drawer = document.getElementById('appDrawer');
-    const overlay = document.getElementById('appDrawerOverlay');
-    const closeBtn = document.getElementById('appDrawerClose');
-
-    function openDrawer() {
-      drawer.classList.add('open');
-      overlay.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeDrawer() {
-      drawer.classList.remove('open');
-      overlay.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    overlay.addEventListener('click', closeDrawer);
-    closeBtn.addEventListener('click', closeDrawer);
-  }
+  header.insertBefore(hamburger, header.firstChild);
 })();
