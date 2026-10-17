@@ -398,3 +398,24 @@ h1, h2, h3, h4 { font-weight: 800; line-height: 1.2; color: var(--ink); letter-s
 /* Sembunyikan bottom-nav saat drawer aktif di halaman yg pakai app-nav.js */
 body.app-nav-active .bottom-nav { display: none !important; }
 body.app-nav-active .page { padding-bottom: calc(24px + env(safe-area-inset-bottom)) !important; }
+/* Tombol Hamburger Khusus Admin (karena admin tidak pakai .app-header) */
+.admin-menu-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r-md);
+  background: rgba(255,255,255,.12);
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--t-fast);
+}
+.admin-menu-btn:active {
+  transform: scale(.92);
+}
+.admin-menu-btn:hover {
+  background: rgba(255,255,255,.22);
+}
