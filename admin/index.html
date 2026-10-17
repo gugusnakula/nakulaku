@@ -580,8 +580,16 @@
   if (!profile) return;
 
   const peran = profile.peran || [];
-  if (!peran.includes('pengurus') && !peran.includes('super_admin') && !peran.includes('ks')) {
-    document.querySelector('main').innerHTML = UI.errorHtml('Halaman ini hanya untuk pengurus/KS.');
+  // Blokir KS dari Dashboard Utama
+  if (!peran.includes('pengurus') && !peran.includes('super_admin')) {
+    if (peran.includes('ks')) {
+      document.querySelector('main').innerHTML = UI.errorHtml(
+        'Dashboard utama ini khusus Pengurus KKG. Sebagai Kepala Sekolah, silakan akses menu Sekolahku atau Guru Sekolah dari Beranda.',
+        '<a href="../beranda.html" class="btn btn-primary btn-sm" style="margin-top:12px;">Kembali ke Beranda</a>'
+      );
+    } else {
+      document.querySelector('main').innerHTML = UI.errorHtml('Halaman ini hanya untuk pengurus.');
+    }
     return;
   }
 
