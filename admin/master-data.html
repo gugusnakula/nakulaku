@@ -436,7 +436,7 @@ function renderJabatan() {
 }
 
 // --- FORM SEKOLAH ---
-function bukaFormSekolah(id) {
+async function bukaFormSekolah(id) {
   editSekolahId = id;
   const s = id ? dataSekolah.find(x => x.id === id) : { nama: '', npsn: '', jenjang: 'SD', alamat: '', kecamatan: 'Selogiri', aktif: true };
   
@@ -450,10 +450,12 @@ function bukaFormSekolah(id) {
       <div class="form-field"><label class="form-label">Jenjang</label><select id="fJenjang" class="input"><option value="SD" ${s.jenjang === 'SD' ? 'selected' : ''}>SD</option><option value="SMP" ${s.jenjang === 'SMP' ? 'selected' : ''}>SMP</option></select></div>
       <div class="form-field"><label class="form-label">Alamat</label><input type="text" id="fAlamat" class="input" value="${UI.escapeHtml(s.alamat || '')}"></div>
       <div class="form-field"><label class="form-label">Kecamatan</label><input type="text" id="fKecamatan" class="input" value="${UI.escapeHtml(s.kecamatan || '')}"></div>
+      <div id="hapusInfo" class="hidden" style="margin-top:10px;padding:10px;border-radius:10px;font-size:12px;line-height:1.5;"></div>
       <div class="modal-actions">
         <button class="btn btn-secondary" data-close>Batal</button>
         <button class="btn btn-primary" id="btnSimpanSekolah">Simpan</button>
       </div>
+      ${id ? `<button class="btn btn-ghost btn-full hidden" id="btnHapusSekolah" style="margin-top:10px;color:var(--danger);border:1.5px solid var(--danger-soft);">Hapus Permanen</button>` : ''}
     </div>
   `;
   document.body.appendChild(overlay);
@@ -461,6 +463,7 @@ function bukaFormSekolah(id) {
   overlay.querySelector('[data-close]').addEventListener('click', close);
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
 
+  // Simpan
   overlay.querySelector('#btnSimpanSekolah').addEventListener('click', async () => {
     const btn = overlay.querySelector('#btnSimpanSekolah');
     const nama = overlay.querySelector('#fNama').value.trim();
@@ -482,6 +485,95 @@ function bukaFormSekolah(id) {
     if (!res.ok) { UI.gagal(res.error); return; }
     UI.sukses('Tersimpan.');
     close();
+    await loadSemua();
+  });
+
+  // Cek bisa hapus (hanya edit mode)
+  if (id) {
+    const hapusInfo = overlay.querySelector('#hapusInfo');
+    const btnHapus = overlay.querySelector('#btnHapusSekolah');
+    
+    const cekRes = await Api.call('admin.sekolah.cek_hapus', { id });
+    if (cekRes.ok) {
+      const cek = cekRes.data;
+      if (cek.bisa_hapus) {
+        btnHapus.classList.remove('hidden');
+        hapusInfo.innerHTML = `<strong>✓ Belum ada data terkait.</strong><br>Sekolah ini bisa dihapus permanen.`;
+        hapusInfo.style.background = 'var(--info-soft)';
+        hapusInfo.style.color = 'var(--info)';
+        hapusInfo.style.border = '1px solid rgba(29,78,216,.2)';
+        hapusInfo.classList.remove('hidden');
+      } else {
+        hapusInfo.innerHTML = `<strong>⚠ Tidak bisa hapus permanen.</strong><br>Masih ada data: ${cek.blokir.join(', ')}.<br>Gunakan tombol ⚡ Nonaktifkan sebagai gantinya.`;
+        hapusInfo.style.background = 'var(--warning-soft)';
+        hapusInfo.style.color = 'var(--warning)';
+        hapusInfo.style.border = '1px solid rgba(180,83,9,.2)';
+        hapusInfo.classList.remove('hidden');
+      }
+    }
+    
+    // Klik hapus
+    btnHapus?.addEventListener('click', () => bukaKonfirmasiHapusSekolah(s, overlay));
+  }
+}
+
+// ============================================================
+// KONFIRMASI HAPUS PERMANEN
+// ============================================================
+function bukaKonfirmasiHapusSekolah(sekolah, modalLama) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-backdrop';
+  overlay.innerHTML = `
+    <div class="modal">
+      <div class="modal-title" style="color:var(--danger);">⚠ Hapus Permanen</div>
+      <div style="font-size:13px;line-height:1.6;color:var(--ink);margin-bottom:14px;">
+        Anda akan <strong>menghapus permanen</strong> sekolah <strong>"${UI.escapeHtml(sekolah.nama)}"</strong> dari database. Tindakan ini <strong>tidak bisa dibatalkan</strong>.
+      </div>
+      <div class="form-field">
+        <label class="form-label">Ketik nama sekolah untuk konfirmasi <span class="req">*</span></label>
+        <input type="text" id="fKonfirmasiHapus" class="input" placeholder="${UI.escapeHtml(sekolah.nama)}" autocomplete="off">
+      </div>
+      <div id="hapusAlert" class="alert alert-error hidden" style="margin-top:10px;"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" data-close>Batal</button>
+        <button class="btn btn-danger" id="btnHapusFinal" disabled style="opacity:0.5;cursor:not-allowed;">Hapus Permanen</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  
+  const input = overlay.querySelector('#fKonfirmasiHapus');
+  const btnFinal = overlay.querySelector('#btnHapusFinal');
+  const alertEl = overlay.querySelector('#hapusAlert');
+  
+  input.addEventListener('input', () => {
+    const cocok = input.value.trim().toLowerCase() === sekolah.nama.trim().toLowerCase();
+    btnFinal.disabled = !cocok;
+    btnFinal.style.opacity = cocok ? '1' : '0.5';
+    btnFinal.style.cursor = cocok ? 'pointer' : 'not-allowed';
+  });
+  
+  const close = () => overlay.remove();
+  overlay.querySelector('[data-close]').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+  
+  btnFinal.addEventListener('click', async () => {
+    UI.btnLoading(btnFinal, 'Menghapus…');
+    const res = await Api.call('admin.sekolah.hapus', {
+      id: sekolah.id,
+      konfirmasi: input.value.trim(),
+    });
+    UI.btnReset(btnFinal);
+    
+    if (!res.ok) {
+      alertEl.textContent = res.error || 'Gagal menghapus.';
+      alertEl.classList.remove('hidden');
+      return;
+    }
+    
+    UI.sukses(`Sekolah "${res.data.nama}" dihapus permanen.`);
+    close();
+    modalLama.remove();
     await loadSemua();
   });
 }
