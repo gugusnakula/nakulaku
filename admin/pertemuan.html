@@ -170,17 +170,23 @@ let tabAktif = 'aktif';
 // ═══════════════════════════════════════════════
 function formatJamInput(val) {
   if (!val) return '';
-  const str = String(val);
+  const str = String(val).trim();
 
-  // Sudah format "HH:mm" atau "HH:mm:ss" → potong jadi HH:mm
+  // 1. Sudah format "HH:mm" atau "HH:mm:ss" (dari time column) → ambil HH:mm
   if (/^\d{2}:\d{2}/.test(str)) return str.slice(0, 5);
 
-  // Format ISO datetime ("2026-10-17T07:49:00.000Z") → konversi ke jam lokal
+  // 2. Format ISO datetime "2026-10-17T07:49:00.000Z" (dari timestamptz)
+  //    Extract HH:mm langsung dari string — TANPA timezone conversion.
+  //    Ini penting: apa yang disimpan = apa yang ditampilkan (round-trip).
+  const isoMatch = str.match(/T(\d{2}):(\d{2})/);
+  if (isoMatch) return `${isoMatch[1]}:${isoMatch[2]}`;
+
+  // 3. Fallback: parse sebagai Date
   try {
     const d = new Date(str);
     if (isNaN(d.getTime())) return '';
-    const hh = String(d.getHours()).padStart(2, '0');
-    const mm = String(d.getMinutes()).padStart(2, '0');
+    const hh = String(d.getUTCHours()).padStart(2, '0');
+    const mm = String(d.getUTCMinutes()).padStart(2, '0');
     return `${hh}:${mm}`;
   } catch {
     return '';
