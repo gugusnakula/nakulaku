@@ -1899,16 +1899,16 @@ function renderRingkasan() {
   if (totalMateri > 0) {
     const dibaca = (data.materi || []).filter(m => getBaca(m.id)).length;
     if (dibaca < totalMateri) {
-      todos.push({ done: false, label: `Baca ${totalMateri - dibaca} materi lagi`, action: 'pindahTab("materi")', actionText: 'Baca' });
+      todos.push({ done: false, label: `Baca ${totalMateri - dibaca} materi lagi`, action: "pindahTab('materi')", actionText: 'Baca' });
     }
   }
   const totalTugas = (data.tugas || []).length;
   const kumpul = (data.pengumpulan_saya || []).length;
   if (kumpul < totalTugas) {
-    todos.push({ done: false, label: `Kumpulkan ${totalTugas - kumpul} tugas`, action: 'pindahTab("tugas")', actionText: 'Buka' });
+    todos.push({ done: false, label: `Kumpulkan ${totalTugas - kumpul} tugas`, action: "pindahTab('tugas')", actionText: 'Buka' });
   }
   if (!progress.feedbackSelesai && data.diskusi_count >= 0) {
-    todos.push({ done: false, label: 'Isi feedback pertemuan', action: 'pindahTab("feedback")', actionText: 'Isi' });
+    todos.push({ done: false, label: 'Isi feedback pertemuan', action: "pindahTab('feedback')", actionText: 'Isi' });
   }
 
   // Catatan pribadi
