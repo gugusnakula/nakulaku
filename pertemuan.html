@@ -13,25 +13,104 @@
 <link rel="stylesheet" href="assets/css/nakula.css" />
 
 <style>
+  /* ═══════════════════════════════════════════════
+     LAYOUT — 3 KOLOM (desktop) / 1 KOLOM (mobile)
+     ═══════════════════════════════════════════════ */
+  .hub-layout {
+    display: block;
+  }
+  .hub-rail { display: none; }
+
+  @media (min-width: 900px) {
+    .hub-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+  }
+  @media (min-width: 1100px) {
+    .hub-layout {
+      grid-template-columns: 260px 1fr 320px;
+    }
+    .hub-rail {
+      display: block;
+      border-left: 1.5px solid var(--border);
+      background: var(--bg);
+      padding: 24px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .hub-rail::-webkit-scrollbar { width: 6px; }
+    .hub-rail::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border-radius: 3px;
+    }
+  }
+
+  /* ═══════════════════════════════════════════════
+     BREADCRUMB
+     ═══════════════════════════════════════════════ */
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .breadcrumb a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color .15s;
+  }
+  .breadcrumb a:hover { color: var(--maroon); }
+  .breadcrumb .sep { opacity: 0.5; }
+  .breadcrumb .current { color: var(--maroon); font-weight: 800; }
+
+  /* ═══════════════════════════════════════════════
+     HERO PREMIUM
+     ═══════════════════════════════════════════════ */
   .hero-card {
-    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon) 100%);
+    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 50%, #9B2649 100%);
     color: white;
-    border-radius: var(--r-xl);
-    padding: 24px 20px;
+    border-radius: 24px;
+    padding: 24px 22px 22px;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 8px 24px rgba(125,29,58,.25);
+    box-shadow: 0 12px 32px rgba(125,29,58,.28);
+    animation: fade-in-up .5s var(--ease-out) both;
   }
   .hero-card::before {
     content: '';
     position: absolute;
-    top: -60px;
-    right: -60px;
-    width: 180px;
-    height: 180px;
+    top: -80px; right: -60px;
+    width: 220px; height: 220px;
     border-radius: 50%;
-    background: var(--gold);
-    opacity: 0.08;
+    background: radial-gradient(circle, rgba(201,169,97,.22) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-card::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,169,97,.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-top-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
   }
   .hero-number {
     display: inline-flex;
@@ -44,22 +123,16 @@
     font-size: 10px;
     font-weight: 700;
     letter-spacing: .5px;
-    margin-bottom: 12px;
   }
   .hero-status-badge {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 5px 12px;
+    padding: 4px 11px;
     border-radius: 999px;
-    font-size: 10.5px;
+    font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.4px;
-    margin-bottom: 12px;
-    margin-left: 6px;
-    vertical-align: middle;
-    position: relative;
-    animation: fade-in .3s var(--ease-out) both;
   }
   .hero-status-badge.open {
     background: rgba(34,197,94,.25);
@@ -72,7 +145,7 @@
     50% { opacity: 0.7; }
   }
   .hero-status-badge.done {
-    background: rgba(255,255,255,.15);
+    background: rgba(134,239,172,.2);
     color: #86EFAC;
     border: 1px solid rgba(134,239,172,.4);
   }
@@ -86,47 +159,262 @@
     font-size: 20px;
     font-weight: 800;
     line-height: 1.3;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+    color: white; /* fix warna */
+  }
+  @media (min-width: 900px) {
+    .hero-title { font-size: 24px; }
+  }
+
+  .hero-meta-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     margin-bottom: 16px;
     position: relative;
-    color: white; /* <- Tambahan agar terbaca */
+    z-index: 1;
   }
   .hero-meta {
     display: flex;
     align-items: center;
     gap: 8px;
     font-size: 13px;
-    opacity: 0.9;
-    margin-bottom: 6px;
+    opacity: 0.92;
+  }
+  .hero-meta svg { flex-shrink: 0; }
+
+  /* Progress bar di hero */
+  .hero-progress {
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,.15);
     position: relative;
+    z-index: 1;
+  }
+  .hero-progress-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 11.5px;
+    font-weight: 700;
+  }
+  .hero-progress-head .label { opacity: 0.85; }
+  .hero-progress-head .pct { font-size: 13px; font-weight: 800; }
+  .hero-progress-bar {
+    height: 8px;
+    background: rgba(255,255,255,.15);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .hero-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold) 0%, #FCD34D 100%);
+    border-radius: 999px;
+    transition: width 1s var(--ease-out);
+  }
+  .hero-progress-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+  }
+  .hero-p-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.12);
+    letter-spacing: 0.2px;
+  }
+  .hero-p-item.done {
+    background: rgba(34,197,94,.25);
+    color: #86EFAC;
+  }
+  .hero-p-item.pending {
+    background: rgba(255,255,255,.12);
+    color: rgba(255,255,255,.7);
+  }
+  .hero-p-item svg { width: 11px; height: 11px; }
+
+  /* ═══════════════════════════════════════════════
+     PRESENSI CARD (bukan tab — di bawah hero)
+     ═══════════════════════════════════════════════ */
+  .presensi-card {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 18px;
+    border: 1.5px solid var(--border);
+    margin: 16px 0 20px;
+    animation: fade-in-up .5s var(--ease-out) .05s both;
+  }
+  .presensi-card.belum { border-left: 4px solid var(--warning); }
+  .presensi-card.sudah { border-left: 4px solid var(--success); }
+  .presensi-card.info { border-left: 4px solid var(--info); }
+
+  .presensi-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .presensi-icon-wrap {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .presensi-card.belum .presensi-icon-wrap {
+    background: var(--warning-soft);
+    color: var(--warning);
+  }
+  .presensi-card.sudah .presensi-icon-wrap {
+    background: var(--success-soft);
+    color: var(--success);
+  }
+  .presensi-card.info .presensi-icon-wrap {
+    background: var(--info-soft);
+    color: var(--info);
+  }
+  .presensi-info { flex: 1; min-width: 0; }
+  .presensi-title {
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+  .presensi-sub {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-weight: 600;
+    line-height: 1.5;
   }
 
-  /* Tabs — Sticky */
+  .presensi-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .presensi-actions .btn { flex: 1; min-width: 140px; }
+
+  /* Mini foto + lokasi */
+  .presensi-media {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .media-thumb {
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--bg);
+    cursor: pointer;
+    aspect-ratio: 4/3;
+    border: 1.5px solid var(--border);
+    transition: all .2s var(--ease-out);
+  }
+  .media-thumb:hover {
+    transform: translateY(-2px);
+    border-color: var(--maroon);
+    box-shadow: 0 8px 20px rgba(125,29,58,.12);
+  }
+  .media-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .media-thumb.map {
+    background:
+      linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #15803D;
+    font-size: 11px;
+    font-weight: 800;
+    text-align: center;
+    padding: 12px;
+  }
+  .media-thumb.map svg { width: 24px; height: 24px; }
+  .media-thumb .badge {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: rgba(0,0,0,.7);
+    color: white;
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 999px;
+    backdrop-filter: blur(4px);
+    letter-spacing: 0.3px;
+  }
+
+  /* Countdown */
+  .countdown-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #F5FDF9 0%, #ECFDF5 100%);
+    border: 1px solid rgba(21,128,61,.2);
+    border-radius: 12px;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--success);
+    margin-top: 12px;
+  }
+  .countdown-box.warning {
+    background: linear-gradient(135deg, #FFFCF3 0%, #FEF3C7 100%);
+    border-color: rgba(180,83,9,.2);
+    color: var(--warning);
+  }
+  .countdown-box.danger {
+    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+    border-color: rgba(185,28,28,.2);
+    color: var(--danger);
+    animation: pulse-badge 1s infinite;
+  }
+
+  /* ═══════════════════════════════════════════════
+     TABS (sticky)
+     ═══════════════════════════════════════════════ */
   .tabs {
     display: flex;
     gap: 4px;
     background: var(--bg);
     padding: 4px;
-    border-radius: var(--r-md);
-    margin: 20px 0 16px;
-    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 16px;
+    border: 1.5px solid var(--border);
     overflow-x: auto;
+    scrollbar-width: none;
     position: sticky;
     top: 60px;
     z-index: 30;
-    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
   }
-  @media (max-width: 480px) {
-    .tabs { top: 56px; }
+  .tabs::-webkit-scrollbar { display: none; }
+  @media (min-width: 900px) {
+    .tabs { top: 0; }
   }
   .tab {
     flex: 1;
-    min-width: 80px;
-    padding: 10px;
+    min-width: 90px;
+    padding: 11px 10px;
     text-align: center;
     font-size: 12.5px;
     font-weight: 700;
     color: var(--muted);
-    border-radius: var(--r-sm);
+    border-radius: 10px;
     cursor: pointer;
     transition: all .15s;
     border: none;
@@ -136,19 +424,13 @@
     justify-content: center;
     gap: 5px;
     white-space: nowrap;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
   }
   .tab.active {
     background: var(--surface);
     color: var(--maroon);
-    box-shadow: var(--sh-sm);
-  }
-  .tab-badge {
-    font-size: 9px;
-    padding: 2px 6px;
-    border-radius: 999px;
-    background: var(--success-soft);
-    color: var(--success);
-    font-weight: 800;
+    box-shadow: 0 2px 8px rgba(125,29,58,.08);
   }
   .tab-indicator {
     display: none;
@@ -156,7 +438,6 @@
     font-weight: 800;
     padding: 2px 6px;
     border-radius: 999px;
-    letter-spacing: 0.3px;
     margin-left: 2px;
     line-height: 1.3;
   }
@@ -176,68 +457,512 @@
   .panel { display: none; }
   .panel.active { display: block; animation: fade-in .25s var(--ease-out) both; }
 
-  .status-card {
-    border-radius: var(--r-lg);
-    padding: 16px;
-    border: 1px solid var(--border);
+  /* ═══════════════════════════════════════════════
+     PANEL — RINGKASAN
+     ═══════════════════════════════════════════════ */
+  .section-mini {
     background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 14px;
+    animation: fade-in-up .4s var(--ease-out) both;
   }
-  .status-card.belum { border-left: 4px solid var(--warning); }
-  .status-card.sudah { border-left: 4px solid var(--success); }
-  .status-card.info { border-left: 4px solid var(--info); }
-
-  /* Badge window presensi */
-  .presensi-badge {
-    display: inline-flex;
+  .section-mini-title {
+    display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--maroon);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 12px;
+  }
+  .section-mini-title .icon-wrap {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: var(--maroon-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .todo-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .todo-item:last-child { border-bottom: none; }
+  .todo-check {
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 800;
+  }
+  .todo-check.done {
+    background: var(--success-soft);
+    color: var(--success);
+  }
+  .todo-check.pending {
+    background: var(--warning-soft);
+    color: var(--warning);
+  }
+  .todo-label { flex: 1; }
+  .todo-label.done {
+    color: var(--muted);
+    text-decoration: line-through;
+  }
+  .todo-action {
+    font-size: 11.5px;
+    font-weight: 800;
+    color: var(--maroon);
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1.5px solid var(--maroon-soft);
+    text-decoration: none;
+    cursor: pointer;
+    background: transparent;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .todo-action:hover { background: var(--maroon-soft); }
+
+  .catatan-textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--ink);
+    line-height: 1.6;
+    resize: vertical;
+    min-height: 90px;
+    outline: none;
+    transition: all .15s;
+  }
+  .catatan-textarea:focus {
+    border-color: var(--maroon);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(125,29,58,.08);
+  }
+  .catatan-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* ═══════════════════════════════════════════════
+     PANEL — MATERI
+     ═══════════════════════════════════════════════ */
+  .materi-item {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 10px;
+    transition: all .2s var(--ease-out);
+  }
+  .materi-item:hover {
+    border-color: var(--maroon-light);
+    box-shadow: 0 6px 16px rgba(125,29,58,.06);
+  }
+  .materi-item.read {
+    opacity: 0.7;
+    background: var(--bg);
+  }
+  .materi-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .materi-thumb {
+    width: 64px; height: 64px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .materi-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .materi-thumb .fb {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .materi-body { flex: 1; min-width: 0; }
+  .materi-judul {
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--ink);
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .materi-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 6px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .materi-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .btn-mini-icon {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .15s;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  .btn-mini-icon:hover { border-color: var(--maroon); color: var(--maroon); }
+  .btn-mini-icon.active {
+    background: var(--gold);
+    color: white;
+    border-color: var(--gold);
+  }
+  .btn-mini-icon.done {
+    background: var(--success);
+    color: white;
+    border-color: var(--success);
+  }
+
+  /* ═══════════════════════════════════════════════
+     PANEL — TUGAS
+     ═══════════════════════════════════════════════ */
+  .tugas-filter {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tugas-filter::-webkit-scrollbar { display: none; }
+  .tf-chip {
+    flex-shrink: 0;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .tf-chip.active {
+    background: var(--maroon);
+    border-color: var(--maroon);
+    color: white;
+  }
+
+  .tugas-item {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 10px;
+    transition: all .2s var(--ease-out);
+  }
+  .tugas-item.urgent {
+    border-left: 4px solid var(--danger);
+  }
+  .tugas-item.soon {
+    border-left: 4px solid var(--warning);
+  }
+  .tugas-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .tugas-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .tugas-body { flex: 1; min-width: 0; }
+  .tugas-judul {
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--ink);
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .tugas-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  .tugas-deadline {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .tugas-deadline.urgent { color: var(--danger); }
+  .tugas-deadline.soon { color: var(--warning); }
+
+  .badge-status {
+    display: inline-block;
     font-size: 10px;
     font-weight: 800;
     padding: 3px 9px;
     border-radius: 999px;
+    text-transform: uppercase;
     letter-spacing: 0.3px;
-    margin-top: 5px;
   }
-  .presensi-badge.buka {
-    background: var(--success-soft);
-    color: var(--success);
+  .badge-status.menunggu { background: var(--warning-soft); color: var(--warning); }
+  .badge-status.diterima { background: var(--success-soft); color: var(--success); }
+  .badge-status.revisi { background: var(--info-soft); color: var(--info); }
+  .badge-status.ditolak { background: var(--danger-soft); color: var(--danger); }
+  .badge-status.belum { background: var(--maroon-soft); color: var(--maroon); }
+
+  /* ═══════════════════════════════════════════════
+     PANEL — DISKUSI
+     ═══════════════════════════════════════════════ */
+  .diskusi-intro {
+    background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
   }
-  .presensi-badge.belum {
-    background: var(--border);
-    color: var(--muted);
+  .diskusi-intro-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: white;
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
-  .presensi-badge.tutup {
-    background: var(--danger-soft);
-    color: var(--danger);
+  .diskusi-intro-text { flex: 1; min-width: 0; }
+  .diskusi-intro-title {
+    font-weight: 800;
+    font-size: 13.5px;
+    color: var(--maroon);
+    margin-bottom: 3px;
+  }
+  .diskusi-intro-desc {
+    font-size: 12px;
+    color: var(--ink);
+    line-height: 1.5;
+    font-weight: 500;
   }
 
-  /* Countdown Timer */
-  .countdown-box {
+  .diskusi-list { margin-bottom: 16px; }
+  .diskusi-item {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 10px;
+    transition: all .15s;
+  }
+  .diskusi-item.pinned {
+    border-color: var(--gold);
+    background: linear-gradient(135deg, #FFFFFF 0%, #FBF4E0 100%);
+  }
+  .diskusi-item.reply {
+    margin-left: 32px;
+    background: var(--bg);
+    border-style: dashed;
+  }
+  .diskusi-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .diskusi-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .diskusi-avatar img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .diskusi-info { flex: 1; min-width: 0; }
+  .diskusi-nama {
+    font-weight: 800;
+    font-size: 13px;
+    color: var(--ink);
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 10px 14px;
-    background: linear-gradient(135deg, #F5FDF9 0%, #ECFDF5 100%);
-    border: 1px solid rgba(21,128,61,.2);
-    border-radius: 12px;
-    font-size: 12.5px;
+    flex-wrap: wrap;
+  }
+  .diskusi-jabatan {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--maroon);
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: var(--maroon-soft);
+    letter-spacing: 0.2px;
+  }
+  .diskusi-time {
+    font-size: 10.5px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .diskusi-pin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 9px;
     font-weight: 800;
-    color: var(--success);
-    margin-bottom: 12px;
+    color: var(--gold-dark);
+    background: var(--gold-soft);
+    padding: 2px 7px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
   }
-  .countdown-box.warning {
-    background: linear-gradient(135deg, #FFFCF3 0%, #FEF3C7 100%);
-    border-color: rgba(180,83,9,.2);
-    color: var(--warning);
+  .diskusi-isi {
+    font-size: 13.5px;
+    color: var(--ink);
+    line-height: 1.6;
+    margin-bottom: 8px;
+    white-space: pre-wrap;
+    word-break: break-word;
   }
-  .countdown-box.danger {
-    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
-    border-color: rgba(185,28,28,.2);
-    color: var(--danger);
-    animation: pulse-badge 1s infinite;
+  .diskusi-actions-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 6px;
+  }
+  .diskusi-btn {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .diskusi-btn:hover { background: var(--bg); color: var(--maroon); }
+  .diskusi-btn.danger:hover { color: var(--danger); }
+
+  .reply-box {
+    margin-top: 10px;
+    padding: 10px;
+    background: var(--bg);
+    border-radius: 12px;
   }
 
-  /* Feedback Progress */
+  .diskusi-input {
+    display: flex;
+    gap: 10px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 10px;
+    margin-top: 16px;
+    align-items: flex-end;
+  }
+  .diskusi-input textarea {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: var(--ink);
+    line-height: 1.5;
+    outline: none;
+    resize: none;
+    min-height: 44px;
+    max-height: 140px;
+  }
+  .diskusi-send {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all .15s;
+  }
+  .diskusi-send:hover:not(:disabled) { transform: scale(1.05); }
+  .diskusi-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ═══════════════════════════════════════════════
+     PANEL — FEEDBACK (existing logic, new style)
+     ═══════════════════════════════════════════════ */
   .feedback-progress {
     display: flex;
     justify-content: space-between;
@@ -256,20 +981,293 @@
     font-size: 13px;
   }
 
-  /* Deadline Urgency */
-  .deadline-urgent {
-    color: var(--danger) !important;
+  .fb-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .fb-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .fb-row:last-child { border-bottom: none; }
+  .fb-row-label { flex: 1; font-size: 12.5px; font-weight: 600; }
+  .fb-rating { display: flex; gap: 4px; flex-shrink: 0; }
+  .fb-rating button {
+    width: 28px; height: 28px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 0;
+    transition: all .12s;
+  }
+
+  /* ═══════════════════════════════════════════════
+     RIGHT RAIL
+     ═══════════════════════════════════════════════ */
+  .rail-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .rail-card-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--maroon);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+  .rail-info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--ink);
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  .rail-info-row:last-child { margin-bottom: 0; }
+  .rail-info-row svg {
+    flex-shrink: 0;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .peserta-avatars {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .peserta-av {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 12px;
+    overflow: hidden;
+    position: relative;
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0,0,0,.08);
+  }
+  .peserta-av img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .peserta-av.more {
+    background: var(--maroon);
+    color: white;
+    font-size: 11px;
+  }
+  .peserta-count {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-top: 8px;
+  }
+  .peserta-count span { color: var(--maroon); }
+
+  .checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .checklist-check {
+    width: 18px; height: 18px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 10px;
     font-weight: 800;
   }
-  .deadline-soon {
-    color: var(--warning) !important;
+  .checklist-check.done {
+    background: var(--success-soft);
+    color: var(--success);
+  }
+  .checklist-check.pending {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+  }
+
+  .nav-pertemuan {
+    display: flex;
+    gap: 6px;
+  }
+  .nav-pertemuan-btn {
+    flex: 1;
+    padding: 10px 8px;
+    border-radius: 10px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    transition: all .15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .nav-pertemuan-btn:hover {
+    border-color: var(--maroon);
+    color: var(--maroon);
+    text-decoration: none;
+  }
+  .nav-pertemuan-btn .num {
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
     font-weight: 800;
   }
+  .nav-pertemuan-btn .title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    font-size: 11px;
+  }
+  .nav-pertemuan-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .quick-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--bg);
+    border: 1.5px solid transparent;
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+    text-decoration: none;
+    text-align: left;
+  }
+  .quick-btn:hover {
+    background: var(--maroon-soft);
+    border-color: var(--maroon-light);
+    color: var(--maroon);
+    text-decoration: none;
+  }
+  .quick-btn svg {
+    width: 16px; height: 16px;
+    flex-shrink: 0;
+    color: var(--maroon);
+  }
+
+  /* ═══════════════════════════════════════════════
+     LIGHTBOX
+     ═══════════════════════════════════════════════ */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.94);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fade-in .2s both;
+    cursor: zoom-out;
+  }
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  }
+
+  /* ═══════════════════════════════════════════════
+     MODAL REFLEKSI
+     ═══════════════════════════════════════════════ */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(28,20,20,.55);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fade-in .2s both;
+  }
+  .modal {
+    background: var(--surface);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 480px;
+    padding: 22px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.3);
+    animation: slide-up .3s var(--ease-out) both;
+  }
+  @keyframes slide-up {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--maroon);
+    margin-bottom: 4px;
+  }
+  .modal-sub {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .modal-actions .btn { flex: 1; }
 </style>
 </head>
 <body>
 
-<!-- Header -->
+<!-- MOBILE HEADER -->
 <header class="app-header">
   <div class="app-header-brand">
     <a href="beranda.html" class="header-btn" style="text-decoration:none;">
@@ -285,61 +1283,126 @@
   </button>
 </header>
 
-<main class="container page" style="max-width:720px;padding-top:16px;">
+<div class="hub-layout">
 
-  <!-- Loading -->
-  <div id="loading">
-    <div class="skeleton" style="height:160px;border-radius:24px;margin-bottom:20px;"></div>
-    <div class="skeleton" style="height:44px;border-radius:12px;margin-bottom:20px;"></div>
-    <div class="skeleton" style="height:120px;border-radius:16px;"></div>
-  </div>
-
-  <!-- Content -->
-  <div id="content" class="hidden">
-
-    <!-- Hero -->
-    <div class="hero-card" id="hero"></div>
-
-    <!-- Tabs -->
-    <div class="tabs" id="tabBar">
-      <button class="tab active" data-tab="presensi">
-        <span data-icon="mapPin"></span> Presensi
-        <span class="tab-indicator" id="indPresensi"></span>
-      </button>
-      <button class="tab" data-tab="materi">
-        <span data-icon="book"></span> Materi
-        <span class="tab-indicator" id="indMateri"></span>
-      </button>
-      <button class="tab" data-tab="tugas">
-        <span data-icon="clipboard"></span> Tugas
-        <span class="tab-indicator" id="indTugas"></span>
-      </button>
-      <button class="tab hidden" data-tab="feedback" id="tabFeedback">
-        <span data-icon="star"></span> Feedback
-        <span class="tab-indicator" id="indFeedback"></span>
-      </button>
+  <!-- SIDEBAR DESKTOP -->
+  <aside class="desktop-sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-logo">
+        <img src="assets/img/logo-mark.svg" alt="Nakula" />
+      </div>
+      <div class="sidebar-brand-text">
+        <div class="name">NAKULAKU</div>
+        <div class="sub">KKG Gugus Nakula</div>
+      </div>
     </div>
 
-    <!-- Panel: Presensi -->
-    <div class="panel active" data-panel="presensi" id="panelPresensi"></div>
+    <nav class="sidebar-menu">
+      <a class="sidebar-item" data-nav="beranda" href="beranda.html">
+        <span data-icon="home"></span> Beranda
+      </a>
+      <a class="sidebar-item active" data-nav="pertemuan" href="beranda.html#sectionPertemuan">
+        <span data-icon="calendar"></span> Pertemuan
+      </a>
+      <a class="sidebar-item" data-nav="galeri" href="galeri.html">
+        <span data-icon="grid"></span> Galeri Sekolah
+      </a>
+      <a class="sidebar-item" data-nav="aktivitas" href="aktivitas.html">
+        <span data-icon="activity"></span> Aktivitas Saya
+      </a>
+      <a class="sidebar-item" data-nav="profil" href="profil.html">
+        <span data-icon="user"></span> Profil
+      </a>
+    </nav>
+  </aside>
 
-    <!-- Panel: Materi -->
-    <div class="panel" data-panel="materi" id="panelMateri"></div>
+  <!-- MAIN CONTENT -->
+  <main class="desktop-main">
 
-    <!-- Panel: Tugas -->
-    <div class="panel" data-panel="tugas" id="panelTugas"></div>
+    <div class="desktop-topbar">
+      <h2>Pertemuan</h2>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="user-chip" id="userChip"></div>
+        <button class="btn-icon" data-act="logout" aria-label="Keluar">
+          <span data-icon="logOut"></span>
+        </button>
+      </div>
+    </div>
 
-    <!-- Panel: Feedback -->
-    <div class="panel" data-panel="feedback" id="panelFeedback"></div>
+    <div class="container page" style="max-width:760px;padding-top:16px;padding-bottom:40px;">
 
-  </div>
+      <!-- Loading -->
+      <div id="loading">
+        <div class="skeleton" style="height:200px;border-radius:24px;margin-bottom:20px;"></div>
+        <div class="skeleton" style="height:120px;border-radius:20px;margin-bottom:20px;"></div>
+        <div class="skeleton" style="height:44px;border-radius:14px;margin-bottom:16px;"></div>
+        <div class="skeleton" style="height:120px;border-radius:16px;"></div>
+      </div>
 
-  <!-- Error -->
-  <div id="error" class="hidden"></div>
+      <!-- Content -->
+      <div id="content" class="hidden">
 
-</main>
+        <!-- Breadcrumb -->
+        <div class="breadcrumb" id="breadcrumb">
+          <a href="beranda.html">Beranda</a>
+          <span class="sep">›</span>
+          <a href="beranda.html#sectionPertemuan">Pertemuan</a>
+          <span class="sep">›</span>
+          <span class="current" id="bcCurrent">Memuat…</span>
+        </div>
 
-<!-- Bottom Nav -->
+        <!-- Hero -->
+        <div class="hero-card" id="hero"></div>
+
+        <!-- Presensi Card -->
+        <div id="presensiWrap"></div>
+
+        <!-- Tabs -->
+        <div class="tabs" id="tabBar">
+          <button class="tab active" data-tab="ringkasan">
+            <span data-icon="layoutDashboard"></span> Ringkasan
+          </button>
+          <button class="tab" data-tab="materi">
+            <span data-icon="book"></span> Materi
+            <span class="tab-indicator" id="indMateri"></span>
+          </button>
+          <button class="tab" data-tab="tugas">
+            <span data-icon="clipboard"></span> Tugas
+            <span class="tab-indicator" id="indTugas"></span>
+          </button>
+          <button class="tab" data-tab="diskusi">
+            <span data-icon="messageCircle"></span> Diskusi
+            <span class="tab-indicator" id="indDiskusi"></span>
+          </button>
+          <button class="tab hidden" data-tab="feedback" id="tabFeedback">
+            <span data-icon="star"></span> Feedback
+            <span class="tab-indicator" id="indFeedback"></span>
+          </button>
+        </div>
+
+        <!-- Panels -->
+        <div class="panel active" data-panel="ringkasan" id="panelRingkasan"></div>
+        <div class="panel" data-panel="materi" id="panelMateri"></div>
+        <div class="panel" data-panel="tugas" id="panelTugas"></div>
+        <div class="panel" data-panel="diskusi" id="panelDiskusi"></div>
+        <div class="panel" data-panel="feedback" id="panelFeedback"></div>
+
+      </div>
+
+      <!-- Error -->
+      <div id="error" class="hidden"></div>
+
+    </div>
+  </main>
+
+  <!-- RIGHT RAIL (desktop only) -->
+  <aside class="hub-rail" id="rail">
+    <div id="railContent"></div>
+  </aside>
+
+</div>
+
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <a class="nav-item" data-nav="beranda" href="beranda.html">
     <span data-icon="home"></span> Beranda
@@ -362,16 +1425,29 @@
 <script src="assets/js/api.js"></script>
 <script src="assets/js/ui.js"></script>
 <script>
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
 document.querySelectorAll('[data-icon]').forEach(el => {
   el.innerHTML = Icons.get(el.dataset.icon);
   el.style.display = 'contents';
 });
-
 UI.bindLogout();
 
 const params = new URLSearchParams(window.location.search);
 const pertemuanId = params.get('id');
 
+let profile = null;
+let data = null;
+let tabAktif = 'ringkasan';
+let daftarDiskusi = [];
+let replyToId = null;
+let countdownTimer = null;
+let pesertaPollTimer = null;
+
+// ═══════════════════════════════════════════════
+// INIT DATA
+// ═══════════════════════════════════════════════
 if (!pertemuanId) {
   document.getElementById('loading').classList.add('hidden');
   document.getElementById('error').classList.remove('hidden');
@@ -381,19 +1457,28 @@ if (!pertemuanId) {
   );
 }
 
-let countdownTimer = null;
-
 (async () => {
-  const profile = await Api.requireLogin();
-  if (!profile || !pertemuanId) return;
+  if (!pertemuanId) return;
+  profile = await Api.requireLogin();
+  if (!profile) return;
+
+  // Render user chip
+  const chip = document.getElementById('userChip');
+  if (chip) {
+    const init = (profile.nama || 'A').charAt(0).toUpperCase();
+    const fotoUrl = Api.fotoSayaUrl('t');
+    chip.innerHTML = `
+      <div class="avatar">${fotoUrl ? `<img src="${fotoUrl}" onerror="this.parentElement.textContent='${init}'">` : init}</div>
+      <span>${UI.escapeHtml(profile.nama || '-')}</span>
+    `;
+  }
 
   const res = await Api.call('pertemuan.detail', { pertemuan_id: Number(pertemuanId) });
-
   document.getElementById('loading').classList.add('hidden');
 
   if (!res.ok || !res.data) {
     document.getElementById('error').classList.remove('hidden');
-    const errMsg = res.error || 'Gagal memuat data pertemuan.';
+    const errMsg = res.error || 'Gagal memuat data.';
     const terkunci = errMsg.includes('Selesaikan Pertemuan') || errMsg.includes('terkunci');
 
     if (terkunci) {
@@ -419,83 +1504,37 @@ let countdownTimer = null;
     return;
   }
 
-  render(res.data);
+  data = res.data;
+  renderAll();
+
+  // Polling peserta hadir tiap 30 detik
+  pesertaPollTimer = setInterval(pollPeserta, 30000);
 })();
 
-function render(data) {
+// ═══════════════════════════════════════════════
+// RENDER UTAMA
+// ═══════════════════════════════════════════════
+function renderAll() {
   const p = data.pertemuan;
   document.title = p.judul + ' — NAKULAKU';
   document.getElementById('content').classList.remove('hidden');
+  document.getElementById('bcCurrent').textContent = `#${p.urutan} · ${p.judul}`;
 
-  // Badge status window di hero
-  let statusBadgeHtml = '';
-  if (data.presensi_saya) {
-    statusBadgeHtml = `<span class="hero-status-badge done">${Icons.get('checkCircle', { class: 'icon-sm' })} Sudah Presensi</span>`;
-  } else if (data.presensi_status === 'buka') {
-    statusBadgeHtml = `<span class="hero-status-badge open">${Icons.get('camera', { class: 'icon-sm' })} Presensi Dibuka</span>`;
-  } else if (data.presensi_status === 'tutup') {
-    statusBadgeHtml = `<span class="hero-status-badge closed">${Icons.get('lock', { class: 'icon-sm' })} Presensi Ditutup</span>`;
-  }
+  renderHero();
+  renderPresensi();
+  renderIndikator();
+  renderRingkasan();
+  renderMateri();
+  renderTugas();
+  renderDiskusi();
+  renderFeedback();
+  renderRail();
 
-  document.getElementById('hero').innerHTML = `
-    <div class="hero-number">
-      ${Icons.get('calendar', { class: 'icon-sm' })}
-      PERTEMUAN #${p.urutan}
-    </div>
-    ${statusBadgeHtml}
-    <h1 class="hero-title">${UI.escapeHtml(p.judul)}</h1>
-    <div class="hero-meta">
-      ${Icons.get('calendar', { class: 'icon-sm' })}
-      ${UI.formatTanggal(p.tanggal)}${p.jam_mulai ? ' · ' + UI.formatJam(p.jam_mulai) : ''}
-    </div>
-    ${p.lokasi_nama ? `
-      <div class="hero-meta">
-        ${Icons.get('mapPin', { class: 'icon-sm' })}
-        ${UI.escapeHtml(p.lokasi_nama)}
-      </div>` : ''}
-    ${p.narasumber_nama ? `
-      <div class="hero-meta">
-        ${Icons.get('user', { class: 'icon-sm' })}
-        ${UI.escapeHtml(p.narasumber_nama)}
-      </div>` : ''}
-  `;
-
-  // Indikator Presensi
-  const indPresensi = document.getElementById('indPresensi');
-  if (data.presensi_saya) {
-    indPresensi.className = 'tab-indicator done';
-    indPresensi.textContent = '✓';
-  }
-
-  // Indikator Materi
-  const indMateri = document.getElementById('indMateri');
-  if (data.materi && data.materi.length > 0) {
-    indMateri.className = 'tab-indicator count';
-    indMateri.textContent = data.materi.length;
-  }
-
-  // Indikator Tugas (x/y terkumpul)
-  const indTugas = document.getElementById('indTugas');
-  const totalTugas = (data.tugas || []).length;
-  const totalKumpul = (data.pengumpulan_saya || []).length;
-  if (totalTugas > 0) {
-    if (totalKumpul >= totalTugas) {
-      indTugas.className = 'tab-indicator done';
-      indTugas.textContent = '✓';
-    } else {
-      indTugas.className = 'tab-indicator count';
-      indTugas.textContent = `${totalKumpul}/${totalTugas}`;
-    }
-  }
-
-  renderPresensi(data.presensi_saya, p, data);
-  renderMateri(data.materi);
-  renderTugas(data.tugas, data.pengumpulan_saya);
-  cekFeedback(p);
-
+  // Bind tabs
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
       const nama = tab.dataset.tab;
+      tabAktif = nama;
       document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t === tab));
       document.querySelectorAll('.panel').forEach(panel => {
         panel.classList.toggle('active', panel.dataset.panel === nama);
@@ -504,387 +1543,838 @@ function render(data) {
   });
 }
 
-// ============================================================
-// BADGE WINDOW PRESENSI (helper)
-// ============================================================
-function badgeWindow(data) {
-  if (!data.presensi_status || !data.presensi_buka || !data.presensi_tutup) return '';
+// ═══════════════════════════════════════════════
+// HERO
+// ═══════════════════════════════════════════════
+function renderHero() {
+  const p = data.pertemuan;
+  const progress = hitungProgres();
 
-  const buka = new Date(data.presensi_buka).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-  const tutup = new Date(data.presensi_tutup).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+  // Status badge
+  let statusBadge = '';
+  if (data.presensi_saya) {
+    statusBadge = `<span class="hero-status-badge done">${Icons.get('checkCircle', { class: 'icon-sm' })} Sudah Presensi</span>`;
+  } else if (data.presensi_status === 'buka') {
+    statusBadge = `<span class="hero-status-badge open">${Icons.get('camera', { class: 'icon-sm' })} Presensi Dibuka</span>`;
+  } else if (data.presensi_status === 'tutup') {
+    statusBadge = `<span class="hero-status-badge closed">${Icons.get('lock', { class: 'icon-sm' })} Presensi Ditutup</span>`;
+  }
 
-  const map = {
-    buka:  { label: 'Presensi Dibuka',       icon: 'checkCircle' },
-    belum: { label: 'Presensi Belum Dibuka', icon: 'lock' },
-    tutup: { label: 'Presensi Ditutup',      icon: 'x' },
-  };
-  const m = map[data.presensi_status] || map.belum;
+  // Progress items
+  const pItems = [
+    { label: 'Presensi', done: !!data.presensi_saya },
+    { label: 'Materi', done: progress.materiSelesai },
+    { label: 'Tugas', done: progress.tugasSelesai },
+    { label: 'Feedback', done: progress.feedbackSelesai },
+  ];
 
-  return `
-    <div class="presensi-badge ${data.presensi_status}" style="margin-bottom:12px;">
-      ${Icons.get(m.icon, { class: 'icon-sm' })}
-      ${m.label} · ${buka}–${tutup}
+  document.getElementById('hero').innerHTML = `
+    <div class="hero-top-row">
+      <div class="hero-number">
+        ${Icons.get('calendar', { class: 'icon-sm' })}
+        PERTEMUAN #${p.urutan}
+      </div>
+      ${statusBadge}
+    </div>
+    <h1 class="hero-title">${UI.escapeHtml(p.judul)}</h1>
+    <div class="hero-meta-list">
+      <div class="hero-meta">
+        ${Icons.get('calendar', { class: 'icon-sm' })}
+        ${UI.formatTanggal(p.tanggal)}${p.jam_mulai ? ' · ' + UI.formatJam(p.jam_mulai) : ''}
+      </div>
+      ${p.lokasi_nama ? `
+        <div class="hero-meta">
+          ${Icons.get('mapPin', { class: 'icon-sm' })}
+          ${UI.escapeHtml(p.lokasi_nama)}
+        </div>
+      ` : ''}
+      ${p.narasumber_nama ? `
+        <div class="hero-meta">
+          ${Icons.get('user', { class: 'icon-sm' })}
+          ${UI.escapeHtml(p.narasumber_nama)}
+        </div>
+      ` : ''}
+    </div>
+    <div class="hero-progress">
+      <div class="hero-progress-head">
+        <span class="label">Progres Anda</span>
+        <span class="pct">${progress.persen}%</span>
+      </div>
+      <div class="hero-progress-bar">
+        <div class="hero-progress-fill" style="width: ${progress.persen}%"></div>
+      </div>
+      <div class="hero-progress-items">
+        ${pItems.map(it => `
+          <span class="hero-p-item ${it.done ? 'done' : 'pending'}">
+            ${it.done ? Icons.get('check', { class: 'icon-sm' }) : Icons.get('circle', { class: 'icon-sm' })}
+            ${it.label}
+          </span>
+        `).join('')}
+      </div>
     </div>
   `;
 }
 
-// ============================================================
-// COUNTDOWN TIMER
-// ============================================================
+function hitungProgres() {
+  const totalMateri = (data.materi || []).length;
+  const materiDibaca = (data.materi || []).filter(m => getBaca(m.id)).length;
+  const materiSelesai = totalMateri === 0 || materiDibaca >= totalMateri;
+
+  const totalTugas = (data.tugas || []).length;
+  const tugasKumpul = (data.pengumpulan_saya || []).length;
+  const tugasSelesai = totalTugas === 0 || tugasKumpul >= totalTugas;
+
+  const feedbackSelesai = !!(data.diskusi_terbaru && false); // placeholder — diganti setelah cek feedback
+  const feedbackDone = window._feedbackDone || false;
+
+  const items = [
+    !!data.presensi_saya,
+    materiSelesai,
+    tugasSelesai,
+    feedbackDone,
+  ];
+  const done = items.filter(x => x).length;
+  const persen = Math.round((done / items.length) * 100);
+
+  return { persen, materiSelesai, tugasSelesai, feedbackSelesai: feedbackDone, materiDibaca, totalMateri, tugasKumpul, totalTugas };
+}
+
+// ═══════════════════════════════════════════════
+// PRESENSI CARD
+// ═══════════════════════════════════════════════
+async function renderPresensi() {
+  const el = document.getElementById('presensiWrap');
+  const p = data.pertemuan;
+
+  if (data.presensi_saya) {
+    const pr = data.presensi_saya;
+    const statusMap = {
+      tepat_waktu:       { label: 'Tepat Waktu',        cls: 'badge-success', icon: 'checkCircle', color: 'success' },
+      terlambat:         { label: 'Terlambat',           cls: 'badge-warning', icon: 'clock', color: 'warning' },
+      luar_radius:       { label: 'Luar Radius',         cls: 'badge-warning', icon: 'alertTriangle', color: 'warning' },
+      izin_pribadi:      { label: 'Izin Pribadi',        cls: 'badge-info',    icon: 'fileText', color: 'info' },
+      sakit:             { label: 'Sakit',               cls: 'badge-info',    icon: 'fileText', color: 'info' },
+      sakit_tanpa_surat: { label: 'Sakit (tanpa surat)', cls: 'badge-info',    icon: 'fileText', color: 'info' },
+      dinas_luar:        { label: 'Dinas Luar',          cls: 'badge-info',    icon: 'briefcase', color: 'info' },
+      cuti_melahirkan:   { label: 'Cuti Melahirkan',     cls: 'badge-info',    icon: 'heart', color: 'info' },
+      ijin:              { label: 'Ijin',                cls: 'badge-info',    icon: 'fileText', color: 'info' },
+      cuti:              { label: 'Cuti',                cls: 'badge-info',    icon: 'fileText', color: 'info' },
+      alfa:              { label: 'Alfa',                cls: 'badge-danger',  icon: 'x', color: 'danger' },
+    };
+    const s = statusMap[pr.status] || statusMap.alfa;
+
+    const hasFoto = !!pr.foto_thumb_url;
+    const hasLokasi = pr.latitude && pr.longitude;
+
+    let verifikasiHtml = '';
+    if (pr.verifikasi_ks === 'menunggu') {
+      verifikasiHtml = `<div class="text-xs" style="margin-top:8px;padding:8px 10px;background:var(--warning-soft);border-radius:8px;color:var(--warning);font-weight:700;">⏳ Menunggu verifikasi admin</div>`;
+    } else if (pr.verifikasi_ks === 'disetujui') {
+      verifikasiHtml = `<div class="text-xs" style="margin-top:8px;color:var(--success);font-weight:700;">✓ Diverifikasi</div>`;
+    } else if (pr.verifikasi_ks === 'ditolak') {
+      verifikasiHtml = `<div class="text-xs" style="margin-top:8px;color:var(--danger);font-weight:700;">✗ Ditolak — tidak dihitung</div>`;
+    }
+
+    el.innerHTML = `
+      <div class="presensi-card sudah">
+        <div class="presensi-head">
+          <div class="presensi-icon-wrap">${Icons.get(s.icon, { class: 'icon-lg' })}</div>
+          <div class="presensi-info">
+            <div class="presensi-title">Presensi Tercatat</div>
+            <div class="presensi-sub">
+              <span class="badge ${s.cls}">${s.label}</span>
+              <strong style="color:var(--maroon);margin-left:6px;">+${pr.poin} poin</strong>
+            </div>
+            <div class="presensi-sub" style="margin-top:4px;font-size:11px;">
+              ${Icons.get('clock', { class: 'icon-sm' })} ${UI.formatTanggalJam(pr.waktu_submit)}
+            </div>
+          </div>
+        </div>
+
+        ${(hasFoto || hasLokasi) ? `
+          <div class="presensi-media">
+            ${hasFoto ? `
+              <div class="media-thumb" onclick="bukaFoto('${UI.escapeHtml(pr.foto_thumb_url)}')">
+                <img src="${UI.escapeHtml(pr.foto_thumb_url)}" alt="Foto presensi" loading="lazy">
+                <span class="badge">📷 Foto</span>
+              </div>
+            ` : ''}
+            ${hasLokasi ? `
+              <div class="media-thumb map" onclick="bukaLokasi(${pr.latitude}, ${pr.longitude})">
+                ${Icons.get('mapPin')}
+                <div>Lihat Lokasi</div>
+                <div style="font-size:10px;font-weight:600;opacity:.8;">${pr.jarak_meter !== null ? pr.jarak_meter + 'm dari titik' : 'Lihat di maps'}</div>
+              </div>
+            ` : ''}
+          </div>
+        ` : ''}
+
+        ${verifikasiHtml}
+      </div>
+    `;
+    return;
+  }
+
+  // Belum presensi — cek ajuan izin dulu
+  const resIzin = await Api.call('izin.saya', { pertemuan_id: p.id });
+  const izin = resIzin.ok ? resIzin.data : null;
+
+  if (izin) {
+    const jenisLabel = {
+      ijin: 'Ijin',
+      izin_pribadi: 'Izin Pribadi',
+      sakit: 'Sakit',
+      sakit_tanpa_surat: 'Sakit (tanpa surat)',
+      dinas_luar: 'Dinas Luar',
+      cuti: 'Cuti',
+      cuti_melahirkan: 'Cuti Melahirkan',
+    }[izin.kategori_kode || izin.jenis] || izin.kategori_kode || izin.jenis;
+
+    const statusInfo = izin.status_ks === 'menunggu'
+      ? { cls: 'badge-warning', text: 'Menunggu Verifikasi KS' }
+      : izin.status_ks === 'disetujui'
+        ? { cls: 'badge-success', text: 'Disetujui KS' }
+        : { cls: 'badge-danger', text: 'Ditolak KS' };
+
+    el.innerHTML = `
+      <div class="presensi-card info">
+        <div class="presensi-head">
+          <div class="presensi-icon-wrap">${Icons.get('fileText', { class: 'icon-lg' })}</div>
+          <div class="presensi-info">
+            <div class="presensi-title">Ajuan ${jenisLabel}</div>
+            <div class="presensi-sub">
+              <span class="badge ${statusInfo.cls}">${statusInfo.text}</span>
+            </div>
+            <div class="presensi-sub" style="margin-top:8px;">
+              <strong>Alasan:</strong> ${UI.escapeHtml(izin.alasan)}
+            </div>
+            ${izin.catatan_ks ? `
+              <div style="margin-top:8px;padding:8px 10px;background:var(--bg);border-radius:8px;font-size:12px;">
+                <strong>Catatan KS:</strong> ${UI.escapeHtml(izin.catatan_ks)}
+              </div>
+            ` : ''}
+          </div>
+        </div>
+        ${izin.status_ks === 'menunggu' ? `
+          <div class="presensi-actions">
+            <button class="btn btn-secondary" onclick="ajukanIzin()">Ubah Ajuan</button>
+          </div>
+        ` : ''}
+      </div>
+    `;
+    return;
+  }
+
+  // Belum presensi & belum izin — tergantung window
+  const status = data.presensi_status;
+  let infoText = '';
+  let actions = '';
+  let countdownHtml = '';
+
+  if (status === 'buka') {
+    infoText = 'Presensi sedang dibuka. Isi sekarang sebelum waktu habis.';
+    countdownHtml = `<div class="countdown-box" id="countdownBox">${Icons.get('clock', { class: 'icon-sm' })}<span id="countdownText">Menghitung…</span></div>`;
+    actions = `
+      <button class="btn btn-primary" onclick="mulaiPresensi()">
+        ${Icons.get('camera', { class: 'icon-sm' })} Isi Presensi
+      </button>
+      <button class="btn btn-secondary" onclick="ajukanIzin()">
+        ${Icons.get('fileText', { class: 'icon-sm' })} Ajukan Izin
+      </button>
+    `;
+  } else if (status === 'tutup') {
+    infoText = 'Presensi sudah ditutup. Kalau Anda berhalangan hadir, silakan ajukan izin.';
+    actions = `
+      <button class="btn btn-primary" onclick="ajukanIzin()">
+        ${Icons.get('fileText', { class: 'icon-sm' })} Ajukan Izin / Sakit / Cuti
+      </button>
+    `;
+  } else {
+    infoText = 'Presensi belum dibuka. Silakan kembali saat waktu yang ditentukan.';
+    actions = `
+      <button class="btn btn-secondary" onclick="ajukanIzin()">
+        ${Icons.get('fileText', { class: 'icon-sm' })} Ajukan Izin
+      </button>
+    `;
+  }
+
+  el.innerHTML = `
+    <div class="presensi-card belum">
+      <div class="presensi-head">
+        <div class="presensi-icon-wrap">${Icons.get('alertCircle', { class: 'icon-lg' })}</div>
+        <div class="presensi-info">
+          <div class="presensi-title">Belum Presensi</div>
+          <div class="presensi-sub">${infoText}</div>
+        </div>
+      </div>
+      ${countdownHtml}
+      <div class="presensi-actions">${actions}</div>
+    </div>
+  `;
+
+  if (status === 'buka' && data.presensi_tutup) {
+    setTimeout(() => mulaiCountdown(data.presensi_tutup), 100);
+  }
+}
+
 function mulaiCountdown(tutupIso) {
   if (countdownTimer) clearInterval(countdownTimer);
   const tutup = new Date(tutupIso).getTime();
-  
   const tick = () => {
     const el = document.getElementById('countdownText');
     const box = document.getElementById('countdownBox');
     if (!el) return;
-    
     const sisa = Math.max(0, tutup - Date.now());
-    
     if (sisa <= 0) {
       el.textContent = 'Waktu presensi habis';
       if (box) box.className = 'countdown-box danger';
       if (countdownTimer) clearInterval(countdownTimer);
       return;
     }
-    
     const jam = Math.floor(sisa / 3600000);
     const m = Math.floor((sisa % 3600000) / 60000);
     const s = Math.floor((sisa % 60000) / 1000);
-    
-    let text;
-    if (jam > 0) text = `Sisa ${jam}j ${m}m`;
-    else if (m > 0) text = `Sisa ${m}m ${String(s).padStart(2, '0')}s`;
-    else text = `Sisa ${s} detik`;
-    
+    let text = jam > 0 ? `Sisa ${jam}j ${m}m` : (m > 0 ? `Sisa ${m}m ${String(s).padStart(2, '0')}s` : `Sisa ${s} detik`);
     el.textContent = text;
-    
     if (box) {
       if (sisa <= 5 * 60000) box.className = 'countdown-box danger';
       else if (sisa <= 30 * 60000) box.className = 'countdown-box warning';
       else box.className = 'countdown-box';
     }
   };
-  
   tick();
   countdownTimer = setInterval(tick, 1000);
 }
 
-// ============================================================
-// PANEL PRESENSI
-// ============================================================
-async function renderPresensi(presensi, pertemuan, data) {
-  const el = document.getElementById('panelPresensi');
-
-  if (!presensi) {
-    const res = await Api.call('izin.saya', { pertemuan_id: pertemuan.id });
-    const izin = res.ok ? res.data : null;
-
-    if (izin) {
-      const jenisLabel = {
-        ijin: 'Ijin',
-        izin_pribadi: 'Izin Pribadi',
-        sakit: 'Sakit',
-        sakit_tanpa_surat: 'Sakit (tanpa surat)',
-        dinas_luar: 'Dinas Luar',
-        cuti: 'Cuti',
-        cuti_melahirkan: 'Cuti Melahirkan',
-      }[izin.kategori_kode || izin.jenis] || izin.kategori_kode || izin.jenis;
-      const statusInfo = izin.status_ks === 'menunggu'
-        ? { cls: 'badge-warning', text: 'Menunggu Verifikasi KS' }
-        : izin.status_ks === 'disetujui'
-          ? { cls: 'badge-success', text: 'Disetujui KS' }
-          : { cls: 'badge-danger', text: 'Ditolak KS' };
-
-      el.innerHTML = `
-        ${badgeWindow(data)}
-        <div class="status-card info">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-            <span style="color:var(--info);">${Icons.get('fileText', { class: 'icon-lg' })}</span>
-            <div style="font-weight:800;">Ajuan ${jenisLabel}</div>
-          </div>
-          <div style="margin-bottom:8px;">
-            <span class="badge ${statusInfo.cls}">${statusInfo.text}</span>
-          </div>
-          <div class="text-sm text-muted" style="margin-bottom:12px;">
-            <strong>Alasan:</strong> ${UI.escapeHtml(izin.alasan)}
-          </div>
-          ${izin.catatan_ks ? `
-            <div class="text-sm" style="padding:10px;background:var(--bg);border-radius:8px;margin-bottom:12px;">
-              <strong>Catatan KS:</strong><br />${UI.escapeHtml(izin.catatan_ks)}
-            </div>
-          ` : ''}
-          ${izin.status_ks === 'menunggu' ? `
-            <button class="btn btn-secondary btn-full" onclick="batalkanIzin()">Ubah Ajuan</button>
-          ` : ''}
-        </div>
-      `;
-      return;
-    }
-
-    const status = data.presensi_status;
-
-    let infoHtml = '';
-    let actionHtml = '';
-    let countdownHtml = '';
-
-    if (status === 'buka') {
-      infoHtml = 'Presensi sedang dibuka. Isi sekarang sebelum waktu habis.';
-      countdownHtml = `
-        <div class="countdown-box" id="countdownBox">
-          ${Icons.get('clock', { class: 'icon-sm' })}
-          <span id="countdownText">Menghitung…</span>
-        </div>
-      `;
-      actionHtml = `
-        <button class="btn btn-primary btn-full" onclick="mulaiPresensi()" style="margin-bottom:8px;">
-          ${Icons.get('camera', { class: 'icon-sm' })}
-          Isi Presensi (Selfie + GPS)
-        </button>
-        <button class="btn btn-secondary btn-full" onclick="ajukanIzin()">
-          ${Icons.get('fileText', { class: 'icon-sm' })}
-          Ajukan Izin / Sakit / Cuti
-        </button>
-      `;
-    } else if (status === 'tutup') {
-      infoHtml = 'Presensi sudah ditutup. Kalau Anda berhalangan hadir, silakan ajukan izin.';
-      actionHtml = `
-        <button class="btn btn-primary btn-full" onclick="ajukanIzin()">
-          ${Icons.get('fileText', { class: 'icon-sm' })}
-          Ajukan Izin / Sakit / Cuti
-        </button>
-      `;
+// ═══════════════════════════════════════════════
+// INDIKATOR TAB
+// ═══════════════════════════════════════════════
+function renderIndikator() {
+  const totalMateri = (data.materi || []).length;
+  if (totalMateri > 0) {
+    const el = document.getElementById('indMateri');
+    const dibaca = (data.materi || []).filter(m => getBaca(m.id)).length;
+    if (dibaca >= totalMateri) {
+      el.className = 'tab-indicator done';
+      el.textContent = '✓';
     } else {
-      infoHtml = 'Presensi belum dibuka. Silakan kembali saat waktu yang ditentukan.';
-      actionHtml = `
-        <button class="btn btn-secondary btn-full" onclick="ajukanIzin()">
-          ${Icons.get('fileText', { class: 'icon-sm' })}
-          Ajukan Izin / Sakit / Cuti
-        </button>
-      `;
+      el.className = 'tab-indicator count';
+      el.textContent = `${dibaca}/${totalMateri}`;
     }
-
-    el.innerHTML = `
-      ${badgeWindow(data)}
-      ${countdownHtml}
-      <div class="status-card belum">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-          <span style="color:var(--warning);">${Icons.get('alertCircle', { class: 'icon-lg' })}</span>
-          <div style="font-weight:800;">Belum Presensi</div>
-        </div>
-        <p class="text-sm text-muted" style="margin-bottom:16px;">${infoHtml}</p>
-        ${actionHtml}
-      </div>
-    `;
-
-    // Aktifkan countdown kalau window buka
-    if (status === 'buka' && data.presensi_tutup) {
-      setTimeout(() => mulaiCountdown(data.presensi_tutup), 100);
-    }
-
-    return;
   }
 
-  const statusMap = {
-    tepat_waktu:       { label: 'Tepat Waktu',        cls: 'badge-success', icon: 'checkCircle' },
-    terlambat:         { label: 'Terlambat',           cls: 'badge-warning', icon: 'clock' },
-    luar_radius:       { label: 'Luar Radius',         cls: 'badge-warning', icon: 'alertTriangle' },
-    izin_pribadi:      { label: 'Izin Pribadi',        cls: 'badge-info',    icon: 'fileText' },
-    sakit:             { label: 'Sakit',               cls: 'badge-info',    icon: 'fileText' },
-    sakit_tanpa_surat: { label: 'Sakit (tanpa surat)', cls: 'badge-info',    icon: 'fileText' },
-    dinas_luar:        { label: 'Dinas Luar',          cls: 'badge-info',    icon: 'briefcase' },
-    cuti_melahirkan:   { label: 'Cuti Melahirkan',     cls: 'badge-info',    icon: 'heart' },
-    ijin:              { label: 'Ijin',                cls: 'badge-info',    icon: 'fileText' },  // legacy
-    cuti:              { label: 'Cuti',                cls: 'badge-info',    icon: 'fileText' },  // legacy
-    alfa:              { label: 'Alfa',                cls: 'badge-danger',  icon: 'x' },
-  };
-  const s = statusMap[presensi.status] || statusMap.alfa;
+  const totalTugas = (data.tugas || []).length;
+  if (totalTugas > 0) {
+    const el = document.getElementById('indTugas');
+    const kumpul = (data.pengumpulan_saya || []).length;
+    if (kumpul >= totalTugas) {
+      el.className = 'tab-indicator done';
+      el.textContent = '✓';
+    } else {
+      el.className = 'tab-indicator count';
+      el.textContent = `${kumpul}/${totalTugas}`;
+    }
+  }
 
-  el.innerHTML = `
-    ${badgeWindow(data)}
-    <div class="status-card sudah">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-        <span style="color:var(--success);">${Icons.get(s.icon, { class: 'icon-lg' })}</span>
-        <div style="font-weight:800;">Presensi Tercatat</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-        <span class="badge ${s.cls}">${s.label}</span>
-        <span class="text-xs text-muted">+${presensi.poin} poin</span>
-      </div>
-      <div class="text-xs text-muted" style="margin-top:12px;">
-        ${Icons.get('clock', { class: 'icon-sm' })} 
-        ${UI.formatTanggalJam(presensi.waktu_submit)}
-      </div>
-      ${presensi.verifikasi_ks === 'menunggu' ? `
-        <div class="text-xs text-muted" style="margin-top:8px;padding:8px 10px;background:var(--warning-soft);border-radius:8px;">
-          ⏳ Menunggu verifikasi admin
-        </div>
-      ` : ''}
-      ${presensi.verifikasi_ks === 'disetujui' ? `
-        <div class="text-xs" style="margin-top:8px;color:var(--success);">
-          ✓ Diverifikasi
-        </div>
-      ` : ''}
-      ${presensi.verifikasi_ks === 'ditolak' ? `
-        <div class="text-xs text-danger" style="margin-top:8px;">
-          ✗ Ditolak — tidak dihitung
-        </div>
-      ` : ''}
-    </div>
-  `;
+  if (data.diskusi_count > 0) {
+    const el = document.getElementById('indDiskusi');
+    el.className = 'tab-indicator count';
+    el.textContent = data.diskusi_count;
+  }
 }
 
-// ============================================================
-// PANEL MATERI
-// ============================================================
-function renderMateri(materi) {
-  const el = document.getElementById('panelMateri');
+// ═══════════════════════════════════════════════
+// PANEL RINGKASAN
+// ═══════════════════════════════════════════════
+function renderRingkasan() {
+  const el = document.getElementById('panelRingkasan');
+  const progress = hitungProgres();
 
-  if (!materi || materi.length === 0) {
+  // Todo list
+  const todos = [];
+  if (!data.presensi_saya) {
+    todos.push({ done: false, label: 'Isi presensi', action: data.presensi_status === 'buka' ? 'mulaiPresensi()' : 'ajukanIzin()', actionText: data.presensi_status === 'buka' ? 'Isi' : 'Ajukan Izin' });
+  }
+  const totalMateri = (data.materi || []).length;
+  if (totalMateri > 0) {
+    const dibaca = (data.materi || []).filter(m => getBaca(m.id)).length;
+    if (dibaca < totalMateri) {
+      todos.push({ done: false, label: `Baca ${totalMateri - dibaca} materi lagi`, action: 'pindahTab("materi")', actionText: 'Baca' });
+    }
+  }
+  const totalTugas = (data.tugas || []).length;
+  const kumpul = (data.pengumpulan_saya || []).length;
+  if (kumpul < totalTugas) {
+    todos.push({ done: false, label: `Kumpulkan ${totalTugas - kumpul} tugas`, action: 'pindahTab("tugas")', actionText: 'Buka' });
+  }
+  if (!progress.feedbackSelesai && data.diskusi_count >= 0) {
+    todos.push({ done: false, label: 'Isi feedback pertemuan', action: 'pindahTab("feedback")', actionText: 'Isi' });
+  }
+
+  // Catatan pribadi
+  const catatan = data.catatan_pribadi || '';
+
+  el.innerHTML = `
+    <!-- Checklist -->
+    <div class="section-mini">
+      <div class="section-mini-title">
+        <span class="icon-wrap">${Icons.get('checkCircle', { class: 'icon-sm' })}</span>
+        Yang Perlu Anda Lakukan
+      </div>
+      ${todos.length === 0 ? `
+        <div style="text-align:center;padding:16px;color:var(--success);font-weight:700;font-size:13px;">
+          ✓ Semua selesai. Kerja bagus!
+        </div>
+      ` : todos.map(t => `
+        <div class="todo-item">
+          <div class="todo-check pending">${Icons.get('circle', { class: 'icon-sm' })}</div>
+          <div class="todo-label">${UI.escapeHtml(t.label)}</div>
+          <button class="todo-action" onclick="${t.action}">${t.actionText}</button>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Catatan Pribadi -->
+    <div class="section-mini">
+      <div class="section-mini-title">
+        <span class="icon-wrap">${Icons.get('edit', { class: 'icon-sm' })}</span>
+        Catatan Pribadi
+      </div>
+      <div style="font-size:12px;color:var(--muted);font-weight:600;margin-bottom:10px;line-height:1.5;">
+        Tulis catatan Anda tentang pertemuan ini. Hanya Anda yang bisa lihat.
+      </div>
+      <textarea class="catatan-textarea" id="catatanInput" placeholder="Contoh: materi asesmen formatif sangat berguna untuk kelas 6...">${UI.escapeHtml(catatan)}</textarea>
+      <div class="catatan-meta">
+        <span id="catatanStatus">${catatan ? 'Tersimpan' : 'Belum ada catatan'}</span>
+        <button class="btn btn-primary btn-sm" id="btnSimpanCatatan">Simpan</button>
+      </div>
+    </div>
+
+    <!-- Refleksi (hanya kalau semua selesai) -->
+    ${(progress.persen >= 75 && !data.refleksi) ? `
+      <div class="section-mini" style="background:linear-gradient(135deg,#FDF2F8 0%,#FCE7F3 100%);border-color:var(--maroon-light);">
+        <div class="section-mini-title">
+          <span class="icon-wrap">${Icons.get('sparkles', { class: 'icon-sm' })}</span>
+          Refleksi Akhir
+        </div>
+        <div style="font-size:12.5px;color:var(--ink);line-height:1.55;margin-bottom:12px;font-weight:500;">
+          Anda hampir selesai pertemuan ini. Ceritakan <strong>1 hal</strong> yang akan Anda terapkan di kelas dari materi KKG.
+        </div>
+        <button class="btn btn-primary" id="btnRefleksi">Tulis Refleksi</button>
+      </div>
+    ` : ''}
+
+    ${data.refleksi ? `
+      <div class="section-mini">
+        <div class="section-mini-title">
+          <span class="icon-wrap">${Icons.get('sparkles', { class: 'icon-sm' })}</span>
+          Refleksi Anda
+        </div>
+        <div style="padding:12px;background:var(--bg);border-radius:10px;font-size:13px;line-height:1.6;color:var(--ink);white-space:pre-wrap;">${UI.escapeHtml(data.refleksi)}</div>
+      </div>
+    ` : ''}
+  `;
+
+  // Bind catatan
+  document.getElementById('btnSimpanCatatan')?.addEventListener('click', simpanCatatan);
+  document.getElementById('btnRefleksi')?.addEventListener('click', bukaModalRefleksi);
+}
+
+async function simpanCatatan() {
+  const btn = document.getElementById('btnSimpanCatatan');
+  const isi = document.getElementById('catatanInput').value.trim();
+  UI.btnLoading(btn, 'Menyimpan…');
+  const res = await Api.call('catatan.simpan', { pertemuan_id: data.pertemuan.id, isi });
+  UI.btnReset(btn);
+
+  if (res.ok) {
+    document.getElementById('catatanStatus').textContent = 'Tersimpan';
+    UI.sukses('Catatan tersimpan.');
+  } else {
+    UI.gagal(res.error);
+  }
+}
+
+function bukaModalRefleksi() {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-backdrop';
+  overlay.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">Refleksi Akhir</div>
+      <div class="modal-sub">Ceritakan 1 hal yang akan Anda terapkan di kelas dari materi KKG ini.</div>
+      <textarea class="catatan-textarea" id="refleksiInput" rows="4" placeholder="Contoh: Saya akan mencoba asesmen formatif dengan exit ticket di akhir pelajaran..." style="min-height:120px;"></textarea>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" data-close>Batal</button>
+        <button class="btn btn-primary" id="btnRefleksiSimpan">Simpan</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelector('[data-close]').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnRefleksiSimpan').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnRefleksiSimpan');
+    const isi = overlay.querySelector('#refleksiInput').value.trim();
+    if (!isi) { UI.gagal('Refleksi wajib diisi.'); return; }
+
+    UI.btnLoading(btn, 'Menyimpan…');
+    const res = await Api.call('refleksi.simpan', { pertemuan_id: data.pertemuan.id, isi });
+    UI.btnReset(btn);
+
+    if (res.ok) {
+      UI.sukses('Refleksi tersimpan.');
+      close();
+      data.refleksi = isi;
+      renderRingkasan();
+    } else {
+      UI.gagal(res.error);
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════
+// PANEL MATERI
+// ═══════════════════════════════════════════════
+function renderMateri() {
+  const el = document.getElementById('panelMateri');
+  const materi = data.materi || [];
+
+  if (materi.length === 0) {
     el.innerHTML = UI.emptyHtml('book', 'Belum ada materi', 'Materi akan muncul di sini.');
     return;
   }
 
-  el.innerHTML = materi.map(m => `
-    <div class="card" style="margin-bottom:10px;">
-      <div style="display:flex;align-items:start;gap:10px;">
-        <div style="width:40px;height:40px;border-radius:12px;background:var(--maroon-soft);color:var(--maroon);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          ${Icons.get('book', { class: 'icon' })}
-        </div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-weight:700;margin-bottom:4px;">${UI.escapeHtml(m.judul)}</div>
-          ${m.deskripsi ? `<div class="text-sm text-muted" style="margin-bottom:8px;">${UI.escapeHtml(m.deskripsi)}</div>` : ''}
-          ${m.link_url ? `
-            <a href="${UI.escapeHtml(m.link_url)}" target="_blank" rel="noopener" class="text-sm" style="font-weight:700;display:inline-flex;align-items:center;gap:6px;">
-              ${Icons.get('externalLink', { class: 'icon-sm' })}
-              Buka Materi
-            </a>` : ''}
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-// ============================================================
-// PANEL TUGAS
-// ============================================================
-function renderTugas(tugas, pengumpulanSaya) {
-  const el = document.getElementById('panelTugas');
-
-  if (!tugas || tugas.length === 0) {
-    el.innerHTML = UI.emptyHtml('clipboard', 'Belum ada tugas');
-    return;
-  }
-
-  const mapKumpul = {};
-  (pengumpulanSaya || []).forEach(p => mapKumpul[p.tugas_id] = p);
-
-  // Helper cek urgensi deadline
-  function deadlineClass(deadline) {
-    if (!deadline) return '';
-    const sisa = new Date(deadline).getTime() - Date.now();
-    if (sisa < 0) return 'deadline-urgent';
-    if (sisa < 24 * 3600 * 1000) return 'deadline-urgent';
-    if (sisa < 3 * 24 * 3600 * 1000) return 'deadline-soon';
-    return '';
-  }
-
-  el.innerHTML = tugas.map(t => {
-    const kumpul = mapKumpul[t.id];
-    const statusBadge = kumpul ? {
-      menunggu: '<span class="badge badge-warning">Menunggu Dinilai</span>',
-      diterima: '<span class="badge badge-success">Diterima</span>',
-      revisi: '<span class="badge badge-info">Perlu Revisi</span>',
-      ditolak: '<span class="badge badge-danger">Ditolak</span>',
-    }[kumpul.status] : '<span class="badge badge-maroon">Belum Dikumpul</span>';
-
-    const dl = deadlineClass(t.deadline);
+  el.innerHTML = materi.map(m => {
+    const dibaca = getBaca(m.id);
+    const marked = getMark(m.id);
+    const thumbUrl = UI.thumbnail(m.link_url);
+    const isYT = m.link_url && /youtube\.com|youtu\.be/.test(m.link_url);
 
     return `
-      <div class="card" style="margin-bottom:10px;">
-        <div style="display:flex;align-items:start;gap:10px;margin-bottom:12px;">
-          <div style="width:40px;height:40px;border-radius:12px;background:var(--maroon-soft);color:var(--maroon);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            ${Icons.get('clipboard', { class: 'icon' })}
+      <div class="materi-item ${dibaca ? 'read' : ''}">
+        <div class="materi-head">
+          <div class="materi-thumb">
+            ${thumbUrl
+              ? `<img src="${thumbUrl}" alt="" loading="lazy" onerror="UI.fotoError(this)">
+                 <div class="fb" style="display:none;">${Icons.get('book')}</div>
+                 ${isYT ? `<div style="position:absolute;bottom:4px;right:4px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.65);color:white;display:flex;align-items:center;justify-content:center;">${Icons.get('play')}</div>` : ''}`
+              : `<div class="fb">${Icons.get('book')}</div>`}
           </div>
-          <div style="flex:1;min-width:0;">
-            <div style="font-weight:700;margin-bottom:4px;">${UI.escapeHtml(t.judul)}</div>
-            ${t.deskripsi ? `<div class="text-sm text-muted" style="margin-bottom:6px;">${UI.escapeHtml(t.deskripsi)}</div>` : ''}
-            ${t.deadline ? `
-              <div class="text-xs text-muted ${dl}">
-                ${Icons.get('clock', { class: 'icon-sm' })} Deadline: ${UI.formatTanggalJam(t.deadline)}
-              </div>` : ''}
+          <div class="materi-body">
+            <div class="materi-judul">${UI.escapeHtml(m.judul)}</div>
+            ${m.deskripsi ? `<div class="materi-desc">${UI.escapeHtml(m.deskripsi)}</div>` : ''}
+            <div class="materi-actions">
+              ${m.link_url ? `
+                <a href="${UI.escapeHtml(m.link_url)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="flex:1;" onclick="setBaca(${m.id});">
+                  ${Icons.get('externalLink', { class: 'icon-sm' })} Buka Materi
+                </a>
+              ` : ''}
+              <button class="btn-mini-icon ${marked ? 'active' : ''}" onclick="toggleMark(${m.id});" title="Tandai penting">
+                ${Icons.get('star')}
+              </button>
+              <button class="btn-mini-icon ${dibaca ? 'done' : ''}" onclick="toggleBaca(${m.id});" title="Tandai sudah baca">
+                ${Icons.get('check')}
+              </button>
+            </div>
           </div>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-          ${statusBadge}
-          ${kumpul 
-            ? `<button class="btn btn-secondary btn-sm" onclick="lihatTugas(${t.id})">Lihat</button>`
-            : `<button class="btn btn-primary btn-sm" onclick="kumpulTugas(${t.id})">Kumpul</button>`}
         </div>
       </div>
     `;
   }).join('');
 }
 
-// ============================================================
+// localStorage materi
+function getBaca(id) { return localStorage.getItem(`nakula_read_${data.pertemuan.id}_${id}`) === '1'; }
+function getMark(id) { return localStorage.getItem(`nakula_bm_${data.pertemuan.id}_${id}`) === '1'; }
+function setBaca(id) { localStorage.setItem(`nakula_read_${data.pertemuan.id}_${id}`, '1'); }
+function toggleBaca(id) {
+  const cur = getBaca(id);
+  localStorage.setItem(`nakula_read_${data.pertemuan.id}_${id}`, cur ? '0' : '1');
+  renderMateri();
+  renderIndikator();
+  renderHero();
+}
+function toggleMark(id) {
+  const cur = getMark(id);
+  localStorage.setItem(`nakula_bm_${data.pertemuan.id}_${id}`, cur ? '0' : '1');
+  renderMateri();
+}
+
+// ═══════════════════════════════════════════════
+// PANEL TUGAS
+// ═══════════════════════════════════════════════
+let tugasFilter = 'semua';
+
+function renderTugas() {
+  const el = document.getElementById('panelTugas');
+  const tugas = data.tugas || [];
+  const mapKumpul = {};
+  (data.pengumpulan_saya || []).forEach(p => mapKumpul[p.tugas_id] = p);
+
+  if (tugas.length === 0) {
+    el.innerHTML = UI.emptyHtml('clipboard', 'Belum ada tugas');
+    return;
+  }
+
+  let filtered = tugas;
+  if (tugasFilter === 'belum') filtered = tugas.filter(t => !mapKumpul[t.id]);
+  if (tugasFilter === 'selesai') filtered = tugas.filter(t => !!mapKumpul[t.id]);
+
+  const html = `
+    <div class="tugas-filter">
+      <button class="tf-chip ${tugasFilter === 'semua' ? 'active' : ''}" onclick="setTugasFilter('semua')">Semua (${tugas.length})</button>
+      <button class="tf-chip ${tugasFilter === 'belum' ? 'active' : ''}" onclick="setTugasFilter('belum')">Belum (${tugas.length - Object.keys(mapKumpul).length})</button>
+      <button class="tf-chip ${tugasFilter === 'selesai' ? 'active' : ''}" onclick="setTugasFilter('selesai')">Selesai (${Object.keys(mapKumpul).length})</button>
+    </div>
+    ${filtered.map(t => {
+      const kumpul = mapKumpul[t.id];
+      const statusBadge = kumpul ? {
+        menunggu: '<span class="badge-status menunggu">Menunggu Dinilai</span>',
+        diterima: '<span class="badge-status diterima">Diterima</span>',
+        revisi: '<span class="badge-status revisi">Perlu Revisi</span>',
+        ditolak: '<span class="badge-status ditolak">Ditolak</span>',
+      }[kumpul.status] : '<span class="badge-status belum">Belum Dikumpul</span>';
+
+      let urgencyCls = '';
+      let dlCls = '';
+      if (t.deadline) {
+        const sisa = new Date(t.deadline).getTime() - Date.now();
+        if (sisa < 0) { urgencyCls = 'urgent'; dlCls = 'urgent'; }
+        else if (sisa < 24 * 3600 * 1000) { urgencyCls = 'urgent'; dlCls = 'urgent'; }
+        else if (sisa < 3 * 24 * 3600 * 1000) { urgencyCls = 'soon'; dlCls = 'soon'; }
+      }
+
+      return `
+        <div class="tugas-item ${urgencyCls}">
+          <div class="tugas-head">
+            <div class="tugas-icon">${Icons.get('clipboard', { class: 'icon-sm' })}</div>
+            <div class="tugas-body">
+              <div class="tugas-judul">${UI.escapeHtml(t.judul)}</div>
+              ${t.deskripsi ? `<div class="tugas-desc">${UI.escapeHtml(t.deskripsi)}</div>` : ''}
+              ${t.deadline ? `<div class="tugas-deadline ${dlCls}">${Icons.get('clock', { class: 'icon-sm' })} Deadline: ${UI.formatTanggalJam(t.deadline)}</div>` : ''}
+              ${kumpul && kumpul.nilai !== null ? `<div class="tugas-deadline" style="color:var(--success);margin-top:4px;">Nilai: ${kumpul.nilai}</div>` : ''}
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+            ${statusBadge}
+            ${kumpul 
+              ? `<button class="btn btn-secondary btn-sm" onclick="lihatTugas(${t.id})">Lihat</button>`
+              : `<button class="btn btn-primary btn-sm" onclick="kumpulTugas(${t.id})">Kumpul</button>`}
+          </div>
+        </div>
+      `;
+    }).join('')}
+  `;
+
+  el.innerHTML = html;
+}
+
+function setTugasFilter(f) { tugasFilter = f; renderTugas(); }
+
+// ═══════════════════════════════════════════════
+// PANEL DISKUSI
+// ═══════════════════════════════════════════════
+async function renderDiskusi() {
+  const el = document.getElementById('panelDiskusi');
+  el.innerHTML = '<div class="skeleton" style="height:120px;border-radius:16px;"></div>';
+
+  const res = await Api.call('diskusi.list', { pertemuan_id: data.pertemuan.id });
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error);
+    return;
+  }
+
+  daftarDiskusi = res.data || [];
+
+  const topLevel = daftarDiskusi.filter(d => !d.parent_id);
+  const replies = {};
+  daftarDiskusi.filter(d => d.parent_id).forEach(d => {
+    if (!replies[d.parent_id]) replies[d.parent_id] = [];
+    replies[d.parent_id].push(d);
+  });
+
+  el.innerHTML = `
+    <div class="diskusi-intro">
+      <div class="diskusi-intro-icon">${Icons.get('messageCircle', { class: 'icon-lg' })}</div>
+      <div class="diskusi-intro-text">
+        <div class="diskusi-intro-title">Diskusi Pertemuan</div>
+        <div class="diskusi-intro-desc">Tanya jawab dengan narasumber & sesama guru. Pertanyaan penting akan di-pin.</div>
+      </div>
+    </div>
+
+    <div class="diskusi-list" id="diskusiList">
+      ${topLevel.length === 0 ? `
+        <div style="text-align:center;padding:30px 20px;color:var(--muted);font-size:13px;line-height:1.6;">
+          Belum ada diskusi. Jadilah yang pertama bertanya! 👋
+        </div>
+      ` : topLevel.map(d => renderDiskusiItem(d, replies[d.id] || [], false)).join('')}
+    </div>
+
+    <div class="diskusi-input">
+      <textarea id="diskusiTextarea" placeholder="Tulis pertanyaan atau tanggapan…" rows="1"></textarea>
+      <button class="diskusi-send" id="btnKirimDiskusi" disabled>
+        ${Icons.get('send')}
+      </button>
+    </div>
+  `;
+
+  // Bind
+  const ta = el.querySelector('#diskusiTextarea');
+  const btn = el.querySelector('#btnKirimDiskusi');
+
+  ta.addEventListener('input', () => {
+    btn.disabled = !ta.value.trim();
+    ta.style.height = 'auto';
+    ta.style.height = Math.min(ta.scrollHeight, 140) + 'px';
+  });
+
+  btn.addEventListener('click', () => kirimDiskusi(null));
+
+  el.querySelectorAll('[data-reply]').forEach(b => {
+    b.addEventListener('click', () => {
+      const id = Number(b.dataset.reply);
+      replyToId = id;
+      ta.focus();
+      ta.placeholder = `Balas ke ${b.dataset.nama}…`;
+    });
+  });
+  el.querySelectorAll('[data-pin]').forEach(b => {
+    b.addEventListener('click', () => pinDiskusi(Number(b.dataset.pin)));
+  });
+  el.querySelectorAll('[data-hapus]').forEach(b => {
+    b.addEventListener('click', () => hapusDiskusi(Number(b.dataset.hapus)));
+  });
+}
+
+function renderDiskusiItem(d, replies, isReply) {
+  const init = (d.user?.nama_lengkap || '?').charAt(0).toUpperCase();
+  const fotoUrl = d.user?.id ? Api.fotoUrl(d.user.id, 't') : null;
+  const isAdmin = (profile.peran || []).includes('super_admin') || (profile.peran || []).includes('pengurus');
+  const isNarsum = (profile.peran || []).includes('narasumber');
+  const isOwner = d.user?.id === profile.id;
+
+  let roleBadge = '';
+  if (d.user?.jabatan) {
+    roleBadge = `<span class="diskusi-jabatan">${UI.escapeHtml(d.user.jabatan)}</span>`;
+  }
+
+  return `
+    <div class="diskusi-item ${d.di_pin ? 'pinned' : ''} ${isReply ? 'reply' : ''}">
+      <div class="diskusi-head">
+        <div class="diskusi-avatar">
+          ${init}
+          ${fotoUrl ? `<img src="${fotoUrl}" loading="lazy" onerror="UI.fotoError(this)">` : ''}
+        </div>
+        <div class="diskusi-info">
+          <div class="diskusi-nama">
+            ${UI.escapeHtml(d.user?.nama_lengkap || '-')}
+            ${roleBadge}
+            ${d.di_pin ? `<span class="diskusi-pin-badge">${Icons.get('star', { class: 'icon-sm' })} PIN</span>` : ''}
+          </div>
+          <div class="diskusi-time">${UI.timeAgo(d.dibuat_pada)}</div>
+        </div>
+      </div>
+      <div class="diskusi-isi">${UI.escapeHtml(d.isi)}</div>
+      <div class="diskusi-actions-row">
+        ${!isReply ? `<button class="diskusi-btn" data-reply="${d.id}" data-nama="${UI.escapeHtml(d.user?.nama_lengkap || '')}">${Icons.get('messageCircle', { class: 'icon-sm' })} Balas</button>` : ''}
+        ${(isAdmin || isNarsum) && !isReply ? `<button class="diskusi-btn" data-pin="${d.id}">${Icons.get('star', { class: 'icon-sm' })} ${d.di_pin ? 'Unpin' : 'Pin'}</button>` : ''}
+        ${(isOwner || isAdmin) ? `<button class="diskusi-btn danger" data-hapus="${d.id}">${Icons.get('trash', { class: 'icon-sm' })} Hapus</button>` : ''}
+      </div>
+      ${replies.length > 0 ? `<div style="margin-top:10px;">${replies.map(r => renderDiskusiItem(r, [], true)).join('')}</div>` : ''}
+    </div>
+  `;
+}
+
+async function kirimDiskusi(parentId) {
+  const ta = document.getElementById('diskusiTextarea');
+  const isi = ta.value.trim();
+  if (!isi) return;
+
+  const btn = document.getElementById('btnKirimDiskusi');
+  btn.disabled = true;
+  UI.btnLoading(btn, '');
+
+  const res = await Api.call('diskusi.kirim', {
+    pertemuan_id: data.pertemuan.id,
+    isi,
+    parent_id: parentId,
+  });
+
+  UI.btnReset(btn);
+  btn.disabled = false;
+
+  if (!res.ok) { UI.gagal(res.error); return; }
+
+  ta.value = '';
+  ta.placeholder = 'Tulis pertanyaan atau tanggapan…';
+  replyToId = null;
+  data.diskusi_count = (data.diskusi_count || 0) + 1;
+  await renderDiskusi();
+  renderIndikator();
+}
+
+async function pinDiskusi(id) {
+  const res = await Api.call('diskusi.pin', { id });
+  if (!res.ok) { UI.gagal(res.error); return; }
+  await renderDiskusi();
+}
+
+async function hapusDiskusi(id) {
+  const ok = await UI.konfirmasi('Hapus Diskusi', 'Hapus pesan ini?', { danger: true, okText: 'Hapus' });
+  if (!ok) return;
+  const res = await Api.call('diskusi.hapus', { id });
+  if (!res.ok) { UI.gagal(res.error); return; }
+  UI.sukses('Dihapus.');
+  await renderDiskusi();
+  renderIndikator();
+}
+
+// ═══════════════════════════════════════════════
 // PANEL FEEDBACK
-// ============================================================
-async function cekFeedback(pertemuan) {
-  const res = await Api.call('feedback.saya', { pertemuan_id: pertemuan.id });
+// ═══════════════════════════════════════════════
+async function renderFeedback() {
+  const res = await Api.call('feedback.saya', { pertemuan_id: data.pertemuan.id });
   if (!res.ok) return;
 
   const sudahIsi = res.data;
   const tabFeedback = document.getElementById('tabFeedback');
   tabFeedback.classList.remove('hidden');
 
+  window._feedbackDone = !!sudahIsi;
+
   if (sudahIsi) {
     document.getElementById('indFeedback').className = 'tab-indicator done';
     document.getElementById('indFeedback').textContent = '✓';
-    renderFeedbackSudah(sudahIsi);
-  } else {
-    renderFeedbackForm(pertemuan);
+    document.getElementById('panelFeedback').innerHTML = `
+      <div class="section-mini">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <span style="color:var(--success);">${Icons.get('checkCircle', { class: 'icon-lg' })}</span>
+          <div style="font-weight:800;">Feedback Terkirim</div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:11px;color:var(--muted);font-weight:700;">SKOR RATA-RATA</div>
+          <div style="font-size:32px;font-weight:800;color:var(--maroon);line-height:1;">${sudahIsi.skor_total}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">dari skala 5.0</div>
+        </div>
+        ${sudahIsi.saran ? `<div style="padding:10px;background:var(--bg);border-radius:8px;margin-bottom:8px;"><div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">SARAN:</div><div style="font-size:13px;">${UI.escapeHtml(sudahIsi.saran)}</div></div>` : ''}
+        ${sudahIsi.kritik ? `<div style="padding:10px;background:var(--bg);border-radius:8px;"><div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">KRITIK:</div><div style="font-size:13px;">${UI.escapeHtml(sudahIsi.kritik)}</div></div>` : ''}
+      </div>
+    `;
+    return;
   }
+
+  // Render form
+  await renderFeedbackForm();
 }
 
-function renderFeedbackSudah(fb) {
-  const el = document.getElementById('panelFeedback');
-  el.innerHTML = `
-    <div class="status-card sudah">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-        <span style="color:var(--success);">${Icons.get('checkCircle', { class: 'icon-lg' })}</span>
-        <div style="font-weight:800;">Feedback Terkirim</div>
-      </div>
-      <div style="margin-bottom:12px;">
-        <div class="text-xs text-muted" style="font-weight:700;">SKOR RATA-RATA</div>
-        <div style="font-size:32px;font-weight:800;color:var(--maroon);line-height:1;">${fb.skor_total}</div>
-        <div class="text-xs text-muted" style="margin-top:2px;">dari skala 5.0</div>
-      </div>
-      ${fb.saran ? `
-        <div style="padding:10px;background:var(--bg);border-radius:8px;margin-bottom:8px;">
-          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">SARAN:</div>
-          <div style="font-size:13px;line-height:1.5;">${UI.escapeHtml(fb.saran)}</div>
-        </div>
-      ` : ''}
-      ${fb.kritik ? `
-        <div style="padding:10px;background:var(--bg);border-radius:8px;">
-          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;">KRITIK:</div>
-          <div style="font-size:13px;line-height:1.5;">${UI.escapeHtml(fb.kritik)}</div>
-        </div>
-      ` : ''}
-      <div class="text-xs text-muted" style="margin-top:12px;">
-        ${Icons.get('clock', { class: 'icon-sm' })} 
-        ${UI.timeAgo(fb.dibuat_pada)}
-      </div>
-    </div>
-  `;
-}
-
-async function renderFeedbackForm(pertemuan) {
+async function renderFeedbackForm() {
   const el = document.getElementById('panelFeedback');
   el.innerHTML = '<div class="skeleton" style="height:200px;border-radius:16px;"></div>';
 
-  const resAspek = await Api.call('feedback.aspek_list', { periode_id: pertemuan.periode_id });
+  const resAspek = await Api.call('feedback.aspek_list', { periode_id: data.pertemuan.periode_id });
   if (!resAspek.ok || !resAspek.data || resAspek.data.length === 0) {
     el.innerHTML = UI.emptyHtml('info', 'Belum ada aspek feedback');
     return;
@@ -897,62 +2387,51 @@ async function renderFeedbackForm(pertemuan) {
   });
 
   const kategoriLabel = {
-    sekolah: 'Sekolah Tuan Rumah',
-    penyelenggara: 'Penyelenggara',
-    narasumber: 'Narasumber',
-    materi: 'Materi',
-    umum: 'Umum',
+    sekolah: 'Sekolah Tuan Rumah', penyelenggara: 'Penyelenggara',
+    narasumber: 'Narasumber', materi: 'Materi', umum: 'Umum',
   };
   const kategoriIcon = {
-    sekolah: 'home',
-    penyelenggara: 'users',
-    narasumber: 'user',
-    materi: 'book',
-    umum: 'info',
+    sekolah: 'home', penyelenggara: 'users', narasumber: 'user', materi: 'book', umum: 'info',
   };
 
   el.innerHTML = `
-    <div class="card" style="margin-bottom:12px;background:var(--maroon-soft);border:none;">
-      <div style="display:flex;align-items:flex-start;gap:10px;">
+    <div class="section-mini" style="background:var(--maroon-soft);border:none;">
+      <div style="display:flex;gap:10px;align-items:flex-start;">
         <span style="color:var(--maroon);">${Icons.get('info', { class: 'icon-lg' })}</span>
         <div>
-          <div style="font-weight:800;font-size:13px;margin-bottom:4px;color:var(--maroon);">Bantu kami jadi lebih baik</div>
-          <div style="font-size:12.5px;color:var(--ink);line-height:1.5;">
-            Isi penilaian Anda terhadap penyelenggaraan pertemuan ini. Feedback bersifat anonim.
-          </div>
+          <div style="font-weight:800;font-size:13px;color:var(--maroon);margin-bottom:4px;">Bantu kami jadi lebih baik</div>
+          <div style="font-size:12.5px;color:var(--ink);line-height:1.5;">Isi penilaian Anda terhadap penyelenggaraan pertemuan ini. Feedback bersifat anonim.</div>
         </div>
       </div>
     </div>
 
     ${Object.keys(grouped).map(kat => `
-      <div class="card" style="margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);">
-          <div style="width:32px;height:32px;border-radius:8px;background:var(--maroon-soft);color:var(--maroon);display:flex;align-items:center;justify-content:center;">
+      <div class="fb-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border);">
+          <div style="width:28px;height:28px;border-radius:8px;background:var(--maroon-soft);color:var(--maroon);display:flex;align-items:center;justify-content:center;">
             ${Icons.get(kategoriIcon[kat] || 'star', { class: 'icon-sm' })}
           </div>
-          <div style="font-weight:800;font-size:13.5px;">${kategoriLabel[kat] || kat}</div>
+          <div style="font-weight:800;font-size:13px;">${kategoriLabel[kat] || kat}</div>
         </div>
         ${grouped[kat].map(a => `
-          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
-            <div style="flex:1;font-size:12.5px;font-weight:600;line-height:1.4;">${UI.escapeHtml(a.nama_aspek)}</div>
+          <div class="fb-row">
+            <div class="fb-row-label">${UI.escapeHtml(a.nama_aspek)}</div>
             <div class="fb-rating" data-kat="${kat}" data-aspek="${a.id}">
-              ${[1,2,3,4,5].map(n =>
-                `<button type="button" data-skor="${n}" style="width:28px;height:28px;border:1.5px solid var(--border);background:var(--surface);border-radius:6px;font-weight:800;font-size:11px;color:var(--muted);cursor:pointer;padding:0;transition:all .12s;">${n}</button>`
-              ).join('')}
+              ${[1,2,3,4,5].map(n => `<button type="button" data-skor="${n}">${n}</button>`).join('')}
             </div>
           </div>
         `).join('')}
       </div>
     `).join('')}
 
-    <div class="card" style="margin-bottom:10px;">
-      <div class="field" style="margin-bottom:12px;">
-        <label class="label">Saran (opsional)</label>
-        <textarea id="fbSaran" class="input" rows="2" style="resize:vertical;" placeholder="Apa yang perlu dipertahankan?"></textarea>
+    <div class="fb-card">
+      <div style="margin-bottom:10px;">
+        <label style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;display:block;margin-bottom:6px;">Saran (opsional)</label>
+        <textarea id="fbSaran" class="catatan-textarea" rows="2" placeholder="Apa yang perlu dipertahankan?" style="min-height:60px;"></textarea>
       </div>
-      <div class="field">
-        <label class="label">Kritik & Masukan (opsional)</label>
-        <textarea id="fbKritik" class="input" rows="2" style="resize:vertical;" placeholder="Apa yang perlu diperbaiki?"></textarea>
+      <div>
+        <label style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;display:block;margin-bottom:6px;">Kritik (opsional)</label>
+        <textarea id="fbKritik" class="catatan-textarea" rows="2" placeholder="Apa yang perlu diperbaiki?" style="min-height:60px;"></textarea>
       </div>
     </div>
 
@@ -962,27 +2441,25 @@ async function renderFeedbackForm(pertemuan) {
     </div>
 
     <button class="btn btn-primary btn-full" id="btnKirimFeedback" style="margin-bottom:16px;">
-      ${Icons.get('send', { class: 'icon-sm' })}
-      Kirim Feedback
+      ${Icons.get('send', { class: 'icon-sm' })} Kirim Feedback
     </button>
   `;
 
   const ratingState = {};
   const totalAspek = el.querySelectorAll('.fb-rating').length;
-
-  function updateProgress() {
-    const dinilai = Object.keys(ratingState).reduce((sum, k) => sum + Object.keys(ratingState[k]).length, 0);
+  const updateProgress = () => {
+    const dinilai = Object.keys(ratingState).reduce((s, k) => s + Object.keys(ratingState[k]).length, 0);
     const valEl = document.getElementById('fbProgressVal');
     if (valEl) {
       valEl.textContent = `${dinilai}/${totalAspek}`;
       valEl.style.color = dinilai >= totalAspek ? 'var(--success)' : 'var(--maroon)';
     }
-  }
+  };
   updateProgress();
 
   el.querySelectorAll('.fb-rating').forEach(r => {
     const kat = r.dataset.kat;
-    const aspekId = r.dataset.aspek;
+    const aid = r.dataset.aspek;
     r.querySelectorAll('button').forEach(b => {
       b.addEventListener('click', () => {
         const skor = Number(b.dataset.skor);
@@ -993,7 +2470,7 @@ async function renderFeedbackForm(pertemuan) {
           x.style.borderColor = on ? 'var(--maroon)' : 'var(--border)';
         });
         if (!ratingState[kat]) ratingState[kat] = {};
-        ratingState[kat][aspekId] = skor;
+        ratingState[kat][aid] = skor;
         updateProgress();
       });
     });
@@ -1001,65 +2478,200 @@ async function renderFeedbackForm(pertemuan) {
 
   el.querySelector('#btnKirimFeedback').addEventListener('click', async () => {
     const btn = el.querySelector('#btnKirimFeedback');
-    const totalRating = Object.keys(ratingState).reduce((sum, k) => sum + Object.keys(ratingState[k]).length, 0);
-    if (totalRating === 0) { UI.gagal('Isi minimal 1 penilaian.'); return; }
-
-    const ok = await UI.konfirmasi(
-      'Kirim Feedback',
-      'Feedback tidak bisa diubah setelah dikirim. Lanjutkan?',
-      { okText: 'Kirim' }
-    );
+    const total = Object.keys(ratingState).reduce((s, k) => s + Object.keys(ratingState[k]).length, 0);
+    if (total === 0) { UI.gagal('Isi minimal 1 penilaian.'); return; }
+    const ok = await UI.konfirmasi('Kirim Feedback', 'Feedback tidak bisa diubah setelah dikirim. Lanjutkan?', { okText: 'Kirim' });
     if (!ok) return;
-
     UI.btnLoading(btn, 'Mengirim…');
-
     const res = await Api.call('feedback.isi', {
-      pertemuan_id: pertemuan.id,
+      pertemuan_id: data.pertemuan.id,
       aspek: ratingState,
       saran: el.querySelector('#fbSaran').value.trim(),
       kritik: el.querySelector('#fbKritik').value.trim(),
     });
-
     UI.btnReset(btn);
-
-    if (!res.ok) { UI.gagal(res.error || 'Gagal mengirim feedback.'); return; }
-
+    if (!res.ok) { UI.gagal(res.error); return; }
     UI.sukses('Terima kasih atas feedback Anda!');
-
-    const resSaya = await Api.call('feedback.saya', { pertemuan_id: pertemuan.id });
-    if (resSaya.ok && resSaya.data) {
-      document.getElementById('indFeedback').className = 'tab-indicator done';
-      document.getElementById('indFeedback').textContent = '✓';
-      renderFeedbackSudah(resSaya.data);
-    }
+    window._feedbackDone = true;
+    renderHero();
+    renderFeedback();
+    renderRail();
   });
 }
 
-// ============================================================
-// AKSI
-// ============================================================
-function mulaiPresensi() {
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-  window.location.href = 'presensi.html?id=' + id;
+// ═══════════════════════════════════════════════
+// RIGHT RAIL
+// ═══════════════════════════════════════════════
+function renderRail() {
+  const el = document.getElementById('railContent');
+  if (!el) return;
+
+  const p = data.pertemuan;
+  const progress = hitungProgres();
+
+  el.innerHTML = `
+    <!-- Info -->
+    <div class="rail-card">
+      <div class="rail-card-title">${Icons.get('info', { class: 'icon-sm' })} Info Pertemuan</div>
+      <div class="rail-info-row">
+        ${Icons.get('calendar', { class: 'icon-sm' })}
+        <div>${UI.formatTanggal(p.tanggal)}${p.jam_mulai ? `<br><strong>${UI.formatJam(p.jam_mulai)}${p.jam_selesai ? ' – ' + UI.formatJam(p.jam_selesai) : ''}</strong>` : ''}</div>
+      </div>
+      ${p.lokasi_nama ? `
+        <div class="rail-info-row">
+          ${Icons.get('mapPin', { class: 'icon-sm' })}
+          <div>${UI.escapeHtml(p.lokasi_nama)}</div>
+        </div>
+      ` : ''}
+      ${p.narasumber_nama ? `
+        <div class="rail-info-row">
+          ${Icons.get('user', { class: 'icon-sm' })}
+          <div>${UI.escapeHtml(p.narasumber_nama)}</div>
+        </div>
+      ` : ''}
+    </div>
+
+    <!-- Peserta Hadir -->
+    <div class="rail-card" id="pesertaCard">
+      <div class="rail-card-title">${Icons.get('users', { class: 'icon-sm' })} Peserta Hadir</div>
+      <div class="peserta-avatars" id="pesertaAvatars"></div>
+      <div class="peserta-count" id="pesertaCount">
+        <span>${data.peserta_hadir_count || 0}</span> guru tercatat hadir
+      </div>
+    </div>
+
+    <!-- Checklist -->
+    <div class="rail-card">
+      <div class="rail-card-title">${Icons.get('checkCircle', { class: 'icon-sm' })} Progres Anda</div>
+      <div class="checklist-item">
+        <div class="checklist-check ${data.presensi_saya ? 'done' : 'pending'}">${data.presensi_saya ? Icons.get('check') : ''}</div>
+        <span style="${data.presensi_saya ? 'color:var(--muted);text-decoration:line-through;' : ''}">Presensi</span>
+      </div>
+      <div class="checklist-item">
+        <div class="checklist-check ${progress.materiSelesai ? 'done' : 'pending'}">${progress.materiSelesai ? Icons.get('check') : ''}</div>
+        <span style="${progress.materiSelesai ? 'color:var(--muted);text-decoration:line-through;' : ''}">Materi (${progress.materiDibaca}/${progress.totalMateri})</span>
+      </div>
+      <div class="checklist-item">
+        <div class="checklist-check ${progress.tugasSelesai ? 'done' : 'pending'}">${progress.tugasSelesai ? Icons.get('check') : ''}</div>
+        <span style="${progress.tugasSelesai ? 'color:var(--muted);text-decoration:line-through;' : ''}">Tugas (${progress.tugasKumpul}/${progress.totalTugas})</span>
+      </div>
+      <div class="checklist-item">
+        <div class="checklist-check ${progress.feedbackSelesai ? 'done' : 'pending'}">${progress.feedbackSelesai ? Icons.get('check') : ''}</div>
+        <span style="${progress.feedbackSelesai ? 'color:var(--muted);text-decoration:line-through;' : ''}">Feedback</span>
+      </div>
+    </div>
+
+    <!-- Navigasi -->
+    <div class="rail-card">
+      <div class="rail-card-title">${Icons.get('calendar', { class: 'icon-sm' })} Navigasi</div>
+      <div class="nav-pertemuan">
+        ${data.pertemuan_prev ? `
+          <a href="pertemuan.html?id=${data.pertemuan_prev.id}" class="nav-pertemuan-btn">
+            <div class="num">← Sebelumnya</div>
+            <div class="title">#${data.pertemuan_prev.urutan} ${UI.escapeHtml(data.pertemuan_prev.judul)}</div>
+          </a>
+        ` : `<div class="nav-pertemuan-btn disabled"><div class="num">←</div><div class="title">Tidak ada</div></div>`}
+        ${data.pertemuan_next ? `
+          <a href="pertemuan.html?id=${data.pertemuan_next.id}" class="nav-pertemuan-btn">
+            <div class="num">Berikutnya →</div>
+            <div class="title">#${data.pertemuan_next.urutan} ${UI.escapeHtml(data.pertemuan_next.judul)}</div>
+          </a>
+        ` : `<div class="nav-pertemuan-btn disabled"><div class="num">→</div><div class="title">Tidak ada</div></div>`}
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="rail-card">
+      <div class="rail-card-title">${Icons.get('externalLink', { class: 'icon-sm' })} Aksi Cepat</div>
+      <div class="quick-actions">
+        <button class="quick-btn" onclick="sharePertemuan()">
+          ${Icons.get('send')} Bagikan via WhatsApp
+        </button>
+        <button class="quick-btn" onclick="copyLinkPertemuan()">
+          ${Icons.get('link')} Salin Link
+        </button>
+        <button class="quick-btn" onclick="window.print()">
+          ${Icons.get('fileText')} Cetak Halaman
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Render peserta avatars
+  renderPesertaAvatars(data.peserta_hadir_count || 0, data.peserta_hadir_sample || []);
 }
 
-function kumpulTugas(id) {
-  window.location.href = 'tugas.html?id=' + id;
+function renderPesertaAvatars(jumlah, sample) {
+  const el = document.getElementById('pesertaAvatars');
+  if (!el) return;
+
+  if (jumlah === 0) {
+    el.innerHTML = '<span style="font-size:12px;color:var(--muted);font-weight:600;">Belum ada yang presensi</span>';
+    return;
+  }
+
+  const max = 5;
+  const tampil = sample.slice(0, max);
+  const sisa = Math.max(0, jumlah - tampil.length);
+
+  el.innerHTML = tampil.map(u => {
+    const init = (u.nama_lengkap || '?').charAt(0).toUpperCase();
+    const url = u.foto_thumb_url || (u.id ? Api.fotoUrl(u.id, 't') : null);
+    return `<div class="peserta-av" title="${UI.escapeHtml(u.nama_lengkap)}">${init}${url ? `<img src="${url}" onerror="UI.fotoError(this)">` : ''}</div>`;
+  }).join('') + (sisa > 0 ? `<div class="peserta-av more">+${sisa}</div>` : '');
 }
 
-function lihatTugas(id) {
-  window.location.href = 'tugas.html?id=' + id;
+async function pollPeserta() {
+  if (!data || !document.getElementById('pesertaCount')) return;
+  const res = await Api.call('pertemuan.peserta_hadir', { pertemuan_id: data.pertemuan.id });
+  if (!res.ok) return;
+  data.peserta_hadir_count = res.data.jumlah;
+  data.peserta_hadir_sample = res.data.sample;
+  renderPesertaAvatars(res.data.jumlah, res.data.sample);
+  const countEl = document.getElementById('pesertaCount');
+  if (countEl) countEl.innerHTML = `<span>${res.data.jumlah}</span> guru tercatat hadir`;
 }
 
-function ajukanIzin() {
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-  window.location.href = 'ajukan.html?id=' + id;
+// ═══════════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════════
+function pindahTab(nama) {
+  tabAktif = nama;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === nama));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.dataset.panel === nama));
+  document.querySelector('.tabs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function batalkanIzin() {
-  ajukanIzin();
+function mulaiPresensi() { window.location.href = 'presensi.html?id=' + pertemuanId; }
+function ajukanIzin() { window.location.href = 'ajukan.html?id=' + pertemuanId; }
+function kumpulTugas(id) { window.location.href = 'tugas.html?id=' + id; }
+function lihatTugas(id) { window.location.href = 'tugas.html?id=' + id; }
+
+function bukaFoto(url) {
+  if (!url) return;
+  const lb = document.createElement('div');
+  lb.className = 'lightbox';
+  lb.innerHTML = `<img src="${UI.escapeHtml(url)}" alt="Foto Presensi">`;
+  lb.addEventListener('click', () => lb.remove());
+  document.body.appendChild(lb);
+}
+
+function bukaLokasi(lat, lng) {
+  if (!lat || !lng) return;
+  window.open(`https://www.google.com/maps?q=${lat},${lng}`, '_blank');
+}
+
+function sharePertemuan() {
+  const url = window.location.href;
+  const text = `Cek pertemuan #${data.pertemuan.urutan} — ${data.pertemuan.judul}\n${url}`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+}
+
+async function copyLinkPertemuan() {
+  try {
+    await navigator.clipboard.writeText(window.location.href);
+    UI.sukses('Link disalin');
+  } catch { UI.gagal('Gagal menyalin'); }
 }
 </script>
 
