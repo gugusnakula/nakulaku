@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>Bulk Action Guru — NAKULAKU Admin</title>
+
+<link rel="icon" type="image/png" href="../assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/nakula.css" />
+<link rel="stylesheet" href="layout.css" />
+
+<style>
+  .toolbar {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+  .toolbar-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .toolbar-row:last-child { margin-bottom: 0; }
+  .toolbar-row .input { flex: 1; min-width: 140px; }
+
+  .bulk-bar {
+    position: sticky;
+    top: 60px;
+    z-index: 10;
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 14px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    box-shadow: 0 6px 20px rgba(125,29,58,.25);
+  }
+  .bulk-bar .info {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .bulk-bar .info strong {
+    background: rgba(255,255,255,.2);
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-right: 4px;
+  }
+  .bulk-bar .aksi {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .bulk-bar .aksi .btn {
+    font-size: 11.5px;
+    padding: 8px 14px;
+    background: rgba(255,255,255,.15);
+    color: white;
+    border: 1.5px solid rgba(255,255,255,.3);
+    border-radius: 10px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all .15s;
+  }
+  .bulk-bar .aksi .btn:hover {
+    background: rgba(255,255,255,.3);
+  }
+  .bulk-bar .aksi .btn.danger {
+    background: rgba(239,68,68,.9);
+    border-color: rgba(239,68,68,1);
+  }
+  .bulk-bar .aksi .btn.danger:hover {
+    background: rgba(239,68,68,1);
+  }
+
+  .guru-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 8px;
+    transition: all .15s;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .guru-item:hover {
+    border-color: var(--maroon-light);
+    background: var(--bg);
+  }
+  .guru-item.selected {
+    background: linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 100%);
+    border-color: var(--maroon);
+    box-shadow: 0 4px 12px rgba(125,29,58,.08);
+  }
+  .guru-item.inactive {
+    opacity: 0.55;
+  }
+
+  .checkbox {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all .15s;
+    color: white;
+  }
+  .guru-item.selected .checkbox {
+    background: var(--maroon);
+    border-color: var(--maroon);
+  }
+  .checkbox svg { width: 14px; height: 14px; opacity: 0; transition: opacity .15s; }
+  .guru-item.selected .checkbox svg { opacity: 1; }
+
+  .guru-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 15px;
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .guru-avatar img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+
+  .guru-info { flex: 1; min-width: 0; }
+  .guru-nama {
+    font-weight: 800;
+    font-size: 13.5px;
+    color: var(--ink);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .guru-meta {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .badge-nonaktif {
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 7px;
+    background: var(--danger-soft);
+    color: var(--danger);
+    border-radius: 999px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .select-all {
+    padding: 10px 14px;
+    background: var(--bg);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .select-all:hover { background: var(--maroon-soft); color: var(--maroon); }
+  .select-all.selected { background: var(--maroon-soft); color: var(--maroon); }
+
+  /* MODAL */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(28,20,20,.55);
+    z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px;
+    animation: fade-in .2s both;
+  }
+  .modal {
+    background: var(--surface);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 22px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.3);
+    animation: slide-up-sm .3s var(--ease-out) both;
+  }
+  @keyframes slide-up-sm {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--maroon);
+    margin-bottom: 4px;
+  }
+  .modal-sub {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .form-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .modal-actions .btn { flex: 1; }
+
+  .preview-box {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 12px;
+    max-height: 150px;
+    overflow-y: auto;
+    font-size: 11.5px;
+    line-height: 1.7;
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
+  .preview-box strong { color: var(--maroon); }
+  
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--border);
+    font-size: 12px;
+  }
+  .result-row:last-child { border-bottom: none; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body class="admin-body">
+
+<!-- HEADER MOBILE -->
+<header class="admin-header">
+  <div class="admin-header-left">
+    <a href="guru.html" class="admin-header-btn" aria-label="Kembali">
+      <span data-icon="chevronLeft"></span>
+    </a>
+    <div class="admin-header-title">
+      <div class="admin-header-title-1">BULK ACTION GURU</div>
+      <div class="admin-header-title-2">Admin NAKULAKU</div>
+    </div>
+  </div>
+  <button class="admin-header-btn" data-act="logout" aria-label="Keluar">
+    <span data-icon="logOut"></span>
+  </button>
+</header>
+
+<div class="admin-layout">
+
+  <!-- SIDEBAR (sama seperti master-data) -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <div class="admin-sidebar-logo"><img src="../assets/img/logo-mark.svg" alt="Nakula" /></div>
+      <div>
+        <div class="admin-sidebar-name">NAKULAKU</div>
+        <div class="admin-sidebar-sub">Admin Panel</div>
+      </div>
+    </div>
+    <nav class="admin-sidebar-menu">
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Dashboard</div>
+        <a class="admin-sidebar-item" data-nav="dashboard" href="index.html"><span data-icon="layoutDashboard"></span> Dashboard</a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Data</div>
+        <a class="admin-sidebar-item" data-nav="guru" href="guru.html"><span data-icon="users"></span> Data Guru</a>
+        <a class="admin-sidebar-item active" data-nav="bulk" href="guru-bulk.html"><span data-icon="checkSquare"></span> Bulk Action</a>
+        <a class="admin-sidebar-item" data-nav="impor" href="impor.html"><span data-icon="upload"></span> Impor CSV</a>
+        <a class="admin-sidebar-item" data-nav="master" href="master-data.html"><span data-icon="database"></span> Master Data</a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Kegiatan</div>
+        <a class="admin-sidebar-item" data-nav="periode" href="periode.html"><span data-icon="calendar"></span> Kelola Periode</a>
+        <a class="admin-sidebar-item" data-nav="pertemuan" href="pertemuan.html"><span data-icon="calendar"></span> Kelola Pertemuan</a>
+        <a class="admin-sidebar-item" data-nav="pengumuman" href="pengumuman.html"><span data-icon="megaphone"></span> Pengumuman</a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Evaluasi</div>
+        <a class="admin-sidebar-item" data-nav="verifikasi-sekolah" href="verifikasi-sekolah.html"><span data-icon="sparkles"></span> Verifikasi Sekolah</a>
+        <a class="admin-sidebar-item" data-nav="karya" href="karya.html"><span data-icon="sparkles"></span> Verifikasi Karya</a>
+        <a class="admin-sidebar-item" data-nav="verifikasi-presensi" href="../ks/verifikasi.html"><span data-icon="checkCircle"></span> Verifikasi Presensi</a>
+        <a class="admin-sidebar-item" data-nav="alihkan" href="alihkan-verifikasi.html"><span data-icon="refreshCw"></span> Alihkan Verifikasi</a>
+        <a class="admin-sidebar-item" data-nav="feedback" href="feedback.html"><span data-icon="messageSquare"></span> Rekap Feedback</a>
+        <a class="admin-sidebar-item" data-nav="award" href="award.html"><span data-icon="award"></span> Kelola Award</a>
+        <a class="admin-sidebar-item" data-nav="sertifikat" href="sertifikat.html"><span data-icon="fileText"></span> Sertifikat</a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Laporan</div>
+        <a class="admin-sidebar-item" data-nav="analitik" href="analitik.html"><span data-icon="activity"></span> Analitik</a>
+        <a class="admin-sidebar-item" data-nav="laporan" href="laporan.html"><span data-icon="download"></span> Export Laporan</a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Sistem</div>
+        <a class="admin-sidebar-item" data-nav="kategori-ajuan" href="kategori-ajuan.html"><span data-icon="tag"></span> Kategori Ajuan</a>
+        <a class="admin-sidebar-item" data-nav="log" href="log.html"><span data-icon="list"></span> Log Aktivitas</a>
+        <a class="admin-sidebar-item" data-nav="pengaturan" href="pengaturan.html"><span data-icon="settings"></span> Pengaturan</a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-topbar-title">Bulk Action Guru</h1>
+      <div class="admin-topbar-right">
+        <div class="admin-user-chip" id="userChip"></div>
+        <button class="btn-icon" data-act="logout" aria-label="Keluar"><span data-icon="logOut"></span></button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <div class="alert alert-info" style="margin-bottom:16px;display:flex;gap:10px;align-items:flex-start;">
+        <span data-icon="info" class="icon-sm" style="flex-shrink:0;margin-top:2px;"></span>
+        <div style="font-size:12.5px;line-height:1.6;">
+          Pilih beberapa guru sekaligus untuk melakukan aksi massal: <strong>Reset PIN</strong>, <strong>Nonaktifkan/Aktifkan</strong>, atau <strong>Assign Peran</strong>. Maksimal 100 guru per batch.
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="toolbar-row">
+          <input type="text" id="fSearch" class="input" placeholder="Cari nama / NIP / email…">
+        </div>
+        <div class="toolbar-row">
+          <select id="fSekolah" class="input">
+            <option value="">Semua Sekolah</option>
+          </select>
+          <select id="fAktif" class="input">
+            <option value="aktif">Aktif Saja</option>
+            <option value="nonaktif">Nonaktif Saja</option>
+            <option value="semua">Semua</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Bulk bar -->
+      <div id="bulkBar" class="bulk-bar hidden">
+        <div class="info">
+          <strong id="jumlahDipilih">0</strong> dipilih
+        </div>
+        <div class="aksi">
+          <button class="btn" id="btnAksiResetPin">
+            <span data-icon="key" class="icon-sm"></span> Reset PIN
+          </button>
+          <button class="btn" id="btnAksiPeran">
+            <span data-icon="shield" class="icon-sm"></span> Peran
+          </button>
+          <button class="btn" id="btnAksiAktif">
+            <span data-icon="checkCircle" class="icon-sm"></span> Aktifkan
+          </button>
+          <button class="btn danger" id="btnAksiNonaktif">
+            <span data-icon="power" class="icon-sm"></span> Nonaktifkan
+          </button>
+        </div>
+      </div>
+
+      <!-- Select all -->
+      <div id="selectAllRow" class="select-all hidden" onclick="toggleSelectAll()">
+        <div class="checkbox" id="selectAllCheckbox">
+          <span data-icon="check"></span>
+        </div>
+        <span id="selectAllText">Pilih semua di halaman ini</span>
+      </div>
+
+      <div id="listGuru">
+        <div class="skeleton" style="height:72px;border-radius:14px;margin-bottom:8px;"></div>
+        <div class="skeleton" style="height:72px;border-radius:14px;margin-bottom:8px;"></div>
+        <div class="skeleton" style="height:72px;border-radius:14px;"></div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<nav class="admin-bottom-nav">
+  <a class="admin-nav-item" data-nav="dashboard" href="index.html"><span data-icon="layoutDashboard"></span> Dashboard</a>
+  <a class="admin-nav-item" data-nav="guru" href="guru.html"><span data-icon="users"></span> Guru</a>
+  <a class="admin-nav-item" data-nav="pertemuan" href="pertemuan.html"><span data-icon="calendar"></span> Pertemuan</a>
+  <a class="admin-nav-item" data-nav="verifikasi" href="verifikasi-sekolah.html"><span data-icon="checkCircle"></span> Verifikasi</a>
+  <button class="admin-nav-item" id="btnLainnya"><span data-icon="menu"></span> Lainnya</button>
+</nav>
+
+<script src="../assets/js/icons.js"></script>
+<script src="../assets/js/api.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script>
+// ============================================================
+// LAYOUT HELPER
+// ============================================================
+(function () {
+  document.querySelectorAll('[data-icon]').forEach(el => {
+    el.innerHTML = Icons.get(el.dataset.icon);
+    el.style.display = 'contents';
+  });
+  UI.bindLogout();
+
+  document.getElementById('btnLainnya')?.addEventListener('click', () => {
+    const overlay = document.createElement('div');
+    overlay.className = 'admin-sheet-overlay';
+    overlay.innerHTML = `<div class="admin-sheet"><div class="admin-sheet-handle"></div><div class="admin-sheet-title">Lainnya</div><div class="admin-sheet-grid"><a class="admin-sheet-item" href="master-data.html"><div class="icon-wrap">${Icons.get('database', { class: 'icon-sm' })}</div><span>Master Data</span></a><a class="admin-sheet-item" href="guru-bulk.html"><div class="icon-wrap">${Icons.get('checkSquare', { class: 'icon-sm' })}</div><span>Bulk Action</span></a></div><button class="btn btn-primary btn-full" id="btnTutupSheet" style="margin-top:16px;">Tutup</button></div>`;
+    document.body.appendChild(overlay);
+    const close = () => overlay.remove();
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+    overlay.querySelector('#btnTutupSheet').addEventListener('click', close);
+  });
+
+  window.addEventListener('load', async () => {
+    const profile = Api.getProfile();
+    if (!profile) return;
+    const chip = document.getElementById('userChip');
+    if (chip) {
+      const init = (profile.nama || 'A').charAt(0).toUpperCase();
+      const fotoUrl = Api.fotoSayaUrl('t');
+      chip.innerHTML = `<div class="avatar">${fotoUrl ? `<img src="${fotoUrl}" onerror="this.parentElement.textContent='${init}'">` : init}</div><span>${UI.escapeHtml(profile.nama || '-')}</span>`;
+    }
+  });
+})();
+
+// ============================================================
+// STATE
+// ============================================================
+let semuaGuru = [];
+let selected = new Set();
+let semuaSekolah = [];
+
+// ============================================================
+// INIT
+// ============================================================
+(async () => {
+  const profile = await Api.requireLogin();
+  if (!profile) return;
+  if (!Api.hasAnyPeran(['super_admin', 'pengurus'])) {
+    document.querySelector('.admin-content').innerHTML = UI.errorHtml('Hanya admin/pengurus.');
+    return;
+  }
+
+  // Load sekolah untuk filter
+  const resSek = await Api.call('sekolah.list');
+  if (resSek.ok) {
+    semuaSekolah = resSek.data || [];
+    const sel = document.getElementById('fSekolah');
+    semuaSekolah.forEach(s => {
+      sel.insertAdjacentHTML('beforeend', `<option value="${s.id}">${UI.escapeHtml(s.nama)}</option>`);
+    });
+  }
+
+  await loadGuru();
+
+  // Bind filter
+  document.getElementById('fSearch').addEventListener('input', debounce(applyFilter, 250));
+  document.getElementById('fSekolah').addEventListener('change', applyFilter);
+  document.getElementById('fAktif').addEventListener('change', applyFilter);
+
+  // Bind bulk actions
+  document.getElementById('btnAksiResetPin').addEventListener('click', aksiResetPin);
+  document.getElementById('btnAksiPeran').addEventListener('click', aksiPeran);
+  document.getElementById('btnAksiAktif').addEventListener('click', aksiAktif);
+  document.getElementById('btnAksiNonaktif').addEventListener('click', aksiNonaktif);
+})();
+
+function debounce(fn, wait) {
+  let t;
+  return function (...args) {
+    clearTimeout(t);
+    t = setTimeout(() => fn.apply(this, args), wait);
+  };
+}
+
+// ============================================================
+// LOAD
+// ============================================================
+async function loadGuru() {
+  const el = document.getElementById('listGuru');
+  el.innerHTML = '<div class="skeleton" style="height:200px;border-radius:14px;"></div>';
+
+  const res = await Api.call('users.list', { limit: 500 });
+  if (!res.ok) {
+    el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat.');
+    return;
+  }
+
+  semuaGuru = res.data.hasil || [];
+  applyFilter();
+}
+
+// ============================================================
+// FILTER
+// ============================================================
+function applyFilter() {
+  const q = document.getElementById('fSearch').value.toLowerCase().trim();
+  const sekolahId = Number(document.getElementById('fSekolah').value) || null;
+  const statusFilter = document.getElementById('fAktif').value;
+
+  let filtered = semuaGuru.filter(g => {
+    if (q) {
+      const nama = (g.nama_lengkap || '').toLowerCase();
+      const nip = (g.nip || '').toLowerCase();
+      const email = (g.email || '').toLowerCase();
+      if (!nama.includes(q) && !nip.includes(q) && !email.includes(q)) return false;
+    }
+    if (sekolahId && g.sekolah?.id !== sekolahId) return false;
+    if (statusFilter === 'aktif' && !g.aktif) return false;
+    if (statusFilter === 'nonaktif' && g.aktif) return false;
+    return true;
+  });
+
+  renderList(filtered);
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderList(list) {
+  const el = document.getElementById('listGuru');
+
+  if (list.length === 0) {
+    el.innerHTML = UI.emptyHtml('users', 'Tidak ada guru', 'Coba ubah filter.');
+    document.getElementById('selectAllRow').classList.add('hidden');
+    return;
+  }
+
+  el.innerHTML = list.map(g => {
+    const init = (g.nama_lengkap || '?').charAt(0).toUpperCase();
+    const fotoUrl = Api.fotoUrl(g.id, 't');
+    const isSelected = selected.has(g.id);
+
+    return `
+      <div class="guru-item ${isSelected ? 'selected' : ''} ${!g.aktif ? 'inactive' : ''}" data-uid="${g.id}">
+        <div class="checkbox">
+          <span data-icon="check"></span>
+        </div>
+        <div class="guru-avatar">
+          ${init}
+          ${fotoUrl ? `<img src="${fotoUrl}" loading="lazy" alt="" onerror="UI.fotoError(this)">` : ''}
+        </div>
+        <div class="guru-info">
+          <div class="guru-nama">${UI.escapeHtml(g.nama_lengkap || '-')}</div>
+          <div class="guru-meta">${UI.escapeHtml(g.sekolah?.nama || '-')}${g.jabatan ? ' · ' + UI.escapeHtml(g.jabatan) : ''}</div>
+        </div>
+        ${!g.aktif ? '<span class="badge-nonaktif">Nonaktif</span>' : ''}
+      </div>
+    `;
+  }).join('');
+
+  // Re-render icons di checkbox
+  el.querySelectorAll('[data-icon]').forEach(ic => {
+    ic.innerHTML = Icons.get(ic.dataset.icon);
+    ic.style.display = 'contents';
+  });
+
+  // Bind click
+  el.querySelectorAll('.guru-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const uid = Number(item.dataset.uid);
+      if (selected.has(uid)) {
+        selected.delete(uid);
+        item.classList.remove('selected');
+      } else {
+        selected.add(uid);
+        item.classList.add('selected');
+      }
+      updateBulkBar();
+    });
+  });
+
+  document.getElementById('selectAllRow').classList.remove('hidden');
+  updateBulkBar();
+}
+
+// ============================================================
+// SELECT ALL
+// ============================================================
+function toggleSelectAll() {
+  const visibleIds = [...document.querySelectorAll('.guru-item')].map(el => Number(el.dataset.uid));
+  const allSelected = visibleIds.every(id => selected.has(id));
+
+  if (allSelected) {
+    visibleIds.forEach(id => selected.delete(id));
+  } else {
+    visibleIds.forEach(id => selected.add(id));
+  }
+
+  // Update UI
+  document.querySelectorAll('.guru-item').forEach(el => {
+    const uid = Number(el.dataset.uid);
+    el.classList.toggle('selected', selected.has(uid));
+  });
+  updateBulkBar();
+}
+
+function updateBulkBar() {
+  const bar = document.getElementById('bulkBar');
+  const jumlah = document.getElementById('jumlahDipilih');
+  const selectAllRow = document.getElementById('selectAllRow');
+  const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+
+  jumlah.textContent = selected.size;
+
+  if (selected.size > 0) {
+    bar.classList.remove('hidden');
+  } else {
+    bar.classList.add('hidden');
+  }
+
+  // Update select all state
+  const visibleIds = [...document.querySelectorAll('.guru-item')].map(el => Number(el.dataset.uid));
+  const allSelected = visibleIds.length > 0 && visibleIds.every(id => selected.has(id));
+
+  selectAllCheckbox.innerHTML = allSelected ? Icons.get('check') : '';
+  selectAllCheckbox.style.display = 'flex';
+  if (allSelected) {
+    selectAllRow.classList.add('selected');
+    document.getElementById('selectAllText').textContent = 'Batalkan pilihan semua';
+  } else {
+    selectAllRow.classList.remove('selected');
+    document.getElementById('selectAllText').textContent = 'Pilih semua di halaman ini';
+  }
+}
+
+// ============================================================
+// AKSI: RESET PIN
+// ============================================================
+async function aksiResetPin() {
+  const ids = [...selected];
+  if (ids.length === 0) return;
+
+  const ok = await UI.konfirmasi(
+    'Reset PIN',
+    `Reset PIN untuk ${ids.length} guru? PIN baru akan di-generate otomatis.`,
+    { okText: 'Reset PIN' }
+  );
+  if (!ok) return;
+
+  UI.info('Memproses…');
+
+  const res = await Api.call('admin.bulk.reset_pin', { user_ids: ids });
+  if (!res.ok) { UI.gagal(res.error); return; }
+
+  const d = res.data;
+  tampilkanHasil(
+    'Reset PIN',
+    `Berhasil: ${d.sukses} · Gagal: ${d.gagal}`,
+    (d.hasil || []).filter(h => h.status === 'sukses' && h.pin_baru)
+  );
+
+  selected.clear();
+  await loadGuru();
+}
+
+// ============================================================
+// AKSI: NONAKTIFKAN
+// ============================================================
+async function aksiNonaktif() {
+  const ids = [...selected];
+  if (ids.length === 0) return;
+
+  const ok = await UI.konfirmasi(
+    'Nonaktifkan Guru',
+    `Nonaktifkan ${ids.length} guru? Mereka tidak bisa login sampai diaktifkan kembali.`,
+    { okText: 'Nonaktifkan', danger: true }
+  );
+  if (!ok) return;
+
+  UI.info('Memproses…');
+  const res = await Api.call('admin.bulk.nonaktif', { user_ids: ids });
+  if (!res.ok) { UI.gagal(res.error); return; }
+
+  UI.sukses(`Berhasil: ${res.data.sukses} · Gagal: ${res.data.gagal}`);
+  selected.clear();
+  await loadGuru();
+}
+
+// ============================================================
+// AKSI: AKTIFKAN
+// ============================================================
+async function aksiAktif() {
+  const ids = [...selected];
+  if (ids.length === 0) return;
+
+  const ok = await UI.konfirmasi(
+    'Aktifkan Guru',
+    `Aktifkan kembali ${ids.length} guru?`,
+    { okText: 'Aktifkan' }
+  );
+  if (!ok) return;
+
+  UI.info('Memproses…');
+  const res = await Api.call('admin.bulk.aktifkan', { user_ids: ids });
+  if (!res.ok) { UI.gagal(res.error); return; }
+
+  UI.sukses(`Berhasil: ${res.data.sukses} · Gagal: ${res.data.gagal}`);
+  selected.clear();
+  await loadGuru();
+}
+
+// ============================================================
+// AKSI: ASSIGN PERAN
+// ============================================================
+function aksiPeran() {
+  const ids = [...selected];
+  if (ids.length === 0) return;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-backdrop';
+  overlay.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">Assign Peran</div>
+      <div class="modal-sub">Terapkan ke ${ids.length} guru terpilih</div>
+
+      <div class="form-field">
+        <label class="form-label">Aksi</label>
+        <select id="fAksi" class="input">
+          <option value="tambah">Tambah Peran</option>
+          <option value="hapus">Hapus Peran</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Peran</label>
+        <select id="fPeran" class="input">
+          <option value="">— Pilih —</option>
+          <option value="peserta">Peserta</option>
+          <option value="narasumber">Narasumber</option>
+          <option value="pengamat">Pengamat</option>
+          <option value="ks">Kepala Sekolah</option>
+          <option value="pengurus">Pengurus</option>
+          <option value="super_admin">Super Admin</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" data-close>Batal</button>
+        <button class="btn btn-primary" id="btnProsesPeran">Proses</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelector('[data-close]').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnProsesPeran').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnProsesPeran');
+    const aksi = overlay.querySelector('#fAksi').value;
+    const peran = overlay.querySelector('#fPeran').value;
+
+    if (!peran) { UI.gagal('Pilih peran dulu.'); return; }
+
+    UI.btnLoading(btn, 'Memproses…');
+    const res = await Api.call('admin.bulk.peran', {
+      user_ids: ids,
+      peran,
+      aksi,
+    });
+    UI.btnReset(btn);
+
+    if (!res.ok) { UI.gagal(res.error); return; }
+
+    UI.sukses(`Berhasil: ${res.data.sukses} · Skip: ${res.data.skip} · Gagal: ${res.data.gagal}`);
+    close();
+    selected.clear();
+    await loadGuru();
+  });
+}
+
+// ============================================================
+// HASIL RESET PIN (tampilkan daftar PIN)
+// ============================================================
+function tampilkanHasil(judul, ringkasan, hasil) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-backdrop';
+  overlay.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">${judul} — Berhasil</div>
+      <div class="modal-sub">${ringkasan}</div>
+      <div class="preview-box">
+        ${hasil.map(h => `<div class="result-row"><span>${UI.escapeHtml(h.nama || '-')}</span><strong style="font-family:monospace;">${UI.escapeHtml(h.pin_baru || '-')}</strong></div>`).join('')}
+      </div>
+      <div style="font-size:11.5px;color:var(--warning);font-weight:700;padding:10px;background:var(--warning-soft);border-radius:10px;margin-bottom:14px;">
+        ⚠ Catat / salin PIN ini sekarang. Tidak akan ditampilkan lagi.
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="btnCopyPin">Salin Semua</button>
+        <button class="btn btn-primary" data-close>Selesai</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelector('[data-close]').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnCopyPin').addEventListener('click', async () => {
+    const text = hasil.map(h => `${h.nama}: ${h.pin_baru}`).join('\n');
+    try {
+      await navigator.clipboard.writeText(text);
+      UI.sukses('Disalin ke clipboard');
+    } catch { UI.gagal('Gagal menyalin.'); }
+  });
+}
+</script>
+
+</body>
+</html>
