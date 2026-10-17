@@ -216,9 +216,33 @@ h1, h2, h3, h4 { font-weight: 800; line-height: 1.2; color: var(--ink); letter-s
 .toast.success { background: var(--success); }
 .toast.error { background: var(--danger); }
 
-.bottom-sheet-overlay { position: fixed; inset: 0; background: rgba(28,20,20,.5); z-index: 1000; animation: fade-in .2s both; display: flex; align-items: flex-end; justify-content: center; }
-.bottom-sheet { background: white; border-radius: var(--r-2xl) var(--r-2xl) 0 0; padding: 8px 20px calc(24px + env(safe-area-inset-bottom)); width: 100%; max-width: 640px; max-height: 88vh; overflow-y: auto; animation: slide-up .35s var(--ease-spring) both; }
-.bottom-sheet-handle { width: 44px; height: 5px; background: var(--border-strong); border-radius: var(--r-full); margin: 8px auto 16px; }
+/* Modal Pop-up di Tengah (Untuk Konfirmasi & Form) */
+.bottom-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28,20,20,.5);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+  animation: fade-in .2s both;
+  display: flex;
+  align-items: center; /* Ke tengah, bukan ke bawah */
+  justify-content: center;
+  padding: 20px;
+}
+.bottom-sheet {
+  background: white;
+  border-radius: var(--r-xl); /* Sudut penuh */
+  padding: 24px;
+  width: 100%;
+  max-width: 420px; /* Lebar maksimal pop-up */
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: scale-in .25s var(--ease-spring) both; /* Animasi membesar, bukan naik */
+  box-shadow: var(--sh-xl);
+}
+.bottom-sheet-handle {
+  display: none; /* Sembunyikan garis kecil di atas */
+}
 
 /* ---------- SKELETON & EMPTY ---------- */
 .skeleton { background: linear-gradient(90deg, var(--border) 25%, #F7F2F2 50%, var(--border) 75%); background-size: 200% 100%; animation: shimmer 1.6s infinite; border-radius: var(--r-sm); }
