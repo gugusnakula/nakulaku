@@ -772,6 +772,25 @@ let totalPertemuan = 0;
   UI.renderUserHeader(profile);
   renderMenuKhusus(profile);
 
+  // ==========================================
+  // SEMBUNYIKAN MENU BERDASARKAN ROLE
+  // ==========================================
+  const peranList = profile.peran || [];
+  const isAdmin = peranList.includes('pengurus') || peranList.includes('super_admin');
+
+  // Jika bukan Admin, sembunyikan Galeri di Sidebar Desktop & Bottom Nav Mobile
+  if (!isAdmin) {
+    // 1. Sembunyikan Sidebar Desktop
+    document.querySelectorAll('.sidebar-item[href="galeri.html"]').forEach(el => {
+      el.style.display = 'none';
+    });
+    
+    // 2. Sembunyikan Bottom Nav Mobile (HP)
+    document.querySelectorAll('.nav-item[href="galeri.html"]').forEach(el => {
+      el.style.display = 'none';
+    });
+  }
+
   loadPengumuman();
   loadPertemuan();
 })();
