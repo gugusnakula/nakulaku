@@ -21,7 +21,7 @@
 
   /* HERO & LOADING */
   .loading-icon { width: 80px; height: 80px; border-radius: 24px; background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%); color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; }
-  .loading-icon svg { width: 36px; height: 36px; animation: spin 2s linear infinite; }
+  .loading-icon svg { width: 36px; height: 36px; }
   .stage-title { text-align: center; font-size: 18px; font-weight: 800; color: var(--maroon); margin-bottom: 6px; }
   .stage-desc { text-align: center; font-size: 13px; color: var(--muted); font-weight: 500; max-width: 320px; margin: 0 auto; }
 
@@ -502,7 +502,10 @@ document.getElementById('btnAmbilFoto').addEventListener('click', () => {
   
   // Kembalikan translasi
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-
+  // DEFINISI DATA WATERMARK (SEBELUMNYA HILANG)
+  const timeStr = new Date().toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const coordsStr = gps.lat.toFixed(5) + ', ' + gps.lng.toFixed(5);
+  const pertemuanStr = 'Pertemuan #' + pertemuanData.urutan;
   // ==========================================
   // WATERMARK SECTION (DESAIN 2 KOLOM)
   // ==========================================
