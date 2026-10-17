@@ -900,35 +900,47 @@ function renderTab() {
 // ═══════════════════════════════════════════════
 function renderBadgeWindow(p) {
   const tgl = p.tanggal || new Date().toISOString().slice(0, 10);
-  const parseTime = (str) => {
+  
+  // Helper untuk mengambil string jam (HH:mm)
+  const getTimeStr = (str) => {
     if (!str) return null;
     const m = String(str).match(/(\d{2}):(\d{2})/);
-    if (!m) return null;
-    return new Date(`${tgl}T${m[1]}:${m[2]}:00+07:00`);
+    return m ? `${m[1]}:${m[2]}` : null;
   };
-  const buka = parseTime(p.presensi_buka);
-  const tutup = parseTime(p.presensi_tutup);
+
+  const jmMulai = getTimeStr(p.jam_mulai);
+  const jmSelesai = getTimeStr(p.jam_selesai);
+  
+  if (!jmMulai || !jmSelesai) return '';
+
+  // Logika: Buka = -30 menit, Tutup = +30 menit
+  const parseTime = (timeStr, offsetMin = 0) => {
+    const d = new Date(`${tgl}T${timeStr}:00+07:00`);
+    d.setMinutes(d.getMinutes() + offsetMin);
+    return d;
+  };
+
+  const buka = parseTime(jmMulai, -30);
+  const tutup = parseTime(jmSelesai, 30);
   const now = new Date();
+  
   let status = 'belum';
-  if (buka && tutup) {
-    if (now >= buka && now <= tutup) status = 'buka';
-    else if (now > tutup) status = 'tutup';
-  }
+  if (now >= buka && now <= tutup) status = 'buka';
+  else if (now > tutup) status = 'tutup';
+
   const map = {
     belum: { label: 'Presensi Belum Dibuka', icon: 'lock' },
     buka:  { label: 'Presensi Dibuka',       icon: 'checkCircle' },
     tutup: { label: 'Presensi Ditutup',      icon: 'x' },
   };
   const m = map[status] || map.belum;
-  const fmt = (str) => {
-    if (!str) return '--:--';
-    const match = String(str).match(/(\d{2}):(\d{2})/);
-    return match ? `${match[1]}.${match[2]}` : '--:--';
-  };
+
+  const fmt = (d) => d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(':', '.');
+  
   return `
     <div class="window-badge ${status}">
       ${Icons.get(m.icon, { class: 'icon-sm' })}
-      ${m.label} · ${fmt(p.presensi_buka)}–${fmt(p.presensi_tutup)}
+      ${m.label} · ${fmt(buka)}–${fmt(tutup)}
     </div>
   `;
 }
@@ -1171,25 +1183,6 @@ function bukaForm(pertemuan) {
           </div>
         </div>
 
-        <div style="background:var(--bg);border-radius:12px;padding:12px;border:1px solid var(--border);margin-bottom:12px;">
-          <div style="font-size:11px;font-weight:800;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-            ${Icons.get('clock', { class: 'icon-sm' })} Window Presensi
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-            <div class="field">
-              <label class="label">Buka</label>
-              <input type="time" id="fPresensiBuka" class="input" step="60" value="${formatJamInput(p.presensi_buka)}" />
-            </div>
-            <div class="field">
-              <label class="label">Tutup</label>
-              <input type="time" id="fPresensiTutup" class="input" step="60" value="${formatJamInput(p.presensi_tutup)}" />
-            </div>
-          </div>
-          <div style="font-size:10.5px;color:var(--muted);margin-top:8px;font-weight:600;line-height:1.5;">
-            Kosongkan untuk pakai default: <strong>jam mulai −2 jam</strong> s/d <strong>jam mulai +4 jam</strong>.
-          </div>
-        </div>
-
         <div class="field" style="margin-bottom:12px;">
           <label class="label">Nama Lokasi</label>
           <input type="text" id="fLokasi" class="input" value="${UI.escapeHtml(p.lokasi_nama || '')}" placeholder="Mis: SD Negeri 1 Krisak" />
@@ -1258,8 +1251,6 @@ function bukaForm(pertemuan) {
       jam_mulai: getWaktu('#fJamMulai'),
       jam_selesai: getWaktu('#fJamSelesai'),
       batas_tepat_waktu: getWaktu('#fBatas'),
-      presensi_buka: getWaktu('#fPresensiBuka'),
-      presensi_tutup: getWaktu('#fPresensiTutup'),
       lokasi_nama: overlay.querySelector('#fLokasi').value.trim(),
       latitude: overlay.querySelector('#fLat').value.trim(),
       longitude: overlay.querySelector('#fLng').value.trim(),
