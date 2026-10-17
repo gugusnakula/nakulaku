@@ -555,6 +555,14 @@ function bukaForm(pertemuan) {
     const alertBox = overlay.querySelector('#formAlert');
     alertBox.classList.remove('show');
 
+    // Helper untuk memastikan format HH:mm atau null
+    const getTimeVal = (id) => {
+      let val = overlay.querySelector(id).value.trim();
+      if (!val) return null;
+      // Pastikan formatnya HH:mm
+      return val.slice(0, 5);
+    };
+
     const payload = {
       id: p.id || null,
       periode_id: periodeAktif.id,
@@ -562,11 +570,11 @@ function bukaForm(pertemuan) {
       judul: overlay.querySelector('#fJudul').value.trim(),
       deskripsi: overlay.querySelector('#fDeskripsi').value.trim(),
       tanggal: overlay.querySelector('#fTanggal').value,
-      jam_mulai: overlay.querySelector('#fJamMulai').value || null,
-      jam_selesai: overlay.querySelector('#fJamSelesai').value || null,
-      batas_tepat_waktu: overlay.querySelector('#fBatas').value || null,
-      presensi_buka: overlay.querySelector('#fPresensiBuka').value || null,
-      presensi_tutup: overlay.querySelector('#fPresensiTutup').value || null,
+      jam_mulai: getTimeVal('#fJamMulai'),
+      jam_selesai: getTimeVal('#fJamSelesai'),
+      batas_tepat_waktu: getTimeVal('#fBatas'),
+      presensi_buka: getTimeVal('#fPresensiBuka'),
+      presensi_tutup: getTimeVal('#fPresensiTutup'),
       lokasi_nama: overlay.querySelector('#fLokasi').value.trim(),
       latitude: overlay.querySelector('#fLat').value.trim(),
       longitude: overlay.querySelector('#fLng').value.trim(),
@@ -574,6 +582,8 @@ function bukaForm(pertemuan) {
       narasumber_nama: overlay.querySelector('#fNarsum').value.trim(),
       status: overlay.querySelector('#fStatus').value,
     };
+    
+    console.log("Mengirim data pertemuan:", payload); // Untuk debugging
 
     if (!payload.judul) { alertBox.textContent = 'Judul wajib.'; alertBox.classList.add('show'); return; }
     if (!payload.tanggal) { alertBox.textContent = 'Tanggal wajib.'; alertBox.classList.add('show'); return; }
