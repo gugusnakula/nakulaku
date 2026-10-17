@@ -46,6 +46,42 @@
     letter-spacing: .5px;
     margin-bottom: 12px;
   }
+  .hero-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    margin-bottom: 12px;
+    margin-left: 6px;
+    vertical-align: middle;
+    position: relative;
+    animation: fade-in .3s var(--ease-out) both;
+  }
+  .hero-status-badge.open {
+    background: rgba(34,197,94,.25);
+    color: #86EFAC;
+    border: 1px solid rgba(34,197,94,.4);
+    animation: pulse-badge 2s infinite;
+  }
+  @keyframes pulse-badge {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  .hero-status-badge.done {
+    background: rgba(255,255,255,.15);
+    color: #86EFAC;
+    border: 1px solid rgba(134,239,172,.4);
+  }
+  .hero-status-badge.closed {
+    background: rgba(239,68,68,.2);
+    color: #FCA5A5;
+    border: 1px solid rgba(239,68,68,.3);
+  }
+
   .hero-title {
     font-size: 20px;
     font-weight: 800;
@@ -63,7 +99,7 @@
     position: relative;
   }
 
-  /* Tabs */
+  /* Tabs — Sticky */
   .tabs {
     display: flex;
     gap: 4px;
@@ -73,6 +109,13 @@
     margin: 20px 0 16px;
     border: 1px solid var(--border);
     overflow-x: auto;
+    position: sticky;
+    top: 60px;
+    z-index: 30;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  }
+  @media (max-width: 480px) {
+    .tabs { top: 56px; }
   }
   .tab {
     flex: 1;
@@ -106,8 +149,32 @@
     color: var(--success);
     font-weight: 800;
   }
+  .tab-indicator {
+    display: none;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 999px;
+    letter-spacing: 0.3px;
+    margin-left: 2px;
+    line-height: 1.3;
+  }
+  .tab-indicator.done {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    background: var(--success-soft);
+    color: var(--success);
+  }
+  .tab-indicator.count {
+    display: inline-flex;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+  }
+
   .panel { display: none; }
-  .panel.active { display: block; }
+  .panel.active { display: block; animation: fade-in .25s var(--ease-out) both; }
+
   .status-card {
     border-radius: var(--r-lg);
     padding: 16px;
@@ -141,6 +208,61 @@
   .presensi-badge.tutup {
     background: var(--danger-soft);
     color: var(--danger);
+  }
+
+  /* Countdown Timer */
+  .countdown-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #F5FDF9 0%, #ECFDF5 100%);
+    border: 1px solid rgba(21,128,61,.2);
+    border-radius: 12px;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--success);
+    margin-bottom: 12px;
+  }
+  .countdown-box.warning {
+    background: linear-gradient(135deg, #FFFCF3 0%, #FEF3C7 100%);
+    border-color: rgba(180,83,9,.2);
+    color: var(--warning);
+  }
+  .countdown-box.danger {
+    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+    border-color: rgba(185,28,28,.2);
+    color: var(--danger);
+    animation: pulse-badge 1s infinite;
+  }
+
+  /* Feedback Progress */
+  .feedback-progress {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--bg);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .feedback-progress .val {
+    font-weight: 800;
+    color: var(--maroon);
+    font-size: 13px;
+  }
+
+  /* Deadline Urgency */
+  .deadline-urgent {
+    color: var(--danger) !important;
+    font-weight: 800;
+  }
+  .deadline-soon {
+    color: var(--warning) !important;
+    font-weight: 800;
   }
 </style>
 </head>
@@ -178,18 +300,22 @@
     <div class="hero-card" id="hero"></div>
 
     <!-- Tabs -->
-    <div class="tabs">
+    <div class="tabs" id="tabBar">
       <button class="tab active" data-tab="presensi">
         <span data-icon="mapPin"></span> Presensi
+        <span class="tab-indicator" id="indPresensi"></span>
       </button>
       <button class="tab" data-tab="materi">
         <span data-icon="book"></span> Materi
+        <span class="tab-indicator" id="indMateri"></span>
       </button>
       <button class="tab" data-tab="tugas">
         <span data-icon="clipboard"></span> Tugas
+        <span class="tab-indicator" id="indTugas"></span>
       </button>
       <button class="tab hidden" data-tab="feedback" id="tabFeedback">
         <span data-icon="star"></span> Feedback
+        <span class="tab-indicator" id="indFeedback"></span>
       </button>
     </div>
 
@@ -254,6 +380,8 @@ if (!pertemuanId) {
   );
 }
 
+let countdownTimer = null;
+
 (async () => {
   const profile = await Api.requireLogin();
   if (!profile || !pertemuanId) return;
@@ -298,11 +426,22 @@ function render(data) {
   document.title = p.judul + ' — NAKULAKU';
   document.getElementById('content').classList.remove('hidden');
 
+  // Badge status window di hero
+  let statusBadgeHtml = '';
+  if (data.presensi_saya) {
+    statusBadgeHtml = `<span class="hero-status-badge done">${Icons.get('checkCircle', { class: 'icon-sm' })} Sudah Presensi</span>`;
+  } else if (data.presensi_status === 'buka') {
+    statusBadgeHtml = `<span class="hero-status-badge open">${Icons.get('camera', { class: 'icon-sm' })} Presensi Dibuka</span>`;
+  } else if (data.presensi_status === 'tutup') {
+    statusBadgeHtml = `<span class="hero-status-badge closed">${Icons.get('lock', { class: 'icon-sm' })} Presensi Ditutup</span>`;
+  }
+
   document.getElementById('hero').innerHTML = `
     <div class="hero-number">
       ${Icons.get('calendar', { class: 'icon-sm' })}
       PERTEMUAN #${p.urutan}
     </div>
+    ${statusBadgeHtml}
     <h1 class="hero-title">${UI.escapeHtml(p.judul)}</h1>
     <div class="hero-meta">
       ${Icons.get('calendar', { class: 'icon-sm' })}
@@ -319,6 +458,34 @@ function render(data) {
         ${UI.escapeHtml(p.narasumber_nama)}
       </div>` : ''}
   `;
+
+  // Indikator Presensi
+  const indPresensi = document.getElementById('indPresensi');
+  if (data.presensi_saya) {
+    indPresensi.className = 'tab-indicator done';
+    indPresensi.textContent = '✓';
+  }
+
+  // Indikator Materi
+  const indMateri = document.getElementById('indMateri');
+  if (data.materi && data.materi.length > 0) {
+    indMateri.className = 'tab-indicator count';
+    indMateri.textContent = data.materi.length;
+  }
+
+  // Indikator Tugas (x/y terkumpul)
+  const indTugas = document.getElementById('indTugas');
+  const totalTugas = (data.tugas || []).length;
+  const totalKumpul = (data.pengumpulan_saya || []).length;
+  if (totalTugas > 0) {
+    if (totalKumpul >= totalTugas) {
+      indTugas.className = 'tab-indicator done';
+      indTugas.textContent = '✓';
+    } else {
+      indTugas.className = 'tab-indicator count';
+      indTugas.textContent = `${totalKumpul}/${totalTugas}`;
+    }
+  }
 
   renderPresensi(data.presensi_saya, p, data);
   renderMateri(data.materi);
@@ -358,6 +525,49 @@ function badgeWindow(data) {
       ${m.label} · ${buka}–${tutup}
     </div>
   `;
+}
+
+// ============================================================
+// COUNTDOWN TIMER
+// ============================================================
+function mulaiCountdown(tutupIso) {
+  if (countdownTimer) clearInterval(countdownTimer);
+  const tutup = new Date(tutupIso).getTime();
+  
+  const tick = () => {
+    const el = document.getElementById('countdownText');
+    const box = document.getElementById('countdownBox');
+    if (!el) return;
+    
+    const sisa = Math.max(0, tutup - Date.now());
+    
+    if (sisa <= 0) {
+      el.textContent = 'Waktu presensi habis';
+      if (box) box.className = 'countdown-box danger';
+      if (countdownTimer) clearInterval(countdownTimer);
+      return;
+    }
+    
+    const jam = Math.floor(sisa / 3600000);
+    const m = Math.floor((sisa % 3600000) / 60000);
+    const s = Math.floor((sisa % 60000) / 1000);
+    
+    let text;
+    if (jam > 0) text = `Sisa ${jam}j ${m}m`;
+    else if (m > 0) text = `Sisa ${m}m ${String(s).padStart(2, '0')}s`;
+    else text = `Sisa ${s} detik`;
+    
+    el.textContent = text;
+    
+    if (box) {
+      if (sisa <= 5 * 60000) box.className = 'countdown-box danger';
+      else if (sisa <= 30 * 60000) box.className = 'countdown-box warning';
+      else box.className = 'countdown-box';
+    }
+  };
+  
+  tick();
+  countdownTimer = setInterval(tick, 1000);
 }
 
 // ============================================================
@@ -412,26 +622,66 @@ async function renderPresensi(presensi, pertemuan, data) {
       return;
     }
 
-    el.innerHTML = `
-      ${badgeWindow(data)}
-      <div class="status-card belum">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-          <span style="color:var(--warning);">${Icons.get('alertCircle', { class: 'icon-lg' })}</span>
-          <div style="font-weight:800;">Belum Presensi</div>
+    const status = data.presensi_status;
+
+    let infoHtml = '';
+    let actionHtml = '';
+    let countdownHtml = '';
+
+    if (status === 'buka') {
+      infoHtml = 'Presensi sedang dibuka. Isi sekarang sebelum waktu habis.';
+      countdownHtml = `
+        <div class="countdown-box" id="countdownBox">
+          ${Icons.get('clock', { class: 'icon-sm' })}
+          <span id="countdownText">Menghitung…</span>
         </div>
-        <p class="text-sm text-muted" style="margin-bottom:16px;">
-          Silakan isi presensi saat pertemuan berlangsung. Pastikan Anda berada di lokasi kegiatan.
-        </p>
+      `;
+      actionHtml = `
         <button class="btn btn-primary btn-full" onclick="mulaiPresensi()" style="margin-bottom:8px;">
           ${Icons.get('camera', { class: 'icon-sm' })}
           Isi Presensi (Selfie + GPS)
         </button>
         <button class="btn btn-secondary btn-full" onclick="ajukanIzin()">
           ${Icons.get('fileText', { class: 'icon-sm' })}
-          Ajukan Ijin/Sakit/Cuti
+          Ajukan Izin / Sakit / Cuti
         </button>
+      `;
+    } else if (status === 'tutup') {
+      infoHtml = 'Presensi sudah ditutup. Kalau Anda berhalangan hadir, silakan ajukan izin.';
+      actionHtml = `
+        <button class="btn btn-primary btn-full" onclick="ajukanIzin()">
+          ${Icons.get('fileText', { class: 'icon-sm' })}
+          Ajukan Izin / Sakit / Cuti
+        </button>
+      `;
+    } else {
+      infoHtml = 'Presensi belum dibuka. Silakan kembali saat waktu yang ditentukan.';
+      actionHtml = `
+        <button class="btn btn-secondary btn-full" onclick="ajukanIzin()">
+          ${Icons.get('fileText', { class: 'icon-sm' })}
+          Ajukan Izin / Sakit / Cuti
+        </button>
+      `;
+    }
+
+    el.innerHTML = `
+      ${badgeWindow(data)}
+      ${countdownHtml}
+      <div class="status-card belum">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <span style="color:var(--warning);">${Icons.get('alertCircle', { class: 'icon-lg' })}</span>
+          <div style="font-weight:800;">Belum Presensi</div>
+        </div>
+        <p class="text-sm text-muted" style="margin-bottom:16px;">${infoHtml}</p>
+        ${actionHtml}
       </div>
     `;
+
+    // Aktifkan countdown kalau window buka
+    if (status === 'buka' && data.presensi_tutup) {
+      setTimeout(() => mulaiCountdown(data.presensi_tutup), 100);
+    }
+
     return;
   }
 
@@ -529,6 +779,16 @@ function renderTugas(tugas, pengumpulanSaya) {
   const mapKumpul = {};
   (pengumpulanSaya || []).forEach(p => mapKumpul[p.tugas_id] = p);
 
+  // Helper cek urgensi deadline
+  function deadlineClass(deadline) {
+    if (!deadline) return '';
+    const sisa = new Date(deadline).getTime() - Date.now();
+    if (sisa < 0) return 'deadline-urgent';
+    if (sisa < 24 * 3600 * 1000) return 'deadline-urgent';
+    if (sisa < 3 * 24 * 3600 * 1000) return 'deadline-soon';
+    return '';
+  }
+
   el.innerHTML = tugas.map(t => {
     const kumpul = mapKumpul[t.id];
     const statusBadge = kumpul ? {
@@ -537,6 +797,8 @@ function renderTugas(tugas, pengumpulanSaya) {
       revisi: '<span class="badge badge-info">Perlu Revisi</span>',
       ditolak: '<span class="badge badge-danger">Ditolak</span>',
     }[kumpul.status] : '<span class="badge badge-maroon">Belum Dikumpul</span>';
+
+    const dl = deadlineClass(t.deadline);
 
     return `
       <div class="card" style="margin-bottom:10px;">
@@ -548,7 +810,7 @@ function renderTugas(tugas, pengumpulanSaya) {
             <div style="font-weight:700;margin-bottom:4px;">${UI.escapeHtml(t.judul)}</div>
             ${t.deskripsi ? `<div class="text-sm text-muted" style="margin-bottom:6px;">${UI.escapeHtml(t.deskripsi)}</div>` : ''}
             ${t.deadline ? `
-              <div class="text-xs text-muted">
+              <div class="text-xs text-muted ${dl}">
                 ${Icons.get('clock', { class: 'icon-sm' })} Deadline: ${UI.formatTanggalJam(t.deadline)}
               </div>` : ''}
           </div>
@@ -576,11 +838,8 @@ async function cekFeedback(pertemuan) {
   tabFeedback.classList.remove('hidden');
 
   if (sudahIsi) {
-    tabFeedback.innerHTML = `<span data-icon="star"></span> Feedback <span class="tab-badge">✓</span>`;
-    tabFeedback.querySelectorAll('[data-icon]').forEach(el => {
-      el.innerHTML = Icons.get(el.dataset.icon);
-      el.style.display = 'contents';
-    });
+    document.getElementById('indFeedback').className = 'tab-indicator done';
+    document.getElementById('indFeedback').textContent = '✓';
     renderFeedbackSudah(sudahIsi);
   } else {
     renderFeedbackForm(pertemuan);
@@ -696,6 +955,11 @@ async function renderFeedbackForm(pertemuan) {
       </div>
     </div>
 
+    <div class="feedback-progress" id="fbProgress">
+      <span>Progres penilaian</span>
+      <span class="val" id="fbProgressVal">0/0</span>
+    </div>
+
     <button class="btn btn-primary btn-full" id="btnKirimFeedback" style="margin-bottom:16px;">
       ${Icons.get('send', { class: 'icon-sm' })}
       Kirim Feedback
@@ -703,6 +967,17 @@ async function renderFeedbackForm(pertemuan) {
   `;
 
   const ratingState = {};
+  const totalAspek = el.querySelectorAll('.fb-rating').length;
+
+  function updateProgress() {
+    const dinilai = Object.keys(ratingState).reduce((sum, k) => sum + Object.keys(ratingState[k]).length, 0);
+    const valEl = document.getElementById('fbProgressVal');
+    if (valEl) {
+      valEl.textContent = `${dinilai}/${totalAspek}`;
+      valEl.style.color = dinilai >= totalAspek ? 'var(--success)' : 'var(--maroon)';
+    }
+  }
+  updateProgress();
 
   el.querySelectorAll('.fb-rating').forEach(r => {
     const kat = r.dataset.kat;
@@ -718,6 +993,7 @@ async function renderFeedbackForm(pertemuan) {
         });
         if (!ratingState[kat]) ratingState[kat] = {};
         ratingState[kat][aspekId] = skor;
+        updateProgress();
       });
     });
   });
@@ -751,13 +1027,9 @@ async function renderFeedbackForm(pertemuan) {
 
     const resSaya = await Api.call('feedback.saya', { pertemuan_id: pertemuan.id });
     if (resSaya.ok && resSaya.data) {
+      document.getElementById('indFeedback').className = 'tab-indicator done';
+      document.getElementById('indFeedback').textContent = '✓';
       renderFeedbackSudah(resSaya.data);
-      const tabFeedback = document.getElementById('tabFeedback');
-      tabFeedback.innerHTML = `<span data-icon="star"></span> Feedback <span class="tab-badge">✓</span>`;
-      tabFeedback.querySelectorAll('[data-icon]').forEach(el => {
-        el.innerHTML = Icons.get(el.dataset.icon);
-        el.style.display = 'contents';
-      });
     }
   });
 }
@@ -782,12 +1054,10 @@ function lihatTugas(id) {
 function ajukanIzin() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
-  // Redirect ke halaman wizard ajukan.html
   window.location.href = 'ajukan.html?id=' + id;
 }
 
 function batalkanIzin() {
-  // Ajuan lama otomatis diganti saat guru submit ulang di ajukan.html
   ajukanIzin();
 }
 </script>
