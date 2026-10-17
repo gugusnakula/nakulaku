@@ -805,27 +805,34 @@ function renderProfil(p) {
 function renderMenuKhusus(p) {
   const menu = [];
   const peranList = p.peran || [];
+  const isAdmin = peranList.includes('pengurus') || peranList.includes('super_admin');
+  const isKS = peranList.includes('ks');
 
-  menu.push({
-    icon: 'award',
-    title: 'Papan Juara',
-    desc: 'Hasil NAKULAKU AWARD',
-    href: 'award.html',
-    warna: 'gold',
-  });
+  // 1. Menu Eksklusif Admin (Papan Juara & Galeri disembunyikan untuk Guru/KS)
+  if (isAdmin) {
+    menu.push({
+      icon: 'award',
+      title: 'Papan Juara',
+      desc: 'Hasil NAKULAKU AWARD',
+      href: 'award.html',
+      warna: 'gold',
+    });
+    menu.push({
+      icon: 'grid',
+      title: 'Galeri Sekolah',
+      desc: 'Prestasi & kegiatan 10 sekolah',
+      href: 'galeri.html',
+      warna: 'gold',
+    });
+  }
+
+  // 2. Menu Umum (Guru, KS, & Admin)
   menu.push({
     icon: 'activity',
     title: 'Aktivitas Saya',
     desc: 'Rapor digital Anda',
     href: 'aktivitas.html',
     warna: 'maroon',
-  });
-  menu.push({
-    icon: 'grid',
-    title: 'Galeri Sekolah',
-    desc: 'Prestasi & kegiatan 10 sekolah',
-    href: 'galeri.html',
-    warna: 'gold',
   });
   menu.push({
     icon: 'sparkles',
@@ -835,24 +842,53 @@ function renderMenuKhusus(p) {
     warna: 'gold',
   });
 
-  if (peranList.includes('ks')) {
+  // 3. Menu Khusus KS
+  if (isKS && !isAdmin) {
     menu.push({
       icon: 'home',
-      title: 'Sekolah Saya',
+      title: 'Sekolahku',
       desc: 'Input prestasi, kegiatan, pembiasaan',
       href: 'ks/sekolah.html',
       warna: 'maroon',
     });
     menu.push({
-      icon: 'shield',
-      title: 'Dashboard Admin',
-      desc: 'Menu verifikasi & kelola',
-      href: 'admin/index.html',
+      icon: 'users',
+      title: 'Guru Sekolah',
+      desc: 'Pantau daftar guru di sekolah Anda',
+      href: 'admin/guru.html',
+      warna: 'maroon',
+    });
+    menu.push({
+      icon: 'checkCircle',
+      title: 'Verifikasi KS',
+      desc: 'Verifikasi Izin & Sakit',
+      href: 'ks/verifikasi.html',
       warna: 'gold',
+    });
+    menu.push({
+      icon: 'shield',
+      title: 'Dashboard KS',
+      desc: 'Menu kelola sekolah',
+      href: 'admin/index.html',
+      warna: 'maroon',
     });
   }
 
-  if (peranList.includes('pengurus') || peranList.includes('super_admin')) {
+  // 4. Menu Khusus Guru Biasa (Peserta)
+  if (!isAdmin && !isKS) {
+    if (p.sekolah && p.sekolah.id) {
+      menu.push({
+        icon: 'home',
+        title: 'Sekolahku',
+        desc: 'Profil & portofolio sekolah',
+        href: `sekolah.html?id=${p.sekolah.id}`,
+        warna: 'maroon',
+      });
+    }
+  }
+
+  // 5. Menu Admin Penuh
+  if (isAdmin) {
     menu.push({
       icon: 'users',
       title: 'Data Guru',
@@ -925,7 +961,10 @@ function renderMenuKhusus(p) {
     });
   }
 
+  // Panggil pengecekan tugas pengamat
   cekTugasPengamat();
+  
+  // Render (biarkan sisa kode di bawahnya tetap sama)
 
   if (menu.length === 0) {
     const panel = document.getElementById('panelKhusus');
