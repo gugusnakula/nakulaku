@@ -200,7 +200,10 @@
     font-size: 11.5px;
     font-weight: 700;
   }
-  .hero-progress-head .label { opacity: 0.85; }
+  .hero-progress-head .label {
+    color: rgba(255,255,255,.9);
+    opacity: 1;
+  }
   .hero-progress-head .pct { font-size: 13px; font-weight: 800; }
   .hero-progress-bar {
     height: 8px;
@@ -226,18 +229,29 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 3px 9px;
+    padding: 4px 11px;
     border-radius: 999px;
-    background: rgba(255,255,255,.12);
     letter-spacing: 0.2px;
+    font-weight: 800;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    transition: all .2s var(--ease-out);
   }
   .hero-p-item.done {
-    background: rgba(34,197,94,.25);
-    color: #86EFAC;
+    background: #16A34A;        /* hijau solid */
+    color: #ffffff;              /* teks putih */
+    border: 1px solid #15803D;
+  }
+  .hero-p-item.done svg {
+    color: #ffffff;
+    stroke-width: 3;
   }
   .hero-p-item.pending {
-    background: rgba(255,255,255,.12);
-    color: rgba(255,255,255,.7);
+    background: #FFFFFF;         /* putih solid */
+    color: #7D1D3A;              /* maroon solid */
+    border: 1px solid rgba(125,29,58,.15);
+  }
+  .hero-p-item.pending svg {
+    color: #7D1D3A;
   }
   .hero-p-item svg { width: 11px; height: 11px; }
 
