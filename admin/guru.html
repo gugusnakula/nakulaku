@@ -260,10 +260,11 @@ let debounceTimer;
   if (!profile) return;
 
   if (!profile.peran.includes('super_admin') && !profile.peran.includes('pengurus') && !profile.peran.includes('ks')) {
-    document.querySelector('main').innerHTML = UI.errorHtml('Halaman ini hanya untuk pengurus/KS.');
+    document.querySelector('main').innerHTML = UI.errorHtml('Halaman ini hanya untuk pengurus dan kepala sekolah.');
     return;
   }
 
+  // Catatan: KS diizinkan masuk, backend akan otomatis memfilter hanya guru dari sekolahnya.
   await loadGuru();
 })();
 
