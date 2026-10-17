@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#611329" />
 <title>Kelola Pertemuan — NAKULAKU Admin</title>
 
@@ -11,59 +11,303 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="../assets/css/nakula.css" />
+<link rel="stylesheet" href="layout.css" />
 
 <style>
-  .item-pertemuan {
+  /* ═══════════════════════════════════════════
+     STAT GRID
+     ═══════════════════════════════════════════ */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  @media (min-width: 768px) {
+    .stats-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+  .stat-card {
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
     padding: 14px;
-    margin-bottom: 10px;
-    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: all .2s var(--ease-out);
+  }
+  .stat-card:hover {
+    border-color: var(--maroon-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(125,29,58,.08);
+  }
+  .stat-icon {
+    width: 32px; height: 32px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+  }
+  .stat-icon.green { background: var(--success-soft); color: var(--success); }
+  .stat-icon.blue { background: var(--info-soft); color: var(--info); }
+  .stat-icon.gray { background: var(--border); color: var(--muted); }
+  .stat-icon.gold { background: var(--gold-soft); color: var(--gold-dark); }
+  .stat-val {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 10.5px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  /* ═══════════════════════════════════════════
+     INFO PERIODE
+     ═══════════════════════════════════════════ */
+  .info-periode {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
+    border-radius: 14px;
+    margin-bottom: 16px;
+    font-size: 12.5px;
+    color: var(--maroon);
+    font-weight: 700;
+  }
+  .info-periode strong { color: var(--ink); }
+
+  /* ═══════════════════════════════════════════
+     TOOLBAR (search + filter)
+     ═══════════════════════════════════════════ */
+  .toolbar {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 12px;
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .search-wrap {
+    position: relative;
+    width: 100%;
+  }
+  .search-wrap input {
+    width: 100%;
+    padding: 10px 14px 10px 38px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--ink);
+    outline: none;
     transition: all .15s;
   }
-  .item-pertemuan:hover {
+  .search-wrap input:focus {
     border-color: var(--maroon);
-    box-shadow: var(--sh-md);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(125,29,58,.08);
   }
+  .search-wrap .icon-left {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+  }
+  .filter-row {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .fchip {
+    flex-shrink: 0;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .fchip:hover { border-color: var(--maroon-light); color: var(--maroon); }
+  .fchip.active {
+    background: var(--maroon);
+    border-color: var(--maroon);
+    color: white;
+  }
+
+  /* ═══════════════════════════════════════════
+     TABS
+     ═══════════════════════════════════════════ */
+  .tab-switch {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    padding: 4px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    border: 1.5px solid var(--border);
+  }
+  .tsw {
+    flex: 1;
+    padding: 11px 8px;
+    text-align: center;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--muted);
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    white-space: nowrap;
+    transition: all .15s;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tsw.active {
+    background: var(--surface);
+    color: var(--maroon);
+    box-shadow: 0 2px 8px rgba(125,29,58,.08);
+  }
+  .tsw-count {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--border);
+    color: var(--muted);
+    font-weight: 800;
+    min-width: 18px;
+    text-align: center;
+  }
+  .tsw.active .tsw-count {
+    background: var(--maroon-soft);
+    color: var(--maroon);
+  }
+
+  /* ═══════════════════════════════════════════
+     KARTU PERTEMUAN (UPGRADED)
+     ═══════════════════════════════════════════ */
+  .item-pertemuan {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: all .2s var(--ease-out);
+    animation: fade-in-up .4s var(--ease-out) both;
+    position: relative;
+    overflow: hidden;
+  }
+  .item-pertemuan:hover {
+    border-color: var(--maroon-light);
+    box-shadow: 0 10px 24px rgba(125,29,58,.08);
+    transform: translateY(-2px);
+  }
+  .item-pertemuan::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--border);
+    transition: background .2s;
+  }
+  .item-pertemuan.status-aktif::before { background: #16A34A; }
+  .item-pertemuan.status-draft::before { background: var(--border-strong); }
+  .item-pertemuan.status-selesai::before { background: var(--info); }
+
   .item-head {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: 14px;
+    margin-bottom: 12px;
   }
   .item-num {
-    width: 44px;
-    height: 44px;
-    border-radius: var(--r-md);
-    background: var(--maroon-soft);
-    color: var(--maroon);
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-weight: 800;
     flex-shrink: 0;
+    background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
+    color: var(--maroon);
+    border: 1.5px solid rgba(125,29,58,.1);
   }
-  .item-num .n { font-size: 16px; line-height: 1; }
-  .item-num .l { font-size: 7px; letter-spacing: .5px; font-weight: 700; opacity: .7; }
-  .item-info { flex: 1; min-width: 0; }
-  .item-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
-  .item-meta {
-    font-size: 11.5px;
-    color: var(--muted);
-    font-weight: 600;
-    display: flex; align-items: center; gap: 4px;
+  .item-pertemuan.status-aktif .item-num {
+    background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+    color: #15803D;
+    border-color: rgba(21,128,61,.15);
+  }
+  .item-pertemuan.status-selesai .item-num {
+    background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+    color: #1D4ED8;
+    border-color: rgba(29,78,216,.15);
+  }
+  .item-num .n {
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .item-num .l {
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    opacity: 0.7;
     margin-top: 2px;
   }
 
-  .status-pill {
-    font-size: 9px;
+  .item-info { flex: 1; min-width: 0; }
+  .item-title {
     font-weight: 800;
-    padding: 3px 8px;
+    font-size: 15px;
+    color: var(--ink);
+    line-height: 1.35;
+    margin-bottom: 6px;
+  }
+  .item-meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-top: 3px;
+  }
+  .item-meta svg { flex-shrink: 0; }
+
+  .status-pill {
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 4px 10px;
     border-radius: 999px;
     text-transform: uppercase;
-    letter-spacing: .3px;
+    letter-spacing: .4px;
     white-space: nowrap;
+    flex-shrink: 0;
   }
   .status-draft { background: var(--border); color: var(--muted); }
   .status-aktif { background: var(--success-soft); color: var(--success); }
@@ -74,131 +318,488 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    font-size: 10px;
+    font-size: 10.5px;
     font-weight: 800;
-    padding: 4px 10px;
+    padding: 5px 11px;
     border-radius: 999px;
     letter-spacing: 0.3px;
-    margin-top: 8px;
+    margin-top: 10px;
+    margin-bottom: 4px;
   }
   .window-badge.belum {
     background: var(--border);
     color: var(--muted);
   }
   .window-badge.buka {
-    background: var(--success-soft);
-    color: var(--success);
+    background: #D1FAE5;
+    color: #15803D;
+    animation: pulse-badge 2s infinite;
   }
   .window-badge.tutup {
     background: var(--danger-soft);
     color: var(--danger);
   }
+  @keyframes pulse-badge {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.75; }
+  }
 
+  .item-actions {
+    display: flex;
+    gap: 6px;
+    padding-top: 12px;
+    margin-top: 12px;
+    border-top: 1px dashed var(--border);
+  }
+  .item-actions .btn {
+    font-size: 12px;
+    padding: 9px 12px;
+  }
+
+  /* ═══════════════════════════════════════════
+     EMPTY STATE
+     ═══════════════════════════════════════════ */
+  .empty-panel {
+    text-align: center;
+    padding: 50px 20px;
+  }
+  .empty-panel .big-icon {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+  }
+  .empty-panel .big-icon svg { width: 40px; height: 40px; }
+  .empty-panel h3 {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .empty-panel p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+    max-width: 320px;
+    margin: 0 auto 20px;
+  }
+
+  /* ═══════════════════════════════════════════
+     FAB
+     ═══════════════════════════════════════════ */
   .fab {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
+    bottom: calc(80px + env(safe-area-inset-bottom));
+    right: 20px;
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: var(--maroon);
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
     color: white;
     border: none;
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(125,29,58,.35);
+    box-shadow: 0 8px 24px rgba(125,29,58,.4);
     display: flex; align-items: center; justify-content: center;
     z-index: 30;
+    transition: all .2s var(--ease-out);
   }
-  .fab:hover { background: var(--maroon-dark); }
+  .fab:hover { transform: scale(1.08); box-shadow: 0 12px 32px rgba(125,29,58,.5); }
+  .fab:active { transform: scale(.95); }
+  @media (min-width: 900px) {
+    .fab {
+      bottom: 28px;
+      right: 28px;
+    }
+  }
+
+  /* ═══════════════════════════════════════════
+     MODAL FORM
+     ═══════════════════════════════════════════ */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(28,20,20,.55);
+    z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px;
+    animation: fade-in .2s both;
+  }
+  .modal {
+    background: var(--surface);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 540px;
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 64px rgba(0,0,0,.3);
+    animation: slide-up-sm .3s var(--ease-out) both;
+  }
+  @keyframes slide-up-sm {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-header {
+    padding: 20px 22px 16px;
+    border-bottom: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .modal-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--maroon);
+  }
+  .modal-body {
+    padding: 20px 22px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .modal-footer {
+    padding: 14px 22px;
+    border-top: 1.5px solid var(--border);
+    background: var(--bg);
+    border-radius: 0 0 20px 20px;
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .modal-footer .btn { flex: 1; }
 </style>
 </head>
-<body>
+<body class="admin-body">
 
-<header class="app-header">
-  <div class="app-header-brand">
-    <a href="../beranda.html" class="header-btn" style="text-decoration:none;">
+<!-- HEADER MOBILE -->
+<header class="admin-header">
+  <div class="admin-header-left">
+    <a href="index.html" class="admin-header-btn" aria-label="Kembali">
       <span data-icon="chevronLeft"></span>
     </a>
-    <div class="app-header-text">
-      <div class="app-header-title">Kelola Pertemuan</div>
-      <div class="app-header-sub">Admin NAKULAKU</div>
+    <div class="admin-header-title">
+      <div class="admin-header-title-1">KELOLA PERTEMUAN</div>
+      <div class="admin-header-title-2">Admin NAKULAKU</div>
     </div>
   </div>
+  <button class="admin-header-btn" data-act="logout" aria-label="Keluar">
+    <span data-icon="logOut"></span>
+  </button>
 </header>
 
-<main class="container page" style="max-width:900px;padding-top:16px;">
+<div class="admin-layout">
 
-  <div id="infoPeriode" style="margin-bottom:16px;font-size:12px;color:var(--muted);font-weight:600;"></div>
+  <!-- SIDEBAR DESKTOP -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <div class="admin-sidebar-logo">
+        <img src="../assets/img/logo-mark.svg" alt="Nakula" />
+      </div>
+      <div>
+        <div class="admin-sidebar-name">NAKULAKU</div>
+        <div class="admin-sidebar-sub">Admin Panel</div>
+      </div>
+    </div>
 
-  <div class="tabs" style="display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:12px;margin-bottom:16px;border:1px solid var(--border);">
-    <button class="tab-p" data-tipe="aktif" style="flex:1;padding:10px;text-align:center;font-size:13px;font-weight:700;color:var(--maroon);border-radius:8px;cursor:pointer;border:none;background:var(--surface);box-shadow:var(--sh-sm);">
-      Aktif
-    </button>
-    <button class="tab-p" data-tipe="arsip" style="flex:1;padding:10px;text-align:center;font-size:13px;font-weight:700;color:var(--muted);border-radius:8px;cursor:pointer;border:none;background:transparent;">
-      Diarsipkan
-    </button>
-  </div>
+    <nav class="admin-sidebar-menu">
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Dashboard</div>
+        <a class="admin-sidebar-item" data-nav="dashboard" href="index.html">
+          <span data-icon="layoutDashboard"></span> Dashboard
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Data</div>
+        <a class="admin-sidebar-item" data-nav="guru" href="guru.html">
+          <span data-icon="users"></span> Data Guru
+        </a>
+        <a class="admin-sidebar-item" data-nav="bulk" href="guru-bulk.html">
+          <span data-icon="checkSquare"></span> Bulk Action
+        </a>
+        <a class="admin-sidebar-item" data-nav="impor" href="impor.html">
+          <span data-icon="upload"></span> Impor CSV
+        </a>
+        <a class="admin-sidebar-item" data-nav="master" href="master-data.html">
+          <span data-icon="database"></span> Master Data
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Kegiatan</div>
+        <a class="admin-sidebar-item" data-nav="periode" href="periode.html">
+          <span data-icon="calendar"></span> Kelola Periode
+        </a>
+        <a class="admin-sidebar-item active" data-nav="pertemuan" href="pertemuan.html">
+          <span data-icon="list"></span> Kelola Pertemuan
+        </a>
+        <a class="admin-sidebar-item" data-nav="pengumuman" href="pengumuman.html">
+          <span data-icon="megaphone"></span> Pengumuman
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Evaluasi</div>
+        <a class="admin-sidebar-item" data-nav="verifikasi-sekolah" href="verifikasi-sekolah.html">
+          <span data-icon="sparkles"></span> Verifikasi Sekolah
+        </a>
+        <a class="admin-sidebar-item" data-nav="karya" href="karya.html">
+          <span data-icon="sparkles"></span> Verifikasi Karya
+        </a>
+        <a class="admin-sidebar-item" data-nav="verifikasi-presensi" href="../ks/verifikasi.html">
+          <span data-icon="checkCircle"></span> Verifikasi Presensi
+        </a>
+        <a class="admin-sidebar-item" data-nav="alihkan" href="alihkan-verifikasi.html">
+          <span data-icon="refreshCw"></span> Alihkan Verifikasi
+        </a>
+        <a class="admin-sidebar-item" data-nav="feedback" href="feedback.html">
+          <span data-icon="messageSquare"></span> Rekap Feedback
+        </a>
+        <a class="admin-sidebar-item" data-nav="award" href="award.html">
+          <span data-icon="award"></span> Kelola Award
+        </a>
+        <a class="admin-sidebar-item" data-nav="sertifikat" href="sertifikat.html">
+          <span data-icon="fileText"></span> Sertifikat
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Laporan</div>
+        <a class="admin-sidebar-item" data-nav="analitik" href="analitik.html">
+          <span data-icon="activity"></span> Analitik
+        </a>
+        <a class="admin-sidebar-item" data-nav="laporan" href="laporan.html">
+          <span data-icon="download"></span> Export Laporan
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Sistem</div>
+        <a class="admin-sidebar-item" data-nav="kategori-ajuan" href="kategori-ajuan.html">
+          <span data-icon="tag"></span> Kategori Ajuan
+        </a>
+        <a class="admin-sidebar-item" data-nav="log" href="log.html">
+          <span data-icon="list"></span> Log Aktivitas
+        </a>
+        <a class="admin-sidebar-item" data-nav="pengaturan" href="pengaturan.html">
+          <span data-icon="settings"></span> Pengaturan
+        </a>
+      </div>
+    </nav>
+  </aside>
 
-  <div id="listPertemuan">
-    <div class="skeleton" style="height:88px;border-radius:16px;margin-bottom:10px;"></div>
-    <div class="skeleton" style="height:88px;border-radius:16px;margin-bottom:10px;"></div>
-  </div>
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-topbar-title">Kelola Pertemuan</h1>
+      <div class="admin-topbar-right">
+        <div class="admin-user-chip" id="userChip"></div>
+        <button class="btn-icon" data-act="logout" aria-label="Keluar" title="Keluar">
+          <span data-icon="logOut"></span>
+        </button>
+      </div>
+    </div>
 
-</main>
+    <div class="admin-content">
 
+      <!-- Info Periode -->
+      <div id="infoPeriode" class="info-periode">
+        <span data-icon="calendar" class="icon-sm"></span>
+        <span>Memuat periode…</span>
+      </div>
+
+      <!-- Statistik -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon gold"><span data-icon="list" class="icon-sm"></span></div>
+          <div class="stat-val" id="statTotal">—</div>
+          <div class="stat-label">Total Pertemuan</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><span data-icon="checkCircle" class="icon-sm"></span></div>
+          <div class="stat-val" id="statAktif">—</div>
+          <div class="stat-label">Aktif</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue"><span data-icon="check" class="icon-sm"></span></div>
+          <div class="stat-val" id="statSelesai">—</div>
+          <div class="stat-label">Selesai</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon gray"><span data-icon="edit" class="icon-sm"></span></div>
+          <div class="stat-val" id="statDraft">—</div>
+          <div class="stat-label">Draft</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-wrap">
+          <span class="icon-left" data-icon="search" data-icon-class="icon-sm"></span>
+          <input type="text" id="fSearch" placeholder="Cari judul, lokasi, atau narasumber…" />
+        </div>
+        <div class="filter-row">
+          <button class="fchip active" data-status="">Semua Status</button>
+          <button class="fchip" data-status="aktif">Aktif</button>
+          <button class="fchip" data-status="draft">Draft</button>
+          <button class="fchip" data-status="selesai">Selesai</button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-switch">
+        <button class="tsw active" data-tipe="aktif">
+          <span data-icon="list" class="icon-sm"></span>
+          Aktif
+          <span class="tsw-count" id="countAktif">0</span>
+        </button>
+        <button class="tsw" data-tipe="arsip">
+          <span data-icon="archive" class="icon-sm"></span>
+          Diarsipkan
+          <span class="tsw-count" id="countArsip">0</span>
+        </button>
+      </div>
+
+      <!-- List -->
+      <div id="listPertemuan">
+        <div class="skeleton" style="height:100px;border-radius:18px;margin-bottom:12px;"></div>
+        <div class="skeleton" style="height:100px;border-radius:18px;"></div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- BOTTOM NAV MOBILE -->
+<nav class="admin-bottom-nav">
+  <a class="admin-nav-item" data-nav="dashboard" href="index.html">
+    <span data-icon="layoutDashboard"></span> Dashboard
+  </a>
+  <a class="admin-nav-item" data-nav="guru" href="guru.html">
+    <span data-icon="users"></span> Guru
+  </a>
+  <a class="admin-nav-item" data-nav="pertemuan" href="pertemuan.html">
+    <span data-icon="calendar"></span> Pertemuan
+  </a>
+  <a class="admin-nav-item" data-nav="verifikasi" href="verifikasi-sekolah.html">
+    <span data-icon="checkCircle"></span> Verifikasi
+  </a>
+  <button class="admin-nav-item" id="btnLainnya">
+    <span data-icon="menu"></span> Lainnya
+  </button>
+</nav>
+
+<!-- FAB -->
 <button class="fab" id="btnTambah" aria-label="Tambah Pertemuan">
-  <span data-icon="plus"></span>
+  <span data-icon="plus" style="display:flex;width:24px;height:24px;"></span>
 </button>
 
 <script src="../assets/js/icons.js"></script>
 <script src="../assets/js/api.js"></script>
 <script src="../assets/js/ui.js"></script>
 <script>
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
 document.querySelectorAll('[data-icon]').forEach(el => {
-  el.innerHTML = Icons.get(el.dataset.icon);
+  const cls = el.dataset.iconClass || '';
+  el.innerHTML = Icons.get(el.dataset.icon, { class: cls });
   el.style.display = 'contents';
 });
+UI.bindLogout();
 
-let profile;
-let periodeAktif = null;
-let daftarPertemuan = [];
-let daftarArsip = [];
-let tabAktif = 'aktif';
+// Bottom sheet Lainnya
+document.getElementById('btnLainnya')?.addEventListener('click', () => {
+  const overlay = document.createElement('div');
+  overlay.className = 'admin-sheet-overlay';
+  overlay.innerHTML = `
+    <div class="admin-sheet">
+      <div class="admin-sheet-handle"></div>
+      <div class="admin-sheet-title">Lainnya</div>
+      <div class="admin-sheet-grid">
+        <a class="admin-sheet-item" href="master-data.html">
+          <div class="icon-wrap">${Icons.get('database', { class: 'icon-sm' })}</div>
+          <span>Master Data</span>
+        </a>
+        <a class="admin-sheet-item" href="guru-bulk.html">
+          <div class="icon-wrap">${Icons.get('checkSquare', { class: 'icon-sm' })}</div>
+          <span>Bulk Action</span>
+        </a>
+        <a class="admin-sheet-item" href="karya.html">
+          <div class="icon-wrap">${Icons.get('sparkles', { class: 'icon-sm' })}</div>
+          <span>Verifikasi Karya</span>
+        </a>
+        <a class="admin-sheet-item" href="alihkan-verifikasi.html">
+          <div class="icon-wrap">${Icons.get('refreshCw', { class: 'icon-sm' })}</div>
+          <span>Alihkan Verifikasi</span>
+        </a>
+        <a class="admin-sheet-item" href="award.html">
+          <div class="icon-wrap">${Icons.get('award', { class: 'icon-sm' })}</div>
+          <span>Kelola Award</span>
+        </a>
+        <a class="admin-sheet-item" href="laporan.html">
+          <div class="icon-wrap">${Icons.get('download', { class: 'icon-sm' })}</div>
+          <span>Export Laporan</span>
+        </a>
+      </div>
+      <button class="btn btn-primary btn-full" id="btnTutupSheet" style="margin-top:16px;">Tutup</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  const close = () => overlay.remove();
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+  overlay.querySelector('#btnTutupSheet').addEventListener('click', close);
+});
+
+// User chip
+window.addEventListener('load', () => {
+  const profile = Api.getProfile();
+  if (!profile) return;
+  const chip = document.getElementById('userChip');
+  if (chip) {
+    const init = (profile.nama || 'A').charAt(0).toUpperCase();
+    const fotoUrl = Api.fotoSayaUrl('t');
+    chip.innerHTML = `
+      <div class="avatar">
+        ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.parentElement.textContent='${init}'">` : init}
+      </div>
+      <span>${UI.escapeHtml(profile.nama || '-')}</span>
+    `;
+  }
+});
 
 // ═══════════════════════════════════════════════
-// HELPER: Format jam untuk <input type="time">
+// HELPER
 // ═══════════════════════════════════════════════
 function formatJamInput(val) {
   if (!val) return '';
   const str = String(val).trim();
-
-  // 1. Sudah format "HH:mm" atau "HH:mm:ss" (dari time column) → ambil HH:mm
   if (/^\d{2}:\d{2}/.test(str)) return str.slice(0, 5);
-
-  // 2. Format ISO datetime "2026-10-17T07:49:00.000Z" (dari timestamptz)
-  //    Extract HH:mm langsung dari string — TANPA timezone conversion.
-  //    Ini penting: apa yang disimpan = apa yang ditampilkan (round-trip).
   const isoMatch = str.match(/T(\d{2}):(\d{2})/);
   if (isoMatch) return `${isoMatch[1]}:${isoMatch[2]}`;
-
-  // 3. Fallback: parse sebagai Date
   try {
     const d = new Date(str);
     if (isNaN(d.getTime())) return '';
-    const hh = String(d.getUTCHours()).padStart(2, '0');
-    const mm = String(d.getUTCMinutes()).padStart(2, '0');
-    return `${hh}:${mm}`;
-  } catch {
-    return '';
-  }
+    return `${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}`;
+  } catch { return ''; }
 }
 
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let profile = null;
+let periodeAktif = null;
+let daftarPertemuan = [];
+let daftarArsip = [];
+let tabAktif = 'aktif';
+let statusFilter = '';
+let searchQuery = '';
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
 (async () => {
   profile = await Api.requireLogin();
   if (!profile) return;
 
   if (!profile.peran.includes('pengurus') && !profile.peran.includes('super_admin')) {
-    document.querySelector('main').innerHTML = UI.errorHtml('Halaman ini hanya untuk pengurus.');
+    document.querySelector('.admin-content').innerHTML = UI.errorHtml('Halaman ini hanya untuk pengurus.');
     return;
   }
 
@@ -208,44 +809,56 @@ function formatJamInput(val) {
   document.getElementById('btnTambah').addEventListener('click', () => bukaForm(null));
 
   // Tab switching
-  document.querySelectorAll('.tab-p').forEach(t => {
+  document.querySelectorAll('.tsw').forEach(t => {
     t.addEventListener('click', () => {
       tabAktif = t.dataset.tipe;
-      document.querySelectorAll('.tab-p').forEach(x => {
-        const on = x === t;
-        x.style.background = on ? 'var(--surface)' : 'transparent';
-        x.style.color = on ? 'var(--maroon)' : 'var(--muted)';
-        x.style.boxShadow = on ? 'var(--sh-sm)' : 'none';
-      });
+      document.querySelectorAll('.tsw').forEach(x => x.classList.toggle('active', x === t));
       renderTab();
     });
   });
-})();
 
-function renderTab() {
-  if (tabAktif === 'aktif') {
-    renderListAktif();
-  } else {
-    renderListArsip();
-  }
-}
+  // Filter status
+  document.querySelectorAll('.fchip').forEach(c => {
+    c.addEventListener('click', () => {
+      statusFilter = c.dataset.status;
+      document.querySelectorAll('.fchip').forEach(x => x.classList.toggle('active', x === c));
+      renderTab();
+    });
+  });
+
+  // Search (debounced)
+  let searchTimer;
+  document.getElementById('fSearch').addEventListener('input', (e) => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      searchQuery = e.target.value.toLowerCase().trim();
+      renderTab();
+    }, 250);
+  });
+})();
 
 async function loadPeriode() {
   const res = await Api.call('periode.aktif');
+  const el = document.getElementById('infoPeriode');
   if (res.ok && res.data) {
     periodeAktif = res.data;
-    document.getElementById('infoPeriode').innerHTML =
-      `<span style="color:var(--maroon);">${Icons.get('calendar', { class: 'icon-sm' })}</span> Periode: <strong>${UI.escapeHtml(periodeAktif.nama)}</strong>`;
+    el.innerHTML = `
+      <span data-icon="calendar" class="icon-sm" style="display:contents;">${Icons.get('calendar', { class: 'icon-sm' })}</span>
+      <span>Periode Aktif: <strong>${UI.escapeHtml(periodeAktif.nama)}</strong></span>
+    `;
   } else {
-    document.getElementById('infoPeriode').textContent = '⚠ Tidak ada periode aktif';
+    el.innerHTML = `
+      <span data-icon="alertCircle" class="icon-sm" style="display:contents;">${Icons.get('alertCircle', { class: 'icon-sm' })}</span>
+      <span>⚠ Tidak ada periode aktif</span>
+    `;
   }
 }
 
 async function loadPertemuan() {
   const el = document.getElementById('listPertemuan');
   el.innerHTML = `
-    <div class="skeleton" style="height:88px;border-radius:16px;margin-bottom:10px;"></div>
-    <div class="skeleton" style="height:88px;border-radius:16px;margin-bottom:10px;"></div>
+    <div class="skeleton" style="height:100px;border-radius:18px;margin-bottom:12px;"></div>
+    <div class="skeleton" style="height:100px;border-radius:18px;"></div>
   `;
 
   const [resAktif, resArsip] = await Promise.all([
@@ -256,49 +869,62 @@ async function loadPertemuan() {
   daftarPertemuan = resAktif.ok ? (resAktif.data || []) : [];
   daftarArsip = resArsip.ok ? (resArsip.data || []) : [];
 
+  updateStats();
   renderTab();
 }
 
-// ============================================================
-// BADGE WINDOW PRESENSI
-// ============================================================
+function updateStats() {
+  const total = daftarPertemuan.length;
+  const aktif = daftarPertemuan.filter(p => p.status === 'aktif').length;
+  const selesai = daftarPertemuan.filter(p => p.status === 'selesai').length;
+  const draft = daftarPertemuan.filter(p => p.status === 'draft').length;
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statAktif').textContent = aktif;
+  document.getElementById('statSelesai').textContent = selesai;
+  document.getElementById('statDraft').textContent = draft;
+  document.getElementById('countAktif').textContent = total;
+  document.getElementById('countArsip').textContent = daftarArsip.length;
+}
+
+function renderTab() {
+  if (tabAktif === 'aktif') {
+    renderListAktif();
+  } else {
+    renderListArsip();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// BADGE WINDOW
+// ═══════════════════════════════════════════════
 function renderBadgeWindow(p) {
   const tgl = p.tanggal || new Date().toISOString().slice(0, 10);
-  
-  // 1. Ambil format jam murni (HH:mm) dari teks apapun
   const parseTime = (str) => {
     if (!str) return null;
     const m = String(str).match(/(\d{2}):(\d{2})/);
     if (!m) return null;
-    // Paksa hitung sebagai WIB (+07:00)
     return new Date(`${tgl}T${m[1]}:${m[2]}:00+07:00`);
   };
-
   const buka = parseTime(p.presensi_buka);
   const tutup = parseTime(p.presensi_tutup);
   const now = new Date();
-  
-  // 2. Hitung status secara mandiri
   let status = 'belum';
   if (buka && tutup) {
     if (now >= buka && now <= tutup) status = 'buka';
     else if (now > tutup) status = 'tutup';
   }
-
   const map = {
     belum: { label: 'Presensi Belum Dibuka', icon: 'lock' },
     buka:  { label: 'Presensi Dibuka',       icon: 'checkCircle' },
     tutup: { label: 'Presensi Ditutup',      icon: 'x' },
   };
   const m = map[status] || map.belum;
-
-  // 3. Format angka untuk badge (titik dua diganti titik)
   const fmt = (str) => {
     if (!str) return '--:--';
     const match = String(str).match(/(\d{2}):(\d{2})/);
     return match ? `${match[1]}.${match[2]}` : '--:--';
   };
-
   return `
     <div class="window-badge ${status}">
       ${Icons.get(m.icon, { class: 'icon-sm' })}
@@ -307,16 +933,49 @@ function renderBadgeWindow(p) {
   `;
 }
 
+// ═══════════════════════════════════════════════
+// LIST AKTIF
+// ═══════════════════════════════════════════════
 function renderListAktif() {
   const el = document.getElementById('listPertemuan');
 
-  if (daftarPertemuan.length === 0) {
-    el.innerHTML = UI.emptyHtml('calendar', 'Belum ada pertemuan', 'Klik tombol + untuk menambah.');
+  // Filter
+  let filtered = daftarPertemuan;
+
+  if (statusFilter) {
+    filtered = filtered.filter(p => p.status === statusFilter);
+  }
+
+  if (searchQuery) {
+    filtered = filtered.filter(p => {
+      const haystack = `${p.judul || ''} ${p.lokasi_nama || ''} ${p.narasumber_nama || ''}`.toLowerCase();
+      return haystack.includes(searchQuery);
+    });
+  }
+
+  if (filtered.length === 0) {
+    if (daftarPertemuan.length === 0) {
+      el.innerHTML = `
+        <div class="empty-panel">
+          <div class="big-icon">${Icons.get('calendar', { class: 'icon-lg' })}</div>
+          <h3>Belum Ada Pertemuan</h3>
+          <p>Klik tombol + di kanan bawah untuk menambah pertemuan pertama Anda.</p>
+        </div>
+      `;
+    } else {
+      el.innerHTML = `
+        <div class="empty-panel">
+          <div class="big-icon">${Icons.get('search', { class: 'icon-lg' })}</div>
+          <h3>Tidak Ada Hasil</h3>
+          <p>Tidak ada pertemuan yang cocok dengan pencarian atau filter Anda. Coba ubah kata kunci.</p>
+        </div>
+      `;
+    }
     return;
   }
 
-  el.innerHTML = daftarPertemuan.map(p => `
-    <div class="item-pertemuan" style="margin-bottom:12px;">
+  el.innerHTML = filtered.map((p, idx) => `
+    <div class="item-pertemuan status-${p.status}" style="animation-delay:${idx * 0.04}s">
       <div class="item-head">
         <div class="item-num">
           <div class="n">${p.urutan}</div>
@@ -332,35 +991,35 @@ function renderListAktif() {
               ${Icons.get('mapPin', { class: 'icon-sm' })} ${UI.escapeHtml(p.lokasi_nama)}
             </div>
           ` : ''}
+          ${p.narasumber_nama ? `
+            <div class="item-meta">
+              ${Icons.get('user', { class: 'icon-sm' })} ${UI.escapeHtml(p.narasumber_nama)}
+            </div>
+          ` : ''}
           ${renderBadgeWindow(p)}
         </div>
         <span class="status-pill status-${p.status}">${p.status}</span>
       </div>
 
-      <div style="display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
-        <button class="btn btn-secondary btn-sm" data-detail="${p.id}" style="flex:2;">
-          ${Icons.get('settings', { class: 'icon-sm' })}
-          Materi & Tugas
+      <div class="item-actions">
+        <button class="btn btn-primary btn-sm" data-detail="${p.id}" style="flex:2;">
+          ${Icons.get('settings', { class: 'icon-sm' })} Materi & Tugas
         </button>
         <button class="btn btn-secondary btn-sm" data-edit="${p.id}" style="flex:1;">
-          ${Icons.get('edit', { class: 'icon-sm' })}
-          Edit
+          ${Icons.get('edit', { class: 'icon-sm' })} Edit
         </button>
-        <button class="btn btn-ghost btn-sm" data-hapus="${p.id}" style="color:var(--danger);padding:8px 10px;">
+        <button class="btn btn-ghost btn-sm" data-hapus="${p.id}" style="color:var(--danger); padding:9px 11px;">
           ${Icons.get('trash', { class: 'icon-sm' })}
         </button>
       </div>
     </div>
   `).join('');
 
-  // Detail → buka halaman kelola materi/tugas
   el.querySelectorAll('[data-detail]').forEach(b => {
     b.addEventListener('click', () => {
       window.location.href = 'pertemuan-detail.html?id=' + Number(b.dataset.detail);
     });
   });
-
-  // Edit → buka form edit pertemuan
   el.querySelectorAll('[data-edit]').forEach(b => {
     b.addEventListener('click', () => {
       const id = Number(b.dataset.edit);
@@ -368,48 +1027,42 @@ function renderListAktif() {
       if (p) bukaForm(p);
     });
   });
-
-  // Hapus
   el.querySelectorAll('[data-hapus]').forEach(b => {
     b.addEventListener('click', () => hapusPertemuan(Number(b.dataset.hapus)));
   });
 }
 
-// ============================================================
-// HAPUS PERTEMUAN
-// ============================================================
-async function hapusPertemuan(id) {
-  const p = daftarPertemuan.find(x => x.id === id);
-  if (!p) return;
-
-  const ok = await UI.konfirmasi(
-    'Hapus Pertemuan',
-    `Hapus "${p.judul}"?\n\nKalau belum ada aktivitas (presensi/tugas/feedback), akan dihapus permanen.\nKalau sudah ada, akan diarsipkan (bisa dipulihkan).`,
-    { danger: true, okText: 'Hapus' }
-  );
-  if (!ok) return;
-
-  const res = await Api.call('admin.pertemuan.hapus', { pertemuan_id: id });
-  if (!res.ok) { UI.gagal(res.error); return; }
-
-  UI.sukses(res.data.pesan || 'Pertemuan dihapus.');
-  await loadPertemuan();
-}
-
+// ═══════════════════════════════════════════════
+// LIST ARSIP
+// ═══════════════════════════════════════════════
 function renderListArsip() {
   const el = document.getElementById('listPertemuan');
 
-  if (daftarArsip.length === 0) {
-    el.innerHTML = UI.emptyHtml('archive', 'Tidak ada arsip', 'Pertemuan yang diarsipkan akan muncul di sini.');
+  let filtered = daftarArsip;
+  if (searchQuery) {
+    filtered = filtered.filter(p => {
+      const haystack = `${p.judul || ''} ${p.lokasi_nama || ''}`.toLowerCase();
+      return haystack.includes(searchQuery);
+    });
+  }
+
+  if (filtered.length === 0) {
+    el.innerHTML = `
+      <div class="empty-panel">
+        <div class="big-icon">${Icons.get('archive', { class: 'icon-lg' })}</div>
+        <h3>Tidak Ada Arsip</h3>
+        <p>Pertemuan yang diarsipkan (karena sudah ada aktivitas) akan muncul di sini.</p>
+      </div>
+    `;
     return;
   }
 
-  el.innerHTML = daftarArsip.map(p => `
-    <div class="item-pertemuan" data-id="${p.id}" style="opacity:0.85;">
+  el.innerHTML = filtered.map((p, idx) => `
+    <div class="item-pertemuan" style="opacity:0.85; animation-delay:${idx * 0.04}s">
       <div class="item-head">
         <div class="item-num" style="background:var(--border);color:var(--muted);">
           <div class="n">${p.urutan}</div>
-          <div class="l">PERT</div>
+          <div class="l">ARSIP</div>
         </div>
         <div class="item-info">
           <div class="item-title">${UI.escapeHtml(p.judul)}</div>
@@ -437,7 +1090,6 @@ function renderListArsip() {
         { okText: 'Pulihkan' }
       );
       if (!ok) return;
-
       const res = await Api.call('admin.pertemuan.pulihkan', { pertemuan_id: id });
       if (!res.ok) { UI.gagal(res.error); return; }
       UI.sukses(res.data.pesan);
@@ -446,9 +1098,29 @@ function renderListArsip() {
   });
 }
 
-// ============================================================
-// FORM TAMBAH/EDIT
-// ============================================================
+// ═══════════════════════════════════════════════
+// HAPUS
+// ═══════════════════════════════════════════════
+async function hapusPertemuan(id) {
+  const p = daftarPertemuan.find(x => x.id === id);
+  if (!p) return;
+
+  const ok = await UI.konfirmasi(
+    'Hapus Pertemuan',
+    `Hapus "${p.judul}"?\n\nKalau belum ada aktivitas (presensi/tugas/feedback), akan dihapus permanen.\nKalau sudah ada, akan diarsipkan (bisa dipulihkan).`,
+    { danger: true, okText: 'Hapus' }
+  );
+  if (!ok) return;
+
+  const res = await Api.call('admin.pertemuan.hapus', { pertemuan_id: id });
+  if (!res.ok) { UI.gagal(res.error); return; }
+  UI.sukses(res.data.pesan || 'Pertemuan dihapus.');
+  await loadPertemuan();
+}
+
+// ═══════════════════════════════════════════════
+// FORM TAMBAH / EDIT
+// ═══════════════════════════════════════════════
 function bukaForm(pertemuan) {
   if (!periodeAktif) { UI.gagal('Belum ada periode aktif.'); return; }
 
@@ -456,63 +1128,61 @@ function bukaForm(pertemuan) {
   const p = pertemuan || {};
 
   const overlay = document.createElement('div');
-  overlay.style.cssText = `
-    position:fixed;inset:0;background:rgba(28,20,20,.5);
-    display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;
-  `;
+  overlay.className = 'modal-backdrop';
   overlay.innerHTML = `
-    <div style="background:white;border-radius:20px;padding:24px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--sh-xl);">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-        <h3 style="font-size:17px;color:var(--maroon);margin:0;">${isEdit ? 'Edit' : 'Tambah'} Pertemuan</h3>
-        <button data-close class="btn-icon">${Icons.get('x')}</button>
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">${isEdit ? 'Edit' : 'Tambah'} Pertemuan</div>
+        <button class="btn-icon" data-close aria-label="Tutup">
+          ${Icons.get('x')}
+        </button>
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div class="field">
+      <div class="modal-body">
+        <div class="field" style="margin-bottom:12px;">
           <label class="label">Urutan *</label>
           <input type="number" id="fUrutan" class="input" value="${p.urutan || (daftarPertemuan.length + 1)}" />
         </div>
-        <div class="field">
+        <div class="field" style="margin-bottom:12px;">
           <label class="label">Judul *</label>
           <input type="text" id="fJudul" class="input" value="${UI.escapeHtml(p.judul || '')}" placeholder="Mis: Pembukaan & Materi Awal" />
         </div>
-        <div class="field">
+        <div class="field" style="margin-bottom:12px;">
           <label class="label">Deskripsi</label>
           <textarea id="fDeskripsi" class="input" rows="2" style="resize:vertical;">${UI.escapeHtml(p.deskripsi || '')}</textarea>
         </div>
-        <div class="field">
+        <div class="field" style="margin-bottom:12px;">
           <label class="label">Tanggal *</label>
           <input type="date" id="fTanggal" class="input" value="${p.tanggal || ''}" />
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
           <div class="field">
             <label class="label">Jam Mulai</label>
-            <input type="time" id="fJamMulai" class="input" value="${formatJamInput(p.jam_mulai)}" />
+            <input type="time" id="fJamMulai" class="input" step="60" value="${formatJamInput(p.jam_mulai)}" />
           </div>
           <div class="field">
             <label class="label">Jam Selesai</label>
-            <input type="time" id="fJamSelesai" class="input" value="${formatJamInput(p.jam_selesai)}" />
+            <input type="time" id="fJamSelesai" class="input" step="60" value="${formatJamInput(p.jam_selesai)}" />
           </div>
           <div class="field">
             <label class="label">Batas Tepat</label>
-            <input type="time" id="fBatas" class="input" value="${formatJamInput(p.batas_tepat_waktu)}" />
+            <input type="time" id="fBatas" class="input" step="60" value="${formatJamInput(p.batas_tepat_waktu)}" />
           </div>
         </div>
 
-        <!-- WINDOW PRESENSI -->
-        <div style="background:var(--bg);border-radius:12px;padding:12px;border:1px solid var(--border);">
+        <div style="background:var(--bg);border-radius:12px;padding:12px;border:1px solid var(--border);margin-bottom:12px;">
           <div style="font-size:11px;font-weight:800;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
             ${Icons.get('clock', { class: 'icon-sm' })} Window Presensi
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
             <div class="field">
               <label class="label">Buka</label>
-              <input type="time" id="fPresensiBuka" class="input" value="${formatJamInput(p.presensi_buka)}" />
+              <input type="time" id="fPresensiBuka" class="input" step="60" value="${formatJamInput(p.presensi_buka)}" />
             </div>
             <div class="field">
               <label class="label">Tutup</label>
-              <input type="time" id="fPresensiTutup" class="input" value="${formatJamInput(p.presensi_tutup)}" />
+              <input type="time" id="fPresensiTutup" class="input" step="60" value="${formatJamInput(p.presensi_tutup)}" />
             </div>
           </div>
           <div style="font-size:10.5px;color:var(--muted);margin-top:8px;font-weight:600;line-height:1.5;">
@@ -520,11 +1190,11 @@ function bukaForm(pertemuan) {
           </div>
         </div>
 
-        <div class="field">
+        <div class="field" style="margin-bottom:12px;">
           <label class="label">Nama Lokasi</label>
           <input type="text" id="fLokasi" class="input" value="${UI.escapeHtml(p.lokasi_nama || '')}" placeholder="Mis: SD Negeri 1 Krisak" />
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
           <div class="field">
             <label class="label">Latitude</label>
             <input type="text" id="fLat" class="input" value="${p.latitude || ''}" placeholder="-7.6895" />
@@ -538,7 +1208,7 @@ function bukaForm(pertemuan) {
             <input type="number" id="fRadius" class="input" value="${p.radius_meter || 100}" />
           </div>
         </div>
-        <div class="field">
+        <div class="field" style="margin-bottom:12px;">
           <label class="label">Narasumber</label>
           <input type="text" id="fNarsum" class="input" value="${UI.escapeHtml(p.narasumber_nama || '')}" placeholder="Nama narasumber (opsional)" />
         </div>
@@ -550,13 +1220,13 @@ function bukaForm(pertemuan) {
             <option value="selesai" ${p.status === 'selesai' ? 'selected' : ''}>Selesai</option>
           </select>
         </div>
+
+        <div id="formAlert" class="alert alert-error hidden" style="margin-top:14px;"></div>
       </div>
 
-      <div id="formAlert" class="alert alert-error" style="margin-top:14px;"></div>
-
-      <div style="display:flex;gap:8px;margin-top:20px;">
-        ${isEdit ? `<button class="btn btn-ghost" id="btnHapus" style="color:var(--danger);">${Icons.get('trash', { class: 'icon-sm' })} Hapus</button>` : ''}
-        <button class="btn btn-secondary" id="btnBatal" style="flex:1;">Batal</button>
+      <div class="modal-footer">
+        ${isEdit ? `<button class="btn btn-ghost" id="btnHapus" style="color:var(--danger);flex:0 0 auto;padding:10px 16px;">${Icons.get('trash', { class: 'icon-sm' })}</button>` : ''}
+        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
         <button class="btn btn-primary" id="btnSimpan" style="flex:2;">Simpan</button>
       </div>
     </div>
@@ -564,21 +1234,18 @@ function bukaForm(pertemuan) {
   document.body.appendChild(overlay);
 
   const close = () => overlay.remove();
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
-  overlay.querySelector('[data-close]').addEventListener('click', close);
-  overlay.querySelector('#btnBatal').addEventListener('click', close);
 
   overlay.querySelector('#btnSimpan').addEventListener('click', async () => {
     const btn = overlay.querySelector('#btnSimpan');
     const alertBox = overlay.querySelector('#formAlert');
-    alertBox.classList.remove('show');
+    alertBox.classList.add('hidden');
 
-    // Helper untuk memastikan format HH:mm atau null
-    const getTimeVal = (id) => {
-      let val = overlay.querySelector(id).value.trim();
-      if (!val) return null;
-      // Pastikan formatnya HH:mm
-      return val.slice(0, 5);
+    const getWaktu = (id) => {
+      const v = overlay.querySelector(id).value;
+      if (!v) return null;
+      return String(v).slice(0, 5);
     };
 
     const payload = {
@@ -588,11 +1255,11 @@ function bukaForm(pertemuan) {
       judul: overlay.querySelector('#fJudul').value.trim(),
       deskripsi: overlay.querySelector('#fDeskripsi').value.trim(),
       tanggal: overlay.querySelector('#fTanggal').value,
-      jam_mulai: getTimeVal('#fJamMulai'),
-      jam_selesai: getTimeVal('#fJamSelesai'),
-      batas_tepat_waktu: getTimeVal('#fBatas'),
-      presensi_buka: getTimeVal('#fPresensiBuka'),
-      presensi_tutup: getTimeVal('#fPresensiTutup'),
+      jam_mulai: getWaktu('#fJamMulai'),
+      jam_selesai: getWaktu('#fJamSelesai'),
+      batas_tepat_waktu: getWaktu('#fBatas'),
+      presensi_buka: getWaktu('#fPresensiBuka'),
+      presensi_tutup: getWaktu('#fPresensiTutup'),
       lokasi_nama: overlay.querySelector('#fLokasi').value.trim(),
       latitude: overlay.querySelector('#fLat').value.trim(),
       longitude: overlay.querySelector('#fLng').value.trim(),
@@ -600,11 +1267,17 @@ function bukaForm(pertemuan) {
       narasumber_nama: overlay.querySelector('#fNarsum').value.trim(),
       status: overlay.querySelector('#fStatus').value,
     };
-    
-    console.log("Mengirim data pertemuan:", payload); // Untuk debugging
 
-    if (!payload.judul) { alertBox.textContent = 'Judul wajib.'; alertBox.classList.add('show'); return; }
-    if (!payload.tanggal) { alertBox.textContent = 'Tanggal wajib.'; alertBox.classList.add('show'); return; }
+    if (!payload.judul) {
+      alertBox.textContent = 'Judul wajib.';
+      alertBox.classList.remove('hidden');
+      return;
+    }
+    if (!payload.tanggal) {
+      alertBox.textContent = 'Tanggal wajib.';
+      alertBox.classList.remove('hidden');
+      return;
+    }
 
     UI.btnLoading(btn, 'Menyimpan…');
     const res = await Api.call('admin.pertemuan.simpan', { pertemuan: payload });
@@ -612,29 +1285,19 @@ function bukaForm(pertemuan) {
 
     if (!res.ok) {
       alertBox.textContent = res.error || 'Gagal menyimpan.';
-      alertBox.classList.add('show');
+      alertBox.classList.remove('hidden');
       return;
     }
 
     UI.sukses(isEdit ? 'Pertemuan diperbarui.' : 'Pertemuan ditambahkan.');
     close();
-    loadPertemuan();
+    await loadPertemuan();
   });
 
   if (isEdit) {
     overlay.querySelector('#btnHapus').addEventListener('click', async () => {
-      const ok = await UI.konfirmasi(
-        'Hapus Pertemuan',
-        `Hapus pertemuan "${p.judul}"? Semua materi, tugas, dan presensi terkait juga akan terhapus.`,
-        { danger: true, okText: 'Hapus' }
-      );
-      if (!ok) return;
-
-      const res = await Api.call('admin.pertemuan.hapus', { pertemuan_id: p.id });
-      if (!res.ok) { UI.gagal(res.error || 'Gagal hapus.'); return; }
-      UI.sukses(res.data.pesan || 'Pertemuan dihapus.');
       close();
-      loadPertemuan();
+      hapusPertemuan(p.id);
     });
   }
 }
