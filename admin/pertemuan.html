@@ -263,8 +263,27 @@ async function loadPertemuan() {
 // BADGE WINDOW PRESENSI
 // ============================================================
 function renderBadgeWindow(p) {
-  const status = p.presensi_status;
-  if (!status || !p.presensi_buka || !p.presensi_tutup) return '';
+  const tgl = p.tanggal || new Date().toISOString().slice(0, 10);
+  
+  // 1. Ambil format jam murni (HH:mm) dari teks apapun
+  const parseTime = (str) => {
+    if (!str) return null;
+    const m = String(str).match(/(\d{2}):(\d{2})/);
+    if (!m) return null;
+    // Paksa hitung sebagai WIB (+07:00)
+    return new Date(`${tgl}T${m[1]}:${m[2]}:00+07:00`);
+  };
+
+  const buka = parseTime(p.presensi_buka);
+  const tutup = parseTime(p.presensi_tutup);
+  const now = new Date();
+  
+  // 2. Hitung status secara mandiri
+  let status = 'belum';
+  if (buka && tutup) {
+    if (now >= buka && now <= tutup) status = 'buka';
+    else if (now > tutup) status = 'tutup';
+  }
 
   const map = {
     belum: { label: 'Presensi Belum Dibuka', icon: 'lock' },
@@ -273,18 +292,17 @@ function renderBadgeWindow(p) {
   };
   const m = map[status] || map.belum;
 
-  // Ambil dari ISO, konversi ke WIB explicit
-  const bukaStr = new Date(p.presensi_buka).toLocaleTimeString('id-ID', { 
-    hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jakarta' 
-  });
-  const tutupStr = new Date(p.presensi_tutup).toLocaleTimeString('id-ID', { 
-    hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jakarta' 
-  });
+  // 3. Format angka untuk badge (titik dua diganti titik)
+  const fmt = (str) => {
+    if (!str) return '--:--';
+    const match = String(str).match(/(\d{2}):(\d{2})/);
+    return match ? `${match[1]}.${match[2]}` : '--:--';
+  };
 
   return `
     <div class="window-badge ${status}">
       ${Icons.get(m.icon, { class: 'icon-sm' })}
-      ${m.label} · ${bukaStr}–${tutupStr}
+      ${m.label} · ${fmt(p.presensi_buka)}–${fmt(p.presensi_tutup)}
     </div>
   `;
 }
