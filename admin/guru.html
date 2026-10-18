@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#611329" />
 <title>Data Guru — NAKULAKU Admin</title>
 
@@ -11,250 +11,1072 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="../assets/css/nakula.css" />
+<link rel="stylesheet" href="layout.css" />
 
 <style>
-  .admin-header {
-    background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon) 100%);
-    color: white;
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-  }
-  .admin-header-left {
-    display: flex;
-    align-items: center;
+  /* ═══════════════════════════════════════
+     STAT GRID
+     ═══════════════════════════════════════ */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    min-width: 0;
+    margin-bottom: 18px;
   }
-  .back-btn {
-    width: 36px;
-    height: 36px;
+  @media (min-width: 768px) {
+    .stats-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: all .2s var(--ease-out);
+  }
+  .stat-card:hover {
+    border-color: var(--maroon-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(125,29,58,.08);
+  }
+  .stat-icon {
+    width: 32px; height: 32px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+  }
+  .stat-icon.green { background: var(--success-soft); color: var(--success); }
+  .stat-icon.blue { background: var(--info-soft); color: var(--info); }
+  .stat-icon.gold { background: var(--gold-soft); color: var(--gold-dark); }
+  .stat-val {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 10.5px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  /* ═══════════════════════════════════════
+     FILTER AREA
+     ═══════════════════════════════════════ */
+  .filter-area {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 16px;
+    position: sticky;
+    top: 60px;
+    z-index: 15;
+    box-shadow: 0 2px 12px rgba(97,19,41,.04);
+  }
+  @media (min-width: 768px) {
+    .filter-area { top: 0; }
+  }
+
+  .search-wrap {
+    position: relative;
+    margin-bottom: 10px;
+  }
+  .search-wrap input {
+    width: 100%;
+    height: 44px;
+    padding: 0 40px 0 42px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
     border-radius: 12px;
-    background: rgba(255,255,255,.12);
-    border: none;
-    color: white;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--ink);
+    font-weight: 600;
+    outline: none;
+    transition: all .15s;
+    box-sizing: border-box;
+  }
+  .search-wrap input::placeholder { color: var(--muted-soft); font-weight: 500; }
+  .search-wrap input:focus {
+    border-color: var(--maroon);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(125,29,58,.08);
+  }
+  .search-wrap .icon-left {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    text-decoration: none;
-    flex-shrink: 0;
-  }
-  .back-btn:hover { background: rgba(255,255,255,.2); }
-
-  .toolbar {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-  }
-  .search-input {
-    flex: 1;
-    min-width: 200px;
-    position: relative;
-  }
-  .search-input input {
-    padding-left: 40px;
-  }
-  .search-input .icon {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
     color: var(--muted);
     pointer-events: none;
   }
+  .search-wrap .icon-left svg { width: 16px; height: 16px; display: block; }
+  .search-wrap .icon-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all .15s;
+  }
+  .search-wrap .icon-clear:hover { background: var(--maroon-soft); color: var(--maroon); }
+  .search-wrap.has-value .icon-clear { display: flex; }
 
-  .stat-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
+  .filter-chips {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
   }
-  .stat-mini {
+  .filter-chips::-webkit-scrollbar { display: none; }
+  .f-chip {
+    flex-shrink: 0;
+    padding: 7px 14px;
+    border-radius: 999px;
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-md);
-    padding: 12px;
-    text-align: center;
+    border: 1.5px solid var(--border);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all .15s;
+    white-space: nowrap;
+    font-family: inherit;
   }
-  .stat-mini .n {
-    font-size: 20px;
+  .f-chip:hover { border-color: var(--maroon-light); color: var(--maroon); }
+  .f-chip.active {
+    background: var(--maroon);
+    border-color: var(--maroon);
+    color: white;
+  }
+  .f-chip .count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--border);
+    color: var(--muted);
+    font-size: 9.5px;
     font-weight: 800;
     line-height: 1;
-    color: var(--maroon);
   }
-  .stat-mini .l {
-    font-size: 10px;
+  .f-chip.active .count { background: rgba(255,255,255,.25); color: white; }
+
+  /* ═══════════════════════════════════════
+     INFO BAR
+     ═══════════════════════════════════════ */
+  .info-bar {
+    font-size: 11px;
     color: var(--muted);
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .5px;
-    margin-top: 4px;
+    margin-bottom: 10px;
+    padding: 0 2px;
   }
 
-  .guru-item {
+  /* ═══════════════════════════════════════
+     GURU CARD
+     ═══════════════════════════════════════ */
+  .guru-list { display: flex; flex-direction: column; gap: 10px; }
+  @media (min-width: 1024px) {
+    .guru-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+  }
+
+  .guru-card {
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
     padding: 14px;
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 10px;
     cursor: pointer;
-    transition: all .15s;
+    transition: all .2s var(--ease-out);
+    position: relative;
+    overflow: hidden;
   }
-  .guru-item:hover {
-    border-color: var(--maroon);
-    transform: translateY(-1px);
-    box-shadow: var(--sh-md);
+  .guru-card:hover {
+    border-color: var(--maroon-light);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(125,29,58,.1);
+  }
+  .guru-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--border);
+    transition: background .2s;
+  }
+  .guru-card.has-ks::before { background: var(--gold); }
+  .guru-card.has-narsum::before { background: #A855F7; }
+  .guru-card.has-pengamat::before { background: #3B82F6; }
+  .guru-card.inactive { opacity: 0.65; }
+
+  .guru-avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
   }
   .guru-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: var(--maroon-soft);
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
     color: var(--maroon);
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 800;
-    font-size: 16px;
-    flex-shrink: 0;
+    font-size: 18px;
     overflow: hidden;
     position: relative;
+    border: 1.5px solid rgba(125,29,58,.08);
   }
   .guru-avatar img {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    z-index: 1;
   }
-  .guru-info { flex: 1; min-width: 0; }
+  .guru-status-dot {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2.5px solid var(--surface);
+    z-index: 2;
+  }
+  .guru-status-dot.aktif { background: var(--success); }
+  .guru-status-dot.nonaktif { background: var(--muted-soft); }
+
+  .guru-body { flex: 1; min-width: 0; }
+  .guru-name-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 3px;
+    flex-wrap: wrap;
+  }
   .guru-name {
-    font-weight: 700;
+    font-weight: 800;
     font-size: 14px;
-    margin-bottom: 2px;
+    color: var(--ink);
+    line-height: 1.3;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 100%;
   }
   .guru-meta {
     font-size: 11.5px;
     color: var(--muted);
-    font-weight: 500;
+    font-weight: 600;
+    line-height: 1.5;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .guru-status {
-    font-size: 10px;
-    padding: 3px 8px;
-    border-radius: 999px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: .3px;
-    flex-shrink: 0;
+  .guru-roles {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 6px;
   }
-  .guru-status.aktif { background: var(--success-soft); color: var(--success); }
-  .guru-status.nonaktif { background: var(--danger-soft); color: var(--danger); }
+  .role-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+  .role-pill.guru { background: var(--maroon-soft); color: var(--maroon); }
+  .role-pill.ks { background: var(--gold-soft); color: var(--gold-dark); }
+  .role-pill.narsum { background: #F3E8FF; color: #7C3AED; }
+  .role-pill.pengamat { background: var(--info-soft); color: var(--info); }
+  .role-pill.pengurus { background: #DBEAFE; color: #1E40AF; }
+  .role-pill.sa {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--maroon) 100%);
+    color: white;
+  }
 
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(28,20,20,.5);
+  /* ═══════════════════════════════════════
+     EMPTY STATE
+     ═══════════════════════════════════════ */
+  .empty-panel {
+    text-align: center;
+    padding: 50px 20px;
+  }
+  .empty-panel .big-icon {
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
+    color: var(--maroon);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    margin: 0 auto 16px;
+  }
+  .empty-panel .big-icon svg { width: 36px; height: 36px; }
+  .empty-panel h3 {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .empty-panel p {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 320px;
+    margin: 0 auto 16px;
+  }
+  .empty-panel .reset-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    background: var(--maroon);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .empty-panel .reset-btn:hover { background: var(--maroon-dark); box-shadow: 0 6px 16px rgba(125,29,58,.25); }
+
+  /* ═══════════════════════════════════════
+     MODAL
+     ═══════════════════════════════════════ */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(28,20,20,.55);
+    backdrop-filter: blur(3px);
     z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fade-in .2s both;
   }
-  .modal-box {
-    background: white;
+  .modal {
+    background: var(--surface);
     border-radius: 20px;
-    padding: 24px;
-    max-width: 520px;
     width: 100%;
-    max-height: 85vh;
-    overflow-y: auto;
-    box-shadow: var(--sh-xl);
+    max-width: 520px;
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 64px rgba(0,0,0,.3);
+    animation: slide-up .3s var(--ease-out) both;
   }
+  @keyframes slide-up {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-header {
+    padding: 18px 22px 14px;
+    border-bottom: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .modal-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .modal-body {
+    padding: 20px 22px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .modal-footer {
+    padding: 14px 22px;
+    border-top: 1.5px solid var(--border);
+    background: var(--bg);
+    border-radius: 0 0 20px 20px;
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .modal-footer .btn { flex: 1; }
+
+  /* ═══════════════════════════════════════
+     DETAIL MODAL — Hero
+     ═══════════════════════════════════════ */
+  .detail-hero {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 18px;
+    margin-bottom: 18px;
+    border-bottom: 1.5px dashed var(--border);
+  }
+  .detail-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 28px;
+    overflow: hidden;
+    position: relative;
+    border: 2px solid var(--gold);
+    flex-shrink: 0;
+    box-shadow: 0 8px 20px rgba(125,29,58,.15);
+  }
+  .detail-avatar img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+  .detail-info { flex: 1; min-width: 0; }
+  .detail-name {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 3px;
+    line-height: 1.3;
+  }
+  .detail-jabatan {
+    font-size: 12.5px;
+    color: var(--maroon);
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .detail-sekolah {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* Detail info grid */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .info-item {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .info-item .lbl {
+    font-size: 9.5px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .info-item .val {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.4;
+    word-break: break-word;
+  }
+  .info-item .val.status-aktif { color: var(--success); }
+  .info-item .val.status-nonaktif { color: var(--danger); }
+
+  /* Detail section */
+  .detail-section {
+    padding-top: 16px;
+    margin-top: 16px;
+    border-top: 1px dashed var(--border);
+  }
+  .detail-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .detail-section-title {
+    font-size: 10.5px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+  }
+
+  /* Role badges */
+  .role-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .role-badge.guru { background: var(--maroon-soft); color: var(--maroon); }
+  .role-badge.ks { background: var(--gold-soft); color: var(--gold-dark); }
+  .role-badge.narsum { background: #F3E8FF; color: #7C3AED; }
+  .role-badge.pengamat { background: var(--info-soft); color: var(--info); }
+  .role-badge.pengurus { background: #DBEAFE; color: #1E40AF; }
+  .role-badge.sa {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--maroon) 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(201,169,97,.3);
+  }
+
+  /* KS assignment */
+  .ks-assignment-list { display: flex; flex-direction: column; gap: 6px; }
+  .ks-assignment {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg);
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* Timeline riwayat */
+  .timeline { position: relative; padding-left: 20px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    background: var(--border);
+  }
+  .tl-item {
+    position: relative;
+    padding: 6px 0;
+    font-size: 11.5px;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -18px;
+    top: 12px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--maroon);
+  }
+  .tl-item.current::before { background: var(--maroon); }
+  .tl-sekolah {
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 12.5px;
+    margin-bottom: 2px;
+  }
+  .tl-period {
+    color: var(--muted);
+    font-size: 10.5px;
+    font-weight: 600;
+  }
+
+  /* Detail actions */
+  .detail-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding-top: 16px;
+    margin-top: 16px;
+    border-top: 1.5px solid var(--border);
+  }
+  .detail-actions .btn-full-row {
+    grid-column: 1 / -1;
+  }
+
+  /* ═══════════════════════════════════════
+     RESET PIN RESULT
+     ═══════════════════════════════════════ */
+  .pin-result-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--success-soft);
+    color: var(--success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    animation: bounce-in .5s var(--ease-spring) both;
+  }
+  @keyframes bounce-in {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  .pin-display {
+    padding: 20px;
+    background: linear-gradient(135deg, var(--bg) 0%, var(--maroon-faint) 100%);
+    border: 2px dashed var(--maroon-soft);
+    border-radius: 14px;
+    text-align: center;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .pin-display .lbl {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .pin-display .pin-val {
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--maroon);
+    letter-spacing: 8px;
+    font-family: 'Courier New', monospace;
+    line-height: 1;
+  }
+  .pin-display .copy-hint {
+    font-size: 10.5px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-top: 8px;
+  }
+
+  /* ═══════════════════════════════════════
+     KELOLA PERAN
+     ═══════════════════════════════════════ */
+  .peran-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 6px;
+    transition: all .15s;
+  }
+  .peran-item:hover { border-color: var(--maroon-light); }
+  .peran-item.sa {
+    border-color: var(--gold);
+    background: linear-gradient(135deg, #FFFFFF 0%, #FBF4E0 100%);
+  }
+  .peran-item .peran-label {
+    flex: 1;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .peran-item .revoke-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .15s;
+  }
+  .peran-item .revoke-btn:hover { background: var(--danger-soft); }
+
+  /* ═══════════════════════════════════════
+     ALERT
+     ═══════════════════════════════════════ */
+  .alert {
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .alert-error { background: var(--danger-soft); color: var(--danger); border: 1px solid rgba(185,28,28,.15); }
+  .alert-warning { background: var(--warning-soft); color: var(--warning); border: 1px solid rgba(180,83,9,.15); }
+  .alert-info { background: var(--info-soft); color: var(--info); border: 1px solid rgba(30,64,175,.15); }
+  .alert.hidden { display: none; }
 </style>
 </head>
-<body>
+<body class="admin-body">
 
+<!-- HEADER MOBILE -->
 <header class="admin-header">
   <div class="admin-header-left">
-    <a href="../beranda.html" class="back-btn" aria-label="Kembali">
+    <a href="index.html" class="admin-header-btn" aria-label="Kembali">
       <span data-icon="chevronLeft"></span>
     </a>
-    <div>
-      <div style="font-weight:800;font-size:15px;letter-spacing:.5px;">DATA GURU</div>
-      <div style="font-size:10px;opacity:.75;font-weight:500;">KKG Gugus Nakula</div>
+    <div class="admin-header-title">
+      <div class="admin-header-title-1">DATA GURU</div>
+      <div class="admin-header-title-2">Admin NAKULAKU</div>
     </div>
   </div>
+  <button class="admin-header-btn" data-act="logout" aria-label="Keluar">
+    <span data-icon="logOut"></span>
+  </button>
 </header>
 
-<main class="container page" style="max-width:900px;padding-top:16px;">
+<div class="admin-layout">
 
-  <div class="stat-row">
-    <div class="stat-mini">
-      <div class="n" id="statTotal">—</div>
-      <div class="l">Total Guru</div>
+  <!-- SIDEBAR DESKTOP -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <div class="admin-sidebar-logo">
+        <img src="../assets/img/logo-mark.svg" alt="Nakula" />
+      </div>
+      <div>
+        <div class="admin-sidebar-name">NAKULAKU</div>
+        <div class="admin-sidebar-sub">Admin Panel</div>
+      </div>
     </div>
-    <div class="stat-mini">
-      <div class="n" id="statSekolah">—</div>
-      <div class="l">Sekolah</div>
+
+    <nav class="admin-sidebar-menu">
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Dashboard</div>
+        <a class="admin-sidebar-item" data-nav="dashboard" href="index.html">
+          <span data-icon="layoutDashboard"></span> Dashboard
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Data</div>
+        <a class="admin-sidebar-item active" data-nav="guru" href="guru.html">
+          <span data-icon="users"></span> Data Guru
+        </a>
+        <a class="admin-sidebar-item" data-nav="bulk" href="guru-bulk.html">
+          <span data-icon="checkSquare"></span> Bulk Action
+        </a>
+        <a class="admin-sidebar-item" data-nav="impor" href="impor.html">
+          <span data-icon="upload"></span> Impor CSV
+        </a>
+        <a class="admin-sidebar-item" data-nav="master" href="master-data.html">
+          <span data-icon="database"></span> Master Data
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Kegiatan</div>
+        <a class="admin-sidebar-item" data-nav="periode" href="periode.html">
+          <span data-icon="calendar"></span> Kelola Periode
+        </a>
+        <a class="admin-sidebar-item" data-nav="pertemuan" href="pertemuan.html">
+          <span data-icon="list"></span> Kelola Pertemuan
+        </a>
+        <a class="admin-sidebar-item" data-nav="pengumuman" href="pengumuman.html">
+          <span data-icon="megaphone"></span> Pengumuman
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Evaluasi</div>
+        <a class="admin-sidebar-item" data-nav="verifikasi-sekolah" href="verifikasi-sekolah.html">
+          <span data-icon="sparkles"></span> Verifikasi Sekolah
+        </a>
+        <a class="admin-sidebar-item" data-nav="karya" href="karya.html">
+          <span data-icon="sparkles"></span> Verifikasi Karya
+        </a>
+        <a class="admin-sidebar-item" data-nav="verifikasi-presensi" href="../ks/verifikasi.html">
+          <span data-icon="checkCircle"></span> Verifikasi Presensi
+        </a>
+        <a class="admin-sidebar-item" data-nav="alihkan" href="alihkan-verifikasi.html">
+          <span data-icon="refreshCw"></span> Alihkan Verifikasi
+        </a>
+        <a class="admin-sidebar-item" data-nav="feedback" href="feedback.html">
+          <span data-icon="messageSquare"></span> Rekap Feedback
+        </a>
+        <a class="admin-sidebar-item" data-nav="award" href="award.html">
+          <span data-icon="award"></span> Kelola Award
+        </a>
+        <a class="admin-sidebar-item" data-nav="sertifikat" href="sertifikat.html">
+          <span data-icon="fileText"></span> Sertifikat
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Laporan</div>
+        <a class="admin-sidebar-item" data-nav="analitik" href="analitik.html">
+          <span data-icon="activity"></span> Analitik
+        </a>
+        <a class="admin-sidebar-item" data-nav="laporan" href="laporan.html">
+          <span data-icon="download"></span> Export Laporan
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Sistem</div>
+        <a class="admin-sidebar-item" data-nav="kategori-ajuan" href="kategori-ajuan.html">
+          <span data-icon="tag"></span> Kategori Ajuan
+        </a>
+        <a class="admin-sidebar-item" data-nav="log" href="log.html">
+          <span data-icon="list"></span> Log Aktivitas
+        </a>
+        <a class="admin-sidebar-item" data-nav="pengaturan" href="pengaturan.html">
+          <span data-icon="settings"></span> Pengaturan
+        </a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-topbar-title">Data Guru</h1>
+      <div class="admin-topbar-right">
+        <div class="admin-user-chip" id="userChip"></div>
+        <button class="btn-icon" data-act="logout" aria-label="Keluar" title="Keluar">
+          <span data-icon="logOut"></span>
+        </button>
+      </div>
     </div>
-    <div class="stat-mini">
-      <div class="n" id="statKS">—</div>
-      <div class="l">Kepala Sekolah</div>
+
+    <div class="admin-content">
+
+      <!-- Statistik -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><span data-icon="users" class="icon-sm"></span></div>
+          <div class="stat-val" id="statTotal">—</div>
+          <div class="stat-label">Total Guru</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><span data-icon="home" class="icon-sm"></span></div>
+          <div class="stat-val" id="statSekolah">—</div>
+          <div class="stat-label">Sekolah</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon gold"><span data-icon="shield" class="icon-sm"></span></div>
+          <div class="stat-val" id="statKS">—</div>
+          <div class="stat-label">Kepala Sekolah</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue"><span data-icon="userCheck" class="icon-sm"></span></div>
+          <div class="stat-val" id="statNarsum">—</div>
+          <div class="stat-label">Narasumber</div>
+        </div>
+      </div>
+
+      <!-- Filter -->
+      <div class="filter-area">
+        <div class="search-wrap" id="searchWrap">
+          <span class="icon-left" data-icon="search"></span>
+          <input type="text" id="inputCari" placeholder="Cari nama, email, atau NIP…" />
+          <button class="icon-clear" id="btnClearSearch" title="Hapus" aria-label="Hapus pencarian">
+            <span data-icon="x"></span>
+          </button>
+        </div>
+        <div class="filter-chips" id="filterChips">
+          <button class="f-chip active" data-filter="">
+            <span data-icon="users" data-icon-class="icon-sm"></span> Semua
+            <span class="count" data-count="">0</span>
+          </button>
+          <button class="f-chip" data-filter="guru">
+            <span data-icon="user" data-icon-class="icon-sm"></span> Guru
+            <span class="count" data-count="guru">0</span>
+          </button>
+          <button class="f-chip" data-filter="ks">
+            <span data-icon="shield" data-icon-class="icon-sm"></span> KS
+            <span class="count" data-count="ks">0</span>
+          </button>
+          <button class="f-chip" data-filter="narsum">
+            <span data-icon="userCheck" data-icon-class="icon-sm"></span> Narsum
+            <span class="count" data-count="narsum">0</span>
+          </button>
+          <button class="f-chip" data-filter="pengamat">
+            <span data-icon="eye" data-icon-class="icon-sm"></span> Pengamat
+            <span class="count" data-count="pengamat">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Info bar -->
+      <div class="info-bar" id="infoHasil">Memuat…</div>
+
+      <!-- List -->
+      <div id="listGuru" class="guru-list">
+        <div class="skeleton" style="height:80px;border-radius:16px;"></div>
+        <div class="skeleton" style="height:80px;border-radius:16px;"></div>
+        <div class="skeleton" style="height:80px;border-radius:16px;"></div>
+        <div class="skeleton" style="height:80px;border-radius:16px;"></div>
+      </div>
+
     </div>
-  </div>
+  </main>
+</div>
 
-  <div class="toolbar">
-    <div class="search-input">
-      <span data-icon="search"></span>
-      <input
-        type="text"
-        id="inputCari"
-        class="input"
-        placeholder="Cari nama, email, atau NIP…"
-      />
-    </div>
-  </div>
-
-  <div id="infoHasil" style="font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:600;">
-    Memuat…
-  </div>
-
-  <div id="listGuru">
-    <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
-    <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
-    <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
-  </div>
-
-</main>
+<!-- BOTTOM NAV MOBILE -->
+<nav class="admin-bottom-nav">
+  <a class="admin-nav-item" data-nav="dashboard" href="index.html">
+    <span data-icon="layoutDashboard"></span> Dashboard
+  </a>
+  <a class="admin-nav-item active" data-nav="guru" href="guru.html">
+    <span data-icon="users"></span> Guru
+  </a>
+  <a class="admin-nav-item" data-nav="pertemuan" href="pertemuan.html">
+    <span data-icon="calendar"></span> Pertemuan
+  </a>
+  <a class="admin-nav-item" data-nav="verifikasi" href="verifikasi-sekolah.html">
+    <span data-icon="checkCircle"></span> Verifikasi
+  </a>
+  <button class="admin-nav-item" id="btnLainnya">
+    <span data-icon="menu"></span> Lainnya
+  </button>
+</nav>
 
 <script src="../assets/js/icons.js"></script>
 <script src="../assets/js/api.js"></script>
 <script src="../assets/js/ui.js"></script>
+<script src="../assets/js/app-nav.js"></script>
 <script>
-// ============================================================
+// ═══════════════════════════════════════════════
 // INIT
-// ============================================================
+// ═══════════════════════════════════════════════
 document.querySelectorAll('[data-icon]').forEach(el => {
-  el.innerHTML = Icons.get(el.dataset.icon);
+  const cls = el.dataset.iconClass || '';
+  el.innerHTML = Icons.get(el.dataset.icon, { class: cls });
   el.style.display = 'contents';
 });
+UI.bindLogout();
 
+// Bottom sheet "Lainnya"
+document.getElementById('btnLainnya')?.addEventListener('click', () => {
+  const overlay = document.createElement('div');
+  overlay.className = 'admin-sheet-overlay';
+  overlay.innerHTML = `
+    <div class="admin-sheet">
+      <div class="admin-sheet-handle"></div>
+      <div class="admin-sheet-title">Lainnya</div>
+      <div class="admin-sheet-grid">
+        <a class="admin-sheet-item" href="master-data.html">
+          <div class="icon-wrap">${Icons.get('database', { class: 'icon-sm' })}</div>
+          <span>Master Data</span>
+        </a>
+        <a class="admin-sheet-item" href="guru-bulk.html">
+          <div class="icon-wrap">${Icons.get('checkSquare', { class: 'icon-sm' })}</div>
+          <span>Bulk Action</span>
+        </a>
+        <a class="admin-sheet-item" href="karya.html">
+          <div class="icon-wrap">${Icons.get('sparkles', { class: 'icon-sm' })}</div>
+          <span>Verifikasi Karya</span>
+        </a>
+        <a class="admin-sheet-item" href="alihkan-verifikasi.html">
+          <div class="icon-wrap">${Icons.get('refreshCw', { class: 'icon-sm' })}</div>
+          <span>Alihkan Verifikasi</span>
+        </a>
+        <a class="admin-sheet-item" href="award.html">
+          <div class="icon-wrap">${Icons.get('award', { class: 'icon-sm' })}</div>
+          <span>Kelola Award</span>
+        </a>
+        <a class="admin-sheet-item" href="laporan.html">
+          <div class="icon-wrap">${Icons.get('download', { class: 'icon-sm' })}</div>
+          <span>Export Laporan</span>
+        </a>
+      </div>
+      <button class="btn btn-primary btn-full" id="btnTutupSheet" style="margin-top:16px;">Tutup</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  const close = () => overlay.remove();
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+  overlay.querySelector('#btnTutupSheet').addEventListener('click', close);
+});
+
+// User chip
+window.addEventListener('load', () => {
+  const p = Api.getProfile();
+  if (!p) return;
+  const chip = document.getElementById('userChip');
+  if (chip) {
+    const init = (p.nama || 'A').charAt(0).toUpperCase();
+    const fotoUrl = Api.fotoSayaUrl('t');
+    chip.innerHTML = `
+      <div class="avatar" style="position:relative;">
+        <span style="position:relative;z-index:0;">${init}</span>
+        ${fotoUrl ? `<img src="${fotoUrl}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;z-index:1;" onerror="this.remove()">` : ''}
+      </div>
+      <span>${UI.escapeHtml(p.nama || '-')}</span>
+    `;
+  }
+});
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
 let profile;
 let debounceTimer;
+let allRawList = [];      // semua data dari backend (termasuk SA)
+let filteredList = [];    // setelah filter SA
+let searchQuery = '';
+let roleFilter = '';
 
+const ROLE_LABELS = {
+  super_admin: 'Super Admin',
+  pengurus: 'Pengurus',
+  narasumber: 'Narasumber',
+  pengamat: 'Pengamat',
+  peserta: 'Guru',
+  ks: 'Kepala Sekolah',
+};
+
+// ═══════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════
 (async () => {
   profile = await Api.requireLogin();
   if (!profile) return;
@@ -264,27 +1086,43 @@ let debounceTimer;
     return;
   }
 
-  // Catatan: KS diizinkan masuk, backend akan otomatis memfilter hanya guru dari sekolahnya.
   await loadGuru();
 })();
 
-// ============================================================
-// LOAD GURU
-// ============================================================
-async function loadGuru() {
-  const q = document.getElementById('inputCari').value.trim();
+// ═══════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════
+function hasRole(user, role) {
+  const peranList = Array.isArray(user.peran) ? user.peran : [];
+  return peranList.some(p => p.peran === role && p.aktif !== false);
+}
 
+function getActiveRoles(user) {
+  const peranList = Array.isArray(user.peran) ? user.peran : [];
+  return peranList.filter(p => p.aktif !== false).map(p => p.peran);
+}
+
+function isSuperAdmin(user) {
+  return hasRole(user, 'super_admin');
+}
+
+function isCurrentUserSA() {
+  return profile && (profile.peran || []).includes('super_admin');
+}
+
+// ═══════════════════════════════════════════════
+// LOAD GURU
+// ═══════════════════════════════════════════════
+async function loadGuru() {
   const el = document.getElementById('listGuru');
   el.innerHTML = `
-    <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
-    <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
-    <div class="skeleton" style="height:72px;border-radius:16px;margin-bottom:10px;"></div>
+    <div class="skeleton" style="height:80px;border-radius:16px;"></div>
+    <div class="skeleton" style="height:80px;border-radius:16px;"></div>
+    <div class="skeleton" style="height:80px;border-radius:16px;"></div>
+    <div class="skeleton" style="height:80px;border-radius:16px;"></div>
   `;
 
-  const res = await Api.call('users.list', {
-    q,
-    limit: 200,
-  });
+  const res = await Api.call('users.list', { q: searchQuery, limit: 300 });
 
   if (!res.ok) {
     el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat data.');
@@ -292,71 +1130,203 @@ async function loadGuru() {
     return;
   }
 
-  const list = res.data.hasil || [];
-  const total = res.data.total || 0;
+  allRawList = res.data.hasil || [];
 
-  document.getElementById('statTotal').textContent = total;
+  // ✅ EXCLUDE super_admin dari list — SA tidak dikelola di sini
+  filteredList = allRawList.filter(g => !isSuperAdmin(g));
 
-  // Hitung KS dari list
-  document.getElementById('statKS').textContent =
-    list.filter(g => (g.jabatan || '').toLowerCase() === 'kepala sekolah').length;
+  updateStats();
+  updateFilterCounts();
+  renderList();
+}
 
-  // Hitung sekolah unik dari list
+function updateStats() {
+  document.getElementById('statTotal').textContent = filteredList.length;
+
+  // Unique sekolah
   const sekolahSet = new Set();
-  list.forEach(g => { if (g.sekolah?.id) sekolahSet.add(g.sekolah.id); });
+  filteredList.forEach(g => { if (g.sekolah?.id) sekolahSet.add(g.sekolah.id); });
   document.getElementById('statSekolah').textContent = sekolahSet.size;
 
-  document.getElementById('infoHasil').textContent =
-    `Menampilkan ${list.length} dari ${total} guru`;
+  // KS count
+  const jmlKS = filteredList.filter(g => hasRole(g, 'ks')).length;
+  document.getElementById('statKS').textContent = jmlKS;
 
-  if (list.length === 0) {
-    el.innerHTML = UI.emptyHtml('users', 'Tidak ada guru ditemukan', 'Coba ubah kata kunci pencarian.');
-    return;
-  }
+  // Narasumber count
+  const jmlNarsum = filteredList.filter(g => hasRole(g, 'narasumber')).length;
+  document.getElementById('statNarsum').textContent = jmlNarsum;
+}
 
-  el.innerHTML = list.map(g => renderGuruItem(g)).join('');
+function updateFilterCounts() {
+  const counts = {
+    '': filteredList.length,
+    guru: filteredList.filter(g => getActiveRoles(g).length <= 1 || getActiveRoles(g).every(r => r === 'peserta')).length,
+    ks: filteredList.filter(g => hasRole(g, 'ks')).length,
+    narsum: filteredList.filter(g => hasRole(g, 'narasumber')).length,
+    pengamat: filteredList.filter(g => hasRole(g, 'pengamat')).length,
+  };
 
-  el.querySelectorAll('.guru-item').forEach(item => {
-    item.addEventListener('click', () => bukaDetail(Number(item.dataset.id)));
+  document.querySelectorAll('.f-chip [data-count]').forEach(el => {
+    el.textContent = counts[el.dataset.count] || 0;
   });
 }
 
-function renderGuruItem(g) {
-  const init = (g.nama_lengkap || 'G').charAt(0).toUpperCase();
-  const fotoUrl = g.foto_thumb_url || Api.fotoUrl(g.id, 't');
-  const isKS = (g.jabatan || '').toLowerCase().includes('kepala sekolah');
+// ═══════════════════════════════════════════════
+// FILTER & RENDER
+// ═══════════════════════════════════════════════
+function applyFilter() {
+  let list = [...filteredList];
 
-  const badgeKS = isKS ? '<span class="badge badge-gold" style="margin-left:6px;">KS</span>' : '';
+  // Search
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    list = list.filter(g =>
+      (g.nama_lengkap || '').toLowerCase().includes(q) ||
+      (g.email || '').toLowerCase().includes(q) ||
+      (g.nip || '').toLowerCase().includes(q)
+    );
+  }
 
+  // Role filter
+  if (roleFilter === 'guru') {
+    list = list.filter(g => {
+      const active = getActiveRoles(g);
+      return active.length <= 1 || active.every(r => r === 'peserta');
+    });
+  } else if (roleFilter === 'ks') {
+    list = list.filter(g => hasRole(g, 'ks'));
+  } else if (roleFilter === 'narsum') {
+    list = list.filter(g => hasRole(g, 'narasumber'));
+  } else if (roleFilter === 'pengamat') {
+    list = list.filter(g => hasRole(g, 'pengamat'));
+  }
+
+  return list;
+}
+
+function renderList() {
+  const el = document.getElementById('listGuru');
+  const list = applyFilter();
+
+  document.getElementById('infoHasil').textContent =
+    list.length === 0
+      ? 'Tidak ada guru ditemukan'
+      : `Menampilkan ${list.length} dari ${filteredList.length} guru`;
+
+  if (list.length === 0) {
+    el.innerHTML = renderEmptyState();
+    document.getElementById('btnResetFilter')?.addEventListener('click', resetFilter);
+    return;
+  }
+
+  el.innerHTML = list.map(g => renderGuruCard(g)).join('');
+
+  el.querySelectorAll('.guru-card').forEach(card => {
+    card.addEventListener('click', () => bukaDetail(Number(card.dataset.id)));
+  });
+}
+
+function renderEmptyState() {
+  const hasFilter = searchQuery || roleFilter;
   return `
-    <div class="guru-item" data-id="${g.id}">
-      <div class="guru-avatar">
-        <span>${init}</span>
-        <img src="${fotoUrl}" loading="lazy" onerror="this.remove()" />
-      </div>
-      <div class="guru-info">
-        <div class="guru-name">${UI.escapeHtml(g.nama_lengkap || '-')}${badgeKS}</div>
-        <div class="guru-meta">${UI.escapeHtml(g.sekolah?.nama || '-')}</div>
-        <div class="guru-meta">${UI.escapeHtml(g.jabatan || '-')}${g.nip ? ' · ' + UI.escapeHtml(g.nip) : ''}</div>
-      </div>
-      <span class="guru-status ${g.aktif ? 'aktif' : 'nonaktif'}">
-        ${g.aktif ? 'Aktif' : 'Non-Aktif'}
-      </span>
+    <div class="empty-panel">
+      <div class="big-icon">${Icons.get('users', { class: 'icon-lg' })}</div>
+      <h3>${hasFilter ? 'Tidak Ada Hasil' : 'Belum Ada Guru'}</h3>
+      <p>${hasFilter
+        ? 'Coba ubah kata kunci atau reset filter.'
+        : 'Data guru akan muncul setelah di-import dari Data Sekolah.'}</p>
+      ${hasFilter ? `<button class="reset-btn" id="btnResetFilter">
+        ${Icons.get('rotateCcw', { class: 'icon-sm' })} Reset Filter
+      </button>` : ''}
     </div>
   `;
 }
 
-// ============================================================
-// EVENT
-// ============================================================
-document.getElementById('inputCari').addEventListener('input', () => {
+function renderGuruCard(g) {
+  const init = (g.nama_lengkap || 'G').charAt(0).toUpperCase();
+  const fotoUrl = g.foto_thumb_url || Api.fotoUrl(g.id, 't');
+  const activeRoles = getActiveRoles(g);
+
+  // Card border color based on primary role
+  let cardCls = '';
+  if (hasRole(g, 'ks')) cardCls = 'has-ks';
+  else if (hasRole(g, 'narasumber')) cardCls = 'has-narsum';
+  else if (hasRole(g, 'pengamat')) cardCls = 'has-pengamat';
+  if (!g.aktif) cardCls += ' inactive';
+
+  // Role pills
+  const rolePills = activeRoles
+    .filter(r => r !== 'super_admin') // safety — SA sudah difilter di atas
+    .map(r => {
+      const label = r === 'peserta' ? 'Guru' : r === 'ks' ? 'KS' : r === 'narasumber' ? 'Narsum' : r === 'pengamat' ? 'Pengamat' : r === 'pengurus' ? 'Pengurus' : r;
+      const cls = r === 'peserta' ? 'guru' : r === 'ks' ? 'ks' : r === 'narasumber' ? 'narsum' : r === 'pengamat' ? 'pengamat' : r === 'pengurus' ? 'pengurus' : 'guru';
+      return `<span class="role-pill ${cls}">${UI.escapeHtml(label)}</span>`;
+    }).join('');
+
+  return `
+    <div class="guru-card ${cardCls}" data-id="${g.id}">
+      <div class="guru-avatar-wrap">
+        <div class="guru-avatar">
+          <span style="position:relative;z-index:0;">${init}</span>
+          <img src="${fotoUrl}" loading="lazy" onerror="this.remove()" />
+        </div>
+        <div class="guru-status-dot ${g.aktif ? 'aktif' : 'nonaktif'}"></div>
+      </div>
+      <div class="guru-body">
+        <div class="guru-name-row">
+          <div class="guru-name">${UI.escapeHtml(g.nama_lengkap || '-')}</div>
+        </div>
+        <div class="guru-meta">${UI.escapeHtml(g.jabatan || 'Guru')} · ${UI.escapeHtml(g.sekolah?.nama || '-')}</div>
+        ${rolePills ? `<div class="guru-roles">${rolePills}</div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function resetFilter() {
+  searchQuery = '';
+  roleFilter = '';
+  document.getElementById('inputCari').value = '';
+  document.getElementById('searchWrap').classList.remove('has-value');
+  document.querySelectorAll('.f-chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.filter === '');
+  });
+  renderList();
+}
+
+// ═══════════════════════════════════════════════
+// EVENTS
+// ═══════════════════════════════════════════════
+document.getElementById('inputCari').addEventListener('input', (e) => {
+  const wrap = document.getElementById('searchWrap');
+  wrap.classList.toggle('has-value', !!e.target.value.trim());
+
   clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(loadGuru, 400);
+  debounceTimer = setTimeout(() => {
+    searchQuery = e.target.value.trim();
+    renderList();
+  }, 300);
 });
 
-// ============================================================
+document.getElementById('btnClearSearch').addEventListener('click', () => {
+  document.getElementById('inputCari').value = '';
+  document.getElementById('searchWrap').classList.remove('has-value');
+  searchQuery = '';
+  renderList();
+  document.getElementById('inputCari').focus();
+});
+
+document.querySelectorAll('.f-chip').forEach(c => {
+  c.addEventListener('click', () => {
+    roleFilter = c.dataset.filter;
+    document.querySelectorAll('.f-chip').forEach(x => x.classList.toggle('active', x === c));
+    renderList();
+  });
+});
+
+// ═══════════════════════════════════════════════
 // DETAIL GURU
-// ============================================================
+// ═══════════════════════════════════════════════
 async function bukaDetail(id) {
   const res = await Api.call('users.detail', { user_id: id });
   if (!res.ok) {
@@ -371,102 +1341,126 @@ function showDetailModal(data) {
   const init = (u.nama_lengkap || 'G').charAt(0).toUpperCase();
   const fotoUrl = u.foto_thumb_url || Api.fotoUrl(u.id, 't');
 
-  const peranLabels = (data.peran || []).map(p => {
-    const l = p.peran.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-    return `<span class="badge badge-maroon" style="margin:2px 4px 2px 0;">${UI.escapeHtml(l)}</span>`;
-  }).join('');
+  // Role list
+  const activeRoles = (data.peran || []).filter(p => p.aktif !== false);
+  const roleBadges = activeRoles.length > 0
+    ? activeRoles.map(p => {
+        const label = ROLE_LABELS[p.peran] || p.peran;
+        const cls = p.peran === 'peserta' ? 'guru'
+                  : p.peran === 'ks' ? 'ks'
+                  : p.peran === 'narasumber' ? 'narsum'
+                  : p.peran === 'pengamat' ? 'pengamat'
+                  : p.peran === 'pengurus' ? 'pengurus'
+                  : p.peran === 'super_admin' ? 'sa' : 'guru';
+        const icon = p.peran === 'super_admin' ? '👑 ' : '';
+        return `<span class="role-badge ${cls}">${icon}${UI.escapeHtml(label)}</span>`;
+      }).join('')
+    : '<span style="font-size:12px;color:var(--muted);">Belum ada role aktif</span>';
 
-  const ksInfo = (data.ks_sekolah || []).map(k =>
-    `<div class="text-sm" style="margin-top:4px;">
-      <span class="badge ${k.jenis === 'induk' ? 'badge-maroon' : 'badge-info'}" style="margin-right:6px;">
+  // KS assignment
+  const ksInfo = (data.ks_sekolah || []).map(k => `
+    <div class="ks-assignment">
+      <span class="role-badge ${k.jenis === 'induk' ? 'ks' : 'pengamat'}" style="font-size:9px;">
         ${k.jenis === 'induk' ? 'INDUK' : 'PLT'}
       </span>
-      ${UI.escapeHtml(k.sekolah?.nama || '-')}
-    </div>`
-  ).join('');
+      <span>${UI.escapeHtml(k.sekolah?.nama || '-')}</span>
+    </div>
+  `).join('');
 
-  const isSuperAdmin = profile && profile.peran && profile.peran.includes('super_admin');
-  const isNarsum = (data.peran || []).some(p => p.peran === 'narasumber' && p.aktif);
-
-  // Tombol "Pertemuan Diajar" — hanya tampil untuk role narasumber
-  const tombolPertemuanDiajarHtml = isNarsum
-    ? `<button class="btn btn-secondary btn-sm" id="btnPertemuanDiajar" style="flex:1;min-width:140px;color:var(--gold-dark);">
-        ${Icons.get('book', { class: 'icon-sm' })} Pertemuan Diajar
-      </button>`
-    : '';
-
-  const tombolHapusHtml = isSuperAdmin
-    ? '<div style="margin-top:10px;"><button class="btn btn-ghost btn-sm" id="btnHapusGuru" style="color:var(--danger);width:100%;">' + Icons.get('trash', { class: 'icon-sm' }) + ' Hapus Guru</button></div>'
-    : '';
+  const isSA = isCurrentUserSA();
+  const canManage = profile.peran.includes('pengurus') || isSA;
 
   const overlay = document.createElement('div');
-  overlay.className = 'modal-overlay';
+  overlay.className = 'modal-backdrop';
   overlay.innerHTML = `
-    <div class="modal-box">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-        <h3 style="font-size:17px;color:var(--maroon);margin:0;">Detail Guru</h3>
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Detail Guru</div>
         <button class="btn-icon" data-close>${Icons.get('x')}</button>
       </div>
 
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
-        <div style="width:64px;height:64px;border-radius:50%;background:var(--maroon-soft);color:var(--maroon);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:24px;overflow:hidden;position:relative;flex-shrink:0;">
-          <span>${init}</span>
-          <img src="${fotoUrl}" onerror="this.remove()" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
-        </div>
-        <div style="min-width:0;">
-          <div style="font-weight:800;font-size:16px;">${UI.escapeHtml(u.nama_lengkap)}</div>
-          <div class="text-sm text-muted">${UI.escapeHtml(u.sekolah?.nama || '-')}</div>
-          <div class="text-sm text-muted">${UI.escapeHtml(u.jabatan || '-')}</div>
-        </div>
-      </div>
-
-      <div style="border-top:1px solid var(--border);padding-top:16px;display:flex;flex-direction:column;gap:12px;">
-        <div>
-          <div class="text-xs text-muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Email</div>
-          <div class="text-sm" style="font-weight:600;">${UI.escapeHtml(u.email)}</div>
-        </div>
-        <div>
-          <div class="text-xs text-muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">NIP</div>
-          <div class="text-sm" style="font-weight:600;">${UI.escapeHtml(u.nip || 'Non-ASN')}</div>
-        </div>
-        <div>
-          <div class="text-xs text-muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Peran</div>
-          <div>${peranLabels || '-'}</div>
-        </div>
-        ${ksInfo ? `
-          <div>
-            <div class="text-xs text-muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Penugasan KS</div>
-            ${ksInfo}
-          </div>` : ''}
-        <div>
-          <div class="text-xs text-muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Status Akun</div>
-          <div class="text-sm" style="font-weight:600;color:${u.aktif ? 'var(--success)' : 'var(--danger)'};">
-            ${u.aktif ? 'Aktif' : 'Non-Aktif'}
+      <div class="modal-body">
+        <!-- Hero -->
+        <div class="detail-hero">
+          <div class="detail-avatar">
+            <span style="position:relative;z-index:0;">${init}</span>
+            <img src="${fotoUrl}" onerror="this.remove()" />
+          </div>
+          <div class="detail-info">
+            <div class="detail-name">${UI.escapeHtml(u.nama_lengkap || '-')}</div>
+            <div class="detail-jabatan">${UI.escapeHtml(u.jabatan || 'Guru')}</div>
+            <div class="detail-sekolah">${UI.escapeHtml(u.sekolah?.nama || 'Belum ada sekolah')}</div>
           </div>
         </div>
-      </div>
 
-      <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;">Riwayat Sekolah</div>
-          <button class="btn btn-ghost btn-sm" id="btnMutasi" style="color:var(--maroon);font-weight:800;">
-            ${Icons.get('arrowRight', { class: 'icon-sm' })} Mutasi
-          </button>
+        <!-- Info grid -->
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="lbl">Email</div>
+            <div class="val">${UI.escapeHtml(u.email || '-')}</div>
+          </div>
+          <div class="info-item">
+            <div class="lbl">NIP</div>
+            <div class="val">${UI.escapeHtml(u.nip || 'Non-ASN')}</div>
+          </div>
+          <div class="info-item">
+            <div class="lbl">Jenis GTK</div>
+            <div class="val">${UI.escapeHtml(u.jenis_gtk || '-')}</div>
+          </div>
+          <div class="info-item">
+            <div class="lbl">Status Akun</div>
+            <div class="val ${u.aktif ? 'status-aktif' : 'status-nonaktif'}">
+              ${u.aktif ? 'Aktif' : 'Non-Aktif'}
+            </div>
+          </div>
         </div>
-        <div id="riwayatSekolah" style="font-size:12px;color:var(--muted);">Memuat…</div>
-      </div>
 
-      <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn btn-secondary btn-sm" id="btnResetPin" style="flex:1;min-width:140px;">
-          ${Icons.get('lock', { class: 'icon-sm' })} Reset PIN
-        </button>
-        <button class="btn btn-secondary btn-sm" id="btnKelolaPeran" style="flex:1;min-width:140px;">
-          ${Icons.get('users', { class: 'icon-sm' })} Kelola Peran
-        </button>
-        ${tombolPertemuanDiajarHtml}
-      </div>
+        <!-- Roles -->
+        <div class="detail-section">
+          <div class="detail-section-head">
+            <div class="detail-section-title">Role & Akses</div>
+            ${canManage ? `<button class="btn btn-ghost btn-sm" id="btnKelolaPeran" style="padding:4px 10px;font-size:11px;color:var(--maroon);">
+              ${Icons.get('settings', { class: 'icon-sm' })} Kelola
+            </button>` : ''}
+          </div>
+          <div class="role-list">${roleBadges}</div>
+        </div>
 
-      ${tombolHapusHtml}
+        ${ksInfo ? `
+          <div class="detail-section">
+            <div class="detail-section-title" style="margin-bottom:10px;">Penugasan KS</div>
+            <div class="ks-assignment-list">${ksInfo}</div>
+          </div>
+        ` : ''}
+
+        <!-- Riwayat -->
+        <div class="detail-section">
+          <div class="detail-section-head">
+            <div class="detail-section-title">Riwayat Sekolah</div>
+            <button class="btn btn-ghost btn-sm" id="btnMutasi" style="padding:4px 10px;font-size:11px;color:var(--maroon);">
+              ${Icons.get('arrowRight', { class: 'icon-sm' })} Mutasi
+            </button>
+          </div>
+          <div id="riwayatSekolah" class="timeline">
+            <div style="font-size:11.5px;color:var(--muted);padding:8px 0;">Memuat…</div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="detail-actions">
+          <button class="btn btn-secondary btn-sm" id="btnResetPin">
+            ${Icons.get('lock', { class: 'icon-sm' })} Reset PIN
+          </button>
+          <button class="btn btn-secondary btn-sm" id="btnKelolaPeran2">
+            ${Icons.get('shield', { class: 'icon-sm' })} Kelola Peran
+          </button>
+          ${isCurrentUserSA()
+            ? `<button class="btn btn-ghost btn-sm btn-full-row" id="btnHapusGuru" style="color:var(--danger);border-color:var(--danger-soft);">
+                ${Icons.get('trash', { class: 'icon-sm' })} Hapus / Nonaktifkan Guru
+              </button>`
+            : ''}
+        </div>
+      </div>
     </div>
   `;
   document.body.appendChild(overlay);
@@ -480,25 +1474,18 @@ function showDetailModal(data) {
     close();
     formResetPin(data.user);
   });
-
-  overlay.querySelector('#btnKelolaPeran').addEventListener('click', () => {
+  overlay.querySelector('#btnKelolaPeran2').addEventListener('click', () => {
     close();
-    formKelolaPeran(data.user);
+    formKelolaPeran(data.user, data.peran || []);
   });
-
-  const btnPertemuanDiajar = overlay.querySelector('#btnPertemuanDiajar');
-  if (btnPertemuanDiajar) {
-    btnPertemuanDiajar.addEventListener('click', () => {
-      close();
-      formPertemuanDiajar(data.user);
-    });
-  }
-
+  overlay.querySelector('#btnKelolaPeran')?.addEventListener('click', () => {
+    close();
+    formKelolaPeran(data.user, data.peran || []);
+  });
   overlay.querySelector('#btnMutasi').addEventListener('click', () => {
     close();
     formMutasi(data.user);
   });
-
   const btnHapus = overlay.querySelector('#btnHapusGuru');
   if (btnHapus) {
     btnHapus.addEventListener('click', () => {
@@ -507,76 +1494,76 @@ function showDetailModal(data) {
     });
   }
 
-  // Load riwayat sekolah
+  // Load riwayat
   loadRiwayatSekolah(data.user.id, overlay.querySelector('#riwayatSekolah'));
 }
 
-// ============================================================
+// ═══════════════════════════════════════════════
 // RIWAYAT SEKOLAH
-// ============================================================
+// ═══════════════════════════════════════════════
 async function loadRiwayatSekolah(userId, el) {
   const res = await Api.call('admin.riwayat_sekolah.list', { user_id: userId });
-  if (!res.ok) { el.innerHTML = UI.errorHtml(res.error); return; }
+  if (!res.ok) { el.innerHTML = `<div style="color:var(--danger);font-size:11.5px;">${UI.escapeHtml(res.error)}</div>`; return; }
 
   const list = res.data || [];
   if (list.length === 0) {
-    el.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:8px 0;">Belum ada riwayat.</div>';
+    el.innerHTML = '<div style="font-size:11.5px;color:var(--muted);padding:8px 0;">Belum ada riwayat mutasi.</div>';
     return;
   }
 
   const jenisLabel = {
-    induk: { text: 'Induk', cls: 'badge-maroon' },
-    plt: { text: 'PLT', cls: 'badge-info' },
-    pindah_masuk: { text: 'Pindah Masuk', cls: 'badge-success' },
-    pindah_keluar: { text: 'Pindah Keluar', cls: 'badge-danger' },
+    induk: 'Induk', plt: 'PLT', pindah_masuk: 'Pindah Masuk', pindah_keluar: 'Pindah Keluar',
   };
 
-  el.innerHTML = list.map(r => {
-    const j = jenisLabel[r.jenis] || { text: r.jenis, cls: 'badge-maroon' };
+  el.innerHTML = list.map((r, idx) => {
     const dari = UI.formatTanggalPendek(r.dari_tanggal);
     const sampai = r.sampai_tanggal ? UI.formatTanggalPendek(r.sampai_tanggal) : 'Sekarang';
+    const isCurrent = !r.sampai_tanggal;
     return `
-      <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;">
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;flex-wrap:wrap;">
-          <span class="badge ${j.cls}" style="font-size:9px;">${j.text}</span>
-          <strong>${UI.escapeHtml(r.sekolah?.nama || '-')}</strong>
-        </div>
-        <div style="color:var(--muted);font-size:11px;">${dari} — ${sampai}</div>
-        ${r.catatan ? `<div style="color:var(--muted);font-size:11px;font-style:italic;margin-top:2px;">${UI.escapeHtml(r.catatan)}</div>` : ''}
+      <div class="tl-item ${isCurrent ? 'current' : ''}">
+        <div class="tl-sekolah">${UI.escapeHtml(r.sekolah?.nama || '-')}</div>
+        <div class="tl-period">${dari} — ${sampai} · ${jenisLabel[r.jenis] || r.jenis}</div>
       </div>
     `;
   }).join('');
 }
 
-// ============================================================
+// ═══════════════════════════════════════════════
 // FORM RESET PIN
-// ============================================================
+// ═══════════════════════════════════════════════
 function formResetPin(user) {
   const overlay = document.createElement('div');
-  overlay.className = 'modal-overlay';
+  overlay.className = 'modal-backdrop';
   overlay.innerHTML = `
-    <div class="modal-box">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <h3 style="font-size:17px;color:var(--maroon);margin:0;">Reset PIN</h3>
-        <button data-close class="btn-icon">${Icons.get('x')}</button>
+    <div class="modal" style="max-width:440px;">
+      <div class="modal-header">
+        <div class="modal-title">${Icons.get('lock', { class: 'icon-sm' })} Reset PIN</div>
+        <button class="btn-icon" data-close>${Icons.get('x')}</button>
       </div>
+      <div class="modal-body">
+        <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:16px;">
+          <div style="font-weight:700;font-size:13.5px;color:var(--ink);">${UI.escapeHtml(user.nama_lengkap)}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">${UI.escapeHtml(user.email || '')}</div>
+        </div>
 
-      <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:16px;">
-        <div style="font-weight:700;font-size:13.5px;">${UI.escapeHtml(user.nama_lengkap)}</div>
-        <div style="font-size:12px;color:var(--muted);">${UI.escapeHtml(user.email || '')}</div>
+        <div class="field">
+          <label class="label">PIN Baru (opsional)</label>
+          <input type="text" id="pinBaru" class="input" inputmode="numeric" maxlength="6" placeholder="Kosongkan untuk auto-generate" />
+          <div style="font-size:11px;color:var(--muted);margin-top:6px;font-weight:600;">
+            PIN 5–6 digit. Kalau kosong, sistem buat otomatis dan tampilkan di hasil.
+          </div>
+        </div>
+
+        <div class="alert alert-info" style="margin-top:14px;">
+          ${Icons.get('info', { class: 'icon-sm' })}
+          Setelah reset, guru ini akan otomatis logout dari semua perangkat.
+        </div>
+
+        <div id="resetAlert" class="alert alert-error hidden"></div>
       </div>
-
-      <div class="field" style="margin-bottom:12px;">
-        <label class="label">PIN Baru (opsional)</label>
-        <input type="text" id="pinBaru" class="input" inputmode="numeric" maxlength="6" placeholder="Kosongkan untuk auto-generate" />
-        <div style="font-size:11px;color:var(--muted);margin-top:4px;">5–6 digit angka. Kalau kosong, sistem buat otomatis.</div>
-      </div>
-
-      <div id="resetAlert" class="alert alert-error" style="margin-bottom:12px;"></div>
-
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
-        <button class="btn btn-primary" id="btnReset" style="flex:2;">Reset PIN</button>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Batal</button>
+        <button class="btn btn-primary" id="btnReset">Reset PIN</button>
       </div>
     </div>
   `;
@@ -588,16 +1575,20 @@ function formResetPin(user) {
 
   overlay.querySelector('#btnReset').addEventListener('click', async () => {
     const btn = overlay.querySelector('#btnReset');
+    const alertBox = overlay.querySelector('#resetAlert');
+    alertBox.classList.add('hidden');
+
     const pinBaru = overlay.querySelector('#pinBaru').value.trim();
 
     if (pinBaru && !/^\d{5,6}$/.test(pinBaru)) {
-      UI.gagal('PIN harus 5–6 digit angka.');
+      alertBox.textContent = 'PIN harus 5–6 digit angka.';
+      alertBox.classList.remove('hidden');
       return;
     }
 
     const ok = await UI.konfirmasi(
       'Reset PIN',
-      'Reset PIN ' + user.nama_lengkap + '? Sesi login guru ini akan otomatis logout.',
+      `Reset PIN ${user.nama_lengkap}? Guru ini akan logout otomatis.`,
       { okText: 'Reset', danger: true }
     );
     if (!ok) return;
@@ -610,8 +1601,8 @@ function formResetPin(user) {
     UI.btnReset(btn);
 
     if (!res.ok) {
-      overlay.querySelector('#resetAlert').textContent = res.error;
-      overlay.querySelector('#resetAlert').classList.add('show');
+      alertBox.textContent = res.error;
+      alertBox.classList.remove('hidden');
       return;
     }
 
@@ -622,86 +1613,116 @@ function formResetPin(user) {
 
 function showPinResult(data) {
   const waText = encodeURIComponent(
-    'Halo ' + data.nama + ',\n\nPIN NAKULAKU Anda telah direset.\n\nEmail: ' + data.email + '\nPIN baru: *' + data.pin_baru + '*\n\nSilakan login di:\nhttps://gugusnakula.github.io/nakulaku/login.html'
+    `Halo ${data.nama},\n\nPIN NAKULAKU Anda telah direset.\n\nEmail: ${data.email}\nPIN baru: *${data.pin_baru}*\n\nSilakan login di:\nhttps://gugusnakula.github.io/nakulaku/login.html`
   );
   const waLink = 'https://wa.me/?text=' + waText;
 
   const overlay = document.createElement('div');
-  overlay.className = 'modal-overlay';
+  overlay.className = 'modal-backdrop';
   overlay.innerHTML = `
-    <div class="modal-box" style="text-align:center;">
-      <div style="width:64px;height:64px;border-radius:50%;background:var(--success-soft);color:var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-        ${Icons.get('checkCircle', { class: 'icon-xl' })}
-      </div>
-      <h3 style="font-size:18px;color:var(--maroon);margin-bottom:8px;">PIN Berhasil Direset</h3>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Sampaikan PIN baru ini ke guru:</p>
+    <div class="modal" style="max-width:440px;text-align:center;">
+      <div class="modal-body">
+        <div class="pin-result-icon">
+          ${Icons.get('checkCircle', { class: 'icon-xl' })}
+        </div>
+        <h3 style="font-size:17px;color:var(--maroon);margin-bottom:6px;font-weight:800;">PIN Berhasil Direset</h3>
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:18px;font-weight:600;">
+          Sampaikan PIN baru ini ke guru:
+        </p>
 
-      <div style="padding:16px;background:var(--bg);border-radius:12px;margin-bottom:16px;border:2px dashed var(--maroon-soft);">
-        <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;margin-bottom:6px;">PIN BARU</div>
-        <div style="font-size:32px;font-weight:800;color:var(--maroon);letter-spacing:6px;font-family:monospace;">${UI.escapeHtml(data.pin_baru)}</div>
+        <div class="pin-display">
+          <div class="lbl">PIN BARU</div>
+          <div class="pin-val" id="pinDisplay">${UI.escapeHtml(data.pin_baru)}</div>
+          <div class="copy-hint">Klik PIN untuk menyalin</div>
+        </div>
+
+        <div style="font-size:11.5px;color:var(--muted);margin-bottom:16px;line-height:1.5;">
+          Nama: <strong style="color:var(--ink);">${UI.escapeHtml(data.nama)}</strong><br />
+          Email: ${UI.escapeHtml(data.email || '-')}
+        </div>
       </div>
 
-      <div style="font-size:11.5px;color:var(--muted);margin-bottom:16px;">
-        Nama: <strong>${UI.escapeHtml(data.nama)}</strong><br />
-        Email: ${UI.escapeHtml(data.email || '-')}
-      </div>
-
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-secondary" id="btnTutup" style="flex:1;">Tutup</button>
-        <a href="${waLink}" target="_blank" rel="noopener" class="btn btn-primary" style="flex:2;text-decoration:none;">
-          ${Icons.get('send', { class: 'icon-sm' })} Kirim ke WhatsApp
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btnTutup">Tutup</button>
+        <a href="${waLink}" target="_blank" rel="noopener" class="btn btn-primary" style="text-decoration:none;">
+          ${Icons.get('send', { class: 'icon-sm' })} Kirim WA
         </a>
       </div>
     </div>
   `;
   document.body.appendChild(overlay);
 
+  // Copy PIN on click
+  document.getElementById('pinDisplay').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(data.pin_baru);
+      UI.sukses('PIN disalin ke clipboard.');
+    } catch {
+      UI.gagal('Gagal menyalin.');
+    }
+  });
+
   overlay.querySelector('#btnTutup').addEventListener('click', () => overlay.remove());
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
 }
 
-// ============================================================
+// ═══════════════════════════════════════════════
 // FORM KELOLA PERAN
-// ============================================================
-async function formKelolaPeran(user) {
+// ═══════════════════════════════════════════════
+async function formKelolaPeran(user, initialPeran = null) {
+  // Ambil peran terkini
   const res = await Api.call('admin.peran.list', { user_id: user.id });
   if (!res.ok) { UI.gagal(res.error); return; }
 
   const peranSaat = res.data || [];
+  const userIsSA = peranSaat.some(p => p.peran === 'super_admin' && p.aktif);
 
   const overlay = document.createElement('div');
-  overlay.className = 'modal-overlay';
+  overlay.className = 'modal-backdrop';
   overlay.innerHTML = `
-    <div class="modal-box">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <h3 style="font-size:17px;color:var(--maroon);margin:0;">Kelola Peran</h3>
-        <button data-close class="btn-icon">${Icons.get('x')}</button>
+    <div class="modal" style="max-width:520px;">
+      <div class="modal-header">
+        <div class="modal-title">${Icons.get('shield', { class: 'icon-sm' })} Kelola Peran</div>
+        <button class="btn-icon" data-close>${Icons.get('x')}</button>
       </div>
+      <div class="modal-body">
 
-      <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:16px;">
-        <div style="font-weight:700;font-size:13.5px;">${UI.escapeHtml(user.nama_lengkap)}</div>
-        <div style="font-size:12px;color:var(--muted);">${UI.escapeHtml(user.email || '')}</div>
-      </div>
-
-      <div style="margin-bottom:16px;">
-        <div style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0.5px;margin-bottom:10px;">PERAN SAAT INI</div>
-        <div id="listPeran">${renderPeranList(peranSaat)}</div>
-      </div>
-
-      <div style="border-top:1px solid var(--border);padding-top:16px;">
-        <div style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0.5px;margin-bottom:10px;">TAMBAH PERAN</div>
-        <div style="display:flex;gap:8px;">
-          <select id="pilihPeran" class="input" style="flex:1;">
-            <option value="">— Pilih Peran —</option>
-            <option value="pengurus">Pengurus (admin)</option>
-            <option value="narasumber">Narasumber</option>
-            <option value="pengamat">Pengamat</option>
-            <option value="ks">Kepala Sekolah</option>
-          </select>
-          <button class="btn btn-primary" id="btnTambahPeran" style="flex:1;">
-            ${Icons.get('plus', { class: 'icon-sm' })} Tambah
-          </button>
+        <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:18px;">
+          <div style="font-weight:700;font-size:13.5px;color:var(--ink);">${UI.escapeHtml(user.nama_lengkap)}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">${UI.escapeHtml(user.email || '')}</div>
+          ${userIsSA ? `<div class="role-badge sa" style="margin-top:8px;font-size:10px;">👑 Super Admin Aktif</div>` : ''}
         </div>
+
+        <div style="margin-bottom:18px;">
+          <div class="detail-section-title" style="margin-bottom:10px;">Peran Saat Ini</div>
+          <div id="listPeran">${renderPeranList(peranSaat)}</div>
+        </div>
+
+        <div style="padding-top:16px;border-top:1px dashed var(--border);">
+          <div class="detail-section-title" style="margin-bottom:10px;">Tambah Peran</div>
+          <div style="display:flex;gap:8px;">
+            <select id="pilihPeran" class="input" style="flex:1;height:44px;">
+              <option value="">— Pilih Peran —</option>
+              ${isCurrentUserSA() ? '<option value="super_admin">👑 Super Admin</option>' : ''}
+              <option value="pengurus">Pengurus (Admin)</option>
+              <option value="narasumber">Narasumber</option>
+              <option value="pengamat">Pengamat</option>
+              <option value="ks">Kepala Sekolah</option>
+            </select>
+            <button class="btn btn-primary" id="btnTambahPeran" style="padding:0 20px;height:44px;">
+              ${Icons.get('plus', { class: 'icon-sm' })} Tambah
+            </button>
+          </div>
+          ${isCurrentUserSA()
+            ? `<div style="font-size:11px;color:var(--warning);margin-top:8px;font-weight:700;">
+                ⚠️ Super Admin hanya untuk yang benar-benar dipercaya
+              </div>`
+            : `<div style="font-size:11px;color:var(--muted);margin-top:8px;font-weight:600;">
+                Hanya Super Admin yang bisa menambahkan role Super Admin
+              </div>`}
+        </div>
+
+        <div id="peranAlert" class="alert alert-error hidden" style="margin-top:14px;"></div>
       </div>
     </div>
   `;
@@ -711,23 +1732,42 @@ async function formKelolaPeran(user) {
   overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
 
+  const alertBox = overlay.querySelector('#peranAlert');
+  const listEl = overlay.querySelector('#listPeran');
+
   function wireHapus() {
-    overlay.querySelectorAll('[data-hapus-peran]').forEach(b => {
+    listEl.querySelectorAll('[data-hapus-peran]').forEach(b => {
       b.addEventListener('click', async () => {
         const peran = b.dataset.hapusPeran;
-        const ok = await UI.konfirmasi(
-          'Hapus Peran',
-          'Hapus peran "' + peran + '" dari ' + user.nama_lengkap + '?',
-          { danger: true, okText: 'Hapus' }
-        );
-        if (!ok) return;
-        const res2 = await Api.call('admin.peran.hapus', {
-          user_id: user.id,
-          peran,
-        });
-        if (!res2.ok) { UI.gagal(res2.error); return; }
-        UI.sukses('Peran dihapus.');
+
+        // ✅ Guardrail SA revoke
+        if (peran === 'super_admin') {
+          const ok = await UI.konfirmasi(
+            '⚠️ Cabut Akses Super Admin?',
+            `Anda akan MENCABUT akses SUPER ADMIN dari "${user.nama_lengkap}".\n\nPastikan masih ada minimal 1 super_admin aktif di sistem.`,
+            { okText: 'Ya, Cabut', danger: true }
+          );
+          if (!ok) return;
+        } else {
+          const label = ROLE_LABELS[peran] || peran;
+          const ok = await UI.konfirmasi(
+            'Hapus Peran',
+            `Hapus peran "${label}" dari ${user.nama_lengkap}?`,
+            { danger: true, okText: 'Hapus' }
+          );
+          if (!ok) return;
+        }
+
+        alertBox.classList.add('hidden');
+        const r = await Api.call('admin.peran.hapus', { user_id: user.id, peran });
+        if (!r.ok) {
+          alertBox.textContent = r.error;
+          alertBox.classList.remove('hidden');
+          return;
+        }
+        UI.sukses(`Peran ${ROLE_LABELS[peran] || peran} dicabut.`);
         await reload();
+        await loadGuru();
       });
     });
   }
@@ -736,116 +1776,137 @@ async function formKelolaPeran(user) {
   async function reload() {
     const r = await Api.call('admin.peran.list', { user_id: user.id });
     if (!r.ok) return;
-    overlay.querySelector('#listPeran').innerHTML = renderPeranList(r.data || []);
+    listEl.innerHTML = renderPeranList(r.data || []);
     wireHapus();
   }
 
   overlay.querySelector('#btnTambahPeran').addEventListener('click', async () => {
     const btn = overlay.querySelector('#btnTambahPeran');
     const peran = overlay.querySelector('#pilihPeran').value;
-    if (!peran) { UI.gagal('Pilih peran.'); return; }
+    alertBox.classList.add('hidden');
+
+    if (!peran) { alertBox.textContent = 'Pilih peran dulu.'; alertBox.classList.remove('hidden'); return; }
+
+    // ✅ Guardrail SA assign
+    if (peran === 'super_admin') {
+      const ok = await UI.konfirmasi(
+        '⚠️ Beri Akses Super Admin?',
+        `Anda akan memberi akses SUPER ADMIN kepada "${user.nama_lengkap}".\n\nAkses ini meliputi:\n• Hapus guru permanen\n• Hapus sekolah permanen\n• Backup database\n• Transfer super admin ke user lain\n\nPastikan Anda benar-benar yakin.`,
+        { okText: 'Ya, Beri Akses', danger: true }
+      );
+      if (!ok) return;
+    }
 
     UI.btnLoading(btn, 'Menambah…');
-    const res2 = await Api.call('admin.peran.tambah', {
-      user_id: user.id,
-      peran,
-    });
+    const r = await Api.call('admin.peran.tambah', { user_id: user.id, peran });
     UI.btnReset(btn);
 
-    if (!res2.ok) { UI.gagal(res2.error); return; }
-    UI.sukses('Peran ditambahkan.');
+    if (!r.ok) {
+      alertBox.textContent = r.error;
+      alertBox.classList.remove('hidden');
+      return;
+    }
+    UI.sukses(`Peran ${ROLE_LABELS[peran] || peran} ditambahkan.`);
     overlay.querySelector('#pilihPeran').value = '';
     await reload();
+    await loadGuru();
   });
 }
 
 function renderPeranList(peranList) {
   if (!peranList || peranList.length === 0) {
-    return '<div style="text-align:center;padding:14px;color:var(--muted);font-size:13px;">Belum punya peran khusus.</div>';
+    return '<div style="text-align:center;padding:14px;color:var(--muted);font-size:13px;">Belum punya role khusus.</div>';
   }
-  const peranLabel = {
-    super_admin: 'Super Admin',
-    pengurus: 'Pengurus',
-    narasumber: 'Narasumber',
-    pengamat: 'Pengamat',
-    peserta: 'Peserta',
-    ks: 'Kepala Sekolah',
-  };
-  return peranList.map(p => {
-    const bisaHapus = p.peran !== 'super_admin' && p.peran !== 'peserta';
-    return `
-      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;">
-        <span class="badge badge-maroon" style="flex-shrink:0;">${UI.escapeHtml(peranLabel[p.peran] || p.peran)}</span>
-        <div style="flex:1;"></div>
-        ${bisaHapus ? '<button class="btn-icon" data-hapus-peran="' + p.peran + '" style="color:var(--danger);width:32px;height:32px;">' + Icons.get('trash', { class: 'icon-sm' }) + '</button>' : ''}
-      </div>
-    `;
-  }).join('');
+
+  return peranList
+    .filter(p => p.aktif !== false)
+    .map(p => {
+      const isSA = p.peran === 'super_admin';
+      const canRevoke = p.peran !== 'super_admin' || isCurrentUserSA();
+      const label = ROLE_LABELS[p.peran] || p.peran;
+
+      return `
+        <div class="peran-item ${isSA ? 'sa' : ''}">
+          <span class="role-badge ${p.peran === 'peserta' ? 'guru' : p.peran === 'ks' ? 'ks' : p.peran === 'narasumber' ? 'narsum' : p.peran === 'pengamat' ? 'pengamat' : p.peran === 'pengurus' ? 'pengurus' : 'sa'}">
+            ${isSA ? '👑 ' : ''}${UI.escapeHtml(label)}
+          </span>
+          <div class="peran-label"></div>
+          ${canRevoke ? `<button class="revoke-btn" data-hapus-peran="${p.peran}" title="Cabut">
+            ${Icons.get('trash', { class: 'icon-sm' })}
+          </button>` : `<span style="font-size:10px;color:var(--muted);font-weight:700;">🔒</span>`}
+        </div>
+      `;
+    }).join('');
 }
 
-// ============================================================
+// ═══════════════════════════════════════════════
 // FORM MUTASI
-// ============================================================
+// ═══════════════════════════════════════════════
 async function formMutasi(user) {
   const resS = await Api.call('sekolah.list');
   if (!resS.ok) { UI.gagal(resS.error); return; }
-  const sekolahList = (resS.data || []).filter(s => s.id !== user.sekolah_id);
 
+  const sekolahList = (resS.data || []).filter(s => s.id !== user.sekolah_id);
   const opsiSekolah = sekolahList.map(s => `<option value="${s.id}">${UI.escapeHtml(s.nama)}</option>`).join('');
 
   const overlay = document.createElement('div');
-  overlay.className = 'modal-overlay';
+  overlay.className = 'modal-backdrop';
   overlay.innerHTML = `
-    <div class="modal-box">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <h3 style="font-size:17px;color:var(--maroon);margin:0;">Mutasi Guru</h3>
-        <button data-close class="btn-icon">${Icons.get('x')}</button>
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">${Icons.get('arrowRight', { class: 'icon-sm' })} Mutasi Guru</div>
+        <button class="btn-icon" data-close>${Icons.get('x')}</button>
       </div>
-
-      <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:16px;">
-        <div style="font-weight:700;font-size:13.5px;">${UI.escapeHtml(user.nama_lengkap)}</div>
-        <div style="font-size:12px;color:var(--muted);">Sekolah saat ini: ${UI.escapeHtml(user.sekolah?.nama || '-')}</div>
-      </div>
-
-      <div style="padding:10px 12px;background:var(--info-soft);border-radius:10px;margin-bottom:16px;font-size:12px;line-height:1.5;color:var(--info);">
-        <strong>ℹ️ Info:</strong> Mutasi tidak menghapus data historis. Presensi & tugas lama tetap tercatat di sekolah asal.
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div class="field">
-          <label class="label">Jenis Mutasi *</label>
-          <select id="mJenis" class="input">
-            <option value="induk">Pindah Induk (ganti sekolah utama)</option>
-            <option value="plt">PLT (tambah sekolah, tetap di sekolah asal)</option>
-            <option value="pindah_masuk">Pindah Masuk (dari luar gugus)</option>
-          </select>
+      <div class="modal-body">
+        <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:14px;">
+          <div style="font-weight:700;font-size:13.5px;color:var(--ink);">${UI.escapeHtml(user.nama_lengkap)}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">
+            Sekolah saat ini: ${UI.escapeHtml(user.sekolah?.nama || '-')}
+          </div>
         </div>
 
-        <div class="field">
-          <label class="label">Sekolah Baru *</label>
-          <select id="mSekolah" class="input">
-            <option value="">— Pilih Sekolah —</option>
-            ${opsiSekolah}
-          </select>
+        <div class="alert alert-info">
+          ${Icons.get('info', { class: 'icon-sm' })}
+          Mutasi tidak menghapus data historis. Presensi & tugas lama tetap tercatat di sekolah asal.
         </div>
 
-        <div class="field">
-          <label class="label">Tanggal Mulai *</label>
-          <input type="date" id="mTanggal" class="input" value="${new Date().toISOString().slice(0, 10)}" />
-          <div style="font-size:11px;color:var(--muted);margin-top:4px;">Riwayat sekolah lama akan ditutup H-1 dari tanggal ini.</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="field">
+            <label class="label">Jenis Mutasi *</label>
+            <select id="mJenis" class="input">
+              <option value="induk">Pindah Induk (ganti sekolah utama)</option>
+              <option value="plt">PLT (tambah sekolah, tetap di sekolah asal)</option>
+              <option value="pindah_masuk">Pindah Masuk (dari luar gugus)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="label">Sekolah Baru *</label>
+            <select id="mSekolah" class="input">
+              <option value="">— Pilih Sekolah —</option>
+              ${opsiSekolah}
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="label">Tanggal Mulai *</label>
+            <input type="date" id="mTanggal" class="input" value="${new Date().toISOString().slice(0, 10)}" />
+            <div style="font-size:11px;color:var(--muted);margin-top:4px;font-weight:600;">
+              Riwayat sekolah lama akan ditutup H-1 dari tanggal ini.
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">Catatan (opsional)</label>
+            <textarea id="mCatatan" class="input" rows="2" style="resize:vertical;" placeholder="Mis: SK Mutasi No. 123/2026"></textarea>
+          </div>
         </div>
 
-        <div class="field">
-          <label class="label">Catatan (opsional)</label>
-          <textarea id="mCatatan" class="input" rows="2" style="resize:vertical;" placeholder="Mis: SK Mutasi No. 123/2026"></textarea>
-        </div>
+        <div id="mAlert" class="alert alert-error hidden" style="margin-top:14px;"></div>
       </div>
-
-      <div id="mAlert" class="alert alert-error" style="margin-top:14px;"></div>
-
-      <div style="display:flex;gap:8px;margin-top:20px;">
-        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
-        <button class="btn btn-primary" id="btnSimpanMutasi" style="flex:2;">Proses Mutasi</button>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Batal</button>
+        <button class="btn btn-primary" id="btnSimpanMutasi">Proses Mutasi</button>
       </div>
     </div>
   `;
@@ -858,19 +1919,19 @@ async function formMutasi(user) {
   overlay.querySelector('#btnSimpanMutasi').addEventListener('click', async () => {
     const btn = overlay.querySelector('#btnSimpanMutasi');
     const alertBox = overlay.querySelector('#mAlert');
-    alertBox.classList.remove('show');
+    alertBox.classList.add('hidden');
 
     const jenis = overlay.querySelector('#mJenis').value;
     const sekolahBaru = Number(overlay.querySelector('#mSekolah').value);
     const tanggal = overlay.querySelector('#mTanggal').value;
     const catatan = overlay.querySelector('#mCatatan').value.trim();
 
-    if (!sekolahBaru) { alertBox.textContent = 'Pilih sekolah baru.'; alertBox.classList.add('show'); return; }
-    if (!tanggal) { alertBox.textContent = 'Tanggal wajib.'; alertBox.classList.add('show'); return; }
+    if (!sekolahBaru) { alertBox.textContent = 'Pilih sekolah baru.'; alertBox.classList.remove('hidden'); return; }
+    if (!tanggal) { alertBox.textContent = 'Tanggal wajib.'; alertBox.classList.remove('hidden'); return; }
 
     const ok = await UI.konfirmasi(
       'Konfirmasi Mutasi',
-      'Mutasi ' + user.nama_lengkap + ' ke sekolah baru?\n\nData historis (presensi, tugas) tetap tersimpan.',
+      `Mutasi ${user.nama_lengkap} ke sekolah baru?\n\nData historis (presensi, tugas) tetap tersimpan.`,
       { okText: 'Ya, Mutasi' }
     );
     if (!ok) return;
@@ -885,7 +1946,11 @@ async function formMutasi(user) {
     });
     UI.btnReset(btn);
 
-    if (!res.ok) { alertBox.textContent = res.error; alertBox.classList.add('show'); return; }
+    if (!res.ok) {
+      alertBox.textContent = res.error;
+      alertBox.classList.remove('hidden');
+      return;
+    }
 
     UI.sukses(res.data.pesan);
     close();
@@ -893,40 +1958,43 @@ async function formMutasi(user) {
   });
 }
 
-// ============================================================
+// ═══════════════════════════════════════════════
 // FORM HAPUS GURU
-// ============================================================
+// ═══════════════════════════════════════════════
 function formHapusGuru(user) {
   const overlay = document.createElement('div');
-  overlay.className = 'modal-overlay';
+  overlay.className = 'modal-backdrop';
   overlay.innerHTML = `
-    <div class="modal-box">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <h3 style="font-size:17px;color:var(--danger);margin:0;">Hapus Guru</h3>
-        <button data-close class="btn-icon">${Icons.get('x')}</button>
+    <div class="modal" style="max-width:440px;">
+      <div class="modal-header">
+        <div class="modal-title" style="color:var(--danger);">
+          ${Icons.get('trash', { class: 'icon-sm' })} Hapus Guru
+        </div>
+        <button class="btn-icon" data-close>${Icons.get('x')}</button>
       </div>
+      <div class="modal-body">
+        <div class="alert alert-warning" style="margin-bottom:14px;">
+          ${Icons.get('alertTriangle', { class: 'icon-sm' })}
+          <div>
+            <strong>Perhatian:</strong> Kalau sudah punya aktivitas (presensi/tugas/feedback), akun akan <strong>dinonaktifkan</strong> — bukan dihapus permanen.
+          </div>
+        </div>
 
-      <div style="padding:12px;background:var(--danger-soft);border-radius:12px;margin-bottom:16px;font-size:12.5px;line-height:1.5;color:var(--danger);">
-        <strong>⚠️ Perhatian</strong><br>
-        Kalau guru ini <strong>sudah punya aktivitas</strong> (presensi, tugas, feedback, dll), akun akan <strong>dinonaktifkan</strong> saja — bukan dihapus permanen.<br>
-        Kalau <strong>belum ada aktivitas</strong>, akun akan dihapus permanen.
+        <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:14px;">
+          <div style="font-weight:700;font-size:13.5px;color:var(--ink);">${UI.escapeHtml(user.nama_lengkap)}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">${UI.escapeHtml(user.email || '')}</div>
+        </div>
+
+        <div class="field">
+          <label class="label">Ketik nama lengkap untuk konfirmasi *</label>
+          <input type="text" id="konfirmasiHapus" class="input" placeholder="Ketik nama persis…" />
+        </div>
+
+        <div id="hapusAlert" class="alert alert-error hidden" style="margin-top:14px;"></div>
       </div>
-
-      <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:16px;">
-        <div style="font-weight:700;font-size:13.5px;">${UI.escapeHtml(user.nama_lengkap)}</div>
-        <div style="font-size:12px;color:var(--muted);">${UI.escapeHtml(user.email || '')}</div>
-      </div>
-
-      <div class="field" style="margin-bottom:14px;">
-        <label class="label">Ketik nama lengkap guru untuk konfirmasi *</label>
-        <input type="text" id="konfirmasiHapus" class="input" placeholder="Ketik nama persis…" />
-      </div>
-
-      <div id="hapusAlert" class="alert alert-error" style="margin-bottom:12px;"></div>
-
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
-        <button class="btn btn-danger" id="btnProsesHapus" disabled style="flex:2;">Hapus</button>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Batal</button>
+        <button class="btn btn-danger" id="btnProsesHapus" disabled>Hapus</button>
       </div>
     </div>
   `;
@@ -947,8 +2015,7 @@ function formHapusGuru(user) {
 
   btnProses.addEventListener('click', async () => {
     if (btnProses.disabled) return;
-
-    alertBox.classList.remove('show');
+    alertBox.classList.add('hidden');
     UI.btnLoading(btnProses, 'Memproses…');
 
     const res = await Api.call('admin.users.hapus', {
@@ -960,111 +2027,13 @@ function formHapusGuru(user) {
 
     if (!res.ok) {
       alertBox.textContent = res.error;
-      alertBox.classList.add('show');
+      alertBox.classList.remove('hidden');
       return;
     }
 
     close();
     UI.sukses(res.data.pesan);
     await loadGuru();
-  });
-}
-
-// ============================================================
-// FORM PERTEMUAN DIAJAR (NARASUMBER)
-// ============================================================
-async function formPertemuanDiajar(user) {
-  const res = await Api.call('admin.narasumber.preview_pertemuan', { user_id: user.id });
-  if (!res.ok) {
-    UI.gagal(res.error || 'Gagal memuat pertemuan.');
-    return;
-  }
-  const { pertemuan = [], periode } = res.data;
-
-  const overlay = document.createElement('div');
-  overlay.className = 'modal-overlay';
-  overlay.innerHTML = `
-    <div class="modal-box" style="max-width:600px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <h3 style="font-size:17px;color:var(--maroon);margin:0;">Pertemuan Diajar</h3>
-        <button data-close class="btn-icon">${Icons.get('x')}</button>
-      </div>
-
-      <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:16px;">
-        <div style="font-weight:700;font-size:13.5px;">${UI.escapeHtml(user.nama_lengkap)}</div>
-        <div style="font-size:12px;color:var(--muted);">${periode ? 'Periode: ' + UI.escapeHtml(periode.nama) : 'Tidak ada periode aktif'}</div>
-      </div>
-
-      <div style="padding:10px 12px;background:var(--info-soft);border-radius:10px;margin-bottom:16px;font-size:12px;line-height:1.5;color:var(--info);">
-        <strong>ℹ️ Info:</strong> Centang pertemuan yang <strong>diajar</strong> oleh narsum ini. Yang tidak dicentang akan dilepas (kalau sebelumnya dipegang olehnya).
-      </div>
-
-      ${pertemuan.length === 0 ? `
-        <div style="text-align:center;padding:30px 20px;color:var(--muted);font-size:13px;">
-          ${periode ? 'Belum ada pertemuan di periode aktif.' : 'Belum ada periode aktif.'}
-        </div>
-      ` : `
-        <div style="max-height:42vh;overflow-y:auto;margin-bottom:16px;border:1px solid var(--border);border-radius:12px;">
-          ${pertemuan.map(p => `
-            <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border);cursor:pointer;${p.diampu_oleh_narsum_ini ? 'background:var(--maroon-faint);' : ''}">
-              <input type="checkbox" data-pid="${p.id}" ${p.diampu_oleh_narsum_ini ? 'checked' : ''} style="width:18px;height:18px;flex-shrink:0;cursor:pointer;">
-              <div style="flex:1;min-width:0;">
-                <div style="font-weight:700;font-size:13px;">#${p.urutan} — ${UI.escapeHtml(p.judul)}</div>
-                <div style="font-size:11px;color:var(--muted);">${UI.formatTanggalPendek(p.tanggal)}${p.lokasi_nama ? ' · ' + UI.escapeHtml(p.lokasi_nama) : ''}</div>
-              </div>
-              ${p.narasumber_user_id && p.narasumber_user_id !== user.id
-                ? `<span style="font-size:10px;padding:2px 8px;background:var(--warning-soft);color:var(--warning);border-radius:999px;font-weight:700;flex-shrink:0;">Narsum lain</span>`
-                : ''}
-            </label>
-          `).join('')}
-        </div>
-      `}
-
-      <div id="pdAlert" class="alert alert-error" style="margin-bottom:12px;"></div>
-
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
-        <button class="btn btn-primary" id="btnSimpanPd" style="flex:2;" ${pertemuan.length === 0 ? 'disabled' : ''}>Simpan</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-
-  const close = () => overlay.remove();
-  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
-  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
-
-  const btnSimpan = overlay.querySelector('#btnSimpanPd');
-  if (!btnSimpan) return;
-
-  btnSimpan.addEventListener('click', async () => {
-    const alertBox = overlay.querySelector('#pdAlert');
-    alertBox.classList.remove('show');
-
-    const checked = [...overlay.querySelectorAll('input[type="checkbox"]:checked')].map(cb => Number(cb.dataset.pid));
-
-    const ok = await UI.konfirmasi(
-      'Simpan Perubahan',
-      `Narsum ${user.nama_lengkap} akan mengajar ${checked.length} pertemuan. Lanjutkan?`,
-      { okText: 'Simpan' }
-    );
-    if (!ok) return;
-
-    UI.btnLoading(btnSimpan, 'Menyimpan…');
-    const res2 = await Api.call('admin.narasumber.set_pertemuan', {
-      user_id: user.id,
-      pertemuan_ids: checked,
-    });
-    UI.btnReset(btnSimpan);
-
-    if (!res2.ok) {
-      alertBox.textContent = res2.error;
-      alertBox.classList.add('show');
-      return;
-    }
-
-    UI.sukses(res2.data.pesan || `Berhasil! ${checked.length} pertemuan diset.`);
-    close();
   });
 }
 </script>
