@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>Penilaian Tugas — NAKULAKU</title>
+
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/nakula.css" />
+
+<style>
+  .app-header-brand { flex: 1; justify-content: flex-start; }
+  .app-header-text { text-align: left; }
+  .narsum-stage { max-width: 900px; margin: 0 auto; padding: 20px 16px 40px; }
+
+  /* CARD LIST PERTEMUAN/TUGAS */
+  .task-card {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 18px; padding: 16px; margin-bottom: 12px;
+    cursor: pointer; transition: all .2s var(--ease-out);
+    animation: fade-in-up .4s var(--ease-out) both;
+  }
+  .task-card:hover { border-color: var(--maroon-light); box-shadow: var(--sh-md); transform: translateY(-2px); }
+
+  /* TAB & FILTER */
+  .tab-switch {
+    display: flex; gap: 4px; background: var(--bg); padding: 4px;
+    border-radius: 14px; margin-bottom: 16px; border: 1.5px solid var(--border);
+  }
+  .tsw {
+    flex: 1; padding: 11px 8px; text-align: center; font-size: 13px; font-weight: 700;
+    color: var(--muted); border-radius: 10px; cursor: pointer; border: none;
+    background: transparent; display: flex; align-items: center; justify-content: center;
+    gap: 6px; transition: all .15s; font-family: inherit;
+  }
+  .tsw.active { background: var(--surface); color: var(--maroon); box-shadow: 0 2px 8px rgba(125,29,58,.08); }
+
+  /* LIST SISWA/GURU */
+  .siswa-row {
+    display: flex; align-items: center; gap: 12px; padding: 14px;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 16px; margin-bottom: 10px; transition: all .15s;
+  }
+  .siswa-row:hover { border-color: var(--maroon); }
+  .siswa-avatar {
+    width: 44px; height: 44px; border-radius: 50%; background: var(--maroon-soft);
+    color: var(--maroon); display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px; flex-shrink: 0; overflow: hidden; position: relative;
+  }
+  .siswa-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .siswa-info { flex: 1; min-width: 0; }
+  .siswa-nama { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 2px; }
+  .siswa-sub { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  
+  .status-badge {
+    font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: 0.3px; flex-shrink: 0;
+  }
+  .status-badge.dinilai { background: var(--success-soft); color: var(--success); }
+  .status-badge.belum { background: var(--warning-soft); color: var(--warning); }
+
+  /* BULK ACTION BAR */
+  .bulk-bar {
+    position: sticky; bottom: 20px; background: var(--ink); color: white;
+    padding: 12px 16px; border-radius: 16px; display: flex; align-items: center;
+    justify-content: space-between; box-shadow: 0 8px 24px rgba(0,0,0,.3);
+    animation: slide-up .3s var(--ease-out) both; z-index: 10; margin-top: 20px;
+  }
+  .bulk-bar .count { font-weight: 700; font-size: 13px; }
+  .bulk-bar .btn { background: var(--gold); color: var(--ink); border: none; font-weight: 800; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-brand" style="display:flex; align-items:center; gap:10px;">
+    <div class="app-header-text" style="text-align:left;">
+      <div class="app-header-title">Penilaian Tugas</div>
+      <div class="app-header-sub">Ruang Kerja Narsum</div>
+    </div>
+  </div>
+  <button class="header-btn" data-act="logout"><span data-icon="logOut"></span></button>
+</header>
+
+<div class="desktop-layout">
+  <aside class="desktop-sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-logo"><img src="assets/img/logo-mark.svg" alt="Nakula" /></div>
+      <div class="sidebar-brand-text"><div class="name">NAKULAKU</div><div class="sub">KKG Gugus Nakula</div></div>
+    </div>
+    <nav class="sidebar-menu">
+      <a class="sidebar-item" data-nav="beranda" href="beranda.html"><span data-icon="home"></span> Beranda</a>
+      <a class="sidebar-item active" data-nav="narsum" href="narsum.html"><span data-icon="edit"></span> Penilaian Tugas</a>
+      <a class="sidebar-item" data-nav="profil" href="profil.html"><span data-icon="user"></span> Profil</a>
+    </nav>
+  </aside>
+
+  <main class="desktop-main">
+    <div class="desktop-topbar">
+      <h2>Penilaian Tugas</h2>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="user-chip" id="userChip"></div>
+        <button class="btn-icon" data-act="logout"><span data-icon="logOut"></span></button>
+      </div>
+    </div>
+
+    <div class="narsum-stage">
+      <!-- STEP 1: PILIH TUGAS -->
+      <div id="stepPilihTugas">
+        <h3 style="font-size:16px;font-weight:800;margin-bottom:16px;">Daftar Tugas yang Anda Ajar</h3>
+        <div id="listTugas"></div>
+      </div>
+
+      <!-- STEP 2: KOREKSI -->
+      <div id="stepKoreksi" class="hidden">
+        <button class="btn btn-secondary btn-sm" id="btnKembali" style="margin-bottom:16px;">
+          <span data-icon="chevronLeft"></span> Kembali ke Daftar
+        </button>
+        
+        <div class="info-header" id="infoTugas" style="background:var(--surface);border:1.5px solid var(--border);border-radius:18px;padding:16px;margin-bottom:16px;">
+          <!-- Diisi JS -->
+        </div>
+
+        <div class="tab-switch">
+          <button class="tsw active" data-filter="belum">Belum Dinilai</button>
+          <button class="tsw" data-filter="dinilai">Sudah Dinilai</button>
+          <button class="tsw" data-filter="hadir">Peserta Hadir</button>
+        </div>
+
+        <div id="listSiswa"></div>
+
+        <!-- Bulk Action Bar -->
+        <div class="bulk-bar hidden" id="bulkBar">
+          <div class="count"><span id="bulkCount">0</span> tugas dipilih</div>
+          <button class="btn btn-sm" id="btnBulkNilai">Beri Nilai</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/app-nav.js"></script>
+<script>
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = Icons.get(el.dataset.icon);
+  el.style.display = 'contents';
+});
+UI.bindLogout();
+
+let profile;
+let daftarTugas = [];
+let tugasAktif = null;
+let dataSubmissions = null;
+let filterAktif = 'belum';
+let selectedIds = new Set();
+
+(async () => {
+  profile = await Api.requireLogin();
+  if (!profile) return;
+
+  const chip = document.getElementById('userChip');
+  if (chip) {
+    const init = (profile.nama || 'A').charAt(0).toUpperCase();
+    const fotoUrl = Api.fotoSayaUrl('t');
+    chip.innerHTML = `<div class="avatar">${fotoUrl ? `<img src="${fotoUrl}" onerror="this.parentElement.textContent='${init}'">` : init}</div><span>${UI.escapeHtml(profile.nama || '-')}</span>`;
+  }
+
+  await loadDaftarTugas();
+})();
+
+async function loadDaftarTugas() {
+  const el = document.getElementById('listTugas');
+  el.innerHTML = '<div class="skeleton" style="height:80px;border-radius:16px;margin-bottom:10px;"></div>';
+
+  // Ambil semua pertemuan di mana narasumber adalah user ini
+  const res = await Api.call('pertemuan.list');
+  if (!res.ok) { el.innerHTML = UI.errorHtml(res.error); return; }
+
+  const pertemuanList = res.data || [];
+  const tugasRes = await Promise.all(pertemuanList.map(async p => {
+    if (p.narasumber_user_id !== profile.id) return null;
+    const r = await Api.call('admin.pertemuan.detail', { pertemuan_id: p.id });
+    return r.ok ? { pertemuan: p, tugas: r.data.tugas } : null;
+  }));
+
+  const tugasDiajar = tugasRes.filter(Boolean).flatMap(item => 
+    item.tugas.map(t => ({ ...t, pertemuan: item.pertemuan }))
+  );
+
+  if (tugasDiajar.length === 0) {
+    el.innerHTML = `<div style="text-align:center;padding:40px;color:var(--muted);">Anda belum ditugaskan mengajar atau belum ada tugas.</div>`;
+    return;
+  }
+
+  el.innerHTML = tugasDiajar.map(t => `
+    <div class="task-card" onclick="bukaKoreksi(${t.id}, ${t.pertemuan.id})">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:44px;height:44px;border-radius:12px;background:var(--gold-soft);color:var(--gold-dark);display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;">
+          ${t.pertemuan.urutan}
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:800;font-size:14px;">${UI.escapeHtml(t.judul)}</div>
+          <div style="font-size:11.5px;color:var(--muted);font-weight:600;">Pertemuan #${t.pertemuan.urutan} · ${UI.formatTanggal(t.pertemuan.tanggal)}</div>
+        </div>
+        <span class="btn btn-sm btn-secondary">Nilai →</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function bukaKoreksi(tugasId, pertemuanId) {
+  tugasAktif = tugasId;
+  selectedIds.clear();
+  document.getElementById('stepPilihTugas').classList.add('hidden');
+  document.getElementById('stepKoreksi').classList.remove('hidden');
+  
+  const res = await Api.call('tugas.submissions', { tugas_id: tugasId });
+  if (!res.ok) { UI.gagal(res.error); return; }
+
+  dataSubmissions = res.data;
+  document.getElementById('infoTugas').innerHTML = `
+    <div style="font-weight:800;font-size:16px;color:var(--maroon);">${UI.escapeHtml(dataSubmissions.tugas.judul || 'Tugas')}</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:4px;">Pertemuan ID #${pertemuanId}</div>
+  `;
+
+  renderListSiswa();
+
+  document.querySelectorAll('.tsw').forEach(t => {
+    t.addEventListener('click', () => {
+      filterAktif = t.dataset.filter;
+      document.querySelectorAll('.tsw').forEach(x => x.classList.toggle('active', x === t));
+      renderListSiswa();
+    });
+  });
+}
+
+function renderListSiswa() {
+  const el = document.getElementById('listSiswa');
+  let list = dataSubmissions.pengumpulan;
+
+  if (filterAktif === 'belum') list = list.filter(p => p.status === 'menunggu');
+  else if (filterAktif === 'dinilai') list = list.filter(p => p.status !== 'menunggu');
+  else if (filterAktif === 'hadir') {
+    el.innerHTML = dataSubmissions.hadir.map(h => `
+      <div class="siswa-row">
+        <div class="siswa-avatar">${h.nama_lengkap.charAt(0)}</div>
+        <div class="siswa-info">
+          <div class="siswa-nama">${UI.escapeHtml(h.nama_lengkap)}</div>
+          <div class="siswa-sub">${UI.escapeHtml(h.sekolah?.nama || '-')}</div>
+        </div>
+      </div>
+    `).join('');
+    return;
+  }
+
+  if (list.length === 0) {
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);">Tidak ada data untuk filter ini.</div>';
+    return;
+  }
+
+  el.innerHTML = list.map(p => {
+    const isSelected = selectedIds.has(p.id);
+    return `
+      <div class="siswa-row" style="border-color:${isSelected ? 'var(--maroon)' : 'var(--border)'}">
+        ${filterAktif !== 'hadir' ? `
+          <input type="checkbox" data-id="${p.id}" ${isSelected ? 'checked' : ''} style="width:18px;height:18px;accent-color:var(--maroon);" />
+        ` : ''}
+        <div class="siswa-avatar">
+          ${p.user?.nama_lengkap?.charAt(0) || '?'}
+          ${p.user?.foto_thumb_url ? `<img src="${p.user.foto_thumb_url}">` : ''}
+        </div>
+        <div class="siswa-info">
+          <div class="siswa-nama">${UI.escapeHtml(p.user?.nama_lengkap || '-')}</div>
+          <div class="siswa-sub">${UI.escapeHtml(p.user?.sekolah?.nama || '-')}</div>
+          ${p.link ? `<a href="${UI.escapeHtml(p.link)}" target="_blank" style="font-size:11px;color:var(--maroon);font-weight:700;display:inline-block;margin-top:4px;">🔗 Buka Link</a>` : ''}
+        </div>
+        <div style="text-align:right;">
+          <div class="status-badge ${p.status === 'menunggu' ? 'belum' : 'dinilai'}">
+            ${p.status === 'menunggu' ? 'Belum' : 'Nilai: ' + p.nilai}
+          </div>
+          ${filterAktif !== 'hadir' ? `
+            <button class="btn btn-sm btn-secondary" onclick="bukaModalNilai(${p.id}, ${p.nilai || ''})" style="margin-top:6px;">Beri Nilai</button>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Event Checkbox
+  el.querySelectorAll('input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', (e) => {
+      const id = Number(e.target.dataset.id);
+      if (e.target.checked) selectedIds.add(id);
+      else selectedIds.delete(id);
+      updateBulkBar();
+    });
+  });
+
+  updateBulkBar();
+}
+
+function updateBulkBar() {
+  const bar = document.getElementById('bulkBar');
+  const count = document.getElementById('bulkCount');
+  count.textContent = selectedIds.size;
+  if (selectedIds.size > 0 && filterAktif !== 'hadir') bar.classList.remove('hidden');
+  else bar.classList.add('hidden');
+}
+
+// BULK ACTION
+document.getElementById('btnBulkNilai').addEventListener('click', () => {
+  if (selectedIds.size === 0) return;
+  bukaModalNilai(Array.from(selectedIds));
+});
+
+// MODAL NILAI
+function bukaModalNilai(targetIds, existingNilai = '') {
+  const isBulk = Array.isArray(targetIds);
+  const ids = isBulk ? targetIds : [targetIds];
+
+  const overlay = document.createElement('div');
+  overlay.className = 'bottom-sheet-overlay';
+  overlay.innerHTML = `
+    <div class="bottom-sheet">
+      <div style="text-align:center;margin-bottom:20px;">
+        <h3 style="font-size:18px;color:var(--maroon);">${isBulk ? 'Beri Nilai Massal' : 'Beri Nilai'}</h3>
+        <p style="font-size:12px;color:var(--muted);margin-top:4px;">${isBulk ? `${ids.length} tugas dipilih` : 'Masukkan nilai 1-100'}</p>
+      </div>
+      <div class="field" style="margin-bottom:16px;">
+        <label class="label">Nilai (1-100) *</label>
+        <input type="number" id="inputNilai" class="input" value="${existingNilai}" min="1" max="100" placeholder="Contoh: 85" />
+      </div>
+      <div class="field" style="margin-bottom:16px;">
+        <label class="label">Status</label>
+        <select id="inputStatus" class="input">
+          <option value="diterima">Diterima (Lulus)</option>
+          <option value="revisi">Perlu Revisi</option>
+          <option value="ditolak">Ditolak</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:20px;">
+        <label class="label">Komentar Tambahan (Opsional)</label>
+        <textarea id="inputKomentar" class="input" rows="2" placeholder="Otomatis dibuat jika kosong."></textarea>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-secondary" id="btnBatalModal" style="flex:1;">Batal</button>
+        <button class="btn btn-primary" id="btnSimpanNilai" style="flex:2;">Simpan Nilai</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelector('#btnBatalModal').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnSimpanNilai').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnSimpanNilai');
+    const nilai = Number(overlay.querySelector('#inputNilai').value);
+    const status = overlay.querySelector('#inputStatus').value;
+    const komentar = overlay.querySelector('#inputKomentar').value.trim();
+
+    if (!nilai || nilai < 1 || nilai > 100) { UI.gagal('Nilai harus 1-100.'); return; }
+
+    UI.btnLoading(btn, 'Menyimpan…');
+    const res = await Api.call('tugas.nilai', {
+      pengumpulan_ids: ids,
+      nilai,
+      status,
+      komentar
+    });
+    UI.btnReset(btn);
+
+    if (!res.ok) { UI.gagal(res.error); return; }
+
+    UI.sukses(isBulk ? 'Nilai massal disimpan.' : 'Nilai disimpan.');
+    close();
+    await bukaKoreksi(tugasAktif, dataSubmissions.tugas.pertemuan_id); // Reload
+  });
+}
+
+document.getElementById('btnKembali').addEventListener('click', () => {
+  document.getElementById('stepKoreksi').classList.add('hidden');
+  document.getElementById('stepPilihTugas').classList.remove('hidden');
+});
+</script>
+</body>
+</html>
