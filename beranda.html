@@ -717,8 +717,22 @@ let profileGlobal = null;
 // BOOT
 // ═══════════════════════════════════════════════
 (async () => {
-  const profile = await Api.requireLogin();
-  if (!profile) return;
+  const cachedProfile = await Api.requireLogin();
+  if (!cachedProfile) return;
+
+  // ✅ FIX: Refresh profile dari backend — dapat data terbaru (sekolah, peran, dst)
+  let profile = cachedProfile;
+  try {
+    const fresh = await Api.call('profile.saya');
+    if (fresh.ok && fresh.data) {
+      profile = { ...cachedProfile, ...fresh.data };
+      Api.setSession(Api.getToken(), profile);
+      console.log('[beranda] Profile refreshed:', profile);
+    }
+  } catch (e) {
+    console.warn('[beranda] Gagal refresh profile:', e);
+  }
+
   profileGlobal = profile;
 
   const peranList = profile.peran || [];
@@ -810,10 +824,29 @@ if (indukId) {
     menu.push({ icon: 'checkCircle', title: 'Verifikasi Izin', desc: 'Verifikasi Izin & Sakit', href: 'ks/verifikasi.html', warna: 'gold' });
   }
 
-  // 3. MENU GURU BIASA
+  // 3. MENU GURU BIASA (dan semua non-KS non-admin)
   if (!isKS && !isAdmin) {
-    if (p.sekolah && p.sekolah.id) {
-      menu.push({ icon: 'home', title: 'Sekolahku', desc: 'Profil & portofolio sekolah', href: `sekolah.html?id=${p.sekolah.id}`, warna: 'maroon' });
+    // Coba berbagai sumber ID sekolah
+    const sekolahId = p.sekolah?.id || p.sekolah_id || null;
+
+    if (sekolahId) {
+      menu.push({
+        icon: 'home',
+        title: 'Sekolahku',
+        desc: p.sekolah?.nama || 'Profil & portofolio sekolah',
+        href: `sekolah.html?id=${sekolahId}`,
+        warna: 'maroon',
+      });
+    } else {
+      // Fallback: kalau benar-benar tidak ada sekolah_id
+      console.warn('[beranda] Guru tidak punya sekolah_id. Profile:', p);
+      menu.push({
+        icon: 'home',
+        title: 'Sekolah',
+        desc: 'Jelajahi sekolah di gugus',
+        href: 'galeri.html',
+        warna: 'maroon',
+      });
     }
   }
 
