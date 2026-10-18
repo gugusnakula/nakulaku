@@ -42,361 +42,158 @@
     border-radius: 16px;
     background: rgba(255,255,255,.15);
     border: 2px solid var(--gold);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--gold);
-    margin-bottom: 16px;
-    position: relative;
-    z-index: 1;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gold); margin-bottom: 16px; position: relative; z-index: 1;
   }
-  .hero-title {
-    font-size: 20px;
-    font-weight: 800;
-    margin-bottom: 6px;
-    position: relative;
-    z-index: 1;
-  }
-  .hero-desc {
-    font-size: 13px;
-    opacity: 0.9;
-    line-height: 1.5;
-    font-weight: 500;
-    position: relative;
-    z-index: 1;
-  }
+  .hero-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; position: relative; z-index: 1; }
+  .hero-desc { font-size: 13px; opacity: 0.9; line-height: 1.5; font-weight: 500; position: relative; z-index: 1; }
 
   /* SECTION TITLE */
   .section-title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--maroon);
-    margin-bottom: 12px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 800; color: var(--maroon);
+    margin-bottom: 12px; letter-spacing: 0.5px; text-transform: uppercase;
   }
   .section-title .icon-wrap {
-    width: 28px; height: 28px;
-    border-radius: 8px;
-    background: var(--maroon-soft);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--maroon-soft); display: flex; align-items: center; justify-content: center;
   }
 
   /* CARD PERTEMUAN (STEP 1) */
   .pertemuan-card {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 18px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 12px;
-    cursor: pointer;
-    transition: all .2s var(--ease-out);
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 18px; padding: 16px; display: flex; align-items: center;
+    gap: 14px; margin-bottom: 12px; cursor: pointer; transition: all .2s var(--ease-out);
     animation: fade-in-up .4s var(--ease-out) both;
   }
-  .pertemuan-card:hover {
-    border-color: var(--maroon-light);
-    transform: translateY(-2px);
-    box-shadow: var(--sh-md);
-  }
+  .pertemuan-card:hover { border-color: var(--maroon-light); transform: translateY(-2px); box-shadow: var(--sh-md); }
   .pertemuan-num {
-    width: 52px; height: 52px;
-    border-radius: 14px;
+    width: 52px; height: 52px; border-radius: 14px;
     background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
-    color: var(--maroon);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 20px;
-    flex-shrink: 0;
+    color: var(--maroon); display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 20px; flex-shrink: 0;
   }
   .pertemuan-info { flex: 1; min-width: 0; }
-  .pertemuan-judul {
-    font-size: 14.5px;
-    font-weight: 800;
-    color: var(--ink);
-    margin-bottom: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .pertemuan-meta {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11.5px;
-    color: var(--muted);
-    font-weight: 700;
-  }
+  .pertemuan-judul { font-size: 14.5px; font-weight: 800; color: var(--ink); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pertemuan-meta { display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--muted); font-weight: 700; }
   .pertemuan-meta + .pertemuan-meta { margin-top: 3px; }
 
   /* INFO HEADER (STEP 2) */
   .info-header {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 18px;
-    padding: 16px;
-    margin-bottom: 16px;
-    box-shadow: var(--sh-xs);
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 18px; padding: 16px; margin-bottom: 16px; box-shadow: var(--sh-xs);
   }
 
-  /* SEARCH BAR */
-  .search-wrap {
-    position: relative;
-    margin-bottom: 16px;
-  }
+  /* SEARCH BAR (FIXED) */
+  .search-wrap { position: relative; margin-bottom: 16px; }
   .search-wrap input {
-    width: 100%;
-    padding: 12px 16px 12px 42px;
-    background: var(--surface);
-    border: 1.5px solid var(--border-strong);
-    border-radius: 14px;
-    font-size: 13.5px;
-    font-family: inherit;
-    font-weight: 600;
-    color: var(--ink);
-    outline: none;
-    transition: all .15s;
+    width: 100%; padding: 12px 16px 12px 42px;
+    background: var(--surface); border: 1.5px solid var(--border-strong);
+    border-radius: 14px; font-size: 13.5px; font-family: inherit;
+    font-weight: 600; color: var(--ink); outline: none; transition: all .15s;
     box-shadow: var(--sh-xs);
   }
-  .search-wrap input:focus {
-    border-color: var(--maroon);
-    box-shadow: var(--sh-glow);
-    background: #FFFFFF;
-  }
+  .search-wrap input:focus { border-color: var(--maroon); box-shadow: var(--sh-glow); background: #FFFFFF; }
   .search-wrap .icon-left {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--muted);
-    pointer-events: none;
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    color: var(--muted); pointer-events: none; display: flex; align-items: center; justify-content: center;
   }
+  .search-wrap .icon-left svg { width: 18px; height: 18px; } /* Ikon lebih presisi */
 
   /* TAB SWITCH */
   .tab-switch {
-    display: flex;
-    gap: 4px;
-    background: var(--bg);
-    padding: 4px;
-    border-radius: 14px;
-    margin-bottom: 16px;
-    border: 1.5px solid var(--border);
+    display: flex; gap: 4px; background: var(--bg); padding: 4px;
+    border-radius: 14px; margin-bottom: 16px; border: 1.5px solid var(--border);
   }
   .tsw {
-    flex: 1;
-    padding: 11px 8px;
-    text-align: center;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--muted);
-    border-radius: 10px;
-    cursor: pointer;
-    border: none;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: all .15s;
-    font-family: inherit;
+    flex: 1; padding: 11px 8px; text-align: center; font-size: 13px; font-weight: 700;
+    color: var(--muted); border-radius: 10px; cursor: pointer; border: none;
+    background: transparent; display: flex; align-items: center; justify-content: center;
+    gap: 6px; transition: all .15s; font-family: inherit;
   }
-  .tsw.active {
-    background: var(--surface);
-    color: var(--maroon);
-    box-shadow: 0 2px 8px rgba(125,29,58,.08);
+  .tsw.active { background: var(--surface); color: var(--maroon); box-shadow: 0 2px 8px rgba(125,29,58,.08); }
+
+  /* LIST GURU */
+  .guru-list { display: flex; flex-direction: column; gap: 10px; }
+  .guru-row {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 16px; padding: 14px; display: flex; align-items: center;
+    gap: 12px; cursor: pointer; transition: all .15s;
+  }
+  .guru-row:hover { border-color: var(--maroon); transform: translateY(-1px); box-shadow: var(--sh-sm); }
+  .guru-avatar {
+    width: 44px; height: 44px; border-radius: 50%; background: var(--maroon-soft);
+    color: var(--maroon); display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px; flex-shrink: 0; overflow: hidden; position: relative;
+  }
+  .guru-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .guru-info { flex: 1; min-width: 0; }
+  .guru-nama { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 2px; }
+  .guru-sub { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  
+  /* BADGE DIAMATI */
+  .badge-diamati {
+    font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 999px;
+    background: var(--success-soft); color: var(--success); flex-shrink: 0;
+    display: flex; align-items: center; gap: 4px;
   }
 
-  /* TARGET CARD */
-  .target-card {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 18px;
-    padding: 16px;
-    margin-bottom: 12px;
-    animation: fade-in-up .4s var(--ease-out) both;
+  /* MODAL / BOTTOM SHEET (TALLY COUNTER) */
+  .modal-sheet {
+    position: fixed; inset: 0; background: rgba(28,20,20,.5); backdrop-filter: blur(2px);
+    z-index: 1000; display: flex; align-items: flex-end; justify-content: center;
+    animation: fade-in .2s both;
   }
-  .target-head {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 14px;
-    padding-bottom: 14px;
-    border-bottom: 1px dashed var(--border);
+  .modal-content {
+    background: white; border-radius: 24px 24px 0 0; width: 100%; max-width: 600px;
+    padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+    animation: slide-up .3s var(--ease-out) both; max-height: 90vh; overflow-y: auto;
   }
-  .target-avatar {
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    background: var(--maroon-soft);
-    color: var(--maroon);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 16px;
-    flex-shrink: 0;
-    overflow: hidden;
-    position: relative;
-    border: 2px solid white;
-    box-shadow: 0 2px 8px rgba(125,29,58,.1);
+  @media (min-width: 900px) {
+    .modal-sheet { align-items: center; }
+    .modal-content { border-radius: 24px; max-height: 85vh; animation: scale-in .25s var(--ease-spring) both; }
   }
-  .target-avatar img {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    object-fit: cover;
+  .modal-handle { width: 40px; height: 5px; background: var(--border-strong); border-radius: 999px; margin: 0 auto 16px; }
+  
+  .tally-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
   }
-  .target-avatar.sekolah {
-    border-radius: 14px;
-    background: var(--gold-soft);
-    color: var(--gold-dark);
+  .tally-row:last-of-type { border-bottom: none; }
+  .tally-label { font-size: 13.5px; font-weight: 700; color: var(--ink); flex: 1; }
+  .tally-controls { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .btn-tally {
+    width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--border);
+    background: var(--surface); color: var(--muted); font-size: 20px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: all .15s; font-family: inherit;
   }
-  .target-info { flex: 1; min-width: 0; }
-  .target-nama {
-    font-weight: 800;
-    font-size: 14.5px;
-    color: var(--ink);
-    margin-bottom: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .target-sub {
-    font-size: 11.5px;
-    color: var(--muted);
-    font-weight: 600;
-  }
-
-  /* ASPEK ROW */
-  .aspek-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .aspek-row:last-of-type { border-bottom: none; }
-  .aspek-name {
-    flex: 1;
-    font-size: 12.5px;
-    font-weight: 700;
-    min-width: 0;
-    color: var(--ink);
-  }
-  .rating {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-  .rating button {
-    width: 34px; height: 34px;
-    border: 1.5px solid var(--border);
-    background: var(--surface);
-    border-radius: 10px;
-    font-weight: 800;
-    font-size: 13px;
-    color: var(--muted);
-    cursor: pointer;
-    padding: 0;
-    transition: all .12s var(--ease-out);
-    font-family: inherit;
-  }
-  .rating button:hover {
-    border-color: var(--maroon);
-    color: var(--maroon);
-    transform: translateY(-1px);
-  }
-  .rating button.on {
-    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
-    color: white;
-    border-color: var(--maroon);
-    box-shadow: 0 4px 10px rgba(125,29,58,.25);
-    transform: translateY(-1px);
-  }
-  .rating button:active {
-    transform: translateY(0) scale(.92);
-  }
-
-  .catatan-input {
-    margin-top: 14px;
-    width: 100%;
-    padding: 12px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    font-family: inherit;
-    font-size: 12.5px;
-    font-weight: 500;
-    resize: vertical;
-    min-height: 56px;
-    background: var(--bg);
-    color: var(--ink);
-    transition: all .15s;
-  }
-  .catatan-input:focus {
-    outline: none;
-    border-color: var(--maroon);
-    background: var(--surface);
-    box-shadow: var(--sh-glow);
+  .btn-tally:active { transform: scale(.9); }
+  .btn-tally.minus:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-soft); }
+  .btn-tally.plus:hover { border-color: var(--success); color: var(--success); background: var(--success-soft); }
+  .tally-val {
+    font-size: 16px; font-weight: 800; color: var(--ink); min-width: 24px; text-align: center;
   }
 
   /* SAVE BAR */
   .save-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(255,255,255,.98);
-    backdrop-filter: blur(12px);
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(255,255,255,.98); backdrop-filter: blur(12px);
     padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-    border-top: 1.5px solid var(--border);
-    box-shadow: 0 -4px 20px rgba(97,19,41,.08);
-    z-index: 40;
+    border-top: 1.5px solid var(--border); box-shadow: 0 -4px 20px rgba(97,19,41,.08); z-index: 40;
   }
-  .save-bar-inner {
-    width: 100%;
-    max-width: 720px;
-    display: flex;
-    gap: 10px;
-    margin: 0 auto;
-  }
+  .save-bar-inner { width: 100%; max-width: 800px; display: flex; gap: 10px; margin: 0 auto; }
   .save-bar-inner .btn { flex: 1; }
-
-  @media (min-width: 900px) {
-    /* Geser Save Bar di Desktop agar tidak menutupi Sidebar */
-    .save-bar { left: 260px; padding: 16px 32px; }
-    .save-bar-inner { max-width: 800px; }
-    .target-card { padding: 20px; }
-    .rating button { width: 40px; height: 40px; font-size: 14px; }
-  }
-
-  /* EMPTY */
-  .empty-panel {
-    text-align: center;
-    padding: 40px 20px;
-  }
-  .empty-panel .big-icon {
-    width: 90px; height: 90px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
-    color: var(--maroon);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 18px;
-  }
-  .empty-panel .big-icon svg { width: 40px; height: 40px; }
-  .empty-panel h3 { font-size: 16px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
-  .empty-panel p { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 300px; margin: 0 auto; }
+  @media (min-width: 900px) { .save-bar { left: 260px; padding: 16px 32px; } }
 
   body.has-savebar { padding-bottom: 100px; }
   @media (min-width: 900px) { body.has-savebar { padding-bottom: 120px; } }
+
+  /* EMPTY */
+  .empty-panel { text-align: center; padding: 40px 20px; }
+  .empty-panel .big-icon { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%); color: var(--maroon); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; }
+  .empty-panel h3 { font-size: 16px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+  .empty-panel p { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 300px; margin: 0 auto; }
 </style>
 </head>
 <body>
@@ -419,15 +216,12 @@
   <!-- SIDEBAR DESKTOP -->
   <aside class="desktop-sidebar">
     <div class="sidebar-brand">
-      <div class="sidebar-brand-logo">
-        <img src="assets/img/logo-mark.svg" alt="Nakula" />
-      </div>
+      <div class="sidebar-brand-logo"><img src="assets/img/logo-mark.svg" alt="Nakula" /></div>
       <div class="sidebar-brand-text">
         <div class="name">NAKULAKU</div>
         <div class="sub">KKG Gugus Nakula</div>
       </div>
     </div>
-
     <nav class="sidebar-menu">
       <a class="sidebar-item" data-nav="beranda" href="beranda.html"><span data-icon="home"></span> Beranda</a>
       <a class="sidebar-item" data-nav="pertemuan" href="beranda.html#sectionPertemuan"><span data-icon="calendar"></span> Pertemuan</a>
@@ -455,7 +249,7 @@
         <div class="hero-pengamat">
           <div class="hero-icon"><span data-icon="eye" class="icon-xl"></span></div>
           <div class="hero-title">Tugas Pengamatan</div>
-          <div class="hero-desc">Catat keaktifan peserta dan kekompakan sekolah selama pertemuan berlangsung. Data ini akan digunakan untuk NAKULAKU AWARD.</div>
+          <div class="hero-desc">Catat keaktifan peserta dan kekompakan sekolah. Klik nama guru untuk mencatat poin keaktifannya.</div>
         </div>
 
         <div class="section-title">
@@ -471,7 +265,6 @@
 
       <!-- STEP ISI -->
       <section id="stepIsi" class="hidden">
-        
         <div class="info-header">
           <div style="display:flex;align-items:center;gap:12px;">
             <div style="width:44px;height:44px;border-radius:12px;background:var(--maroon-soft);color:var(--maroon);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
@@ -486,27 +279,23 @@
 
         <!-- SEARCH BAR -->
         <div class="search-wrap">
-          <span class="icon-left" data-icon="search" data-icon-class="icon-sm"></span>
+          <span class="icon-left"><span data-icon="search"></span></span>
           <input type="text" id="searchTarget" placeholder="Cari nama guru atau sekolah..." autocomplete="off" />
         </div>
 
         <div class="tab-switch">
-          <button class="tsw active" data-tipe="guru">
-            <span data-icon="user" class="icon-sm"></span> Guru
-          </button>
-          <button class="tsw" data-tipe="sekolah">
-            <span data-icon="home" class="icon-sm"></span> Sekolah
-          </button>
+          <button class="tsw active" data-tipe="guru"><span data-icon="user" class="icon-sm"></span> Guru</button>
+          <button class="tsw" data-tipe="sekolah"><span data-icon="home" class="icon-sm"></span> Sekolah</button>
         </div>
 
-        <div id="targetList"></div>
+        <div id="targetList" class="guru-list"></div>
       </section>
 
     </div>
   </main>
 </div>
 
-<!-- SAVE BAR -->
+<!-- SAVE BAR (Hanya muncul jika ada perubahan) -->
 <div class="save-bar hidden" id="saveBar">
   <div class="save-bar-inner">
     <button class="btn btn-secondary" id="btnBatal">
@@ -525,8 +314,7 @@
 <script>
 // Render Ikon
 document.querySelectorAll('[data-icon]').forEach(el => {
-  const cls = el.dataset.iconClass || '';
-  el.innerHTML = Icons.get(el.dataset.icon, { class: cls });
+  el.innerHTML = Icons.get(el.dataset.icon);
   el.style.display = 'contents';
 });
 UI.bindLogout();
@@ -535,7 +323,7 @@ let profile;
 let tugasList = [];
 let pertemuanAktif = null;
 let dataSesi = null;
-let catatanState = {};
+let catatanState = {}; // { guru-123: { bertanya: 2, menjawab: 1, catatan: "" } }
 let tipeAktif = 'guru';
 let searchQuery = '';
 
@@ -557,7 +345,7 @@ const ASPEK_SEKOLAH = [
   profile = await Api.requireLogin();
   if (!profile) return;
 
-  // Setup User Chip (Desktop)
+  // Setup User Chip
   const chip = document.getElementById('userChip');
   if (chip) {
     const init = (profile.nama || 'A').charAt(0).toUpperCase();
@@ -565,11 +353,8 @@ const ASPEK_SEKOLAH = [
     chip.innerHTML = `<div class="avatar">${fotoUrl ? `<img src="${fotoUrl}" onerror="this.parentElement.textContent='${init}'">` : init}</div><span>${UI.escapeHtml(profile.nama || '-')}</span>`;
   }
 
-  // Sembunyikan Galeri untuk Non-Admin di Sidebar Desktop
   const isAdmin = (profile.peran || []).includes('pengurus') || (profile.peran || []).includes('super_admin');
-  if (!isAdmin) {
-    document.querySelectorAll('.galeri-menu').forEach(el => el.style.display = 'none');
-  }
+  if (!isAdmin) document.querySelectorAll('.galeri-menu').forEach(el => el.style.display = 'none');
 
   const res = await Api.call('pengamat.tugas_saya');
   document.getElementById('listTugas').innerHTML = '';
@@ -580,7 +365,6 @@ const ASPEK_SEKOLAH = [
   }
 
   tugasList = res.data || [];
-
   if (tugasList.length === 0) {
     document.getElementById('listTugas').innerHTML = `
       <div class="empty-panel">
@@ -607,14 +391,8 @@ function renderListTugas() {
       <div class="pertemuan-num">${t.urutan}</div>
       <div class="pertemuan-info">
         <div class="pertemuan-judul">${UI.escapeHtml(t.judul)}</div>
-        <div class="pertemuan-meta">
-          ${Icons.get('calendar', { class: 'icon-sm' })} ${UI.formatTanggal(t.tanggal)}
-        </div>
-        ${t.lokasi_nama ? `
-          <div class="pertemuan-meta">
-            ${Icons.get('mapPin', { class: 'icon-sm' })} ${UI.escapeHtml(t.lokasi_nama)}
-          </div>
-        ` : ''}
+        <div class="pertemuan-meta">${Icons.get('calendar', { class: 'icon-sm' })} ${UI.formatTanggal(t.tanggal)}</div>
+        ${t.lokasi_nama ? `<div class="pertemuan-meta">${Icons.get('mapPin', { class: 'icon-sm' })} ${UI.escapeHtml(t.lokasi_nama)}</div>` : ''}
       </div>
       <span style="color:var(--muted);">${Icons.get('chevronRight', { class: 'icon' })}</span>
     </div>
@@ -629,7 +407,6 @@ async function bukaPertemuan(id) {
   pertemuanAktif = id;
   document.getElementById('stepPilih').classList.add('hidden');
   document.getElementById('stepIsi').classList.remove('hidden');
-  document.getElementById('saveBar').classList.remove('hidden');
   document.body.classList.add('has-savebar');
   document.getElementById('subHeader').textContent = 'Isi Catatan';
 
@@ -647,11 +424,19 @@ async function bukaPertemuan(id) {
   document.getElementById('infoPertemuan').textContent = `Pertemuan #${dataSesi.pertemuan.urutan} · ${dataSesi.pertemuan.judul}`;
   document.getElementById('infoPertemuan2').textContent = `${UI.formatTanggal(dataSesi.pertemuan.tanggal)} · ${dataSesi.jumlah_peserta} peserta hadir`;
 
+  // Load catatan awal dari DB ke state (format: guru-123-bertanya)
   catatanState = {};
   (dataSesi.catatan || []).forEach(c => {
     const targetId = c.target_tipe === 'guru' ? c.target_user_id : c.target_sekolah_id;
-    const key = `${c.target_tipe}-${targetId}-${c.aspek}`;
-    catatanState[key] = { skor: c.skor, catatan: c.catatan || '' };
+    const baseKey = `${c.target_tipe}-${targetId}`;
+    if (!catatanState[baseKey]) catatanState[baseKey] = { catatan: '' };
+    
+    // Simpan skor per aspek
+    if (c.aspek !== '__umum') {
+      catatanState[baseKey][c.aspek] = (catatanState[baseKey][c.aspek] || 0) + c.skor;
+    } else {
+      catatanState[baseKey].catatan = c.catatan || '';
+    }
   });
 
   renderTargets();
@@ -664,19 +449,18 @@ async function bukaPertemuan(id) {
     });
   });
 
-  // Search Listener
   document.getElementById('searchTarget').addEventListener('input', (e) => {
     searchQuery = e.target.value.toLowerCase().trim();
     renderTargets();
   });
+  
+  document.getElementById('saveBar').classList.remove('hidden');
 }
 
 function renderTargets() {
   const el = document.getElementById('targetList');
-  const aspek = tipeAktif === 'guru' ? ASPEK_GURU : ASPEK_SEKOLAH;
   let list = tipeAktif === 'guru' ? dataSesi.peserta : dataSesi.sekolah;
 
-  // Filter Berdasarkan Pencarian
   if (searchQuery && list) {
     list = list.filter(t => {
       const nama = (t.nama_lengkap || t.nama || '').toLowerCase();
@@ -686,127 +470,171 @@ function renderTargets() {
   }
 
   if (!list || list.length === 0) {
-    const label = tipeAktif === 'guru' ? 'peserta hadir' : 'sekolah';
-    const msg = searchQuery ? `Tidak ada hasil untuk "${searchQuery}"` : `Peserta akan muncul setelah mereka presensi.`;
     el.innerHTML = `
       <div class="empty-panel">
         <div class="big-icon">${Icons.get(searchQuery ? 'search' : 'users', { class: 'icon-lg' })}</div>
         <h3>${searchQuery ? 'Tidak Ditemukan' : 'Belum Ada Data'}</h3>
-        <p>${msg}</p>
+        <p>${searchQuery ? `Tidak ada hasil untuk "${searchQuery}"` : 'Peserta akan muncul setelah mereka presensi.'}</p>
       </div>
     `;
     return;
   }
 
   el.innerHTML = list.map((t, idx) => {
-    const init = (t.nama_lengkap || t.nama || '?').charAt(0).toUpperCase();
-    const fotoUrl = t.foto_thumb_url || (t.id ? Api.fotoUrl(t.id, 't') : null);
     const isSekolah = tipeAktif === 'sekolah';
+    const init = (t.nama_lengkap || t.nama || '?').charAt(0).toUpperCase();
     const nama = isSekolah ? t.nama : t.nama_lengkap;
     const sub = isSekolah ? (t.npsn || '') : (t.sekolah?.nama || t.jabatan || '');
     const targetId = t.id;
+    const key = `${tipeAktif}-${targetId}`;
+    const state = catatanState[key] || {};
+    
+    // Hitung total skor yang sudah diisi
+    const aspekList = isSekolah ? ASPEK_SEKOLAH : ASPEK_GURU;
+    let totalSkor = 0;
+    aspekList.forEach(a => totalSkor += (state[a.key] || 0));
+
+    const fotoUrl = t.foto_thumb_url || (t.id ? Api.fotoUrl(t.id, 't') : null);
 
     return `
-      <div class="target-card" style="animation-delay:${idx * 0.04}s">
-        <div class="target-head">
-          <div class="target-avatar ${isSekolah ? 'sekolah' : ''}">
-            <span>${init}</span>
-            ${fotoUrl && !isSekolah ? `<img src="${fotoUrl}" onerror="this.remove()">` : ''}
-          </div>
-          <div class="target-info">
-            <div class="target-nama">${UI.escapeHtml(nama || '-')}</div>
-            <div class="target-sub">${UI.escapeHtml(sub)}</div>
-          </div>
+      <div class="guru-row" onclick="bukaModalTally('${tipeAktif}', ${targetId}, '${UI.escapeHtml(nama)}')">
+        <div class="guru-avatar">
+          <span>${init}</span>
+          ${fotoUrl && !isSekolah ? `<img src="${fotoUrl}" onerror="this.remove()">` : ''}
         </div>
-
-        <div>
-          ${aspek.map(a => {
-            const key = `${tipeAktif}-${targetId}-${a.key}`;
-            const cur = catatanState[key]?.skor || 0;
-            return `
-              <div class="aspek-row">
-                <div class="aspek-name">${a.label}</div>
-                <div class="rating" data-key="${key}">
-                  ${[1,2,3,4,5].map(n =>
-                    `<button type="button" data-skor="${n}" class="${cur === n ? 'on' : ''}">${n}</button>`
-                  ).join('')}
-                </div>
-              </div>
-            `;
-          }).join('')}
-
-          <textarea class="catatan-input" data-catatan-key="${tipeAktif}-${targetId}"
-            placeholder="Catatan tambahan (opsional)…">${UI.escapeHtml(catatanState[`${tipeAktif}-${targetId}-__note`]?.catatan || '')}</textarea>
+        <div class="guru-info">
+          <div class="guru-nama">${UI.escapeHtml(nama || '-')}</div>
+          <div class="guru-sub">${UI.escapeHtml(sub)}</div>
         </div>
+        ${totalSkor > 0 ? `
+          <div class="badge-diamati">
+            ${Icons.get('check', { class: 'icon-sm' })} Diamati
+          </div>
+        ` : ''}
       </div>
     `;
   }).join('');
+}
 
-  // Bind Rating
-  el.querySelectorAll('.rating').forEach(r => {
-    const key = r.dataset.key;
-    r.querySelectorAll('button').forEach(b => {
-      b.addEventListener('click', () => {
-        const skor = Number(b.dataset.skor);
-        r.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
-        if (!catatanState[key]) catatanState[key] = { skor: null, catatan: '' };
-        catatanState[key].skor = skor;
-      });
+// ==========================================
+// MODAL TALLY COUNTER
+// ==========================================
+function bukaModalTally(tipe, targetId, nama) {
+  const isSekolah = tipe === 'sekolah';
+  const aspekList = isSekolah ? ASPEK_SEKOLAH : ASPEK_GURU;
+  const key = `${tipe}-${targetId}`;
+  
+  // Ambil state saat ini (atau init 0)
+  const state = catatanState[key] || { catatan: '' };
+  const aspekState = {};
+  aspekList.forEach(a => aspekState[a.key] = state[a.key] || 0);
+  
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-sheet';
+  overlay.innerHTML = `
+    <div class="modal-content">
+      <div class="modal-handle"></div>
+      
+      <div style="text-align:center; margin-bottom:20px;">
+        <h3 style="font-size:18px; color:var(--maroon); margin-bottom:4px;">Catat Keaktifan</h3>
+        <p style="font-size:13px; color:var(--muted); font-weight:600;">${UI.escapeHtml(nama)}</p>
+      </div>
+
+      <div style="background:var(--bg); border-radius:16px; padding:10px 16px; margin-bottom:16px;">
+        ${aspekList.map(a => `
+          <div class="tally-row">
+            <div class="tally-label">${a.label}</div>
+            <div class="tally-controls">
+              <button class="btn-tally minus" data-aksi="minus" data-aspek="${a.key}">−</button>
+              <div class="tally-val" id="val-${a.key}">${aspekState[a.key]}</div>
+              <button class="btn-tally plus" data-aksi="plus" data-aspek="${a.key}">+</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="field" style="margin-bottom:20px;">
+        <label class="label">Catatan Tambahan (Opsional)</label>
+        <textarea id="tallyCatatan" class="input" rows="2" placeholder="Contoh: Sangat aktif di sesi diskusi kelompok...">${UI.escapeHtml(state.catatan || '')}</textarea>
+      </div>
+
+      <div style="display:flex; gap:10px;">
+        <button class="btn btn-secondary" id="btnTutupModal" style="flex:1;">Tutup</button>
+        <button class="btn btn-primary" id="btnSimpanTally" style="flex:2;">Simpan Catatan</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  // Bind Tally Buttons
+  overlay.querySelectorAll('.btn-tally').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const aspek = btn.dataset.aspek;
+      const aksi = btn.dataset.aksi;
+      const elVal = overlay.querySelector(`#val-${aspek}`);
+      let cur = Number(elVal.textContent);
+      
+      if (aksi === 'plus' && cur < 5) cur++; // Max 5 per aspek
+      if (aksi === 'minus' && cur > 0) cur--;
+      
+      elVal.textContent = cur;
+      aspekState[aspek] = cur;
     });
   });
 
-  // Bind Catatan
-  el.querySelectorAll('[data-catatan-key]').forEach(ta => {
-    const key = ta.dataset.catatanKey + '-__note';
-    ta.addEventListener('input', () => {
-      if (!catatanState[key]) catatanState[key] = { skor: null, catatan: '' };
-      catatanState[key].catatan = ta.value;
-    });
+  const close = () => overlay.remove();
+  overlay.querySelector('#btnTutupModal').addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnSimpanTally').addEventListener('click', () => {
+    // Simpan ke state global
+    catatanState[key] = { ...aspekState, catatan: overlay.querySelector('#tallyCatatan').value.trim() };
+    close();
+    renderTargets(); // Update badge di belakang
+    UI.sukses('Catatan tersimpan di daftar.');
   });
 }
 
-// AKSI
+// AKSI BAWAH
 document.getElementById('btnBatal').addEventListener('click', async () => {
-  const ok = await UI.konfirmasi('Batalkan', 'Catatan yang belum disimpan akan hilang. Lanjutkan?', { danger: true });
+  const ok = await UI.konfirmasi('Batalkan', 'Catatan yang belum disimpan ke server akan hilang. Lanjutkan?', { danger: true });
   if (ok) window.location.href = 'beranda.html';
 });
 
 document.getElementById('btnSimpan').addEventListener('click', async () => {
   const btn = document.getElementById('btnSimpan');
-  UI.btnLoading(btn, 'Menyimpan…');
+  UI.btnLoading(btn, 'Menyimpan ke Server…');
 
+  // Konversi catatanState ke format items backend
   const items = [];
-  Object.keys(catatanState).forEach(key => {
-    if (key.endsWith('-__note')) {
-      const base = key.replace('-__note', '');
-      const parts = base.split('-');
-      const tipe = parts[0];
-      const targetId = parts[1];
-      const catatanText = catatanState[key].catatan;
-      if (catatanText && catatanText.trim()) {
+  Object.keys(catatanState).forEach(baseKey => {
+    const [tipe, targetIdStr] = baseKey.split('-');
+    const targetId = Number(targetIdStr);
+    const state = catatanState[baseKey];
+    
+    // Kirim skor aspek
+    Object.keys(state).forEach(k => {
+      if (k === 'catatan') return;
+      if (state[k] > 0) {
         items.push({
           target_tipe: tipe,
-          target_id: Number(targetId),
-          aspek: '__umum',
-          skor: 1,
-          catatan: catatanText.trim(),
-        });
-      }
-    } else {
-      const parts = key.split('-');
-      const tipe = parts[0];
-      const targetId = parts[1];
-      const aspek = parts[2];
-      const v = catatanState[key];
-      if (v.skor !== null && v.skor !== undefined) {
-        items.push({
-          target_tipe: tipe,
-          target_id: Number(targetId),
-          aspek,
-          skor: v.skor,
+          target_id: targetId,
+          aspek: k,
+          skor: state[k],
           catatan: null,
         });
       }
+    });
+
+    // Kirim catatan teks jika ada
+    if (state.catatan && state.catatan.trim()) {
+      items.push({
+        target_tipe: tipe,
+        target_id: targetId,
+        aspek: '__umum',
+        skor: 1, // skor dummy untuk catatan umum
+        catatan: state.catatan.trim(),
+      });
     }
   });
 
@@ -819,7 +647,7 @@ document.getElementById('btnSimpan').addEventListener('click', async () => {
 
   if (!res.ok) { UI.gagal(res.error || 'Gagal menyimpan.'); return; }
 
-  UI.sukses('Catatan tersimpan.');
+  UI.sukses('Semua catatan berhasil disimpan!');
   setTimeout(() => window.location.href = 'beranda.html', 800);
 });
 </script>
