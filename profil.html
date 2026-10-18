@@ -56,6 +56,7 @@
     border: 4px solid var(--gold);
     box-shadow: 0 8px 24px rgba(0,0,0,.25);
     transition: transform .2s var(--ease-out);
+    z-index: 1;
   }
   .profile-avatar-wrap:hover {
     transform: scale(1.03);
@@ -78,7 +79,7 @@
   }
   .edit-badge {
     position: absolute;
-    bottom: 4px; right: 4px;
+    bottom: 0; right: 0;
     width: 32px; height: 32px;
     border-radius: 50%;
     background: var(--maroon);
@@ -253,7 +254,7 @@
   <div class="identity-card" id="identityCard">
     <div class="profile-avatar-wrap" id="avatarWrap">
       <div class="profile-avatar-fallback" id="avatarFallback">?</div>
-      <div class="edit-badge">${Icons.get('camera')}</div>
+      <div class="edit-badge"><span data-icon="camera" class="icon-sm"></span></div>
     </div>
     <div class="identity-name" id="profileName">Memuat…</div>
     <div class="identity-sub" id="profileSub">—</div>
@@ -266,28 +267,28 @@
     <div class="section-title">Data Pribadi</div>
     <div class="info-group">
       <div class="info-row">
-        <div class="info-icon">${Icons.get('mail')}</div>
+        <div class="info-icon"><span data-icon="mail"></span></div>
         <div class="info-content">
           <div class="info-label">Email</div>
           <div class="info-value" id="infoEmail">—</div>
         </div>
       </div>
       <div class="info-row">
-        <div class="info-icon">${Icons.get('fileText')}</div>
+        <div class="info-icon"><span data-icon="fileText"></span></div>
         <div class="info-content">
           <div class="info-label">NIP / NI PPPK</div>
           <div class="info-value" id="infoNip">—</div>
         </div>
       </div>
       <div class="info-row">
-        <div class="info-icon">${Icons.get('briefcase')}</div>
+        <div class="info-icon"><span data-icon="briefcase"></span></div>
         <div class="info-content">
           <div class="info-label">Jabatan</div>
           <div class="info-value" id="infoJabatan">—</div>
         </div>
       </div>
       <div class="info-row">
-        <div class="info-icon">${Icons.get('home')}</div>
+        <div class="info-icon"><span data-icon="home"></span></div>
         <div class="info-content">
           <div class="info-label">Sekolah</div>
           <div class="info-value" id="infoSekolah">—</div>
@@ -299,18 +300,18 @@
     <div class="section-title">Keamanan & Pengaturan</div>
     <div class="action-list">
       <button class="action-item" id="btnGantiPin">
-        <div class="info-icon">${Icons.get('lock')}</div>
+        <div class="info-icon"><span data-icon="lock"></span></div>
         <div class="info-content">
           <div class="info-value">Ubah PIN Akses</div>
         </div>
-        <span class="chevron-right">${Icons.get('chevronRight')}</span>
+        <span class="chevron-right"><span data-icon="chevronRight"></span></span>
       </button>
       <button class="action-item danger" data-act="logout">
-        <div class="info-icon">${Icons.get('logOut')}</div>
+        <div class="info-icon"><span data-icon="logOut"></span></div>
         <div class="info-content">
           <div class="info-value">Keluar dari Akun</div>
         </div>
-        <span class="chevron-right">${Icons.get('chevronRight')}</span>
+        <span class="chevron-right"><span data-icon="chevronRight"></span></span>
       </button>
     </div>
 
