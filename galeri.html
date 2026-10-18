@@ -4,18 +4,19 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#611329" />
-<title>Galeri Sekolah — NAKULAKU</title>
+<title>Galeri Nakulaku — Portal Pendidikan KKG Gugus Nakula</title>
+<meta name="description" content="Merawat mimpi, menuai karya. Perayaan prestasi siswa, pembiasaan baik, kegiatan bermakna, dan inovasi guru dari sekolah-sekolah di Gugus Nakula." />
 
 <link rel="icon" type="image/png" href="assets/img/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lora:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="assets/css/nakula.css" />
 
 <style>
-  /* ═══════════════════════════════════════
-     HEADER PUBLIC
-     ═══════════════════════════════════════ */
+  /* ═══════════════════════════════════════════
+     HEADER (smart: publik atau user)
+     ═══════════════════════════════════════════ */
   .public-header {
     background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 100%);
     color: white;
@@ -50,6 +51,7 @@
     border: 1.5px solid var(--gold);
     flex-shrink: 0;
     overflow: hidden;
+    position: relative;
   }
   .public-header-logo img {
     width: 100%; height: 100%;
@@ -62,125 +64,529 @@
 
   .public-header-actions {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     align-items: center;
     flex-shrink: 0;
   }
-  .public-header-btn {
+  .masuk-btn {
     color: white;
-    font-size: 11.5px;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 800;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    background: rgba(255,255,255,.12);
-    padding: 8px 12px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    padding: 8px 14px;
     border-radius: 10px;
     transition: all .15s;
-    border: none;
-    cursor: pointer;
-    font-family: inherit;
+    box-shadow: 0 4px 12px rgba(201,169,97,.3);
     white-space: nowrap;
   }
-  .public-header-btn:hover {
-    background: rgba(255,255,255,.22);
+  .masuk-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(201,169,97,.4);
+    color: white;
+    text-decoration: none;
+  }
+  .masuk-btn svg { width: 14px; height: 14px; }
+
+  .user-chip-mini {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px 4px 4px;
+    background: rgba(255,255,255,.15);
+    border-radius: 999px;
+    text-decoration: none;
+    color: white;
+    transition: all .15s;
+  }
+  .user-chip-mini:hover { background: rgba(255,255,255,.25); color: white; text-decoration: none; }
+  .user-chip-avatar {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.25);
+    border: 1.5px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 11px;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .user-chip-avatar img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+  .user-chip-name {
+    font-size: 11.5px;
+    font-weight: 700;
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .logout-btn {
+    color: white;
+    background: rgba(255,255,255,.15);
+    border: none;
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .15s;
+  }
+  .logout-btn:hover { background: rgba(255,255,255,.25); }
+
+  /* ═══════════════════════════════════════════
+     HERO SINEMATIK
+     ═══════════════════════════════════════════ */
+  .hero-portal {
+    position: relative;
+    border-radius: 28px;
+    padding: 32px 24px 24px;
+    margin-bottom: 20px;
+    color: white;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at top right, rgba(201,169,97,.35) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom left, rgba(155,38,73,.5) 0%, transparent 55%),
+      linear-gradient(135deg, #2C0714 0%, #4A0D1F 40%, #7D1D3A 75%, #9B2649 100%);
+    box-shadow: 0 20px 60px rgba(97,19,41,.35);
+    animation: fade-in-up .6s var(--ease-out) both;
+  }
+  .hero-portal::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23C9A961' stroke-width='0.6' opacity='0.2'%3E%3Ccircle cx='20' cy='20' r='12'/%3E%3Ccircle cx='60' cy='20' r='12'/%3E%3Ccircle cx='20' cy='60' r='12'/%3E%3Ccircle cx='60' cy='60' r='12'/%3E%3Ccircle cx='40' cy='40' r='6'/%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  }
+  .hero-portal::after {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 240px; height: 240px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,169,97,.5) 0%, transparent 70%);
+    filter: blur(30px);
+    animation: floatOrb 20s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes floatOrb {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-20px, 20px) scale(1.1); }
+  }
+
+  .hero-portal-inner {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+  .hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(201,169,97,.5);
+    border-radius: 999px;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    backdrop-filter: blur(6px);
+  }
+  .hero-label .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 8px var(--gold);
+    animation: pulse-dot 2s infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--gold); }
+    50% { opacity: 0.5; box-shadow: 0 0 16px var(--gold); }
+  }
+
+  .hero-title {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+    color: white;
+    text-shadow: 0 4px 20px rgba(0,0,0,.25);
+  }
+  .hero-title .title-2 {
+    display: block;
+    background: linear-gradient(135deg, #E8C877 0%, #C9A961 50%, #A37E2E 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 40px;
+    margin-top: 2px;
+    letter-spacing: 1px;
+    filter: drop-shadow(0 4px 16px rgba(201,169,97,.4));
+  }
+  @media (min-width: 720px) {
+    .hero-title { font-size: 36px; }
+    .hero-title .title-2 { font-size: 52px; }
+  }
+
+  .hero-quote {
+    font-family: 'Lora', Georgia, serif;
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.55;
+    color: rgba(255,255,255,.95);
+    max-width: 460px;
+    margin: 16px auto 12px;
+    position: relative;
+    padding: 0 20px;
+    font-weight: 500;
+  }
+  .hero-quote::before,
+  .hero-quote::after {
+    content: '"';
+    font-size: 32px;
+    line-height: 1;
+    color: var(--gold);
+    opacity: 0.7;
+    position: absolute;
+    font-family: 'Lora', Georgia, serif;
+    font-style: normal;
+  }
+  .hero-quote::before { top: -6px; left: 0; }
+  .hero-quote::after { content: '"'; bottom: -20px; right: 0; }
+
+  .hero-desc {
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: rgba(255,255,255,.8);
+    max-width: 520px;
+    margin: 0 auto;
+    font-weight: 500;
+  }
+
+  /* Stats di hero */
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding-top: 20px;
+    margin-top: 22px;
+    border-top: 1px solid rgba(255,255,255,.18);
+    position: relative;
+    z-index: 1;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat .val {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.5px;
+    color: white;
+    transition: transform .3s var(--ease-out);
+    display: inline-block;
+  }
+  .hero-stat .val.loaded {
+    animation: stat-pop .5s var(--ease-spring) both;
+  }
+  @keyframes stat-pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+  .hero-stat .lbl {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    opacity: 0.8;
+    margin-top: 6px;
+  }
+  @media (min-width: 720px) {
+    .hero-stat .val { font-size: 32px; }
+    .hero-stat .lbl { font-size: 10px; }
+  }
+
+  /* ═══════════════════════════════════════════
+     FEATURED SECTION
+     ═══════════════════════════════════════════ */
+  .featured-section {
+    margin-bottom: 24px;
+    animation: fade-in-up .5s var(--ease-out) .1s both;
+  }
+  .featured-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding: 0 2px;
+  }
+  .featured-head-icon {
+    width: 32px; height: 32px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(201,169,97,.3);
+  }
+  .featured-head-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--maroon);
+    letter-spacing: 0.3px;
+  }
+  .featured-head-sub {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .featured-grid {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 6px;
+    padding-left: 2px;
+    padding-right: 2px;
+    scroll-snap-type: x mandatory;
+  }
+  .featured-grid::-webkit-scrollbar { display: none; }
+
+  .feat-card {
+    flex-shrink: 0;
+    width: 280px;
+    background: var(--surface);
+    border: 2px solid var(--gold);
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    scroll-snap-align: start;
+    transition: all .25s var(--ease-out);
+    box-shadow: 0 8px 24px rgba(201,169,97,.15);
+    animation: fade-in-up .5s var(--ease-out) both;
+  }
+  .feat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(201,169,97,.25);
+    border-color: var(--gold-dark);
+  }
+  .feat-badge {
+    position: absolute;
+    top: 10px; left: 10px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 2;
+    box-shadow: 0 4px 12px rgba(201,169,97,.4);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .feat-thumb {
+    width: 100%;
+    aspect-ratio: 16/10;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .feat-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform .4s var(--ease-out);
+  }
+  .feat-card:hover .feat-thumb img {
+    transform: scale(1.05);
+  }
+  .feat-thumb .fallback {
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+  .feat-thumb .fallback svg { width: 40px; height: 40px; }
+  .feat-thumb.prestasi .fallback { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); }
+  .feat-thumb.kegiatan .fallback { background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%); }
+  .feat-thumb.pembiasaan .fallback { background: linear-gradient(135deg, #22C55E 0%, #15803D 100%); }
+  .feat-thumb.karya .fallback { background: linear-gradient(135deg, #A855F7 0%, #7C3AED 100%); }
+
+  .feat-thumb .play-ov {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,.2);
+    transition: background .2s;
+  }
+  .feat-card:hover .play-ov { background: rgba(0,0,0,.35); }
+  .feat-thumb .play-ov .pb {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(0,0,0,.7);
+    backdrop-filter: blur(6px);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,.4);
+  }
+  .feat-thumb .play-ov .pb svg { width: 18px; height: 18px; margin-left: 2px; }
+
+  .feat-body {
+    padding: 14px;
+  }
+  .feat-jenis {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .feat-jenis.prestasi { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: white; }
+  .feat-jenis.kegiatan { background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%); color: white; }
+  .feat-jenis.pembiasaan { background: linear-gradient(135deg, #22C55E 0%, #15803D 100%); color: white; }
+  .feat-jenis.karya { background: linear-gradient(135deg, #A855F7 0%, #7C3AED 100%); color: white; }
+
+  .feat-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.35;
+    margin-bottom: 6px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 38px;
+  }
+  .feat-sub {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 600;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 10px;
+    min-height: 34px;
+  }
+  .feat-footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(201,169,97,.3);
+  }
+  .feat-sekolah {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--maroon);
+    min-width: 0;
+    flex: 1;
+  }
+  .feat-sekolah .logo {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: 800;
+    color: var(--maroon);
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .feat-sekolah .logo img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .feat-sekolah span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .feat-lihat {
+    padding: 5px 10px;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: all .15s;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .feat-lihat:hover {
+    background: var(--maroon);
     color: white;
     text-decoration: none;
   }
 
-  /* ═══════════════════════════════════════
-     HERO GALERI
-     ═══════════════════════════════════════ */
-  .hero-galeri {
-    text-align: center;
-    margin-bottom: 20px;
-    padding: 12px 16px 0;
-    animation: fade-in-up .5s var(--ease-out) both;
+  /* ═══════════════════════════════════════════
+     FILTER BAR (sticky)
+     ═══════════════════════════════════════════ */
+  .filter-bar-wrap {
+    position: sticky;
+    top: 60px;
+    z-index: 15;
+    background: linear-gradient(180deg, var(--bg) 0%, var(--bg) 90%, transparent 100%);
+    padding: 4px 0 12px;
+    margin: 0 -4px;
+    transition: box-shadow .2s;
   }
-  .hero-galeri .icon-big {
-    width: 76px; height: 76px;
-    margin: 0 auto 14px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
-    color: var(--gold);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 12px 32px rgba(125,29,58,.3), inset 0 0 0 2px rgba(201,169,97,.3);
-    position: relative;
-  }
-  .hero-galeri .icon-big::after {
-    content: '';
-    position: absolute;
-    inset: -5px;
-    border-radius: 24px;
-    border: 1.5px solid var(--gold);
-    opacity: 0.25;
-  }
-  .hero-galeri h1 {
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--maroon);
-    margin-bottom: 6px;
-    letter-spacing: 0.5px;
-  }
-  .hero-galeri p {
-    font-size: 12.5px;
-    color: var(--muted);
-    font-weight: 500;
-    line-height: 1.6;
-    max-width: 320px;
-    margin: 0 auto;
+  .filter-bar-wrap.stuck {
+    box-shadow: 0 8px 20px rgba(125,29,58,.08);
   }
 
-  /* ═══════════════════════════════════════
-     STATISTIK (4 box)
-     ═══════════════════════════════════════ */
-  .stat-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin-bottom: 18px;
-    animation: fade-in-up .5s var(--ease-out) .05s both;
-  }
-  .stat-box {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: 12px 6px;
-    text-align: center;
-    transition: all .2s var(--ease-out);
-  }
-  .stat-box:hover {
-    border-color: var(--maroon-light);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(125,29,58,.08);
-  }
-  .stat-box .n {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--maroon);
-    line-height: 1;
-    letter-spacing: -0.5px;
-  }
-  .stat-box .l {
-    font-size: 9px;
-    color: var(--muted);
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    margin-top: 5px;
-  }
-
-  /* ═══════════════════════════════════════
-     SEARCH + SORT ROW
-     ═══════════════════════════════════════ */
   .search-sort-row {
     display: flex;
     gap: 8px;
-    margin-bottom: 12px;
-    animation: fade-in-up .5s var(--ease-out) .1s both;
+    margin-bottom: 10px;
   }
   .search-wrap {
     flex: 1;
@@ -200,10 +606,7 @@
     outline: none;
     transition: all .15s;
   }
-  .search-wrap input::placeholder {
-    color: var(--muted-soft);
-    font-weight: 500;
-  }
+  .search-wrap input::placeholder { color: var(--muted-soft); font-weight: 500; }
   .search-wrap input:focus {
     border-color: var(--maroon);
     box-shadow: 0 0 0 3px rgba(125,29,58,.08);
@@ -221,8 +624,7 @@
     right: 8px;
     top: 50%;
     transform: translateY(-50%);
-    width: 24px;
-    height: 24px;
+    width: 24px; height: 24px;
     border-radius: 50%;
     background: var(--bg);
     border: none;
@@ -234,10 +636,7 @@
     padding: 0;
     transition: all .15s;
   }
-  .search-wrap .icon-clear:hover {
-    background: var(--maroon-soft);
-    color: var(--maroon);
-  }
+  .search-wrap .icon-clear:hover { background: var(--maroon-soft); color: var(--maroon); }
   .search-wrap.has-value .icon-clear { display: flex; }
 
   .sort-btn {
@@ -256,112 +655,17 @@
     transition: all .15s;
     white-space: nowrap;
     flex-shrink: 0;
-    -webkit-tap-highlight-color: transparent;
   }
-  .sort-btn:hover {
-    border-color: var(--maroon-light);
-    color: var(--maroon);
-  }
-  .sort-btn.active {
-    background: var(--maroon-soft);
-    border-color: var(--maroon);
-    color: var(--maroon);
-  }
+  .sort-btn:hover { border-color: var(--maroon-light); color: var(--maroon); }
+  .sort-btn.active { background: var(--maroon-soft); border-color: var(--maroon); color: var(--maroon); }
 
-  /* ═══════════════════════════════════════
-     SEKOLAH FILTER CHIPS
-     ═══════════════════════════════════════ */
-  .sekolah-chips-wrap {
-    margin-bottom: 12px;
-    animation: fade-in-up .5s var(--ease-out) .12s both;
-  }
-  .sekolah-chips-label {
-    font-size: 10px;
-    font-weight: 800;
-    color: var(--muted);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-    padding-left: 2px;
-  }
-  .sekolah-chips {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    padding-bottom: 4px;
-  }
-  .sekolah-chips::-webkit-scrollbar { display: none; }
-  .sk-chip {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px 6px 6px;
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 999px;
-    font-size: 11.5px;
-    font-weight: 700;
-    color: var(--muted);
-    cursor: pointer;
-    font-family: inherit;
-    transition: all .15s;
-    white-space: nowrap;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .sk-chip:hover {
-    border-color: var(--maroon-light);
-    color: var(--maroon);
-    transform: translateY(-1px);
-  }
-  .sk-chip.active {
-    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
-    border-color: var(--maroon);
-    color: white;
-    box-shadow: 0 4px 12px rgba(125,29,58,.25);
-  }
-  .sk-chip .sk-logo {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--maroon-soft);
-    color: var(--maroon);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 8px;
-    font-weight: 800;
-    overflow: hidden;
-    position: relative;
-    flex-shrink: 0;
-    border: 1.5px solid white;
-  }
-  .sk-chip.active .sk-logo {
-    border-color: var(--gold);
-  }
-  .sk-chip .sk-logo img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .sk-chip.all {
-    padding: 6px 12px;
-  }
-
-  /* ═══════════════════════════════════════
-     TAB JENIS
-     ═══════════════════════════════════════ */
   .filter-row {
     display: flex;
     gap: 6px;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
     overflow-x: auto;
     padding-bottom: 4px;
     scrollbar-width: none;
-    animation: fade-in-up .5s var(--ease-out) .15s both;
   }
   .filter-row::-webkit-scrollbar { display: none; }
   .filter-chip {
@@ -380,18 +684,13 @@
     transition: all .2s var(--ease-out);
     white-space: nowrap;
     font-family: inherit;
-    -webkit-tap-highlight-color: transparent;
   }
-  .filter-chip:hover {
-    border-color: var(--maroon-light);
-    color: var(--maroon);
-    transform: translateY(-1px);
-  }
+  .filter-chip:hover { border-color: var(--maroon-light); color: var(--maroon); transform: translateY(-1px); }
   .filter-chip.active {
     background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
     border-color: var(--maroon);
     color: white;
-    box-shadow: 0 4px 12px rgba(125,29,58,.25), inset 0 0 0 1px rgba(201,169,97,.3);
+    box-shadow: 0 4px 12px rgba(125,29,58,.25);
   }
   .filter-chip .count {
     display: inline-flex;
@@ -407,24 +706,81 @@
     font-weight: 800;
     line-height: 1;
   }
-  .filter-chip.active .count {
-    background: rgba(255,255,255,.25);
+  .filter-chip.active .count { background: rgba(255,255,255,.25); color: white; }
+
+  /* Sekolah chips */
+  .sekolah-chips-wrap {
+    display: none;
+    margin-bottom: 4px;
+  }
+  .sekolah-chips-wrap.show { display: block; }
+  .sekolah-chips {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+  .sekolah-chips::-webkit-scrollbar { display: none; }
+  .sk-chip {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px 5px 5px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .sk-chip:hover { border-color: var(--maroon-light); color: var(--maroon); }
+  .sk-chip.active {
+    background: var(--maroon);
+    border-color: var(--maroon);
     color: white;
   }
+  .sk-chip .sk-logo {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 7px;
+    font-weight: 800;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+    border: 1.5px solid white;
+  }
+  .sk-chip.active .sk-logo { border-color: var(--gold); }
+  .sk-chip .sk-logo img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
-  /* ═══════════════════════════════════════
-     INFO BAR
-     ═══════════════════════════════════════ */
+  /* Info bar */
   .info-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    padding: 8px 4px;
+    padding: 8px 2px;
     font-size: 11px;
     color: var(--muted);
     font-weight: 700;
     margin-bottom: 8px;
+    flex-wrap: wrap;
   }
   .info-bar .active-filters {
     display: inline-flex;
@@ -443,15 +799,20 @@
     font-weight: 800;
   }
 
-  /* ═══════════════════════════════════════
-     ITEM CARD
-     ═══════════════════════════════════════ */
+  /* ═══════════════════════════════════════════
+     CARD GRID
+     ═══════════════════════════════════════════ */
+  #listItem {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
   .item-publik {
     background: var(--surface);
     border: 1.5px solid var(--border);
     border-radius: 16px;
     padding: 14px;
-    margin-bottom: 10px;
     transition: all .2s var(--ease-out);
     animation: fade-in-up .4s var(--ease-out) both;
     position: relative;
@@ -462,17 +823,14 @@
     box-shadow: 0 10px 24px rgba(125,29,58,.1);
     transform: translateY(-2px);
   }
-
   .item-publik.prestasi::after,
   .item-publik.kegiatan::after,
   .item-publik.pembiasaan::after,
   .item-publik.karya::after {
     content: '';
     position: absolute;
-    top: -40px;
-    right: -40px;
-    width: 120px;
-    height: 120px;
+    top: -40px; right: -40px;
+    width: 120px; height: 120px;
     border-radius: 50%;
     pointer-events: none;
     opacity: 0.5;
@@ -503,10 +861,7 @@
     justify-content: center;
     cursor: pointer;
   }
-  .item-thumb img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-  }
+  .item-thumb img { width: 100%; height: 100%; object-fit: cover; }
   .item-thumb .fallback-icon {
     width: 100%; height: 100%;
     display: flex;
@@ -532,8 +887,6 @@
     backdrop-filter: blur(4px);
   }
   .item-thumb .play-badge svg { width: 11px; height: 11px; }
-
-  /* Baru badge */
   .item-thumb .new-badge {
     position: absolute;
     top: 4px; left: 4px;
@@ -571,11 +924,8 @@
     font-weight: 600;
     line-height: 1.5;
   }
-  .item-extra {
-    margin-top: 8px;
-    position: relative;
-    z-index: 1;
-  }
+  .item-extra { margin-top: 8px; position: relative; z-index: 1; }
+
   .badge-tingkat {
     display: inline-block;
     font-size: 9.5px;
@@ -631,8 +981,7 @@
     z-index: 1;
   }
   .karya-author .av {
-    width: 20px;
-    height: 20px;
+    width: 20px; height: 20px;
     border-radius: 50%;
     background: var(--maroon-soft);
     color: var(--maroon);
@@ -681,14 +1030,9 @@
     flex-shrink: 1;
     min-width: 0;
   }
-  .item-sekolah:hover {
-    background: var(--maroon);
-    color: white;
-    text-decoration: none;
-  }
+  .item-sekolah:hover { background: var(--maroon); color: white; text-decoration: none; }
   .item-sekolah .sk-logo {
-    width: 20px;
-    height: 20px;
+    width: 20px; height: 20px;
     border-radius: 50%;
     background: white;
     display: flex;
@@ -700,9 +1044,7 @@
     position: relative;
     flex-shrink: 0;
   }
-  .item-sekolah:hover .sk-logo {
-    border: 1.5px solid var(--gold);
-  }
+  .item-sekolah:hover .sk-logo { border: 1.5px solid var(--gold); }
   .item-sekolah .sk-logo img {
     position: absolute;
     inset: 0;
@@ -710,7 +1052,6 @@
     height: 100%;
     object-fit: cover;
   }
-
   .link-bukti {
     display: inline-flex;
     align-items: center;
@@ -727,19 +1068,12 @@
     margin-left: auto;
     flex-shrink: 0;
   }
-  .link-bukti:hover {
-    background: var(--maroon-soft);
-    color: var(--maroon);
-    text-decoration: none;
-  }
+  .link-bukti:hover { background: var(--maroon-soft); text-decoration: none; }
 
-  /* ═══════════════════════════════════════
-     LOAD MORE
-     ═══════════════════════════════════════ */
-  .load-more-wrap {
-    text-align: center;
-    padding: 20px 0 10px;
-  }
+  /* ═══════════════════════════════════════════
+     LOAD MORE + EMPTY
+     ═══════════════════════════════════════════ */
+  .load-more-wrap { text-align: center; padding: 22px 0 10px; }
   .load-more-btn {
     display: inline-flex;
     align-items: center;
@@ -770,10 +1104,7 @@
     font-size: 10.5px;
     font-weight: 800;
   }
-  .load-more-btn:hover .remaining {
-    background: rgba(255,255,255,.25);
-    color: white;
-  }
+  .load-more-btn:hover .remaining { background: rgba(255,255,255,.25); color: white; }
   .all-loaded {
     text-align: center;
     padding: 16px;
@@ -782,13 +1113,7 @@
     font-weight: 700;
   }
 
-  /* ═══════════════════════════════════════
-     EMPTY STATE
-     ═══════════════════════════════════════ */
-  .empty-state {
-    text-align: center;
-    padding: 50px 20px;
-  }
+  .empty-state { text-align: center; padding: 50px 20px; }
   .empty-state .big-icon {
     width: 84px; height: 84px;
     border-radius: 50%;
@@ -798,7 +1123,6 @@
     align-items: center;
     justify-content: center;
     margin: 0 auto 16px;
-    position: relative;
   }
   .empty-state .big-icon svg { width: 36px; height: 36px; }
   .empty-state .title {
@@ -834,9 +1158,9 @@
     box-shadow: 0 6px 16px rgba(125,29,58,.25);
   }
 
-  /* ═══════════════════════════════════════
+  /* ═══════════════════════════════════════════
      LIGHTBOX
-     ═══════════════════════════════════════ */
+     ═══════════════════════════════════════════ */
   .lightbox {
     position: fixed;
     inset: 0;
@@ -856,122 +1180,135 @@
     box-shadow: 0 20px 60px rgba(0,0,0,.5);
   }
 
-  /* ═══════════════════════════════════════
-     DESKTOP: 2-COLUMN GRID
-     ═══════════════════════════════════════ */
+  /* ═══════════════════════════════════════════
+     DESKTOP
+     ═══════════════════════════════════════════ */
   @media (min-width: 900px) {
+    .hero-portal { padding: 44px 40px 32px; }
     #listItem {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
-    .item-publik {
-      margin-bottom: 0;
+    .item-publik { margin-bottom: 0; }
+    .load-more-wrap, .all-loaded, .empty-state { grid-column: 1 / -1; }
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      overflow-x: visible;
+      gap: 14px;
     }
-    .load-more-wrap,
-    .all-loaded,
-    .empty-state {
-      grid-column: 1 / -1;
-    }
-    .hero-galeri h1 { font-size: 28px; }
-    .hero-galeri .icon-big { width: 88px; height: 88px; }
+    .feat-card { width: auto; }
   }
 </style>
 </head>
 <body>
 
-<header class="public-header">
-  <a href="beranda.html" class="public-header-brand">
-    <div class="public-header-logo">
-      <img src="assets/img/logo-mark.svg" alt="Nakula" />
-    </div>
-    <div class="public-header-text">
-      <div class="public-header-title">NAKULAKU</div>
-      <div class="public-header-sub">KKG Gugus Nakula</div>
-    </div>
-  </a>
-  <div class="public-header-actions">
-    <a href="sekolah.html" class="public-header-btn">
-      <span data-icon="home" class="icon-sm"></span> Profil Sekolah
-    </a>
-  </div>
-</header>
+<!-- HEADER -->
+<header class="public-header" id="header"></header>
 
-<main class="container page" style="max-width:920px;padding-top:20px;padding-bottom:40px;">
+<main class="container page" style="max-width:920px;padding-top:16px;padding-bottom:40px;">
 
-  <!-- HERO -->
-  <div class="hero-galeri">
-    <div class="icon-big">
-      <span data-icon="grid" class="icon-xl"></span>
-    </div>
-    <h1>GALERI SEKOLAH</h1>
-    <p>Prestasi siswa, kegiatan, pembiasaan &amp; karya guru<br>dari 10 sekolah KKG Gugus Nakula</p>
-  </div>
+  <!-- HERO SINEMATIK -->
+  <section class="hero-portal">
+    <div class="hero-portal-inner">
+      <div class="hero-label">
+        <span class="dot"></span>
+        Portal Pendidikan · KKG Gugus Nakula
+      </div>
 
-  <!-- STATISTIK -->
-  <div class="stat-row">
-    <div class="stat-box">
-      <div class="n" id="statTotal">—</div>
-      <div class="l">Total</div>
-    </div>
-    <div class="stat-box">
-      <div class="n" id="statSekolah">—</div>
-      <div class="l">Sekolah</div>
-    </div>
-    <div class="stat-box">
-      <div class="n" id="statBulan">—</div>
-      <div class="l">Bulan Ini</div>
-    </div>
-    <div class="stat-box">
-      <div class="n" id="statKarya">—</div>
-      <div class="l">Karya</div>
-    </div>
-  </div>
+      <h1 class="hero-title">
+        GALERI
+        <span class="title-2">NAKULAKU</span>
+      </h1>
 
-  <!-- SEARCH + SORT -->
-  <div class="search-sort-row">
-    <div class="search-wrap" id="searchWrap">
-      <span class="icon-left" data-icon="search" data-icon-class="icon-sm"></span>
-      <input type="text" id="inputSearch" placeholder="Cari nama siswa, lomba, sekolah…" />
-      <button class="icon-clear" id="btnClearSearch" title="Hapus">
-        <span data-icon="x" data-icon-class="icon-sm"></span>
+      <div class="hero-quote">
+        Merawat mimpi, menuai karya.
+        Setiap langkah kecil adalah benih masa depan.
+      </div>
+
+      <div class="hero-desc">
+        Perayaan karya pendidikan dari sekolah-sekolah di Gugus Nakula —
+        prestasi siswa, pembiasaan baik, kegiatan bermakna, dan inovasi guru.
+        Semua jejak kecil yang merajut masa depan.
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="val" id="statTotal" data-target="0">0</div>
+          <div class="lbl">Karya</div>
+        </div>
+        <div class="hero-stat">
+          <div class="val" id="statSekolah" data-target="0">0</div>
+          <div class="lbl">Sekolah</div>
+        </div>
+        <div class="hero-stat">
+          <div class="val" id="statBulan" data-target="0">0</div>
+          <div class="lbl">Bulan Ini</div>
+        </div>
+        <div class="hero-stat">
+          <div class="val" id="statKarya" data-target="0">0</div>
+          <div class="lbl">Karya Guru</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED -->
+  <section class="featured-section hidden" id="featuredSection">
+    <div class="featured-head">
+      <div class="featured-head-icon">${'' /* filled by JS */}</div>
+      <div>
+        <div class="featured-head-title">Karya Pilihan</div>
+        <div class="featured-head-sub">Sorotan karya terbaru dari Gugus Nakula</div>
+      </div>
+    </div>
+    <div class="featured-grid" id="featuredGrid"></div>
+  </section>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar-wrap" id="filterBarWrap">
+    <div class="search-sort-row">
+      <div class="search-wrap" id="searchWrap">
+        <span class="icon-left" data-icon="search" data-icon-class="icon-sm"></span>
+        <input type="text" id="inputSearch" placeholder="Cari nama siswa, lomba, sekolah…" />
+        <button class="icon-clear" id="btnClearSearch" title="Hapus">
+          <span data-icon="x" data-icon-class="icon-sm"></span>
+        </button>
+      </div>
+      <button class="sort-btn" id="btnSort">
+        <span data-icon="list" data-icon-class="icon-sm"></span>
+        <span id="sortLabel">Terbaru</span>
+        <span data-icon="chevronDown" data-icon-class="icon-sm"></span>
       </button>
     </div>
-    <button class="sort-btn" id="btnSort">
-      <span data-icon="list" data-icon-class="icon-sm"></span>
-      <span id="sortLabel">Terbaru</span>
-      <span data-icon="chevronDown" data-icon-class="icon-sm"></span>
-    </button>
-  </div>
 
-  <!-- SEKOLAH CHIPS (hidden by default) -->
-  <div class="sekolah-chips-wrap hidden" id="sekolahChipsWrap">
-    <div class="sekolah-chips-label">Filter Sekolah</div>
-    <div class="sekolah-chips" id="sekolahChips"></div>
-  </div>
+    <div class="filter-row" id="filterJenis">
+      <button class="filter-chip active" data-jenis="">
+        <span data-icon="grid" class="icon-sm"></span> Semua
+        <span class="count" data-count="">0</span>
+      </button>
+      <button class="filter-chip" data-jenis="prestasi">
+        <span data-icon="award" class="icon-sm"></span> Prestasi
+        <span class="count" data-count="prestasi">0</span>
+      </button>
+      <button class="filter-chip" data-jenis="kegiatan">
+        <span data-icon="calendar" class="icon-sm"></span> Kegiatan
+        <span class="count" data-count="kegiatan">0</span>
+      </button>
+      <button class="filter-chip" data-jenis="pembiasaan">
+        <span data-icon="sparkles" class="icon-sm"></span> Pembiasaan
+        <span class="count" data-count="pembiasaan">0</span>
+      </button>
+      <button class="filter-chip" data-jenis="karya">
+        <span data-icon="target" class="icon-sm"></span> Karya Guru
+        <span class="count" data-count="karya">0</span>
+      </button>
+    </div>
 
-  <!-- TAB JENIS -->
-  <div class="filter-row" id="filterJenis">
-    <button class="filter-chip active" data-jenis="">
-      <span data-icon="grid" class="icon-sm"></span> Semua
-      <span class="count" data-count="">0</span>
-    </button>
-    <button class="filter-chip" data-jenis="prestasi">
-      <span data-icon="award" class="icon-sm"></span> Prestasi
-      <span class="count" data-count="prestasi">0</span>
-    </button>
-    <button class="filter-chip" data-jenis="kegiatan">
-      <span data-icon="calendar" class="icon-sm"></span> Kegiatan
-      <span class="count" data-count="kegiatan">0</span>
-    </button>
-    <button class="filter-chip" data-jenis="pembiasaan">
-      <span data-icon="sparkles" class="icon-sm"></span> Pembiasaan
-      <span class="count" data-count="pembiasaan">0</span>
-    </button>
-    <button class="filter-chip" data-jenis="karya">
-      <span data-icon="target" class="icon-sm"></span> Karya Guru
-      <span class="count" data-count="karya">0</span>
-    </button>
+    <div class="sekolah-chips-wrap" id="sekolahChipsWrap">
+      <div class="sekolah-chips" id="sekolahChips"></div>
+    </div>
   </div>
 
   <!-- INFO BAR -->
@@ -980,10 +1317,10 @@
     <div class="active-filters" id="activeFilters"></div>
   </div>
 
-  <!-- LIST -->
+  <!-- GRID -->
   <div id="listItem">
-    <div class="skeleton" style="height:130px;border-radius:16px;margin-bottom:12px;"></div>
-    <div class="skeleton" style="height:130px;border-radius:16px;margin-bottom:12px;"></div>
+    <div class="skeleton" style="height:130px;border-radius:16px;"></div>
+    <div class="skeleton" style="height:130px;border-radius:16px;"></div>
     <div class="skeleton" style="height:130px;border-radius:16px;"></div>
   </div>
 
@@ -1002,6 +1339,9 @@ document.querySelectorAll('[data-icon]').forEach(el => {
   el.style.display = 'contents';
 });
 
+// Featured head icon
+document.querySelector('.featured-head-icon').innerHTML = Icons.get('sparkles', { class: 'icon-sm' });
+
 // ═══════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════
@@ -1012,8 +1352,9 @@ const SORT_OPTIONS = [
   { key: 'sekolah_az', label: 'Sekolah A-Z', icon: 'home' },
 ];
 
-let semuaData = [];          // gabungan prestasi + kegiatan + pembiasaan + karya
-let filteredData = [];       // setelah filter & sort
+let semuaData = [];
+let filteredData = [];
+let featuredData = [];
 let displayed = PAGE_SIZE;
 
 let jenisAktif = '';
@@ -1021,14 +1362,18 @@ let sekolahFilter = null;
 let sortBy = 'terbaru';
 let searchQuery = '';
 
-let allSchools = [];         // unique schools dari semuaData
-let dataLoaded = false;
+let allSchools = [];
+let profile = null;
+let isLoggedIn = false;
 
 // ═══════════════════════════════════════════════
 // BOOT
 // ═══════════════════════════════════════════════
 (async () => {
-  // Baca URL state
+  // 1. Smart header
+  await renderHeader();
+
+  // 2. Baca URL state
   const url = new URL(location.href);
   jenisAktif = url.searchParams.get('jenis') || '';
   const skParam = url.searchParams.get('sekolah');
@@ -1036,25 +1381,95 @@ let dataLoaded = false;
   sortBy = url.searchParams.get('sort') || 'terbaru';
   searchQuery = url.searchParams.get('q') || '';
 
-  // Set UI initial dari URL
   document.getElementById('inputSearch').value = searchQuery;
   updateSearchClearBtn();
   updateSortLabel();
 
-  // Set tab aktif dari URL
   document.querySelectorAll('.filter-chip').forEach(c => {
     c.classList.toggle('active', c.dataset.jenis === jenisAktif);
   });
 
-  // Load data
+  // 3. Load data
   await loadSemuaData();
 
-  // Bind events
+  // 4. Bind events
   bindEvents();
+
+  // 5. Sticky shadow on scroll
+  bindStickyShadow();
 })();
 
 // ═══════════════════════════════════════════════
-// LOAD SEMUA DATA (paralel 2 call)
+// SMART HEADER
+// ═══════════════════════════════════════════════
+async function renderHeader() {
+  const el = document.getElementById('header');
+  const token = Api.getToken();
+
+  if (token) {
+    try {
+      const v = await Api.verify(token);
+      if (v.valid) {
+        isLoggedIn = true;
+        profile = v.profile;
+        Api.setSession(token, profile);
+      }
+    } catch {}
+  }
+
+  // Public header (belum login)
+  if (!isLoggedIn) {
+    el.innerHTML = `
+      <a href="beranda.html" class="public-header-brand">
+        <div class="public-header-logo"><img src="assets/img/logo-mark.svg" alt="Nakula" /></div>
+        <div class="public-header-text">
+          <div class="public-header-title">NAKULAKU</div>
+          <div class="public-header-sub">KKG Gugus Nakula</div>
+        </div>
+      </a>
+      <div class="public-header-actions">
+        <a href="login.html" class="masuk-btn">
+          ${Icons.get('logIn', { class: 'icon-sm' })} Masuk
+        </a>
+      </div>
+    `;
+    return;
+  }
+
+  // Logged in header
+  const init = (profile.nama || 'U').charAt(0).toUpperCase();
+  const fotoUrl = Api.fotoSayaUrl('t');
+
+  el.innerHTML = `
+    <a href="beranda.html" class="public-header-brand">
+      <div class="public-header-logo"><img src="assets/img/logo-mark.svg" alt="Nakula" /></div>
+      <div class="public-header-text">
+        <div class="public-header-title">NAKULAKU</div>
+        <div class="public-header-sub">KKG Gugus Nakula</div>
+      </div>
+    </a>
+    <div class="public-header-actions">
+      <a href="beranda.html" class="user-chip-mini" title="Ke Beranda">
+        <div class="user-chip-avatar">
+          <span style="position:relative;z-index:0;">${init}</span>
+          ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.remove()" />` : ''}
+        </div>
+        <span class="user-chip-name">${UI.escapeHtml(profile.nama || '-')}</span>
+      </a>
+      <button class="logout-btn" id="btnLogout" title="Keluar">
+        ${Icons.get('logOut', { class: 'icon-sm' })}
+      </button>
+    </div>
+  `;
+
+  document.getElementById('btnLogout').addEventListener('click', async () => {
+    const ok = await UI.konfirmasi('Keluar', 'Yakin ingin keluar?', { danger: true, okText: 'Keluar' });
+    if (ok) Api.logout();
+  });
+}
+
+// ═══════════════════════════════════════════════
+// LOAD DATA
 // ═══════════════════════════════════════════════
 async function loadSemuaData() {
   const [resGaleri, resKarya] = await Promise.all([
@@ -1065,15 +1480,11 @@ async function loadSemuaData() {
   const base = (resGaleri.ok && resGaleri.data?.data) ? resGaleri.data.data : [];
   const karya = (resKarya.ok && resKarya.data?.data) ? resKarya.data.data : [];
 
-  // Merge dengan _jenis marker
   semuaData = [
     ...base.map(x => ({ ...x, _jenis: x._jenis || 'prestasi' })),
     ...karya.map(x => ({ ...x, _jenis: 'karya' })),
   ];
 
-  dataLoaded = true;
-
-  // Extract unique schools
   const map = new Map();
   semuaData.forEach(it => {
     const s = it.sekolah;
@@ -1083,38 +1494,54 @@ async function loadSemuaData() {
     (a.nama || '').localeCompare(b.nama || '')
   );
 
-  // Render sekolah chips
   renderSekolahChips();
-
-  // Update counts & stats
   updateStats();
   updateTabCounts();
-
-  // Apply filter & render
+  prepareFeatured();
   applyFilterAndRender();
 }
 
 // ═══════════════════════════════════════════════
-// STATS
+// STATS + ANIMATED COUNTER
 // ═══════════════════════════════════════════════
 function updateStats() {
-  document.getElementById('statTotal').textContent = semuaData.length;
-  document.getElementById('statSekolah').textContent = allSchools.length;
-
   const now = new Date();
   const bulanIni = semuaData.filter(it => {
     const d = getDate(it);
     if (!d) return false;
     return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
   }).length;
-  document.getElementById('statBulan').textContent = bulanIni;
-
   const jmlKarya = semuaData.filter(it => it._jenis === 'karya').length;
-  document.getElementById('statKarya').textContent = jmlKarya;
+
+  animateStat('statTotal', semuaData.length, 800);
+  animateStat('statSekolah', allSchools.length, 600);
+  animateStat('statBulan', bulanIni, 1000);
+  animateStat('statKarya', jmlKarya, 900);
+}
+
+function animateStat(elId, target, duration = 1000) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (target === 0) { el.textContent = '0'; return; }
+
+  const startTime = performance.now();
+  el.classList.remove('loaded');
+
+  function tick(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.floor(target * eased);
+    if (progress < 1) requestAnimationFrame(tick);
+    else {
+      el.textContent = target;
+      el.classList.add('loaded');
+    }
+  }
+  requestAnimationFrame(tick);
 }
 
 function updateTabCounts() {
-  // Hitung per jenis (global, tidak terpengaruh filter sekolah/search)
   const counts = { '': 0, prestasi: 0, kegiatan: 0, pembiasaan: 0, karya: 0 };
   semuaData.forEach(it => {
     counts['']++;
@@ -1126,6 +1553,113 @@ function updateTabCounts() {
 }
 
 // ═══════════════════════════════════════════════
+// FEATURED (Top 3 latest)
+// ═══════════════════════════════════════════════
+function prepareFeatured() {
+  featuredData = [...semuaData]
+    .sort((a, b) => (getDate(b)?.getTime() || 0) - (getDate(a)?.getTime() || 0))
+    .slice(0, 3);
+
+  renderFeatured();
+  updateFeaturedVisibility();
+}
+
+function renderFeatured() {
+  const el = document.getElementById('featuredGrid');
+  if (featuredData.length === 0) return;
+
+  el.innerHTML = featuredData.map((it, idx) => {
+    const jenis = it._jenis;
+    const isKarya = jenis === 'karya';
+
+    let judul = '';
+    let sub = '';
+    let linkUrl = null;
+    let thumbUrl = null;
+
+    if (isKarya) {
+      judul = it.judul;
+      sub = it.deskripsi || (it.user?.nama_lengkap ? 'Oleh ' + it.user.nama_lengkap : '');
+      linkUrl = it.link_url;
+      thumbUrl = UI.thumbnail(it.link_url);
+    } else {
+      judul = it.nama_lomba || it.nama;
+      sub = it.nama_siswa
+        ? `${it.nama_siswa}${it.kelas ? ' (' + it.kelas + ')' : ''}`
+        : (it.deskripsi || '');
+      linkUrl = it.bukti_url;
+      thumbUrl = UI.thumbnail(it.bukti_url);
+    }
+
+    const sekolah = it.sekolah || {};
+    const sekolahId = sekolah.id;
+    const logoSekolah = sekolahId ? Api.logoUrl(sekolahId, sekolah.logo_updated_at) : null;
+    const initSk = Api.inisialSekolah(sekolah.nama);
+
+    const isYT = linkUrl && /youtube\.com|youtu\.be/.test(linkUrl);
+    const isDirectImg = linkUrl && /\.(jpg|jpeg|png|webp|gif|avif)(\?|#|$)/i.test(linkUrl);
+    const iconName = jenis === 'prestasi' ? 'award' : jenis === 'kegiatan' ? 'calendar' : jenis === 'pembiasaan' ? 'sparkles' : 'target';
+
+    const jenisLabel = isKarya
+      ? (it.jenis === 'inovasi' ? 'Inovasi' : 'Aksi Nyata')
+      : (jenis === 'prestasi' ? 'Prestasi' : jenis === 'kegiatan' ? 'Kegiatan' : 'Pembiasaan');
+
+    const thumbHtml = `
+      <div class="feat-thumb ${jenis}" ${linkUrl ? `data-feat-thumb data-url="${UI.escapeHtml(linkUrl)}" data-is-img="${isDirectImg ? '1' : '0'}"` : ''}>
+        ${thumbUrl
+          ? `<img src="${thumbUrl}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+             <div class="fallback" style="display:none;">${Icons.get(iconName)}</div>
+             ${isYT ? `<div class="play-ov"><div class="pb">${Icons.get('play')}</div></div>` : ''}`
+          : `<div class="fallback">${Icons.get(iconName)}</div>`}
+      </div>
+    `;
+
+    return `
+      <div class="feat-card" style="animation-delay:${idx * 0.1}s">
+        <div class="feat-badge">✨ Pilihan</div>
+        ${thumbHtml}
+        <div class="feat-body">
+          <span class="feat-jenis ${jenis}">${jenisLabel}</span>
+          <div class="feat-title">${UI.escapeHtml(judul || '-')}</div>
+          <div class="feat-sub">${UI.escapeHtml(sub || '-')}</div>
+          <div class="feat-footer">
+            <div class="feat-sekolah">
+              <span class="logo">
+                <span style="position:relative;z-index:0;">${initSk}</span>
+                ${logoSekolah ? `<img src="${logoSekolah}" onerror="this.remove()" />` : ''}
+              </span>
+              <span>${UI.escapeHtml(sekolah.nama || '-')}</span>
+            </div>
+            ${sekolahId ? `<a href="sekolah.html?id=${sekolahId}" class="feat-lihat">
+              Lihat ${Icons.get('chevronRight', { class: 'icon-sm' })}
+            </a>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Bind thumbnail
+  el.querySelectorAll('[data-feat-thumb]').forEach(t => {
+    t.addEventListener('click', () => {
+      const url = t.dataset.url;
+      const isImg = t.dataset.isImg === '1';
+      if (isImg) showLightbox(url);
+      else if (url) window.open(url, '_blank');
+    });
+  });
+}
+
+function updateFeaturedVisibility() {
+  const feat = document.getElementById('featuredSection');
+  if (featuredData.length === 0 || searchQuery || sekolahFilter !== null || jenisAktif) {
+    feat.classList.add('hidden');
+  } else {
+    feat.classList.remove('hidden');
+  }
+}
+
+// ═══════════════════════════════════════════════
 // SEKOLAH CHIPS
 // ═══════════════════════════════════════════════
 function renderSekolahChips() {
@@ -1133,14 +1667,14 @@ function renderSekolahChips() {
   const el = document.getElementById('sekolahChips');
 
   if (allSchools.length < 2) {
-    wrap.classList.add('hidden');
+    wrap.classList.remove('show');
     return;
   }
 
-  wrap.classList.remove('hidden');
+  wrap.classList.add('show');
 
   let html = `
-    <button class="sk-chip all ${sekolahFilter === null ? 'active' : ''}" data-sk="">
+    <button class="sk-chip ${sekolahFilter === null ? 'active' : ''}" data-sk="">
       ${Icons.get('grid', { class: 'icon-sm' })}
       <span>Semua</span>
     </button>
@@ -1171,6 +1705,7 @@ function renderSekolahChips() {
       displayed = PAGE_SIZE;
       syncUrl();
       renderSekolahChips();
+      updateFeaturedVisibility();
       applyFilterAndRender();
     });
   });
@@ -1182,22 +1717,10 @@ function renderSekolahChips() {
 function applyFilterAndRender() {
   let result = [...semuaData];
 
-  // 1. Filter jenis
-  if (jenisAktif) {
-    result = result.filter(it => it._jenis === jenisAktif);
-  }
+  if (jenisAktif) result = result.filter(it => it._jenis === jenisAktif);
+  if (sekolahFilter !== null) result = result.filter(it => it.sekolah?.id === sekolahFilter);
+  if (searchQuery) result = result.filter(it => matchesSearch(it, searchQuery));
 
-  // 2. Filter sekolah
-  if (sekolahFilter !== null) {
-    result = result.filter(it => it.sekolah?.id === sekolahFilter);
-  }
-
-  // 3. Search
-  if (searchQuery) {
-    result = result.filter(it => matchesSearch(it, searchQuery));
-  }
-
-  // 4. Sort
   result = sortData(result, sortBy);
 
   filteredData = result;
@@ -1211,10 +1734,8 @@ function matchesSearch(it, q) {
   const f = q.toLowerCase();
   const fields = [
     it.nama_lomba, it.nama_siswa, it.jenis_lomba,
-    it.nama, it.deskripsi, it.tempat,
-    it.judul,
-    it.sekolah?.nama,
-    it.user?.nama_lengkap,
+    it.nama, it.deskripsi, it.tempat, it.judul,
+    it.sekolah?.nama, it.user?.nama_lengkap,
   ];
   return fields.some(x => x && String(x).toLowerCase().includes(f));
 }
@@ -1229,26 +1750,16 @@ function getDate(it) {
 function sortData(list, mode) {
   const arr = [...list];
   if (mode === 'terbaru') {
-    return arr.sort((a, b) => {
-      const da = getDate(a)?.getTime() || 0;
-      const db = getDate(b)?.getTime() || 0;
-      return db - da;
-    });
+    return arr.sort((a, b) => (getDate(b)?.getTime() || 0) - (getDate(a)?.getTime() || 0));
   }
   if (mode === 'terlama') {
-    return arr.sort((a, b) => {
-      const da = getDate(a)?.getTime() || Infinity;
-      const db = getDate(b)?.getTime() || Infinity;
-      return da - db;
-    });
+    return arr.sort((a, b) => (getDate(a)?.getTime() || Infinity) - (getDate(b)?.getTime() || Infinity));
   }
   if (mode === 'sekolah_az') {
     return arr.sort((a, b) => {
       const na = (a.sekolah?.nama || '').localeCompare(b.sekolah?.nama || '');
       if (na !== 0) return na;
-      const da = getDate(a)?.getTime() || 0;
-      const db = getDate(b)?.getTime() || 0;
-      return db - da;
+      return (getDate(b)?.getTime() || 0) - (getDate(a)?.getTime() || 0);
     });
   }
   return arr;
@@ -1263,11 +1774,8 @@ function renderInfoBar() {
 
   const total = filteredData.length;
   const showing = Math.min(displayed, total);
-  infoText.textContent = total === 0
-    ? 'Tidak ada hasil'
-    : `Menampilkan ${showing} dari ${total} item`;
+  infoText.textContent = total === 0 ? 'Tidak ada hasil' : `Menampilkan ${showing} dari ${total}`;
 
-  // Active filter tags
   const tags = [];
   if (jenisAktif) {
     const label = { prestasi: 'Prestasi', kegiatan: 'Kegiatan', pembiasaan: 'Pembiasaan', karya: 'Karya' }[jenisAktif];
@@ -1284,7 +1792,6 @@ function renderInfoBar() {
     const opt = SORT_OPTIONS.find(o => o.key === sortBy);
     tags.push(`<span class="af-tag">${Icons.get('list', { class: 'icon-sm' })} ${opt?.label || sortBy}</span>`);
   }
-
   activeFilters.innerHTML = tags.join('');
 }
 
@@ -1318,19 +1825,17 @@ function renderList() {
       </div>
     `;
   } else if (total > PAGE_SIZE) {
-    html += `<div class="all-loaded">✓ Semua ${total} item sudah ditampilkan</div>`;
+    html += `<div class="all-loaded">✓ Semua ${total} karya sudah ditampilkan</div>`;
   }
 
   el.innerHTML = html;
 
-  // Bind load more
   document.getElementById('btnLoadMore')?.addEventListener('click', () => {
     displayed += PAGE_SIZE;
     renderList();
     renderInfoBar();
   });
 
-  // Bind thumbnail click
   el.querySelectorAll('[data-thumb]').forEach(thumb => {
     thumb.addEventListener('click', () => {
       const url = thumb.dataset.fullurl;
@@ -1349,40 +1854,26 @@ function renderItem(it, idx) {
   const sekolah = it.sekolah || {};
   const sekolahId = sekolah.id || '';
 
-  let judul = '';
-  let sub = '';
-  let extra = '';
+  let judul = '', sub = '', extra = '';
 
   if (jenis === 'prestasi') {
     judul = it.nama_lomba;
-    const tingkatLabel = {
-      sekolah: 'Sekolah', kecamatan: 'Kecamatan', kabupaten: 'Kabupaten',
-      provinsi: 'Provinsi', nasional: 'Nasional', internasional: 'Internasional',
-    }[it.tingkat] || it.tingkat;
-    const peringkatLabel = {
-      juara_1: 'Juara 1', juara_2: 'Juara 2', juara_3: 'Juara 3', harapan: 'Harapan',
-    }[it.peringkat] || it.peringkat;
+    const tingkatLabel = { sekolah: 'Sekolah', kecamatan: 'Kecamatan', kabupaten: 'Kabupaten', provinsi: 'Provinsi', nasional: 'Nasional', internasional: 'Internasional' }[it.tingkat] || it.tingkat;
+    const peringkatLabel = { juara_1: 'Juara 1', juara_2: 'Juara 2', juara_3: 'Juara 3', harapan: 'Harapan' }[it.peringkat] || it.peringkat;
     sub = `${it.nama_siswa}${it.kelas ? ' (' + it.kelas + ')' : ''} · ${UI.formatTanggalPendek(it.tanggal)}`;
-    extra = `
-      <div class="item-extra">
-        <span class="badge-tingkat ${it.tingkat}">${tingkatLabel}</span>
-        <span class="badge-peringkat">${peringkatLabel}</span>
-      </div>
-    `;
+    extra = `<div class="item-extra">
+      <span class="badge-tingkat ${it.tingkat}">${tingkatLabel}</span>
+      <span class="badge-peringkat">${peringkatLabel}</span>
+    </div>`;
   } else if (jenis === 'kegiatan') {
     judul = it.nama;
-    const skalaLabel = {
-      internal: 'Internal', orang_tua: 'Orang Tua',
-      komunitas: 'Komunitas', kecamatan: 'Kecamatan', kabupaten_plus: 'Kabupaten+',
-    }[it.skala] || it.skala;
+    const skalaLabel = { internal: 'Internal', orang_tua: 'Orang Tua', komunitas: 'Komunitas', kecamatan: 'Kecamatan', kabupaten_plus: 'Kabupaten+' }[it.skala] || it.skala;
     sub = `${UI.formatTanggalPendek(it.tanggal)}${it.tempat ? ' · ' + it.tempat : ''}`;
     extra = `<div class="item-extra"><span class="badge-tingkat kecamatan">${skalaLabel}</span></div>`;
   } else if (jenis === 'pembiasaan') {
     judul = it.nama;
     sub = `${it.frekuensi || '-'}${it.bulan ? ' · Bulan ' + it.bulan : ''} ${it.tahun}`;
-    extra = it.deskripsi
-      ? `<div class="item-extra" style="font-size:12px;color:var(--muted);line-height:1.5;">${UI.escapeHtml(it.deskripsi)}</div>`
-      : '';
+    extra = it.deskripsi ? `<div class="item-extra" style="font-size:12px;color:var(--muted);line-height:1.5;">${UI.escapeHtml(it.deskripsi)}</div>` : '';
   }
 
   const thumbUrl = UI.thumbnail(it.bukti_url);
@@ -1441,9 +1932,6 @@ function renderItem(it, idx) {
   `;
 }
 
-// ═══════════════════════════════════════════════
-// RENDER KARYA
-// ═══════════════════════════════════════════════
 function renderKaryaItem(k, idx) {
   const jenisKarya = k.jenis;
   const user = k.user || {};
@@ -1454,15 +1942,10 @@ function renderKaryaItem(k, idx) {
   const isNew = isRecent(k);
 
   const jenisLabel = jenisKarya === 'inovasi' ? 'Inovasi' : 'Aksi Nyata';
-  const kategoriLabel = {
-    media: 'Media', metode: 'Metode', modul: 'Modul Ajar',
-    alat: 'Alat Peraga', video: 'Video', lainnya: 'Lainnya',
-  }[k.kategori] || '';
+  const kategoriLabel = { media: 'Media', metode: 'Metode', modul: 'Modul Ajar', alat: 'Alat Peraga', video: 'Video', lainnya: 'Lainnya' }[k.kategori] || '';
 
   let extra = `<span class="badge-jenis ${jenisKarya}">${jenisLabel}</span>`;
-  if (jenisKarya === 'inovasi' && kategoriLabel) {
-    extra += `<span class="badge-tingkat kabupaten">${kategoriLabel}</span>`;
-  }
+  if (jenisKarya === 'inovasi' && kategoriLabel) extra += `<span class="badge-tingkat kabupaten">${kategoriLabel}</span>`;
 
   const init = (user.nama_lengkap || '?').charAt(0).toUpperCase();
   const fotoUrl = user.id ? Api.fotoUrl(user.id, 't') : null;
@@ -1480,12 +1963,7 @@ function renderKaryaItem(k, idx) {
   const sekolahId = sekolah.id || user.sekolah?.id;
   const sekolahNama = sekolah.nama || user.sekolah?.nama;
 
-  const logoSekolah = sekolahId
-    ? `<span class="sk-logo">
-         <span style="position:relative;z-index:0;">${Api.inisialSekolah(sekolahNama)}</span>
-       </span>`
-    : '';
-
+  const logoSekolah = sekolahId ? `<span class="sk-logo"><span>${Api.inisialSekolah(sekolahNama)}</span></span>` : '';
   const sekolahLink = sekolahId
     ? `<a href="sekolah.html?id=${sekolahId}" class="item-sekolah">
          ${logoSekolah}
@@ -1541,11 +2019,11 @@ function isRecent(it) {
 }
 
 // ═══════════════════════════════════════════════
-// EMPTY STATE (contextual)
+// EMPTY STATE
 // ═══════════════════════════════════════════════
 function renderEmptyState() {
-  let title = 'Belum Ada Data';
-  let desc = 'Galeri akan muncul setelah panitia memverifikasi submission dari sekolah.';
+  let title = 'Belum Ada Karya';
+  let desc = 'Karya akan muncul setelah panitia memverifikasi submission dari sekolah.';
   let showReset = false;
 
   if (searchQuery) {
@@ -1554,7 +2032,7 @@ function renderEmptyState() {
     showReset = true;
   } else if (sekolahFilter !== null) {
     const s = allSchools.find(x => x.id === sekolahFilter);
-    title = `Belum Ada Data dari ${s?.nama || 'Sekolah Ini'}`;
+    title = `Belum Ada Karya dari ${s?.nama || 'Sekolah Ini'}`;
     desc = 'Data akan muncul setelah panitia memverifikasi. Coba lihat sekolah lain.';
     showReset = true;
   } else if (jenisAktif) {
@@ -1593,6 +2071,7 @@ function bindEmptyStateActions() {
 
     syncUrl();
     renderSekolahChips();
+    updateFeaturedVisibility();
     applyFilterAndRender();
   });
 }
@@ -1601,48 +2080,43 @@ function bindEmptyStateActions() {
 // EVENTS
 // ═══════════════════════════════════════════════
 function bindEvents() {
-  // Jenis tabs
   document.querySelectorAll('.filter-chip').forEach(c => {
     c.addEventListener('click', () => {
       jenisAktif = c.dataset.jenis;
       displayed = PAGE_SIZE;
       document.querySelectorAll('.filter-chip').forEach(x => x.classList.toggle('active', x === c));
       syncUrl();
+      updateFeaturedVisibility();
       applyFilterAndRender();
     });
   });
 
-  // Search (debounced)
   let searchTimer;
   const inputSearch = document.getElementById('inputSearch');
   inputSearch.addEventListener('input', (e) => {
     clearTimeout(searchTimer);
-    const q = e.target.value;
     updateSearchClearBtn();
-
     searchTimer = setTimeout(() => {
-      searchQuery = q.trim();
+      searchQuery = e.target.value.trim();
       displayed = PAGE_SIZE;
       syncUrl();
+      updateFeaturedVisibility();
       applyFilterAndRender();
     }, 300);
   });
 
-  // Clear search
   document.getElementById('btnClearSearch').addEventListener('click', () => {
     inputSearch.value = '';
     searchQuery = '';
     updateSearchClearBtn();
     displayed = PAGE_SIZE;
     syncUrl();
+    updateFeaturedVisibility();
     applyFilterAndRender();
     inputSearch.focus();
   });
 
-  // Sort dropdown
-  document.getElementById('btnSort').addEventListener('click', () => {
-    showSortMenu();
-  });
+  document.getElementById('btnSort').addEventListener('click', showSortMenu);
 }
 
 function updateSearchClearBtn() {
@@ -1654,12 +2128,10 @@ function updateSearchClearBtn() {
 function updateSortLabel() {
   const opt = SORT_OPTIONS.find(o => o.key === sortBy) || SORT_OPTIONS[0];
   document.getElementById('sortLabel').textContent = opt.label;
-  const btn = document.getElementById('btnSort');
-  btn.classList.toggle('active', sortBy !== 'terbaru');
+  document.getElementById('btnSort').classList.toggle('active', sortBy !== 'terbaru');
 }
 
 function showSortMenu() {
-  // Bikin overlay kecil di bawah tombol
   const existing = document.getElementById('sortMenu');
   if (existing) { existing.remove(); return; }
 
@@ -1716,7 +2188,6 @@ function showSortMenu() {
 
   document.body.appendChild(menu);
 
-  // Close on outside click
   setTimeout(() => {
     const handler = (e) => {
       if (!menu.contains(e.target) && e.target !== btn) {
@@ -1726,6 +2197,22 @@ function showSortMenu() {
     };
     document.addEventListener('click', handler);
   }, 0);
+}
+
+// ═══════════════════════════════════════════════
+// STICKY SHADOW
+// ═══════════════════════════════════════════════
+function bindStickyShadow() {
+  const el = document.getElementById('filterBarWrap');
+  if (!el) return;
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      el.classList.toggle('stuck', entry.intersectionRatio < 1);
+    },
+    { threshold: [1], rootMargin: '-61px 0px 0px 0px' }
+  );
+  observer.observe(el);
 }
 
 // ═══════════════════════════════════════════════
