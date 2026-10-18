@@ -146,7 +146,12 @@ menuItems.push(
 { href: prefix + 'ks/verifikasi.html', icon: 'checkCircle', label: 'Verifikasi Izin', key: 'ks-verif' },
 );
 }
-
+  // MENU NARASUMBER
+  if (peranList.includes('narasumber') && !isAdmin) {
+    menuItems.push(
+      { href: prefix + 'narsum.html', icon: 'edit', label: 'Penilaian Tugas', key: 'narsum' }
+    );
+  }
 const initial = (profile.nama || 'U').charAt(0).toUpperCase();
 const fotoUrl = Api.fotoSayaUrl ? Api.fotoSayaUrl('t') : null;
 const roleLabel = isAdmin ? 'Admin' : (isKS ? 'Kepala Sekolah' : 'Guru');
