@@ -233,8 +233,10 @@
 </head>
 <body>
 
+<!-- MOBILE HEADER (Otomatis tersembunyi di Desktop) -->
 <header class="app-header">
   <div class="app-header-brand">
+    <!-- Di mobile, tombol back diganti otomatis jadi hamburger oleh app-nav.js -->
     <a href="beranda.html" class="header-btn" style="text-decoration:none;">
       <span data-icon="chevronLeft"></span>
     </a>
@@ -248,81 +250,131 @@
   </button>
 </header>
 
-<main class="container page" style="max-width:600px;padding-top:20px;">
+<!-- DESKTOP LAYOUT -->
+<div class="desktop-layout">
 
-  <!-- IDENTITY CARD -->
-  <div class="identity-card" id="identityCard">
-    <div class="profile-avatar-wrap" id="avatarWrap">
-      <div class="profile-avatar-fallback" id="avatarFallback">?</div>
-      <div class="edit-badge"><span data-icon="camera" class="icon-sm"></span></div>
-    </div>
-    <div class="identity-name" id="profileName">Memuat…</div>
-    <div class="identity-sub" id="profileSub">—</div>
-    <div class="identity-badges" id="profileBadges"></div>
-  </div>
-
-  <div id="mainContent" class="hidden">
-    
-    <!-- DATA PRIBADI -->
-    <div class="section-title">Data Pribadi</div>
-    <div class="info-group">
-      <div class="info-row">
-        <div class="info-icon"><span data-icon="mail"></span></div>
-        <div class="info-content">
-          <div class="info-label">Email</div>
-          <div class="info-value" id="infoEmail">—</div>
-        </div>
+  <!-- SIDEBAR KIRI (Desktop) -->
+  <aside class="desktop-sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-logo">
+        <img src="assets/img/logo-mark.svg" alt="Nakula" />
       </div>
-      <div class="info-row">
-        <div class="info-icon"><span data-icon="fileText"></span></div>
-        <div class="info-content">
-          <div class="info-label">NIP / NI PPPK</div>
-          <div class="info-value" id="infoNip">—</div>
-        </div>
-      </div>
-      <div class="info-row">
-        <div class="info-icon"><span data-icon="briefcase"></span></div>
-        <div class="info-content">
-          <div class="info-label">Jabatan</div>
-          <div class="info-value" id="infoJabatan">—</div>
-        </div>
-      </div>
-      <div class="info-row">
-        <div class="info-icon"><span data-icon="home"></span></div>
-        <div class="info-content">
-          <div class="info-label">Sekolah</div>
-          <div class="info-value" id="infoSekolah">—</div>
-        </div>
+      <div class="sidebar-brand-text">
+        <div class="name">NAKULAKU</div>
+        <div class="sub">KKG Gugus Nakula</div>
       </div>
     </div>
 
-    <!-- KEAMANAN & PENGATURAN -->
-    <div class="section-title">Keamanan & Pengaturan</div>
-    <div class="action-list">
-      <button class="action-item" id="btnGantiPin">
-        <div class="info-icon"><span data-icon="lock"></span></div>
-        <div class="info-content">
-          <div class="info-value">Ubah PIN Akses</div>
-        </div>
-        <span class="chevron-right"><span data-icon="chevronRight"></span></span>
-      </button>
-      <button class="action-item danger" data-act="logout">
-        <div class="info-icon"><span data-icon="logOut"></span></div>
-        <div class="info-content">
-          <div class="info-value">Keluar dari Akun</div>
-        </div>
-        <span class="chevron-right"><span data-icon="chevronRight"></span></span>
-      </button>
+    <nav class="sidebar-menu">
+      <a class="sidebar-item" data-nav="beranda" href="beranda.html">
+        <span data-icon="home"></span> Beranda
+      </a>
+      <a class="sidebar-item" data-nav="pertemuan" href="beranda.html#sectionPertemuan">
+        <span data-icon="calendar"></span> Pertemuan
+      </a>
+      <a class="sidebar-item" data-nav="galeri" href="galeri.html">
+        <span data-icon="grid"></span> Galeri Sekolah
+      </a>
+      <a class="sidebar-item" data-nav="aktivitas" href="aktivitas.html">
+        <span data-icon="activity"></span> Aktivitas Saya
+      </a>
+      <a class="sidebar-item active" data-nav="profil" href="profil.html">
+        <span data-icon="user"></span> Profil
+      </a>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="desktop-main">
+
+    <!-- TOPBAR (Desktop) -->
+    <div class="desktop-topbar">
+      <h2>Profil Saya</h2>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="user-chip" id="userChipDesktop"></div>
+        <button class="btn-icon" data-act="logout" aria-label="Keluar">
+          <span data-icon="logOut"></span>
+        </button>
+      </div>
     </div>
 
-    <!-- APP INFO -->
-    <div style="text-align:center; margin-top:32px; padding-bottom:24px;">
-      <div style="font-weight:800; color:var(--muted); letter-spacing:1px; font-size:12px;">NAKULAKU EKOSISTEM</div>
-      <div style="font-size:11px; color:var(--muted-soft); margin-top:4px;">Versi 3.0.0 · KKG Gugus Nakula</div>
-    </div>
+    <div class="container page" style="max-width:600px;padding-top:20px;">
 
-  </div>
-</main>
+      <!-- IDENTITY CARD -->
+      <div class="identity-card" id="identityCard">
+        <div class="profile-avatar-wrap" id="avatarWrap">
+          <div class="profile-avatar-fallback" id="avatarFallback">?</div>
+          <div class="edit-badge"><span data-icon="camera" class="icon-sm"></span></div>
+        </div>
+        <div class="identity-name" id="profileName">Memuat…</div>
+        <div class="identity-sub" id="profileSub">—</div>
+        <div class="identity-badges" id="profileBadges"></div>
+      </div>
+
+      <div id="mainContent" class="hidden">
+        
+        <!-- DATA PRIBADI -->
+        <div class="section-title">Data Pribadi</div>
+        <div class="info-group">
+          <div class="info-row">
+            <div class="info-icon"><span data-icon="mail"></span></div>
+            <div class="info-content">
+              <div class="info-label">Email</div>
+              <div class="info-value" id="infoEmail">—</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon"><span data-icon="fileText"></span></div>
+            <div class="info-content">
+              <div class="info-label">NIP / NI PPPK</div>
+              <div class="info-value" id="infoNip">—</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon"><span data-icon="briefcase"></span></div>
+            <div class="info-content">
+              <div class="info-label">Jabatan</div>
+              <div class="info-value" id="infoJabatan">—</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon"><span data-icon="home"></span></div>
+            <div class="info-content">
+              <div class="info-label">Sekolah</div>
+              <div class="info-value" id="infoSekolah">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KEAMANAN & PENGATURAN -->
+        <div class="section-title">Keamanan & Pengaturan</div>
+        <div class="action-list">
+          <button class="action-item" id="btnGantiPin">
+            <div class="info-icon"><span data-icon="lock"></span></div>
+            <div class="info-content">
+              <div class="info-value">Ubah PIN Akses</div>
+            </div>
+            <span class="chevron-right"><span data-icon="chevronRight"></span></span>
+          </button>
+          <button class="action-item danger" data-act="logout">
+            <div class="info-icon"><span data-icon="logOut"></span></div>
+            <div class="info-content">
+              <div class="info-value">Keluar dari Akun</div>
+            </div>
+            <span class="chevron-right"><span data-icon="chevronRight"></span></span>
+          </button>
+        </div>
+
+        <!-- APP INFO -->
+        <div style="text-align:center; margin-top:32px; padding-bottom:24px;">
+          <div style="font-weight:800; color:var(--muted); letter-spacing:1px; font-size:12px;">NAKULAKU EKOSISTEM</div>
+          <div style="font-size:11px; color:var(--muted-soft); margin-top:4px;">Versi 3.0.0 · KKG Gugus Nakula</div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
 
 <input type="file" id="fileFoto" accept="image/*" style="display:none;" />
 
@@ -343,6 +395,23 @@ let profile = null;
 (async () => {
   profile = await Api.requireLogin();
   if (!profile) return;
+
+  // Setup User Chip (Desktop)
+  const chipDesktop = document.getElementById('userChipDesktop');
+  if (chipDesktop) {
+    const init = (profile.nama || 'A').charAt(0).toUpperCase();
+    const fotoUrl = Api.fotoSayaUrl('t');
+    chipDesktop.innerHTML = `
+      <div class="avatar">${fotoUrl ? `<img src="${fotoUrl}" onerror="this.parentElement.textContent='${init}'">` : init}</div>
+      <span>${UI.escapeHtml(profile.nama || '-')}</span>
+    `;
+  }
+
+  // Sembunyikan Galeri untuk Non-Admin di Sidebar Desktop
+  const isAdmin = (profile.peran || []).includes('pengurus') || (profile.peran || []).includes('super_admin');
+  if (!isAdmin) {
+    document.querySelectorAll('.sidebar-item[href="galeri.html"]').forEach(el => el.style.display = 'none');
+  }
 
   renderProfil(profile);
   
