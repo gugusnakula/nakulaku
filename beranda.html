@@ -8,42 +8,31 @@
 
 <link rel="icon" type="image/png" href="assets/img/favicon.png" />
 <link rel="apple-touch-icon" href="assets/img/favicon.png" />
-
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-
 <link rel="stylesheet" href="assets/css/nakula.css" />
 
 <style>
-  /* HERO PROFIL */
+  /* HERO PROFIL PREMIUM */
   .hero-profil {
     background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 50%, #9B2649 100%);
     color: white;
-    border-radius: 24px;
-    padding: 24px 20px 20px;
+    border-radius: 28px;
+    padding: 26px 22px;
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 12px 32px rgba(125,29,58,.28);
+    box-shadow: 0 16px 40px rgba(97,19,41,.3);
     animation: fade-in-up .5s var(--ease-out) both;
   }
   .hero-profil::before {
     content: '';
     position: absolute;
     top: -80px; right: -60px;
-    width: 220px; height: 220px;
+    width: 240px; height: 240px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,169,97,.22) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .hero-profil::after {
-    content: '';
-    position: absolute;
-    bottom: -60px; left: -40px;
-    width: 160px; height: 160px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,169,97,.15) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(201,169,97,.25) 0%, transparent 70%);
     pointer-events: none;
   }
   .hero-profil-inner {
@@ -56,8 +45,8 @@
   .hero-avatar {
     width: 64px; height: 64px;
     border-radius: 18px;
-    background: rgba(255,255,255,.18);
-    border: 2.5px solid var(--gold);
+    background: rgba(255,255,255,.15);
+    border: 2px solid var(--gold);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -74,10 +63,17 @@
     position: absolute; inset: 0;
   }
   .hero-info { flex: 1; min-width: 0; }
+  .hero-greeting {
+    font-size: 12px;
+    opacity: 0.8;
+    font-weight: 600;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+  }
   .hero-nama {
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 800;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
     letter-spacing: 0.2px;
     line-height: 1.3;
   }
@@ -96,21 +92,20 @@
     color: white;
     border: 1px solid rgba(201,169,97,.4);
     font-size: 10px;
-    padding: 3px 9px;
+    padding: 3px 10px;
   }
 
   /* KARTU PROGRES */
   .progress-card {
     background: var(--surface);
-    border: 1.5px solid rgba(125,29,58,.12);
+    border: 1px solid var(--border);
     border-radius: 20px;
     padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 16px rgba(125,29,58,.06);
+    margin-bottom: 24px;
+    box-shadow: var(--sh-sm);
     animation: fade-in-up .5s var(--ease-out) .05s both;
     position: relative;
   }
-
   .progress-head {
     display: flex;
     align-items: center;
@@ -135,9 +130,6 @@
     background: var(--maroon-soft);
     padding: 5px 12px;
     border-radius: 999px;
-    letter-spacing: 0.3px;
-    white-space: nowrap;
-    flex-shrink: 0;
   }
   .progress-bar-wrap {
     height: 10px;
@@ -146,7 +138,6 @@
     overflow: hidden;
     margin-bottom: 14px;
     position: relative;
-    box-shadow: inset 0 1px 3px rgba(125,29,58,.08);
   }
   .progress-bar-wrap > div {
     height: 100%;
@@ -188,7 +179,7 @@
     justify-content: center;
     gap: 8px;
     margin-top: 14px;
-    padding: 11px 16px;
+    padding: 12px 16px;
     background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
     color: white;
     border-radius: 12px;
@@ -196,48 +187,45 @@
     font-weight: 800;
     text-decoration: none;
     width: 100%;
-    box-shadow: 0 6px 16px rgba(125,29,58,.25), inset 0 0 0 1px rgba(201,169,97,.3);
+    box-shadow: 0 6px 16px rgba(125,29,58,.25);
     transition: all .2s var(--ease-out);
   }
   .progress-cta:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(125,29,58,.35), inset 0 0 0 1px rgba(201,169,97,.4);
+    box-shadow: 0 10px 24px rgba(125,29,58,.35);
     text-decoration: none;
     color: white;
   }
-  .progress-cta:active { transform: translateY(0) scale(.98); }
 
   /* MENU KHUSUS GRID */
   .menu-khusus-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 12px;
   }
   .menu-khusus-card {
     background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 16px;
-    padding: 14px 12px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 16px 14px;
     text-decoration: none;
     color: inherit;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     transition: all .2s var(--ease-out);
     -webkit-tap-highlight-color: transparent;
+    box-shadow: var(--sh-xs);
   }
   .menu-khusus-card:hover {
     border-color: var(--maroon-light);
-    box-shadow: 0 8px 20px rgba(125,29,58,.1);
-    transform: translateY(-2px);
+    box-shadow: var(--sh-md);
+    transform: translateY(-3px);
   }
-  .menu-khusus-card:active { transform: translateY(0) scale(.98); }
-  .menu-khusus-card.gold:hover { border-color: var(--gold); }
-
   .menu-khusus-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -255,12 +243,12 @@
   }
   .menu-khusus-title {
     font-weight: 800;
-    font-size: 13.5px;
-    line-height: 1.25;
+    font-size: 14px;
+    line-height: 1.3;
     color: var(--ink);
   }
   .menu-khusus-desc {
-    font-size: 11px;
+    font-size: 11.5px;
     color: var(--muted);
     font-weight: 600;
     line-height: 1.4;
@@ -314,9 +302,9 @@
   .announce-premium {
     background: var(--surface);
     border-radius: 16px;
-    padding: 14px 16px;
-    border: 1.5px solid var(--border);
-    box-shadow: 0 2px 8px rgba(125,29,58,.04);
+    padding: 16px;
+    border: 1px solid var(--border);
+    box-shadow: var(--sh-xs);
     margin-bottom: 10px;
     transition: all .2s var(--ease-out);
     animation: fade-in-up .4s var(--ease-out) both;
@@ -324,12 +312,11 @@
   .announce-premium:hover {
     border-color: var(--maroon-light);
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(125,29,58,.08);
+    box-shadow: var(--sh-sm);
   }
   .announce-premium.penting {
     border-color: var(--gold);
     background: linear-gradient(135deg, #FFFFFF 0%, #FBF4E0 100%);
-    box-shadow: 0 4px 16px rgba(201,169,97,.15);
   }
   .announce-head-premium {
     display: flex;
@@ -363,35 +350,27 @@
   .pertemuan-premium {
     background: var(--surface);
     border-radius: 16px;
-    padding: 14px;
+    padding: 16px;
     display: flex;
     align-items: center;
     gap: 14px;
-    border: 1.5px solid var(--border);
-    box-shadow: 0 2px 8px rgba(125,29,58,.04);
+    border: 1px solid var(--border);
+    box-shadow: var(--sh-xs);
     margin-bottom: 10px;
     cursor: pointer;
     transition: all .2s var(--ease-out);
-    -webkit-tap-highlight-color: transparent;
     animation: fade-in-up .4s var(--ease-out) both;
   }
   .pertemuan-premium:hover {
     border-color: var(--maroon-light);
     transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(125,29,58,.1);
+    box-shadow: var(--sh-md);
   }
-  .pertemuan-premium:active { transform: translateY(0) scale(.99); }
   .pertemuan-premium.locked {
-    opacity: 0.55;
+    opacity: 0.6;
     cursor: not-allowed;
-    background: #FAF6F6;
+    background: var(--bg);
   }
-  .pertemuan-premium.locked:hover {
-    border-color: var(--border);
-    transform: none;
-    box-shadow: 0 2px 8px rgba(125,29,58,.04);
-  }
-
   .pertemuan-num-premium {
     width: 52px;
     height: 52px;
@@ -405,22 +384,12 @@
     font-weight: 800;
     flex-shrink: 0;
     border: 1.5px solid rgba(125,29,58,.1);
-    overflow: hidden;
   }
   .pertemuan-premium.selesai .pertemuan-num-premium {
     background: linear-gradient(135deg, var(--success-soft) 0%, #D1FAE5 100%);
     color: var(--success);
-    border-color: rgba(21,128,61,.15);
   }
-  .pertemuan-premium.locked .pertemuan-num-premium {
-    background: linear-gradient(135deg, #F0EAEA 0%, #EAE0E0 100%);
-    color: var(--muted-soft);
-    border-color: var(--border);
-  }
-  .pertemuan-num-premium .n {
-    font-size: 22px;
-    line-height: 1;
-  }
+  .pertemuan-num-premium .n { font-size: 22px; line-height: 1; }
 
   .pertemuan-body-premium { flex: 1; min-width: 0; }
   .pertemuan-title-premium {
@@ -431,153 +400,42 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 1.3;
   }
   .pertemuan-meta-premium {
     display: flex;
     align-items: center;
     gap: 5px;
-    font-size: 11px;
+    font-size: 11.5px;
     color: var(--muted);
     font-weight: 700;
   }
-  .pertemuan-meta-premium + .pertemuan-meta-premium { margin-top: 3px; }
-
   .chevron-premium {
     color: #C8BFC3;
     transition: all .2s var(--ease-out);
-    flex-shrink: 0;
   }
   .pertemuan-premium:hover .chevron-premium {
     color: var(--maroon);
     transform: translateX(4px);
   }
-  .pertemuan-premium.locked:hover .chevron-premium {
-    transform: none;
-    color: #C8BFC3;
-  }
 
-  .content-section { margin-bottom: 26px; }
-
-  /* ============================================
-     KARTU AKSI DIBUTUHKAN
-     ============================================ */
-  .aksi-card {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 16px;
-    border-radius: 18px;
-    margin-bottom: 12px;
-    border: 1.5px solid;
-    animation: fade-in-up .45s var(--ease-out) both;
-    position: relative;
-    overflow: hidden;
-    text-decoration: none;
-    color: inherit;
-    transition: all .2s var(--ease-out);
-    -webkit-tap-highlight-color: transparent;
-  }
-  .aksi-card:hover {
-    transform: translateY(-2px);
-    text-decoration: none;
-  }
-  .aksi-card.urgent {
-    background: linear-gradient(135deg, #FFFCF3 0%, #FEF3C7 100%);
-    border-color: rgba(180,83,9,.25);
-  }
-  .aksi-card.urgent:hover {
-    border-color: var(--warning);
-    box-shadow: 0 8px 20px rgba(180,83,9,.15);
-  }
-  .aksi-card.danger {
-    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
-    border-color: rgba(185,28,28,.2);
-  }
-  .aksi-card.danger:hover {
-    border-color: var(--danger);
-    box-shadow: 0 8px 20px rgba(185,28,28,.15);
-  }
-  .aksi-icon {
-    width: 48px; height: 48px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .aksi-card.urgent .aksi-icon {
-    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-    color: white;
-    box-shadow: 0 6px 16px rgba(201,169,97,.35);
-  }
-  .aksi-card.danger .aksi-icon {
-    background: linear-gradient(135deg, var(--danger) 0%, #991B1B 100%);
-    color: white;
-    box-shadow: 0 6px 16px rgba(185,28,28,.3);
-  }
-  .aksi-icon svg { width: 22px; height: 22px; }
-  .aksi-body { flex: 1; min-width: 0; }
-  .aksi-title {
-    font-weight: 800;
-    font-size: 14px;
-    color: var(--ink);
-    margin-bottom: 3px;
-    letter-spacing: 0.2px;
-  }
-  .aksi-desc {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.5;
-    font-weight: 600;
-  }
-  .aksi-chevron {
-    color: var(--muted);
-    flex-shrink: 0;
-    transition: transform .2s;
-  }
-  .aksi-card:hover .aksi-chevron {
-    transform: translateX(4px);
-    color: var(--maroon);
-  }
-
-  .aksi-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 20px;
-    height: 20px;
-    padding: 0 7px;
-    border-radius: 999px;
-    background: var(--danger);
-    color: white;
-    font-size: 10.5px;
-    font-weight: 800;
-    margin-left: 8px;
-    vertical-align: middle;
-    letter-spacing: 0.2px;
-  }
+  .content-section { margin-bottom: 28px; }
 
   @media (min-width: 900px) {
-    .menu-khusus-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    .hero-profil { padding: 28px 24px; }
-    .hero-nama { font-size: 19px; }
-    .hero-avatar { width: 72px; height: 72px; font-size: 30px; }
+    .menu-khusus-grid { grid-template-columns: repeat(3, 1fr); }
+    .hero-profil { padding: 32px 28px; }
+    .hero-nama { font-size: 20px; }
+    .hero-avatar { width: 76px; height: 76px; font-size: 30px; }
   }
 </style>
 </head>
 <body>
 
-<!-- MOBILE HEADER -->
+<!-- HEADER MOBILE (Tanpa Logo, Hanya Teks) -->
 <header class="app-header">
   <div class="app-header-brand">
-    <div class="app-header-logo">
-      <img src="assets/img/logo-mark.svg" alt="Nakula" />
-    </div>
+    <!-- Tombol hamburger akan otomatis disisipkan di sini oleh app-nav.js -->
     <div class="app-header-text">
-      <div class="app-header-title">NAKULAKU</div>
+      <div class="app-header-title">Beranda</div>
       <div class="app-header-sub">KKG Gugus Nakula</div>
     </div>
   </div>
@@ -588,7 +446,7 @@
 
 <div class="desktop-layout">
 
-  <!-- SIDEBAR DESKTOP -->
+  <!-- SIDEBAR DESKTOP (Logo Tetap Ada) -->
   <aside class="desktop-sidebar">
     <div class="sidebar-brand">
       <div class="sidebar-brand-logo">
@@ -607,7 +465,7 @@
       <a class="sidebar-item" data-nav="pertemuan" href="#sectionPertemuan">
         <span data-icon="calendar"></span> Pertemuan
       </a>
-      <a class="sidebar-item" data-nav="galeri" href="galeri.html">
+      <a class="sidebar-item galeri-menu" data-nav="galeri" href="galeri.html">
         <span data-icon="grid"></span> Galeri Sekolah
       </a>
       <a class="sidebar-item" data-nav="aktivitas" href="aktivitas.html">
@@ -619,7 +477,7 @@
     </nav>
   </aside>
 
-  <!-- MAIN -->
+  <!-- MAIN CONTENT -->
   <main class="desktop-main">
 
     <div class="desktop-topbar">
@@ -632,12 +490,14 @@
       </div>
     </div>
 
-    <div class="container page" style="padding-top:20px;">
+    <div class="container page" style="padding-top:20px; max-width: 900px; margin: 0 auto;">
 
+      <!-- HERO PROFIL -->
       <section class="hero-profil">
         <div class="hero-profil-inner">
           <div class="hero-avatar" id="heroAvatar">?</div>
           <div class="hero-info">
+            <div class="hero-greeting" id="heroGreeting">Selamat Datang</div>
             <div class="hero-nama" id="heroNama">Memuat…</div>
             <div class="hero-sekolah" id="heroSekolah">—</div>
             <div class="hero-badges" id="heroBadges"></div>
@@ -645,10 +505,7 @@
         </div>
       </section>
 
-      <section id="sectionAksi" class="content-section hidden" style="margin-bottom:20px;">
-        <div id="listAksi"></div>
-      </section>
-
+      <!-- KARTU PROGRES -->
       <section id="kartuProgres" class="progress-card hidden">
         <div class="progress-head">
           <div class="progress-title">
@@ -672,7 +529,8 @@
         </a>
       </section>
 
-      <section id="panelKhusus" class="hidden content-section" style="scroll-margin-top:80px;">
+      <!-- MENU KHUSUS -->
+      <section id="panelKhusus" class="hidden content-section">
         <div class="section-head-premium">
           <h3>
             <span class="icon-wrap"><span data-icon="sparkles" class="icon-sm"></span></span>
@@ -682,30 +540,24 @@
         <div id="listMenuKhusus" class="menu-khusus-grid"></div>
       </section>
 
-      <section id="sectionPengumuman" class="content-section" style="scroll-margin-top:80px;">
+      <!-- PENGUMUMAN -->
+      <section id="sectionPengumuman" class="content-section">
         <div class="section-head-premium">
           <h3>
             <span class="icon-wrap"><span data-icon="megaphone" class="icon-sm"></span></span>
             Pengumuman
           </h3>
-          <a class="more" href="#">
-            Lihat semua
-            <span data-icon="arrowRight" class="icon-sm"></span>
-          </a>
         </div>
         <div id="listPengumuman"></div>
       </section>
 
-      <section id="sectionPertemuan" class="content-section" style="scroll-margin-top:80px;">
+      <!-- PERTEMUAN -->
+      <section id="sectionPertemuan" class="content-section">
         <div class="section-head-premium">
           <h3>
             <span class="icon-wrap"><span data-icon="calendar" class="icon-sm"></span></span>
-            Pertemuan
+            Pertemuan Terbaru
           </h3>
-          <a class="more" href="#">
-            Semua
-            <span data-icon="arrowRight" class="icon-sm"></span>
-          </a>
         </div>
         <div id="listPertemuan"></div>
       </section>
@@ -713,25 +565,6 @@
     </div>
   </main>
 </div>
-
-<!-- BOTTOM NAV — 5 item konsisten -->
-<nav class="bottom-nav">
-  <a class="nav-item active" data-nav="beranda" href="beranda.html">
-    <span data-icon="home"></span> Beranda
-  </a>
-  <a class="nav-item" data-nav="pertemuan" href="#sectionPertemuan">
-    <span data-icon="calendar"></span> Pertemuan
-  </a>
-  <a class="nav-item" data-nav="galeri" href="galeri.html">
-    <span data-icon="grid"></span> Galeri
-  </a>
-  <a class="nav-item" data-nav="aktivitas" href="aktivitas.html">
-    <span data-icon="activity"></span> Aktivitas
-  </a>
-  <a class="nav-item" data-nav="profil" href="profil.html">
-    <span data-icon="user"></span> Profil
-  </a>
-</nav>
 
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/api.js"></script>
@@ -753,11 +586,9 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     if (!target) return;
     e.preventDefault();
     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
     document.querySelectorAll('.sidebar-item').forEach(x => x.classList.remove('active'));
     const parent = a.closest('.sidebar-item');
     if (parent) parent.classList.add('active');
-
     history.replaceState(null, '', targetId);
   });
 });
@@ -769,34 +600,31 @@ let totalPertemuan = 0;
   const profile = await Api.requireLogin();
   if (!profile) return;
 
-  renderProfil(profile);
-  UI.renderUserHeader(profile);
-  renderMenuKhusus(profile);
-
-  // ==========================================
-  // SEMBUNYIKAN MENU BERDASARKAN ROLE
-  // ==========================================
   const peranList = profile.peran || [];
   const isAdmin = peranList.includes('pengurus') || peranList.includes('super_admin');
 
-  // Jika bukan Admin, sembunyikan Galeri di Sidebar Desktop & Bottom Nav Mobile
+  // Sembunyikan menu Galeri & Admin di Sidebar jika bukan Admin
   if (!isAdmin) {
-    // 1. Sembunyikan Sidebar Desktop
-    document.querySelectorAll('.sidebar-item[href="galeri.html"]').forEach(el => {
-      el.style.display = 'none';
-    });
-    
-    // 2. Sembunyikan Bottom Nav Mobile (HP)
-    document.querySelectorAll('.nav-item[href="galeri.html"]').forEach(el => {
-      el.style.display = 'none';
-    });
+    document.querySelectorAll('.galeri-menu').forEach(el => el.style.display = 'none');
   }
+
+  renderProfil(profile);
+  UI.renderUserHeader(profile);
+  renderMenuKhusus(profile);
 
   loadPengumuman();
   loadPertemuan();
 })();
 
 function renderProfil(p) {
+  // Sapaan Dinamis
+  const jam = new Date().getHours();
+  let sapaan = 'Selamat Pagi';
+  if (jam >= 11 && jam < 15) sapaan = 'Selamat Siang';
+  else if (jam >= 15 && jam < 19) sapaan = 'Selamat Sore';
+  else if (jam >= 19 || jam < 4) sapaan = 'Selamat Malam';
+  document.getElementById('heroGreeting').textContent = sapaan + ', Bapak/Ibu';
+
   const avatarEl = document.getElementById('heroAvatar');
   const fotoUrl = Api.fotoSayaUrl('t');
   if (fotoUrl) {
@@ -811,12 +639,10 @@ function renderProfil(p) {
   }
 
   document.getElementById('heroNama').textContent = p.nama || '-';
-  document.getElementById('heroSekolah').textContent =
-    p.sekolah ? `${p.sekolah.nama} · ${p.jabatan || '-'}` : (p.jabatan || '-');
+  document.getElementById('heroSekolah').textContent = p.sekolah ? p.sekolah.nama : (p.jabatan || '-');
 
   const badges = document.getElementById('heroBadges');
-  const peran = p.peran || [];
-  badges.innerHTML = peran.map(r => {
+  badges.innerHTML = (p.peran || []).map(r => {
     const label = r.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     return `<span class="badge">${UI.escapeHtml(label)}</span>`;
   }).join('');
@@ -828,171 +654,33 @@ function renderMenuKhusus(p) {
   const isAdmin = peranList.includes('pengurus') || peranList.includes('super_admin');
   const isKS = peranList.includes('ks');
 
-  // 1. Menu Eksklusif Admin (Papan Juara & Galeri disembunyikan untuk Guru/KS)
+  // 1. MENU ADMIN (Hanya untuk Admin)
   if (isAdmin) {
-    menu.push({
-      icon: 'award',
-      title: 'Papan Juara',
-      desc: 'Hasil NAKULAKU AWARD',
-      href: 'award.html',
-      warna: 'gold',
-    });
-    menu.push({
-      icon: 'grid',
-      title: 'Galeri Sekolah',
-      desc: 'Prestasi & kegiatan 10 sekolah',
-      href: 'galeri.html',
-      warna: 'gold',
-    });
+    menu.push({ icon: 'award', title: 'Papan Juara', desc: 'Hasil NAKULAKU AWARD', href: 'award.html', warna: 'gold' });
+    menu.push({ icon: 'grid', title: 'Galeri Sekolah', desc: 'Prestasi & kegiatan', href: 'galeri.html', warna: 'gold' });
+    menu.push({ icon: 'shield', title: 'Dashboard Admin', desc: 'Kelola seluruh sistem', href: 'admin/index.html', warna: 'maroon' });
   }
 
-  // 2. Menu Umum (Guru, KS, & Admin)
-  menu.push({
-    icon: 'activity',
-    title: 'Aktivitas Saya',
-    desc: 'Rapor digital Anda',
-    href: 'aktivitas.html',
-    warna: 'maroon',
-  });
-  menu.push({
-    icon: 'sparkles',
-    title: 'Karya Saya',
-    desc: 'Inovasi & aksi nyata',
-    href: 'karya.html',
-    warna: 'gold',
-  });
-
-  // 3. Menu Khusus KS
+  // 2. MENU KS (Hanya Sekolahku & Verifikasi)
   if (isKS && !isAdmin) {
-    menu.push({
-      icon: 'home',
-      title: 'Sekolahku',
-      desc: 'Input prestasi, kegiatan, pembiasaan',
-      href: 'ks/sekolah.html',
-      warna: 'maroon',
-    });
-    menu.push({
-      icon: 'users',
-      title: 'Guru Sekolah',
-      desc: 'Pantau daftar guru di sekolah Anda',
-      href: 'admin/guru.html',
-      warna: 'maroon',
-    });
-    menu.push({
-      icon: 'checkCircle',
-      title: 'Verifikasi KS',
-      desc: 'Verifikasi Izin & Sakit',
-      href: 'ks/verifikasi.html',
-      warna: 'gold',
-    });
-    menu.push({
-      icon: 'shield',
-      title: 'Dashboard KS',
-      desc: 'Menu kelola sekolah',
-      href: 'admin/index.html',
-      warna: 'maroon',
-    });
+    menu.push({ icon: 'home', title: 'Sekolahku', desc: 'Input prestasi & kegiatan', href: 'ks/sekolah.html', warna: 'maroon' });
+    menu.push({ icon: 'checkCircle', title: 'Verifikasi Izin', desc: 'Verifikasi Izin & Sakit', href: 'ks/verifikasi.html', warna: 'gold' });
   }
 
-  // 4. Menu Khusus Guru Biasa (Peserta)
-  if (!isAdmin && !isKS) {
+  // 3. MENU GURU BIASA (Sekolahku Portofolio)
+  if (!isKS && !isAdmin) {
     if (p.sekolah && p.sekolah.id) {
-      menu.push({
-        icon: 'home',
-        title: 'Sekolahku',
-        desc: 'Profil & portofolio sekolah',
-        href: `sekolah.html?id=${p.sekolah.id}`,
-        warna: 'maroon',
-      });
+      menu.push({ icon: 'home', title: 'Sekolahku', desc: 'Profil & portofolio sekolah', href: `sekolah.html?id=${p.sekolah.id}`, warna: 'maroon' });
     }
   }
 
-  // 5. Menu Admin Penuh
-  if (isAdmin) {
-    menu.push({
-      icon: 'users',
-      title: 'Data Guru',
-      desc: 'Lihat & kelola seluruh guru',
-      href: 'admin/guru.html',
-      warna: 'maroon',
-    });
-    menu.push({
-      icon: 'upload',
-      title: 'Impor CSV',
-      desc: 'Tambah guru massal',
-      href: 'admin/impor.html',
-      warna: 'gold',
-    });
-    menu.push({
-      icon: 'calendar',
-      title: 'Kelola Pertemuan',
-      desc: 'Jadwal, materi & tugas',
-      href: 'admin/pertemuan.html',
-      warna: 'maroon',
-    });
-    menu.push({
-      icon: 'award',
-      title: 'Kelola Award',
-      desc: 'Nominasi & juara',
-      href: 'admin/award.html',
-      warna: 'gold',
-    });
-    menu.push({
-      icon: 'sparkles',
-      title: 'Verifikasi Sekolah',
-      desc: 'Prestasi, kegiatan, pembiasaan',
-      href: 'admin/verifikasi-sekolah.html',
-      warna: 'maroon',
-    });
-    menu.push({
-      icon: 'fileText',
-      title: 'Sertifikat',
-      desc: 'Impor & kelola sertifikat',
-      href: 'admin/sertifikat.html',
-      warna: 'gold',
-    });
-    menu.push({
-      icon: 'megaphone',
-      title: 'Pengumuman',
-      desc: 'Broadcast ke semua guru',
-      href: 'admin/pengumuman.html',
-      warna: 'maroon',
-    });
-    menu.push({
-      icon: 'messageSquare',
-      title: 'Rekap Feedback',
-      desc: 'Penilaian peserta',
-      href: 'admin/feedback.html',
-      warna: 'maroon',
-    });
-    menu.push({
-      icon: 'activity',
-      title: 'Analitik',
-      desc: 'Grafik & statistik',
-      href: 'admin/analitik.html',
-      warna: 'gold',
-    });
-    menu.push({
-      icon: 'shield',
-      title: 'Dashboard Admin',
-      desc: 'Semua menu admin',
-      href: 'admin/index.html',
-      warna: 'maroon',
-    });
-  }
+  // 4. MENU UMUM (Semua role)
+  menu.push({ icon: 'activity', title: 'Aktivitas Saya', desc: 'Rapor digital Anda', href: 'aktivitas.html', warna: 'maroon' });
+  menu.push({ icon: 'sparkles', title: 'Karya Saya', desc: 'Inovasi & aksi nyata', href: 'karya.html', warna: 'gold' });
 
-  // Panggil pengecekan tugas pengamat
   cekTugasPengamat();
-  
-  // Render (biarkan sisa kode di bawahnya tetap sama)
 
-  if (menu.length === 0) {
-    const panel = document.getElementById('panelKhusus');
-    if (!peranList.includes('ks') && !peranList.includes('pengurus') && !peranList.includes('super_admin')) {
-      panel.classList.add('hidden');
-    }
-    return;
-  }
+  if (menu.length === 0) return;
 
   renderMenuList(menu);
 }
@@ -1023,9 +711,7 @@ async function cekTugasPengamat() {
 
   const menuBaru = `
     <a href="pengamat.html" class="menu-khusus-card gold">
-      <div class="menu-khusus-icon">
-        ${Icons.get('eye', { class: 'icon' })}
-      </div>
+      <div class="menu-khusus-icon">${Icons.get('eye', { class: 'icon' })}</div>
       <div>
         <div class="menu-khusus-title">Tugas Pengamat</div>
         <div class="menu-khusus-desc">${res.data.length} pertemuan ditugaskan</div>
@@ -1034,18 +720,7 @@ async function cekTugasPengamat() {
   `;
 
   listEl.innerHTML = menuBaru + listEl.innerHTML;
-
-  if (panel.classList.contains('hidden')) panel.classList.remove('hidden');
-  if (!panel.querySelector('.section-head-premium')) {
-    const headerDiv = document.createElement('div');
-    headerDiv.className = 'section-head-premium';
-    headerDiv.innerHTML = '<h3><span class="icon-wrap"><span data-icon="sparkles" class="icon-sm"></span></span> Menu Khusus</h3>';
-    panel.insertBefore(headerDiv, listEl);
-    headerDiv.querySelectorAll('[data-icon]').forEach(el => {
-      el.innerHTML = Icons.get(el.dataset.icon);
-      el.style.display = 'contents';
-    });
-  }
+  panel.classList.remove('hidden');
 }
 
 async function loadPengumuman() {
@@ -1098,7 +773,7 @@ async function loadPertemuan() {
   totalPertemuan = daftarPertemuan.length;
 
   renderKartuProgres();
-  renderAksiDibutuhkan();   // ← BARU
+  renderAksiDibutuhkan();
   renderListPertemuan();
 }
 
@@ -1147,122 +822,37 @@ function renderKartuProgres() {
   }
 }
 
-function renderListPertemuan() {
-  const el = document.getElementById('listPertemuan');
-
-  el.innerHTML = daftarPertemuan.map((p, idx) => {
-    const locked = !p.terbuka;
-    const done = p.selesai;
-    const cls = locked ? 'locked' : (done ? 'selesai' : '');
-
-    let badgeHtml = '';
-    if (done) {
-      badgeHtml = `
-        <div style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;background:var(--success-soft);color:var(--success);margin-top:5px;">
-          ${Icons.get('check', { class: 'icon-sm' })}
-          Selesai
-        </div>
-      `;
-    } else if (locked) {
-      badgeHtml = `
-        <div style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;background:var(--border);color:var(--muted);margin-top:5px;">
-          ${Icons.get('lock', { class: 'icon-sm' })}
-          ${UI.escapeHtml(p.alasan || 'Terkunci')}
-        </div>
-      `;
-    }
-
-    return `
-      <div class="pertemuan-premium ${cls}" style="animation-delay:${idx * 0.05}s"
-           onclick="${locked ? 'showLocked(' + p.id + ')' : 'bukaPertemuan(' + p.id + ')'}">
-        <div class="pertemuan-num-premium">
-          <div class="n">${locked ? Icons.get('lock', { class: 'icon-sm' }) : p.urutan}</div>
-        </div>
-        <div class="pertemuan-body-premium">
-          <div class="pertemuan-title-premium">${UI.escapeHtml(p.judul)}</div>
-          <div class="pertemuan-meta-premium">
-            ${Icons.get('calendar', { class: 'icon-sm' })}
-            ${UI.formatTanggal(p.tanggal)}
-          </div>
-          ${p.lokasi_nama ? `
-            <div class="pertemuan-meta-premium">
-              ${Icons.get('mapPin', { class: 'icon-sm' })}
-              ${UI.escapeHtml(p.lokasi_nama)}
-            </div>
-          ` : ''}
-          ${badgeHtml}
-        </div>
-        <span class="chevron-premium">${Icons.get(locked ? 'lock' : 'chevronRight', { class: 'icon' })}</span>
-      </div>
-    `;
-  }).join('');
-}
-
-function bukaPertemuan(id) {
-  window.location.href = 'pertemuan.html?id=' + id;
-}
-
-function showLocked(id) {
-  const p = daftarPertemuan.find(x => x.id === id);
-  if (!p) return;
-  UI.toast(p.alasan || 'Pertemuan ini masih terkunci', 'warning', 3500);
-}
-
-// ============================================================
-// AKSI DIBUTUHKAN (Kartu peringatan)
-// ============================================================
 function renderAksiDibutuhkan() {
   const section = document.getElementById('sectionAksi');
+  if (!section) return;
   const el = document.getElementById('listAksi');
 
-  // Filter pertemuan yang perlu tindakan
-  const perluPresensiBuka = daftarPertemuan.filter(p =>
-    p.presensi_status === 'buka' && !(p.progres?.ada_presensi)
-  );
-
-  const perluPresensiTutup = daftarPertemuan.filter(p =>
-    p.presensi_status === 'tutup' && !(p.progres?.ada_presensi) && !p.selesai
-  );
+  const perluPresensiBuka = daftarPertemuan.filter(p => p.presensi_status === 'buka' && !(p.progres?.ada_presensi));
+  const perluPresensiTutup = daftarPertemuan.filter(p => p.presensi_status === 'tutup' && !(p.progres?.ada_presensi) && !p.selesai);
 
   const kartuList = [];
 
-  // Kartu 1: Presensi sedang dibuka (paling urgent)
   perluPresensiBuka.forEach(p => {
-    const tutupStr = p.presensi_tutup
-      ? new Date(p.presensi_tutup).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
-      : '';
-
+    const tutupStr = p.presensi_tutup ? new Date(p.presensi_tutup).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '';
     kartuList.push(`
       <a href="presensi.html?id=${p.id}" class="aksi-card urgent">
-        <div class="aksi-icon">
-          ${Icons.get('camera')}
-        </div>
+        <div class="aksi-icon">${Icons.get('camera')}</div>
         <div class="aksi-body">
-          <div class="aksi-title">
-            Presensi Sedang Dibuka
-            <span class="aksi-badge">!</span>
-          </div>
-          <div class="aksi-desc">
-            Pertemuan #${p.urutan} — ${UI.escapeHtml(p.judul)}${tutupStr ? ` · Tutup pukul ${tutupStr} WIB` : ''}
-          </div>
+          <div class="aksi-title">Presensi Sedang Dibuka <span class="aksi-badge">!</span></div>
+          <div class="aksi-desc">Pertemuan #${p.urutan} — ${UI.escapeHtml(p.judul)}${tutupStr ? ` · Tutup pukul ${tutupStr} WIB` : ''}</div>
         </div>
         <span class="aksi-chevron">${Icons.get('chevronRight')}</span>
       </a>
     `);
   });
 
-  // Kartu 2: Window sudah tutup & belum presensi (perlu ajukan izin)
   perluPresensiTutup.forEach(p => {
     kartuList.push(`
       <a href="ajukan.html?id=${p.id}" class="aksi-card danger">
-        <div class="aksi-icon">
-          ${Icons.get('fileText')}
-        </div>
+        <div class="aksi-icon">${Icons.get('fileText')}</div>
         <div class="aksi-body">
           <div class="aksi-title">Presensi Terlewat</div>
-          <div class="aksi-desc">
-            Pertemuan #${p.urutan} — ${UI.escapeHtml(p.judul)} · Ajukan izin kalau berhalangan
-          </div>
+          <div class="aksi-desc">Pertemuan #${p.urutan} — ${UI.escapeHtml(p.judul)} · Ajukan izin kalau berhalangan</div>
         </div>
         <span class="aksi-chevron">${Icons.get('chevronRight')}</span>
       </a>
@@ -1277,12 +867,59 @@ function renderAksiDibutuhkan() {
 
   el.innerHTML = kartuList.join('');
   section.classList.remove('hidden');
+}
 
-  // Re-render ikon yang baru disisipkan
-  el.querySelectorAll('[data-icon]').forEach(ic => {
-    ic.innerHTML = Icons.get(ic.dataset.icon);
-    ic.style.display = 'contents';
-  });
+function renderListPertemuan() {
+  const el = document.getElementById('listPertemuan');
+
+  el.innerHTML = daftarPertemuan.map((p, idx) => {
+    const locked = !p.terbuka;
+    const done = p.selesai;
+    const cls = locked ? 'locked' : (done ? 'selesai' : '');
+
+    let badgeHtml = '';
+    if (done) {
+      badgeHtml = `
+        <div style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;background:var(--success-soft);color:var(--success);margin-top:5px;">
+          ${Icons.get('check', { class: 'icon-sm' })} Selesai
+        </div>
+      `;
+    } else if (locked) {
+      badgeHtml = `
+        <div style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;background:var(--border);color:var(--muted);margin-top:5px;">
+          ${Icons.get('lock', { class: 'icon-sm' })} ${UI.escapeHtml(p.alasan || 'Terkunci')}
+        </div>
+      `;
+    }
+
+    return `
+      <div class="pertemuan-premium ${cls}" style="animation-delay:${idx * 0.05}s"
+           onclick="${locked ? 'showLocked(' + p.id + ')' : 'bukaPertemuan(' + p.id + ')'}">
+        <div class="pertemuan-num-premium">
+          <div class="n">${locked ? Icons.get('lock', { class: 'icon-sm' }) : p.urutan}</div>
+        </div>
+        <div class="pertemuan-body-premium">
+          <div class="pertemuan-title-premium">${UI.escapeHtml(p.judul)}</div>
+          <div class="pertemuan-meta-premium">
+            ${Icons.get('calendar', { class: 'icon-sm' })} ${UI.formatTanggal(p.tanggal)}
+          </div>
+          ${p.lokasi_nama ? `
+            <div class="pertemuan-meta-premium">
+              ${Icons.get('mapPin', { class: 'icon-sm' })} ${UI.escapeHtml(p.lokasi_nama)}
+            </div>
+          ` : ''}
+          ${badgeHtml}
+        </div>
+        <span class="chevron-premium">${Icons.get(locked ? 'lock' : 'chevronRight', { class: 'icon' })}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function bukaPertemuan(id) { window.location.href = 'pertemuan.html?id=' + id; }
+function showLocked(id) {
+  const p = daftarPertemuan.find(x => x.id === id);
+  if (p) UI.toast(p.alasan || 'Pertemuan ini masih terkunci', 'warning', 3500);
 }
 </script>
 
