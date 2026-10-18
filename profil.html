@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#611329" />
-<title>Profil — NAKULAKU</title>
+<title>Profil Saya — NAKULAKU</title>
 
 <link rel="icon" type="image/png" href="assets/img/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -13,345 +13,220 @@
 <link rel="stylesheet" href="assets/css/nakula.css" />
 
 <style>
-  /* ============================================
-     HERO PROFIL
-     ============================================ */
-  .hero-profil {
-    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 50%, #9B2649 100%);
+  /* HERO PROFIL / KARTU IDENTITAS */
+  .identity-card {
+    background: linear-gradient(135deg, #4A0D1F 0%, var(--maroon) 50%, var(--maroon-mid) 100%);
+    border-radius: 28px;
+    padding: 30px 20px 24px;
     color: white;
-    border-radius: 24px;
-    padding: 32px 20px 24px;
     text-align: center;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 12px 32px rgba(125,29,58,.28);
+    box-shadow: 0 16px 40px rgba(97,19,41,.3);
     margin-bottom: 20px;
     animation: fade-in-up .5s var(--ease-out) both;
   }
-  .hero-profil::before {
+  .identity-card::before {
     content: '';
     position: absolute;
-    top: -100px; right: -80px;
-    width: 280px; height: 280px;
+    top: -50px; right: -50px;
+    width: 200px; height: 200px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,169,97,.25) 0%, transparent 70%);
-    pointer-events: none;
+    background: var(--gold);
+    opacity: 0.1;
   }
-  .hero-profil::after {
+  .identity-card::after {
     content: '';
     position: absolute;
-    bottom: -80px; left: -60px;
-    width: 220px; height: 220px;
+    bottom: -50px; left: -50px;
+    width: 150px; height: 150px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,169,97,.18) 0%, transparent 70%);
-    pointer-events: none;
+    border: 2px solid rgba(255,255,255,.05);
   }
 
-  .hero-avatar-wrap {
-    width: 108px;
-    height: 108px;
+  /* FOTO PROFIL */
+  .profile-avatar-wrap {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: white;
     margin: 0 auto 16px;
     position: relative;
-    z-index: 1;
-  }
-  .hero-avatar {
-    width: 100%; height: 100%;
-    border-radius: 50%;
-    background: rgba(255,255,255,.2);
-    border: 4px solid var(--gold);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 42px;
-    font-weight: 800;
-    color: white;
-    overflow: hidden;
-    position: relative;
-    box-shadow:
-      0 12px 28px rgba(0,0,0,.25),
-      0 0 0 8px rgba(201,169,97,.12);
     cursor: pointer;
+    border: 4px solid var(--gold);
+    box-shadow: 0 8px 24px rgba(0,0,0,.25);
     transition: transform .2s var(--ease-out);
   }
-  .hero-avatar:hover {
+  .profile-avatar-wrap:hover {
     transform: scale(1.03);
   }
-  .hero-avatar img {
-    position: absolute; inset: 0;
+  .profile-avatar-wrap img {
     width: 100%; height: 100%;
     object-fit: cover;
-  }
-  .hero-avatar .camera-badge {
-    position: absolute;
-    bottom: -4px;
-    right: -4px;
-    width: 36px;
-    height: 36px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-    color: white;
+  }
+  .profile-avatar-fallback {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: var(--maroon-soft);
+    color: var(--maroon);
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 3px solid var(--maroon);
-    z-index: 2;
-    box-shadow: 0 4px 12px rgba(0,0,0,.25);
+    font-size: 40px;
+    font-weight: 800;
   }
-  .hero-avatar .camera-badge svg {
-    width: 16px; height: 16px;
-    stroke-width: 2.5;
+  .edit-badge {
+    position: absolute;
+    bottom: 4px; right: 4px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--maroon);
+    color: white;
+    border: 3px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,.2);
   }
 
-  .hero-nama {
+  .identity-name {
     font-size: 20px;
     font-weight: 800;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
+    letter-spacing: 0.3px;
     position: relative;
     z-index: 1;
-    line-height: 1.3;
-    letter-spacing: 0.2px;
   }
-  .hero-sekolah {
+  .identity-sub {
     font-size: 13px;
     opacity: 0.85;
-    margin-bottom: 14px;
     font-weight: 600;
+    margin-bottom: 14px;
     position: relative;
     z-index: 1;
   }
-  .hero-peran {
+  
+  .identity-badges {
     display: flex;
-    gap: 6px;
     justify-content: center;
+    gap: 6px;
     flex-wrap: wrap;
     position: relative;
     z-index: 1;
   }
-  .hero-peran .badge {
+  .identity-badges .badge {
     background: rgba(255,255,255,.15);
     color: white;
-    border: 1px solid rgba(201,169,97,.4);
-    font-size: 10px;
-    padding: 4px 11px;
-    font-weight: 800;
-    letter-spacing: 0.3px;
+    border: 1px solid rgba(201,169,97,.5);
+    backdrop-filter: blur(4px);
+    font-size: 10.5px;
+    padding: 4px 12px;
   }
 
-  /* ============================================
-     INFO CARD
-     ============================================ */
-  .info-card {
+  /* KARTU INFORMASI */
+  .info-group {
     background: var(--surface);
+    border-radius: 20px;
     border: 1.5px solid var(--border);
-    border-radius: 18px;
-    padding: 20px;
-    margin-bottom: 14px;
-    animation: fade-in-up .5s var(--ease-out) both;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: var(--sh-xs);
+    animation: fade-in-up .5s var(--ease-out) .1s both;
   }
-  .info-card-title {
-    font-size: 11px;
-    font-weight: 800;
-    color: var(--maroon);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .info-card-title .icon-wrap {
-    width: 26px; height: 26px;
-    border-radius: 8px;
-    background: var(--maroon-soft);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
   .info-row {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 11px 0;
+    align-items: center;
+    padding: 16px;
     border-bottom: 1px solid var(--border);
-    gap: 16px;
-    font-size: 13px;
+    gap: 14px;
   }
-  .info-row:last-child { border-bottom: none; padding-bottom: 0; }
-  .info-row:first-of-type { padding-top: 0; }
-  .info-row .lbl {
-    color: var(--muted);
-    font-weight: 700;
-    flex-shrink: 0;
-    min-width: 100px;
-    font-size: 12px;
-  }
-  .info-row .val {
-    font-weight: 700;
-    text-align: right;
-    word-break: break-word;
-    color: var(--ink);
-    flex: 1;
-  }
-
-  /* ============================================
-     FORM PIN
-     ============================================ */
-  .pin-desc {
-    font-size: 12.5px;
-    color: var(--muted);
-    line-height: 1.6;
-    margin-bottom: 16px;
-    font-weight: 500;
-  }
-
-  .input-pin-wrap {
-    position: relative;
-    margin-bottom: 12px;
-  }
-  .input-pin-wrap .field-icon {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--muted-soft);
-    pointer-events: none;
-    z-index: 2;
-    transition: color .2s;
-  }
-  .input-pin-wrap:focus-within .field-icon {
+  .info-row:last-child { border-bottom: none; }
+  
+  .info-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--bg);
     color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
-  .input-pin {
-    width: 100%;
-    padding: 14px 48px 14px 46px;
-    border: 1.5px solid var(--border-strong);
-    border-radius: 14px;
-    font-family: inherit;
-    font-size: 15px;
+  .info-content { flex: 1; min-width: 0; }
+  .info-label {
+    font-size: 11px;
     font-weight: 800;
-    letter-spacing: 6px;
-    background: var(--surface);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 2px;
+  }
+  .info-value {
+    font-size: 14px;
+    font-weight: 700;
     color: var(--ink);
-    transition: all .15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .input-pin::placeholder {
-    letter-spacing: 2px;
-    font-weight: 500;
-    color: var(--muted-soft);
+
+  /* SECTION TITLE */
+  .section-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 24px 0 10px 4px;
   }
-  .input-pin:focus {
-    outline: none;
-    border-color: var(--maroon);
-    box-shadow: 0 0 0 4px rgba(125,29,58,.08);
+
+  /* ACTION LIST */
+  .action-list {
+    background: var(--surface);
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    animation: fade-in-up .5s var(--ease-out) .2s both;
   }
-  .input-pin-toggle {
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 36px;
-    height: 36px;
+  .action-item {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    gap: 14px;
+    text-decoration: none;
+    color: var(--ink);
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: background .15s;
+    font-family: inherit;
+    width: 100%;
+    text-align: left;
     border: none;
     background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all .15s;
-    z-index: 2;
   }
-  .input-pin-toggle:hover {
+  .action-item:last-child { border-bottom: none; }
+  .action-item:hover { background: var(--bg); }
+  
+  .action-item .info-icon {
     background: var(--maroon-soft);
-    color: var(--maroon);
   }
-
-  /* ============================================
-     TENTANG
-     ============================================ */
-  .about-box {
-    text-align: center;
-    padding: 8px 0;
-  }
-  .about-box .logo {
-    width: 72px;
-    height: 72px;
-    margin: 0 auto 14px;
-    background: white;
-    border-radius: 20px;
-    border: 2px solid var(--gold);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    box-shadow: 0 8px 20px rgba(125,29,58,.1);
-  }
-  .about-box .logo img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    transform: scale(1.15);
-  }
-  .about-box .nama {
-    font-weight: 800;
-    font-size: 15px;
-    color: var(--maroon);
-    letter-spacing: 0.5px;
-    margin-bottom: 3px;
-  }
-  .about-box .sub {
-    font-size: 12px;
-    color: var(--muted);
-    font-weight: 600;
-    margin-bottom: 16px;
-    line-height: 1.5;
-  }
-  .about-box .versi {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    padding: 5px 12px;
-    background: var(--bg);
-    border-radius: 999px;
-    color: var(--muted);
-    font-weight: 700;
-    letter-spacing: 0.3px;
-  }
-  .about-box .versi::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--success);
-    box-shadow: 0 0 0 3px rgba(21,128,61,.15);
-  }
-
-  /* ============================================
-     ALERT
-     ============================================ */
-  .form-alert {
-    padding: 12px 14px;
-    border-radius: 12px;
-    font-size: 12.5px;
-    font-weight: 700;
-    margin-bottom: 14px;
-    display: none;
-    align-items: center;
-    gap: 8px;
-    animation: slide-down .3s var(--ease-spring) both;
-  }
-  .form-alert.show { display: flex; }
-  .form-alert.error {
-    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+  .action-item.danger .info-icon {
+    background: var(--danger-soft);
     color: var(--danger);
-    border: 1.5px solid rgba(185,28,28,.15);
   }
-  .form-alert.success {
-    background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
-    color: var(--success);
-    border: 1.5px solid rgba(21,128,61,.15);
+  .action-item.danger .info-value {
+    color: var(--danger);
+  }
+
+  .chevron-right {
+    color: var(--muted-soft);
+    transition: transform .2s;
+  }
+  .action-item:hover .chevron-right {
+    transform: translateX(4px);
+    color: var(--maroon);
   }
 </style>
 </head>
@@ -363,373 +238,216 @@
       <span data-icon="chevronLeft"></span>
     </a>
     <div class="app-header-text">
-      <div class="app-header-title">Profil</div>
-      <div class="app-header-sub">KKG Gugus Nakula</div>
+      <div class="app-header-title">Profil Saya</div>
+      <div class="app-header-sub">NAKULAKU</div>
     </div>
   </div>
+  <button class="header-btn" data-act="logout" aria-label="Keluar">
+    <span data-icon="logOut"></span>
+  </button>
 </header>
 
-<main class="container page" style="max-width:720px;padding-top:16px;padding-bottom:40px;">
+<main class="container page" style="max-width:600px;padding-top:20px;">
 
-  <div id="loading">
-    <div class="skeleton" style="height:280px;border-radius:24px;margin-bottom:20px;"></div>
-    <div class="skeleton" style="height:200px;border-radius:18px;margin-bottom:14px;"></div>
-    <div class="skeleton" style="height:240px;border-radius:18px;"></div>
+  <!-- IDENTITY CARD -->
+  <div class="identity-card" id="identityCard">
+    <div class="profile-avatar-wrap" id="avatarWrap">
+      <div class="profile-avatar-fallback" id="avatarFallback">?</div>
+      <div class="edit-badge">${Icons.get('camera')}</div>
+    </div>
+    <div class="identity-name" id="profileName">Memuat…</div>
+    <div class="identity-sub" id="profileSub">—</div>
+    <div class="identity-badges" id="profileBadges"></div>
   </div>
 
-  <div id="content" class="hidden">
-
-    <!-- HERO PROFIL -->
-    <div class="hero-profil">
-      <div class="hero-avatar-wrap">
-        <div class="hero-avatar" id="heroAvatar">?</div>
-      </div>
-      <div class="hero-nama" id="heroNama">—</div>
-      <div class="hero-sekolah" id="heroSekolah">—</div>
-      <div class="hero-peran" id="heroPeran"></div>
-    </div>
-
-    <!-- DATA DIRI -->
-    <div class="info-card">
-      <div class="info-card-title">
-        <span class="icon-wrap"><span data-icon="user" class="icon-sm"></span></span>
-        Data Diri
-      </div>
-      <div id="infoDiri"></div>
-    </div>
-
-    <!-- GANTI PIN -->
-    <div class="info-card">
-      <div class="info-card-title">
-        <span class="icon-wrap"><span data-icon="lock" class="icon-sm"></span></span>
-        Ganti PIN
-      </div>
-
-      <div class="pin-desc">
-        PIN digunakan untuk login. Setelah ganti PIN, Anda akan diminta login ulang di semua perangkat.
-      </div>
-
-      <div class="input-pin-wrap">
-        <span class="field-icon" data-icon="lock"></span>
-        <input type="password" id="pinLama" class="input-pin" inputmode="numeric" maxlength="6" placeholder="PIN LAMA" />
-      </div>
-
-      <div class="input-pin-wrap">
-        <span class="field-icon" data-icon="keyRound"></span>
-        <input type="password" id="pinBaru" class="input-pin" inputmode="numeric" maxlength="6" placeholder="PIN BARU (5-6 DIGIT)" />
-      </div>
-
-      <div class="input-pin-wrap">
-        <span class="field-icon" data-icon="checkCircle"></span>
-        <input type="password" id="pinUlang" class="input-pin" inputmode="numeric" maxlength="6" placeholder="ULANGI PIN BARU" />
-      </div>
-
-      <div id="alertPin" class="form-alert"></div>
-
-      <button class="btn btn-primary btn-full" id="btnGantiPin" style="margin-top:6px;">
-        <span data-icon="check"></span>
-        Simpan PIN Baru
-      </button>
-    </div>
-
-    <!-- TENTANG -->
-    <div class="info-card">
-      <div class="info-card-title">
-        <span class="icon-wrap"><span data-icon="info" class="icon-sm"></span></span>
-        Tentang Aplikasi
-      </div>
-
-      <div class="about-box">
-        <div class="logo">
-          <img src="assets/img/logo.svg" alt="Nakula" />
+  <div id="mainContent" class="hidden">
+    
+    <!-- DATA PRIBADI -->
+    <div class="section-title">Data Pribadi</div>
+    <div class="info-group">
+      <div class="info-row">
+        <div class="info-icon">${Icons.get('mail')}</div>
+        <div class="info-content">
+          <div class="info-label">Email</div>
+          <div class="info-value" id="infoEmail">—</div>
         </div>
-        <div class="nama">NAKULAKU EKOSISTEM</div>
-        <div class="sub">Sistem Informasi KKG Gugus Nakula<br>Kecamatan Selogiri</div>
-        <div class="versi">Versi 1.0</div>
       </div>
+      <div class="info-row">
+        <div class="info-icon">${Icons.get('fileText')}</div>
+        <div class="info-content">
+          <div class="info-label">NIP / NI PPPK</div>
+          <div class="info-value" id="infoNip">—</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">${Icons.get('briefcase')}</div>
+        <div class="info-content">
+          <div class="info-label">Jabatan</div>
+          <div class="info-value" id="infoJabatan">—</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">${Icons.get('home')}</div>
+        <div class="info-content">
+          <div class="info-label">Sekolah</div>
+          <div class="info-value" id="infoSekolah">—</div>
+        </div>
+      </div>
+    </div>
 
-      <button class="btn btn-secondary btn-full" id="btnLogout" style="margin-top:20px;color:var(--danger);border-color:var(--danger);">
-        <span data-icon="logOut"></span>
-        Keluar dari Akun
+    <!-- KEAMANAN & PENGATURAN -->
+    <div class="section-title">Keamanan & Pengaturan</div>
+    <div class="action-list">
+      <button class="action-item" id="btnGantiPin">
+        <div class="info-icon">${Icons.get('lock')}</div>
+        <div class="info-content">
+          <div class="info-value">Ubah PIN Akses</div>
+        </div>
+        <span class="chevron-right">${Icons.get('chevronRight')}</span>
+      </button>
+      <button class="action-item danger" data-act="logout">
+        <div class="info-icon">${Icons.get('logOut')}</div>
+        <div class="info-content">
+          <div class="info-value">Keluar dari Akun</div>
+        </div>
+        <span class="chevron-right">${Icons.get('chevronRight')}</span>
       </button>
     </div>
 
+    <!-- APP INFO -->
+    <div style="text-align:center; margin-top:32px; padding-bottom:24px;">
+      <div style="font-weight:800; color:var(--muted); letter-spacing:1px; font-size:12px;">NAKULAKU EKOSISTEM</div>
+      <div style="font-size:11px; color:var(--muted-soft); margin-top:4px;">Versi 3.0.0 · KKG Gugus Nakula</div>
+    </div>
+
   </div>
-
-  <input type="file" id="fileFoto" style="display:none;" accept="image/*" />
-
 </main>
 
-<nav class="bottom-nav">
-  <a class="nav-item" data-nav="beranda" href="beranda.html"><span data-icon="home"></span> Beranda</a>
-  <a class="nav-item" data-nav="pertemuan" href="beranda.html#sectionPertemuan"><span data-icon="calendar"></span> Pertemuan</a>
-  <a class="nav-item" data-nav="galeri" href="galeri.html"><span data-icon="grid"></span> Galeri</a>
-  <a class="nav-item" data-nav="aktivitas" href="aktivitas.html"><span data-icon="activity"></span> Aktivitas</a>
-  <a class="nav-item active" data-nav="profil" href="profil.html"><span data-icon="user"></span> Profil</a>
-</nav>
+<input type="file" id="fileFoto" accept="image/*" style="display:none;" />
 
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/ui.js"></script>
 <script src="assets/js/app-nav.js"></script>
 <script>
-// ============================================================
-// PASANG IKON
-// ============================================================
+// Render Ikon
 document.querySelectorAll('[data-icon]').forEach(el => {
   el.innerHTML = Icons.get(el.dataset.icon);
-  if (!el.classList.contains('field-icon')) {
-    el.style.display = 'contents';
-  } else {
-    el.style.display = 'flex';
-  }
+  el.style.display = 'contents';
 });
+UI.bindLogout();
 
-let profile;
+let profile = null;
 
 (async () => {
   profile = await Api.requireLogin();
   if (!profile) return;
-  await loadProfile();
-  render();
+
+  renderProfil(profile);
+  
+  // Bind events
+  document.getElementById('avatarWrap').addEventListener('click', () => document.getElementById('fileFoto').click());
+  document.getElementById('fileFoto').addEventListener('change', (e) => {
+    if (e.target.files[0]) uploadFoto(e.target.files[0]);
+    e.target.value = '';
+  });
+  
+  document.getElementById('btnGantiPin').addEventListener('click', bukaFormGantiPin);
+
+  document.getElementById('mainContent').classList.remove('hidden');
 })();
 
-async function loadProfile() {
-  const res = await Api.call('profile.saya');
-  if (res.ok && res.data) {
-    profile = res.data;
-    Api.updateProfile(profile);
-  }
+function renderProfil(p) {
+  document.getElementById('profileName').textContent = p.nama || '-';
+  document.getElementById('profileSub').textContent = p.sekolah?.nama || 'KKG Gugus Nakula';
+  
+  // Render Badges (Peran)
+  const badgesEl = document.getElementById('profileBadges');
+  const peranLabels = {
+    super_admin: 'Super Admin',
+    pengurus: 'Pengurus',
+    narasumber: 'Narasumber',
+    pengamat: 'Pengamat',
+    peserta: 'Guru Peserta',
+    ks: 'Kepala Sekolah'
+  };
+  badgesEl.innerHTML = (p.peran || []).map(r => 
+    `<span class="badge">${peranLabels[r] || r}</span>`
+  ).join('');
+
+  // Render Data Grid
+  document.getElementById('infoEmail').textContent = p.email || '-';
+  document.getElementById('infoNip').textContent = p.nip || 'Belum diisi';
+  document.getElementById('infoJabatan').textContent = p.jabatan || '-';
+  document.getElementById('infoSekolah').textContent = p.sekolah?.nama || '-';
+
+  // Render Foto
+  renderFotoProfil(p);
 }
 
-// ============================================================
-// RENDER
-// ============================================================
-function render() {
-  document.getElementById('loading').classList.add('hidden');
-  document.getElementById('content').classList.remove('hidden');
+function renderFotoProfil(p) {
+  const wrap = document.getElementById('avatarWrap');
+  const fallback = document.getElementById('avatarFallback');
+  const url = p.foto_thumb_url || (p.id ? Api.fotoUrl(p.id, 't') : null);
+  const init = (p.nama || 'U').charAt(0).toUpperCase();
 
-  // AVATAR
-  const avatarEl = document.getElementById('heroAvatar');
-  const init = (profile.nama || 'G').charAt(0).toUpperCase();
-  const fotoUrl = Api.fotoSayaUrl('t');
+  // Hapus img lama jika ada
+  const oldImg = wrap.querySelector('img');
+  if (oldImg) oldImg.remove();
 
-  avatarEl.innerHTML = `
-    <span>${init}</span>
-    ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.remove()">` : ''}
-    <div class="camera-badge">${Icons.get('camera')}</div>
-  `;
-
-  avatarEl.addEventListener('click', () => {
-    document.getElementById('fileFoto').click();
-  });
-
-  // NAMA + SEKOLAH
-  document.getElementById('heroNama').textContent = profile.nama || '-';
-  document.getElementById('heroSekolah').textContent =
-    profile.sekolah ? profile.sekolah.nama : (profile.jabatan || '-');
-
-  // PERAN
-  const peran = profile.peran || [];
-  document.getElementById('heroPeran').innerHTML = peran.map(r => {
-    const label = r.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-    return `<span class="badge">${UI.escapeHtml(label)}</span>`;
-  }).join('');
-
-  // DATA DIRI
-  document.getElementById('infoDiri').innerHTML = `
-    <div class="info-row">
-      <span class="lbl">Nama Lengkap</span>
-      <span class="val">${UI.escapeHtml(profile.nama || '-')}</span>
-    </div>
-    <div class="info-row">
-      <span class="lbl">Email</span>
-      <span class="val">${UI.escapeHtml(profile.email || '-')}</span>
-    </div>
-    <div class="info-row">
-      <span class="lbl">NIP</span>
-      <span class="val">${UI.escapeHtml(profile.nip || 'Non-ASN')}</span>
-    </div>
-    <div class="info-row">
-      <span class="lbl">Jabatan</span>
-      <span class="val">${UI.escapeHtml(profile.jabatan || '-')}</span>
-    </div>
-    <div class="info-row">
-      <span class="lbl">Jenis GTK</span>
-      <span class="val">${UI.escapeHtml(profile.jenis_gtk || '-')}</span>
-    </div>
-    <div class="info-row">
-      <span class="lbl">Sekolah</span>
-      <span class="val">${UI.escapeHtml(profile.sekolah?.nama || '-')}</span>
-    </div>
-    <div class="info-row">
-      <span class="lbl">NPSN</span>
-      <span class="val">${UI.escapeHtml(profile.sekolah?.npsn || '-')}</span>
-    </div>
-  `;
-
-  // EVENTS
-  document.getElementById('btnGantiPin').addEventListener('click', gantiPin);
-  document.getElementById('btnLogout').addEventListener('click', async () => {
-    const ok = await UI.konfirmasi('Keluar', 'Yakin ingin keluar dari akun?', { danger: true, okText: 'Keluar' });
-    if (ok) Api.logout();
-  });
-  document.getElementById('fileFoto').addEventListener('change', uploadFoto);
-
-  // Bind toggle PIN
-  bindPinToggles();
-}
-
-// ============================================================
-// TOGGLE PIN VISIBILITY
-// ============================================================
-function bindPinToggles() {
-  ['pinLama', 'pinBaru', 'pinUlang'].forEach(id => {
-    const input = document.getElementById(id);
-    if (!input) return;
-
-    // Tambah tombol toggle kalau belum ada
-    if (!input.parentElement.querySelector('.input-pin-toggle')) {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'input-pin-toggle';
-      btn.innerHTML = Icons.get('eye');
-      btn.setAttribute('aria-label', 'Tampilkan PIN');
-      input.parentElement.appendChild(btn);
-
-      btn.addEventListener('click', () => {
-        const visible = input.type === 'password';
-        input.type = visible ? 'text' : 'password';
-        btn.innerHTML = Icons.get(visible ? 'eyeOff' : 'eye');
-      });
-    }
-  });
-}
-
-// ============================================================
-// GANTI PIN
-// ============================================================
-async function gantiPin() {
-  const pinLama = document.getElementById('pinLama').value.trim();
-  const pinBaru = document.getElementById('pinBaru').value.trim();
-  const pinUlang = document.getElementById('pinUlang').value.trim();
-  const alertEl = document.getElementById('alertPin');
-  const btn = document.getElementById('btnGantiPin');
-
-  alertEl.classList.remove('show');
-
-  if (!pinLama || !pinBaru || !pinUlang) {
-    showPinAlert('Semua field wajib diisi.', 'error');
-    return;
+  if (url) {
+    fallback.style.display = 'none';
+    const img = document.createElement('img');
+    img.src = url + '?v=' + Date.now();
+    img.onerror = () => { img.remove(); fallback.style.display = 'flex'; };
+    wrap.insertBefore(img, wrap.firstChild);
+  } else {
+    fallback.style.display = 'flex';
+    fallback.textContent = init;
   }
-  if (!/^\d{5,6}$/.test(pinBaru)) {
-    showPinAlert('PIN baru harus 5–6 digit angka.', 'error');
-    return;
-  }
-  if (pinBaru !== pinUlang) {
-    showPinAlert('PIN baru dan ulangi tidak sama.', 'error');
-    return;
-  }
-
-  const ok = await UI.konfirmasi(
-    'Ganti PIN',
-    'Setelah PIN diubah, Anda akan otomatis keluar dari semua perangkat. Lanjutkan?',
-    { okText: 'Ya, Ganti' }
-  );
-  if (!ok) return;
-
-  UI.btnLoading(btn, 'Menyimpan…');
-
-  const res = await Api.call('profile.ganti_pin', {
-    pin_lama: pinLama,
-    pin_baru: pinBaru,
-  });
-
-  UI.btnReset(btn);
-
-  if (!res.ok) {
-    showPinAlert(res.error || 'Gagal ganti PIN.', 'error');
-    return;
-  }
-
-  showPinAlert('PIN berhasil diubah. Login ulang…', 'success');
-  setTimeout(() => Api.logout(), 1500);
-}
-
-function showPinAlert(pesan, tipe) {
-  const alertEl = document.getElementById('alertPin');
-  const iconSvg = Icons.get(tipe === 'error' ? 'alertCircle' : 'checkCircle', { class: 'icon-sm' });
-  alertEl.innerHTML = iconSvg + '<span>' + UI.escapeHtml(pesan) + '</span>';
-  alertEl.className = 'form-alert show ' + tipe;
 }
 
 // ============================================================
 // UPLOAD FOTO
 // ============================================================
-async function uploadFoto(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  e.target.value = '';
+async function uploadFoto(file) {
+  if (!file.type.startsWith('image/')) { UI.gagal('File harus berupa gambar.'); return; }
+  if (file.size > 5 * 1024 * 1024) { UI.gagal('Maksimal 5 MB.'); return; }
 
-  if (!file.type.startsWith('image/')) {
-    UI.gagal('File harus berupa gambar.');
-    return;
-  }
-
-  UI.toast('Memproses foto…', 'info');
+  UI.toast('Memproses foto...', 'info');
 
   try {
-    const dataUrl = await kompresGambar(file, 480, 0.75);
-
-    const sizeKb = Math.round((dataUrl.length * 3 / 4) / 1024);
-    if (sizeKb > 200) {
-      UI.gagal('Foto terlalu besar (' + sizeKb + ' KB). Coba foto lain.');
-      return;
-    }
-
+    const dataUrl = await kompresFoto(file, 200, 0.85);
     const res = await Api.call('profile.upload_foto', { foto: dataUrl });
-
-    if (!res.ok) {
-      UI.gagal(res.error || 'Gagal upload foto.');
-      return;
-    }
-
-    UI.sukses('Foto berhasil diperbarui!');
+    
+    if (!res.ok) { UI.gagal(res.error || 'Gagal upload.'); return; }
+    
+    UI.sukses('Foto profil diperbarui!');
+    profile.foto_thumb_url = res.data.foto_url;
     Api.updateProfile({ foto_thumb_url: res.data.foto_url });
-
-    setTimeout(() => location.reload(), 800);
-
+    renderFotoProfil(profile);
   } catch (err) {
     console.error(err);
     UI.gagal('Gagal memproses foto.');
   }
 }
 
-function kompresGambar(file, maxSize, quality) {
+function kompresFoto(file, maxSize, quality) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (ev) => {
       const img = new Image();
       img.onload = () => {
-        let w = img.width;
-        let h = img.height;
-        const ratio = Math.min(maxSize / w, maxSize / h, 1);
-        w = Math.round(w * ratio);
-        h = Math.round(h * ratio);
-
         const canvas = document.createElement('canvas');
-        canvas.width = maxSize;
-        canvas.height = maxSize;
+        canvas.width = maxSize; canvas.height = maxSize;
         const ctx = canvas.getContext('2d');
-
-        // Crop center ke 1:1
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, maxSize, maxSize);
         const size = Math.min(img.width, img.height);
         const sx = (img.width - size) / 2;
         const sy = (img.height - size) / 2;
         ctx.drawImage(img, sx, sy, size, size, 0, 0, maxSize, maxSize);
-
-        const out = canvas.toDataURL('image/webp', quality);
-        resolve(out);
+        resolve(canvas.toDataURL('image/webp', quality));
       };
       img.onerror = reject;
       img.src = ev.target.result;
@@ -738,7 +456,80 @@ function kompresGambar(file, maxSize, quality) {
     reader.readAsDataURL(file);
   });
 }
-</script>
 
+// ============================================================
+// GANTI PIN (MODAL)
+// ============================================================
+function bukaFormGantiPin() {
+  const overlay = document.createElement('div');
+  overlay.className = 'bottom-sheet-overlay';
+  overlay.innerHTML = `
+    <div class="bottom-sheet">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--maroon-soft);color:var(--maroon);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+          ${Icons.get('lock', { class: 'icon-lg' })}
+        </div>
+        <h3 style="font-size:18px;color:var(--maroon);margin-bottom:4px;">Ubah PIN</h3>
+        <p style="font-size:12px;color:var(--muted);">Demi keamanan, Anda akan diminta login ulang setelah PIN diubah.</p>
+      </div>
+
+      <div class="field" style="margin-bottom:12px;">
+        <label class="label">PIN Lama *</label>
+        <input type="password" id="pinLama" class="input" inputmode="numeric" maxlength="6" placeholder="••••••" />
+      </div>
+      <div class="field" style="margin-bottom:12px;">
+        <label class="label">PIN Baru *</label>
+        <input type="password" id="pinBaru" class="input" inputmode="numeric" maxlength="6" placeholder="5-6 digit angka" />
+      </div>
+      <div class="field" style="margin-bottom:16px;">
+        <label class="label">Ulangi PIN Baru *</label>
+        <input type="password" id="pinUlang" class="input" inputmode="numeric" maxlength="6" placeholder="Ulangi PIN baru" />
+      </div>
+
+      <div id="pinAlert" class="alert alert-error hidden" style="margin-bottom:16px;"></div>
+
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
+        <button class="btn btn-primary" id="btnSimpanPin" style="flex:2;">Simpan PIN</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  overlay.querySelector('#btnSimpanPin').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnSimpanPin');
+    const alertBox = overlay.querySelector('#pinAlert');
+    alertBox.classList.add('hidden');
+
+    const lama = overlay.querySelector('#pinLama').value.trim();
+    const baru = overlay.querySelector('#pinBaru').value.trim();
+    const ulang = overlay.querySelector('#pinUlang').value.trim();
+
+    if (!lama || !baru || !ulang) {
+      alertBox.textContent = 'Semua field wajib diisi.'; alertBox.classList.remove('hidden'); return;
+    }
+    if (baru !== ulang) {
+      alertBox.textContent = 'PIN baru dan ulangi PIN tidak cocok.'; alertBox.classList.remove('hidden'); return;
+    }
+
+    UI.btnLoading(btn, 'Menyimpan…');
+    const res = await Api.call('profile.ganti_pin', { pin_lama: lama, pin_baru: baru });
+    UI.btnReset(btn);
+
+    if (!res.ok) {
+      alertBox.textContent = res.error; alertBox.classList.remove('hidden'); return;
+    }
+
+    UI.sukses('PIN berhasil diubah. Silakan login ulang.');
+    setTimeout(() => {
+      Api.logout();
+    }, 1500);
+  });
+}
+</script>
 </body>
 </html>
