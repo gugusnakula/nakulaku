@@ -802,7 +802,11 @@ async function renderMenuKhusus(p) {
 
   // 2. MENU KS
   if (isKS && !isAdmin) {
-    menu.push({ icon: 'home', title: 'Sekolahku', desc: 'Input prestasi & kegiatan', href: 'ks/sekolah.html', warna: 'maroon' });
+    const ksSekolah = p.ks_sekolah || [];
+const indukId = ksSekolah.find(k => k.jenis === 'induk')?.sekolah_id || p.sekolah?.id;
+if (indukId) {
+  menu.push({ icon: 'home', title: 'Sekolahku', desc: 'Kelola profil & data sekolah', href: `sekolah.html?id=${indukId}`, warna: 'maroon' });
+}
     menu.push({ icon: 'checkCircle', title: 'Verifikasi Izin', desc: 'Verifikasi Izin & Sakit', href: 'ks/verifikasi.html', warna: 'gold' });
   }
 
