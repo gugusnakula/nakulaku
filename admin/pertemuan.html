@@ -85,7 +85,7 @@
   .info-periode strong { color: var(--ink); }
 
   /* ═══════════════════════════════════════════
-     TOOLBAR (search + filter)
+     TOOLBAR
      ═══════════════════════════════════════════ */
   .toolbar {
     background: var(--surface);
@@ -207,7 +207,7 @@
   }
 
   /* ═══════════════════════════════════════════
-     KARTU PERTEMUAN (UPGRADED)
+     KARTU PERTEMUAN
      ═══════════════════════════════════════════ */
   .item-pertemuan {
     background: var(--surface);
@@ -313,6 +313,40 @@
   .status-aktif { background: var(--success-soft); color: var(--success); }
   .status-selesai { background: var(--info-soft); color: var(--info); }
 
+  /* BADGE NARASUMBER */
+  .narsum-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--gold-soft);
+    color: var(--gold-dark);
+    border: 1px solid rgba(201,169,97,.35);
+    margin-top: 5px;
+    max-width: 100%;
+  }
+  .narsum-badge .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold-dark);
+    flex-shrink: 0;
+  }
+  .narsum-badge span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .narsum-badge.empty {
+    background: var(--danger-soft);
+    color: var(--danger);
+    border-color: rgba(185,28,28,.2);
+  }
+  .narsum-badge.empty .dot { background: var(--danger); }
+
   /* BADGE WINDOW PRESENSI */
   .window-badge {
     display: inline-flex;
@@ -410,10 +444,7 @@
   .fab:hover { transform: scale(1.08); box-shadow: 0 12px 32px rgba(125,29,58,.5); }
   .fab:active { transform: scale(.95); }
   @media (min-width: 900px) {
-    .fab {
-      bottom: 28px;
-      right: 28px;
-    }
+    .fab { bottom: 28px; right: 28px; }
   }
 
   /* ═══════════════════════════════════════════
@@ -468,6 +499,35 @@
     flex-shrink: 0;
   }
   .modal-footer .btn { flex: 1; }
+
+  /* Warning khusus dropdown kosong */
+  .narsum-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--warning-soft);
+    border: 1px solid rgba(180,83,9,.25);
+    border-radius: 10px;
+    font-size: 11.5px;
+    color: #78350F;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .narsum-warning svg { color: var(--warning); flex-shrink: 0; margin-top: 1px; }
+  .narsum-warning a { color: var(--warning); font-weight: 800; text-decoration: underline; }
+
+  /* Alert inline error */
+  .alert {
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    margin-top: 14px;
+  }
+  .alert-error { background: var(--danger-soft); color: var(--danger); border: 1px solid rgba(185,28,28,.2); }
+  .alert.hidden { display: none; }
 </style>
 </head>
 <body class="admin-body">
@@ -696,7 +756,7 @@
 <script src="../assets/js/app-nav.js"></script>
 <script>
 // ═══════════════════════════════════════════════
-// INIT
+// INIT ICONS
 // ═══════════════════════════════════════════════
 document.querySelectorAll('[data-icon]').forEach(el => {
   const cls = el.dataset.iconClass || '';
@@ -705,7 +765,9 @@ document.querySelectorAll('[data-icon]').forEach(el => {
 });
 UI.bindLogout();
 
-// Bottom sheet Lainnya
+// ═══════════════════════════════════════════════
+// BOTTOM SHEET "LAINNYA"
+// ═══════════════════════════════════════════════
 document.getElementById('btnLainnya')?.addEventListener('click', () => {
   const overlay = document.createElement('div');
   overlay.className = 'admin-sheet-overlay';
@@ -748,7 +810,9 @@ document.getElementById('btnLainnya')?.addEventListener('click', () => {
   overlay.querySelector('#btnTutupSheet').addEventListener('click', close);
 });
 
-// User chip
+// ═══════════════════════════════════════════════
+// USER CHIP
+// ═══════════════════════════════════════════════
 window.addEventListener('load', () => {
   const profile = Api.getProfile();
   if (!profile) return;
@@ -757,8 +821,11 @@ window.addEventListener('load', () => {
     const init = (profile.nama || 'A').charAt(0).toUpperCase();
     const fotoUrl = Api.fotoSayaUrl('t');
     chip.innerHTML = `
-      <div class="avatar">
-        ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.parentElement.textContent='${init}'">` : init}
+      <div class="avatar" style="position:relative;">
+        ${fotoUrl
+          ? `<img src="${fotoUrl}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;z-index:1;" onerror="this.remove()">`
+          : ''}
+        <span style="position:relative;z-index:0;">${init}</span>
       </div>
       <span>${UI.escapeHtml(profile.nama || '-')}</span>
     `;
@@ -792,8 +859,24 @@ let tabAktif = 'aktif';
 let statusFilter = '';
 let searchQuery = '';
 
+// ✅ BARU: cache list narasumber untuk dropdown
+let listNarasumber = [];
+let listNarasumberLoaded = false;
+
+async function loadNarasumberList() {
+  if (listNarasumberLoaded) return listNarasumber;
+  const res = await Api.call('admin.narasumber.list');
+  if (res.ok) {
+    listNarasumber = res.data || [];
+    listNarasumberLoaded = true;
+  } else {
+    console.warn('[pertemuan] Gagal load narasumber:', res.error);
+  }
+  return listNarasumber;
+}
+
 // ═══════════════════════════════════════════════
-// INIT
+// INIT BOOT
 // ═══════════════════════════════════════════════
 (async () => {
   profile = await Api.requireLogin();
@@ -806,6 +889,7 @@ let searchQuery = '';
 
   await loadPeriode();
   await loadPertemuan();
+  await loadNarasumberList();   // ✅ BARU: preload narasumber
 
   document.getElementById('btnTambah').addEventListener('click', () => bukaForm(null));
 
@@ -838,6 +922,9 @@ let searchQuery = '';
   });
 })();
 
+// ═══════════════════════════════════════════════
+// DATA LOADERS
+// ═══════════════════════════════════════════════
 async function loadPeriode() {
   const res = await Api.call('periode.aktif');
   const el = document.getElementById('infoPeriode');
@@ -897,12 +984,11 @@ function renderTab() {
 }
 
 // ═══════════════════════════════════════════════
-// BADGE WINDOW
+// BADGE WINDOW PRESENSI
 // ═══════════════════════════════════════════════
 function renderBadgeWindow(p) {
   const tgl = p.tanggal || new Date().toISOString().slice(0, 10);
-  
-  // Helper untuk mengambil string jam (HH:mm)
+
   const getTimeStr = (str) => {
     if (!str) return null;
     const m = String(str).match(/(\d{2}):(\d{2})/);
@@ -911,10 +997,9 @@ function renderBadgeWindow(p) {
 
   const jmMulai = getTimeStr(p.jam_mulai);
   const jmSelesai = getTimeStr(p.jam_selesai);
-  
+
   if (!jmMulai || !jmSelesai) return '';
 
-  // Logika: Buka = -30 menit, Tutup = +30 menit
   const parseTime = (timeStr, offsetMin = 0) => {
     const d = new Date(`${tgl}T${timeStr}:00+07:00`);
     d.setMinutes(d.getMinutes() + offsetMin);
@@ -924,7 +1009,7 @@ function renderBadgeWindow(p) {
   const buka = parseTime(jmMulai, -30);
   const tutup = parseTime(jmSelesai, 30);
   const now = new Date();
-  
+
   let status = 'belum';
   if (now >= buka && now <= tutup) status = 'buka';
   else if (now > tutup) status = 'tutup';
@@ -937,11 +1022,32 @@ function renderBadgeWindow(p) {
   const m = map[status] || map.belum;
 
   const fmt = (d) => d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(':', '.');
-  
+
   return `
     <div class="window-badge ${status}">
       ${Icons.get(m.icon, { class: 'icon-sm' })}
       ${m.label} · ${fmt(buka)}–${fmt(tutup)}
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════
+// BADGE NARASUMBER (baru)
+// ═══════════════════════════════════════════════
+function renderBadgeNarsum(p) {
+  const nama = p.narasumber_nama || '';
+  if (nama.trim()) {
+    return `
+      <div class="narsum-badge" title="Narasumber: ${UI.escapeHtml(nama)}">
+        <span class="dot"></span>
+        <span>${UI.escapeHtml(nama)}</span>
+      </div>
+    `;
+  }
+  return `
+    <div class="narsum-badge empty" title="Narasumber belum ditunjuk">
+      <span class="dot"></span>
+      <span>Narasumber belum ditunjuk</span>
     </div>
   `;
 }
@@ -952,7 +1058,6 @@ function renderBadgeWindow(p) {
 function renderListAktif() {
   const el = document.getElementById('listPertemuan');
 
-  // Filter
   let filtered = daftarPertemuan;
 
   if (statusFilter) {
@@ -1004,11 +1109,7 @@ function renderListAktif() {
               ${Icons.get('mapPin', { class: 'icon-sm' })} ${UI.escapeHtml(p.lokasi_nama)}
             </div>
           ` : ''}
-          ${p.narasumber_nama ? `
-            <div class="item-meta">
-              ${Icons.get('user', { class: 'icon-sm' })} ${UI.escapeHtml(p.narasumber_nama)}
-            </div>
-          ` : ''}
+          ${renderBadgeNarsum(p)}
           ${renderBadgeWindow(p)}
         </div>
         <span class="status-pill status-${p.status}">${p.status}</span>
@@ -1112,7 +1213,7 @@ function renderListArsip() {
 }
 
 // ═══════════════════════════════════════════════
-// HAPUS
+// HAPUS PERTEMUAN
 // ═══════════════════════════════════════════════
 async function hapusPertemuan(id) {
   const p = daftarPertemuan.find(x => x.id === id);
@@ -1132,13 +1233,35 @@ async function hapusPertemuan(id) {
 }
 
 // ═══════════════════════════════════════════════
-// FORM TAMBAH / EDIT
+// FORM TAMBAH / EDIT (DENGAN DROPDOWN NARASUMBER)
 // ═══════════════════════════════════════════════
-function bukaForm(pertemuan) {
+async function bukaForm(pertemuan) {
   if (!periodeAktif) { UI.gagal('Belum ada periode aktif.'); return; }
+
+  // Pastikan list narasumber sudah di-load
+  await loadNarasumberList();
 
   const isEdit = !!pertemuan;
   const p = pertemuan || {};
+
+  // Cari narasumber_user_id: dari data atau fallback match by name
+  const currentNarsumId = p.narasumber_user_id
+    || (p.narasumber_nama
+        ? listNarasumber.find(n => n.nama_lengkap === p.narasumber_nama)?.id
+        : null)
+    || null;
+
+  // Warning kalau daftar narasumber kosong
+  const warningHtml = listNarasumber.length === 0 ? `
+    <div class="narsum-warning">
+      ${Icons.get('alertTriangle', { class: 'icon-sm' })}
+      <div>
+        Belum ada guru dengan role <strong>narasumber</strong>.
+        <a href="guru.html">Tambah role narasumber</a> dulu di Data Guru,
+        atau kosongkan field narasumber (akan diisi manual).
+      </div>
+    </div>
+  ` : '';
 
   const overlay = document.createElement('div');
   overlay.className = 'modal-backdrop';
@@ -1152,6 +1275,8 @@ function bukaForm(pertemuan) {
       </div>
 
       <div class="modal-body">
+        ${warningHtml}
+
         <div class="field" style="margin-bottom:12px;">
           <label class="label">Urutan *</label>
           <input type="number" id="fUrutan" class="input" value="${p.urutan || (daftarPertemuan.length + 1)}" />
@@ -1202,10 +1327,30 @@ function bukaForm(pertemuan) {
             <input type="number" id="fRadius" class="input" value="${p.radius_meter || 100}" />
           </div>
         </div>
+
+        <!-- ✅ NARASUMBER: dropdown + manual -->
         <div class="field" style="margin-bottom:12px;">
-          <label class="label">Narasumber</label>
-          <input type="text" id="fNarsum" class="input" value="${UI.escapeHtml(p.narasumber_nama || '')}" placeholder="Nama narasumber (opsional)" />
+          <label class="label">Narasumber dari Daftar</label>
+          <select id="fNarsumUser" class="input" ${listNarasumber.length === 0 ? 'disabled' : ''}>
+            <option value="">— Tidak ada / input manual —</option>
+            ${listNarasumber.map(n => `
+              <option value="${n.id}" ${currentNarsumId === n.id ? 'selected' : ''}>
+                ${UI.escapeHtml(n.nama_lengkap)}${n.sekolah ? ' · ' + UI.escapeHtml(n.sekolah.nama) : ''}
+              </option>
+            `).join('')}
+          </select>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;font-weight:600;">
+            Pilih guru ber-role <strong>narasumber</strong>. Kosongkan kalau narasumber luar (isi manual di bawah).
+          </div>
         </div>
+        <div class="field" style="margin-bottom:12px;">
+          <label class="label">Nama Narasumber (tampilan)</label>
+          <input type="text" id="fNarsumNama" class="input" value="${UI.escapeHtml(p.narasumber_nama || '')}" placeholder="Kosongkan untuk auto-isi dari daftar" />
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;font-weight:600;">
+            Field ini yang tampil di kartu pertemuan & beranda guru.
+          </div>
+        </div>
+
         <div class="field">
           <label class="label">Status</label>
           <select id="fStatus" class="input">
@@ -1215,7 +1360,7 @@ function bukaForm(pertemuan) {
           </select>
         </div>
 
-        <div id="formAlert" class="alert alert-error hidden" style="margin-top:14px;"></div>
+        <div id="formAlert" class="alert alert-error hidden"></div>
       </div>
 
       <div class="modal-footer">
@@ -1231,6 +1376,17 @@ function bukaForm(pertemuan) {
   overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
 
+  // ✅ Auto-fill nama narasumber saat dropdown berubah
+  overlay.querySelector('#fNarsumUser').addEventListener('change', (e) => {
+    const id = Number(e.target.value);
+    if (id) {
+      const u = listNarasumber.find(x => x.id === id);
+      if (u) overlay.querySelector('#fNarsumNama').value = u.nama_lengkap;
+    }
+    // Kalau dipilih "kosong" — biarkan manual field apa adanya (jangan clear)
+  });
+
+  // Simpan handler
   overlay.querySelector('#btnSimpan').addEventListener('click', async () => {
     const btn = overlay.querySelector('#btnSimpan');
     const alertBox = overlay.querySelector('#formAlert');
@@ -1241,6 +1397,17 @@ function bukaForm(pertemuan) {
       if (!v) return null;
       return String(v).slice(0, 5);
     };
+
+    // ✅ Ambil narasumber_user_id + narasumber_nama
+    const narsumUserIdRaw = overlay.querySelector('#fNarsumUser').value;
+    const narsumUserId = narsumUserIdRaw ? Number(narsumUserIdRaw) : null;
+    const narsumManual = overlay.querySelector('#fNarsumNama').value.trim();
+
+    let narsumNama = narsumManual;
+    if (!narsumNama && narsumUserId) {
+      const u = listNarasumber.find(x => x.id === narsumUserId);
+      narsumNama = u?.nama_lengkap || null;
+    }
 
     const payload = {
       id: p.id || null,
@@ -1256,7 +1423,8 @@ function bukaForm(pertemuan) {
       latitude: overlay.querySelector('#fLat').value.trim(),
       longitude: overlay.querySelector('#fLng').value.trim(),
       radius_meter: Number(overlay.querySelector('#fRadius').value) || 100,
-      narasumber_nama: overlay.querySelector('#fNarsum').value.trim(),
+      narasumber_user_id: narsumUserId,
+      narasumber_nama: narsumNama || null,
       status: overlay.querySelector('#fStatus').value,
     };
 
