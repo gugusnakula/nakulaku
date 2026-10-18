@@ -14,6 +14,15 @@
 <link rel="stylesheet" href="assets/css/nakula.css" />
 
 <style>
+  /* HEADER RATA KIRI */
+  .app-header-brand {
+    flex: 1; /* Memastikan brand mengambil sisa ruang */
+    justify-content: flex-start;
+  }
+  .app-header-text {
+    text-align: left;
+  }
+
   /* HERO PROFIL PREMIUM */
   .hero-profil {
     background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 50%, #9B2649 100%);
@@ -430,11 +439,11 @@
 </head>
 <body>
 
-<!-- HEADER MOBILE (Tanpa Logo, Hanya Teks) -->
+<!-- HEADER MOBILE (Rata Kiri) -->
 <header class="app-header">
-  <div class="app-header-brand">
-    <!-- Tombol hamburger akan otomatis disisipkan di sini oleh app-nav.js -->
-    <div class="app-header-text">
+  <div class="app-header-brand" style="display:flex; align-items:center; gap:10px;">
+    <!-- Tombol hamburger otomatis disisipkan di sini oleh app-nav.js -->
+    <div class="app-header-text" style="text-align:left;">
       <div class="app-header-title">Beranda</div>
       <div class="app-header-sub">KKG Gugus Nakula</div>
     </div>
@@ -446,7 +455,7 @@
 
 <div class="desktop-layout">
 
-  <!-- SIDEBAR DESKTOP (Logo Tetap Ada) -->
+  <!-- SIDEBAR DESKTOP -->
   <aside class="desktop-sidebar">
     <div class="sidebar-brand">
       <div class="sidebar-brand-logo">
@@ -495,7 +504,9 @@
       <!-- HERO PROFIL -->
       <section class="hero-profil">
         <div class="hero-profil-inner">
-          <div class="hero-avatar" id="heroAvatar">?</div>
+          <!-- ID Foto Profil -->
+          <div class="hero-avatar" id="heroAvatarEl"></div>
+          
           <div class="hero-info">
             <div class="hero-greeting" id="heroGreeting">Selamat Datang</div>
             <div class="hero-nama" id="heroNama">Memuat…</div>
@@ -603,7 +614,7 @@ let totalPertemuan = 0;
   const peranList = profile.peran || [];
   const isAdmin = peranList.includes('pengurus') || peranList.includes('super_admin');
 
-  // Sembunyikan menu Galeri & Admin di Sidebar jika bukan Admin
+  // Sembunyikan menu Galeri di Sidebar jika bukan Admin
   if (!isAdmin) {
     document.querySelectorAll('.galeri-menu').forEach(el => el.style.display = 'none');
   }
@@ -617,7 +628,7 @@ let totalPertemuan = 0;
 })();
 
 function renderProfil(p) {
-  // Sapaan Dinamis
+  // 1. Sapaan Dinamis
   const jam = new Date().getHours();
   let sapaan = 'Selamat Pagi';
   if (jam >= 11 && jam < 15) sapaan = 'Selamat Siang';
@@ -625,25 +636,32 @@ function renderProfil(p) {
   else if (jam >= 19 || jam < 4) sapaan = 'Selamat Malam';
   document.getElementById('heroGreeting').textContent = sapaan + ', Bapak/Ibu';
 
-  const avatarEl = document.getElementById('heroAvatar');
+  // 2. Render Foto (Bersih, tanpa kode nyasar)
+  const avatarEl = document.getElementById('heroAvatarEl');
+  avatarEl.innerHTML = ''; // Kosongkan kontainer
   const fotoUrl = Api.fotoSayaUrl('t');
+  const init = (p.nama || 'G').charAt(0).toUpperCase();
+
   if (fotoUrl) {
-    const img = new Image();
+    const img = document.createElement('img');
     img.src = fotoUrl;
     img.alt = p.nama;
-    img.onerror = () => { avatarEl.textContent = (p.nama || 'G').charAt(0).toUpperCase(); };
-    avatarEl.innerHTML = '';
+    img.onerror = () => { avatarEl.textContent = init; }; // Fallback jika gambar gagal
     avatarEl.appendChild(img);
   } else {
-    avatarEl.textContent = (p.nama || 'G').charAt(0).toUpperCase();
+    avatarEl.textContent = init;
   }
 
+  // 3. Text Info
   document.getElementById('heroNama').textContent = p.nama || '-';
   document.getElementById('heroSekolah').textContent = p.sekolah ? p.sekolah.nama : (p.jabatan || '-');
 
+  // 4. Render Badges (Peserta -> Guru)
   const badges = document.getElementById('heroBadges');
   badges.innerHTML = (p.peran || []).map(r => {
-    const label = r.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    let label = r.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    if (r === 'peserta') label = 'Guru'; // Ubah teks peserta jadi guru
+    if (r === 'ks') label = 'Kepala Sekolah';
     return `<span class="badge">${UI.escapeHtml(label)}</span>`;
   }).join('');
 }
@@ -654,7 +672,7 @@ function renderMenuKhusus(p) {
   const isAdmin = peranList.includes('pengurus') || peranList.includes('super_admin');
   const isKS = peranList.includes('ks');
 
-  // 1. MENU ADMIN (Hanya untuk Admin)
+  // 1. MENU ADMIN
   if (isAdmin) {
     menu.push({ icon: 'award', title: 'Papan Juara', desc: 'Hasil NAKULAKU AWARD', href: 'award.html', warna: 'gold' });
     menu.push({ icon: 'grid', title: 'Galeri Sekolah', desc: 'Prestasi & kegiatan', href: 'galeri.html', warna: 'gold' });
@@ -667,14 +685,14 @@ function renderMenuKhusus(p) {
     menu.push({ icon: 'checkCircle', title: 'Verifikasi Izin', desc: 'Verifikasi Izin & Sakit', href: 'ks/verifikasi.html', warna: 'gold' });
   }
 
-  // 3. MENU GURU BIASA (Sekolahku Portofolio)
+  // 3. MENU GURU BIASA
   if (!isKS && !isAdmin) {
     if (p.sekolah && p.sekolah.id) {
       menu.push({ icon: 'home', title: 'Sekolahku', desc: 'Profil & portofolio sekolah', href: `sekolah.html?id=${p.sekolah.id}`, warna: 'maroon' });
     }
   }
 
-  // 4. MENU UMUM (Semua role)
+  // 4. MENU UMUM
   menu.push({ icon: 'activity', title: 'Aktivitas Saya', desc: 'Rapor digital Anda', href: 'aktivitas.html', warna: 'maroon' });
   menu.push({ icon: 'sparkles', title: 'Karya Saya', desc: 'Inovasi & aksi nyata', href: 'karya.html', warna: 'gold' });
 
