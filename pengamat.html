@@ -13,16 +13,20 @@
 <link rel="stylesheet" href="assets/css/nakula.css" />
 
 <style>
+  /* HEADER MOBILE */
+  .app-header-brand { flex: 1; justify-content: flex-start; }
+  .app-header-text { text-align: left; }
+
   /* HERO */
   .hero-pengamat {
     background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 50%, #9B2649 100%);
     color: white;
     border-radius: 24px;
-    padding: 24px 20px 20px;
+    padding: 24px 20px;
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 12px 32px rgba(125,29,58,.28);
+    box-shadow: 0 12px 32px rgba(97,19,41,.3);
     animation: fade-in-up .5s var(--ease-out) both;
   }
   .hero-pengamat::before {
@@ -32,20 +36,10 @@
     width: 220px; height: 220px;
     border-radius: 50%;
     background: radial-gradient(circle, rgba(201,169,97,.25) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .hero-pengamat::after {
-    content: '';
-    position: absolute;
-    bottom: -60px; left: -40px;
-    width: 160px; height: 160px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,169,97,.15) 0%, transparent 70%);
-    pointer-events: none;
   }
   .hero-icon {
-    width: 64px; height: 64px;
-    border-radius: 18px;
+    width: 56px; height: 56px;
+    border-radius: 16px;
     background: rgba(255,255,255,.15);
     border: 2px solid var(--gold);
     display: flex;
@@ -55,35 +49,34 @@
     margin-bottom: 16px;
     position: relative;
     z-index: 1;
-    box-shadow: 0 8px 20px rgba(0,0,0,.2);
   }
   .hero-title {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 800;
     margin-bottom: 6px;
     position: relative;
     z-index: 1;
-    letter-spacing: 0.3px;
   }
   .hero-desc {
     font-size: 13px;
     opacity: 0.9;
     line-height: 1.5;
-    font-weight: 600;
+    font-weight: 500;
     position: relative;
     z-index: 1;
   }
 
-  /* SECTION */
+  /* SECTION TITLE */
   .section-title {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 800;
     color: var(--maroon);
     margin-bottom: 12px;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
   }
   .section-title .icon-wrap {
     width: 28px; height: 28px;
@@ -94,27 +87,25 @@
     justify-content: center;
   }
 
-  /* PILIH PERTEMUAN CARD */
+  /* CARD PERTEMUAN (STEP 1) */
   .pertemuan-card {
     background: var(--surface);
     border: 1.5px solid var(--border);
-    border-radius: 16px;
-    padding: 14px;
+    border-radius: 18px;
+    padding: 16px;
     display: flex;
     align-items: center;
     gap: 14px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     cursor: pointer;
     transition: all .2s var(--ease-out);
     animation: fade-in-up .4s var(--ease-out) both;
-    -webkit-tap-highlight-color: transparent;
   }
   .pertemuan-card:hover {
     border-color: var(--maroon-light);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(125,29,58,.08);
+    box-shadow: var(--sh-md);
   }
-  .pertemuan-card:active { transform: translateY(0) scale(.99); }
   .pertemuan-num {
     width: 52px; height: 52px;
     border-radius: 14px;
@@ -126,18 +117,16 @@
     font-weight: 800;
     font-size: 20px;
     flex-shrink: 0;
-    border: 1.5px solid rgba(125,29,58,.1);
   }
   .pertemuan-info { flex: 1; min-width: 0; }
   .pertemuan-judul {
-    font-size: 14px;
+    font-size: 14.5px;
     font-weight: 800;
     color: var(--ink);
     margin-bottom: 4px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 1.3;
   }
   .pertemuan-meta {
     display: flex;
@@ -149,6 +138,49 @@
   }
   .pertemuan-meta + .pertemuan-meta { margin-top: 3px; }
 
+  /* INFO HEADER (STEP 2) */
+  .info-header {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: var(--sh-xs);
+  }
+
+  /* SEARCH BAR */
+  .search-wrap {
+    position: relative;
+    margin-bottom: 16px;
+  }
+  .search-wrap input {
+    width: 100%;
+    padding: 12px 16px 12px 42px;
+    background: var(--surface);
+    border: 1.5px solid var(--border-strong);
+    border-radius: 14px;
+    font-size: 13.5px;
+    font-family: inherit;
+    font-weight: 600;
+    color: var(--ink);
+    outline: none;
+    transition: all .15s;
+    box-shadow: var(--sh-xs);
+  }
+  .search-wrap input:focus {
+    border-color: var(--maroon);
+    box-shadow: var(--sh-glow);
+    background: #FFFFFF;
+  }
+  .search-wrap .icon-left {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+  }
+
   /* TAB SWITCH */
   .tab-switch {
     display: flex;
@@ -158,13 +190,12 @@
     border-radius: 14px;
     margin-bottom: 16px;
     border: 1.5px solid var(--border);
-    animation: fade-in-up .4s var(--ease-out) both;
   }
   .tsw {
     flex: 1;
     padding: 11px 8px;
     text-align: center;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--muted);
     border-radius: 10px;
@@ -175,7 +206,6 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    white-space: nowrap;
     transition: all .15s;
     font-family: inherit;
   }
@@ -193,22 +223,19 @@
     padding: 16px;
     margin-bottom: 12px;
     animation: fade-in-up .4s var(--ease-out) both;
-    transition: all .2s var(--ease-out);
-  }
-  .target-card:hover {
-    border-color: var(--maroon-light);
-    box-shadow: 0 6px 16px rgba(125,29,58,.06);
   }
   .target-head {
     display: flex;
     align-items: center;
     gap: 12px;
     margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--border);
   }
   .target-avatar {
     width: 44px; height: 44px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
+    background: var(--maroon-soft);
     color: var(--maroon);
     display: flex;
     align-items: center;
@@ -228,13 +255,13 @@
   }
   .target-avatar.sekolah {
     border-radius: 14px;
-    background: linear-gradient(135deg, var(--gold-soft) 0%, #FBF3D0 100%);
+    background: var(--gold-soft);
     color: var(--gold-dark);
   }
   .target-info { flex: 1; min-width: 0; }
   .target-nama {
     font-weight: 800;
-    font-size: 14px;
+    font-size: 14.5px;
     color: var(--ink);
     margin-bottom: 2px;
     white-space: nowrap;
@@ -252,7 +279,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 9px 0;
+    padding: 10px 0;
     border-bottom: 1px solid var(--border);
   }
   .aspek-row:last-of-type { border-bottom: none; }
@@ -265,22 +292,21 @@
   }
   .rating {
     display: flex;
-    gap: 4px;
+    gap: 6px;
     flex-shrink: 0;
   }
   .rating button {
-    width: 32px; height: 32px;
+    width: 34px; height: 34px;
     border: 1.5px solid var(--border);
     background: var(--surface);
-    border-radius: 9px;
+    border-radius: 10px;
     font-weight: 800;
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--muted);
     cursor: pointer;
     padding: 0;
     transition: all .12s var(--ease-out);
     font-family: inherit;
-    -webkit-tap-highlight-color: transparent;
   }
   .rating button:hover {
     border-color: var(--maroon);
@@ -299,16 +325,16 @@
   }
 
   .catatan-input {
-    margin-top: 12px;
+    margin-top: 14px;
     width: 100%;
     padding: 12px 14px;
-    border: 1.5px solid var(--border-strong);
+    border: 1.5px solid var(--border);
     border-radius: 12px;
     font-family: inherit;
     font-size: 12.5px;
     font-weight: 500;
     resize: vertical;
-    min-height: 48px;
+    min-height: 56px;
     background: var(--bg);
     color: var(--ink);
     transition: all .15s;
@@ -317,7 +343,7 @@
     outline: none;
     border-color: var(--maroon);
     background: var(--surface);
-    box-shadow: 0 0 0 4px rgba(125,29,58,.08);
+    box-shadow: var(--sh-glow);
   }
 
   /* SAVE BAR */
@@ -330,7 +356,7 @@
     backdrop-filter: blur(12px);
     padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
     border-top: 1.5px solid var(--border);
-    box-shadow: 0 -4px 20px rgba(125,29,58,.08);
+    box-shadow: 0 -4px 20px rgba(97,19,41,.08);
     z-index: 40;
   }
   .save-bar-inner {
@@ -342,10 +368,18 @@
   }
   .save-bar-inner .btn { flex: 1; }
 
+  @media (min-width: 900px) {
+    /* Geser Save Bar di Desktop agar tidak menutupi Sidebar */
+    .save-bar { left: 260px; padding: 16px 32px; }
+    .save-bar-inner { max-width: 800px; }
+    .target-card { padding: 20px; }
+    .rating button { width: 40px; height: 40px; font-size: 14px; }
+  }
+
   /* EMPTY */
   .empty-panel {
     text-align: center;
-    padding: 50px 20px;
+    padding: 40px 20px;
   }
   .empty-panel .big-icon {
     width: 90px; height: 90px;
@@ -356,122 +390,146 @@
     align-items: center;
     justify-content: center;
     margin: 0 auto 18px;
-    position: relative;
   }
   .empty-panel .big-icon svg { width: 40px; height: 40px; }
-  .empty-panel h3 {
-    font-size: 16px;
-    font-weight: 800;
-    color: var(--ink);
-    margin-bottom: 6px;
-  }
-  .empty-panel p {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.6;
-    max-width: 300px;
-    margin: 0 auto;
-  }
+  .empty-panel h3 { font-size: 16px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+  .empty-panel p { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 300px; margin: 0 auto; }
 
   body.has-savebar { padding-bottom: 100px; }
+  @media (min-width: 900px) { body.has-savebar { padding-bottom: 120px; } }
 </style>
 </head>
 <body>
 
+<!-- HEADER MOBILE -->
 <header class="app-header">
-  <div class="app-header-brand">
-    <a href="beranda.html" class="header-btn" style="text-decoration:none;">
-      <span data-icon="chevronLeft"></span>
-    </a>
-    <div class="app-header-text">
+  <div class="app-header-brand" style="display:flex; align-items:center; gap:10px;">
+    <div class="app-header-text" style="text-align:left;">
       <div class="app-header-title">Pengamat</div>
-      <div class="app-header-sub" id="subHeader">Memuat…</div>
+      <div class="app-header-sub" id="subHeader">Formulir Observasi</div>
     </div>
   </div>
+  <button class="header-btn" data-act="logout" aria-label="Keluar">
+    <span data-icon="logOut"></span>
+  </button>
 </header>
 
-<main class="container page" style="max-width:720px;padding-top:16px;">
+<div class="desktop-layout">
 
-  <!-- STEP PILIH -->
-  <section id="stepPilih">
-    <div class="hero-pengamat">
-      <div class="hero-icon">
-        <span data-icon="eye" class="icon-xl"></span>
+  <!-- SIDEBAR DESKTOP -->
+  <aside class="desktop-sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-logo">
+        <img src="assets/img/logo-mark.svg" alt="Nakula" />
       </div>
-      <div class="hero-title">Tugas Pengamatan</div>
-      <div class="hero-desc">Catat keaktifan peserta dan kekompakan sekolah selama pertemuan berlangsung.</div>
-    </div>
-
-    <div class="section-title">
-      <span class="icon-wrap"><span data-icon="calendar" class="icon-sm"></span></span>
-      Pertemuan yang Ditugaskan
-    </div>
-
-    <div id="listTugas">
-      <div class="skeleton" style="height:88px;border-radius:16px;margin-bottom:10px;"></div>
-      <div class="skeleton" style="height:88px;border-radius:16px;"></div>
-    </div>
-  </section>
-
-  <!-- STEP ISI -->
-  <section id="stepIsi" class="hidden">
-    <div class="info-header" style="background:var(--surface);border:1.5px solid var(--border);border-radius:18px;padding:18px;margin-bottom:16px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-        <div style="width:40px;height:40px;border-radius:12px;background:var(--maroon-soft);color:var(--maroon);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          ${''}
-          <span data-icon="calendar" class="icon-sm"></span>
-        </div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-weight:800;font-size:14px;" id="infoPertemuan">—</div>
-          <div style="font-size:11.5px;color:var(--muted);font-weight:700;margin-top:2px;" id="infoPertemuan2">—</div>
-        </div>
+      <div class="sidebar-brand-text">
+        <div class="name">NAKULAKU</div>
+        <div class="sub">KKG Gugus Nakula</div>
       </div>
     </div>
 
-    <div class="tab-switch">
-      <button class="tsw active" data-tipe="guru">
-        <span data-icon="user" class="icon-sm"></span> Guru
-      </button>
-      <button class="tsw" data-tipe="sekolah">
-        <span data-icon="home" class="icon-sm"></span> Sekolah
-      </button>
+    <nav class="sidebar-menu">
+      <a class="sidebar-item" data-nav="beranda" href="beranda.html"><span data-icon="home"></span> Beranda</a>
+      <a class="sidebar-item" data-nav="pertemuan" href="beranda.html#sectionPertemuan"><span data-icon="calendar"></span> Pertemuan</a>
+      <a class="sidebar-item galeri-menu" data-nav="galeri" href="galeri.html"><span data-icon="grid"></span> Galeri Sekolah</a>
+      <a class="sidebar-item" data-nav="aktivitas" href="aktivitas.html"><span data-icon="activity"></span> Aktivitas Saya</a>
+      <a class="sidebar-item active" data-nav="pengamat" href="pengamat.html"><span data-icon="eye"></span> Pengamat</a>
+      <a class="sidebar-item" data-nav="profil" href="profil.html"><span data-icon="user"></span> Profil</a>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="desktop-main">
+    <div class="desktop-topbar">
+      <h2>Formulir Pengamatan</h2>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="user-chip" id="userChip"></div>
+        <button class="btn-icon" data-act="logout" aria-label="Keluar"><span data-icon="logOut"></span></button>
+      </div>
     </div>
 
-    <div id="targetList"></div>
-  </section>
+    <div class="container page" style="max-width:800px; padding-top:20px;">
 
-</main>
+      <!-- STEP PILIH -->
+      <section id="stepPilih">
+        <div class="hero-pengamat">
+          <div class="hero-icon"><span data-icon="eye" class="icon-xl"></span></div>
+          <div class="hero-title">Tugas Pengamatan</div>
+          <div class="hero-desc">Catat keaktifan peserta dan kekompakan sekolah selama pertemuan berlangsung. Data ini akan digunakan untuk NAKULAKU AWARD.</div>
+        </div>
+
+        <div class="section-title">
+          <span class="icon-wrap"><span data-icon="calendar" class="icon-sm"></span></span>
+          Pertemuan yang Ditugaskan
+        </div>
+
+        <div id="listTugas">
+          <div class="skeleton" style="height:88px;border-radius:16px;margin-bottom:10px;"></div>
+          <div class="skeleton" style="height:88px;border-radius:16px;"></div>
+        </div>
+      </section>
+
+      <!-- STEP ISI -->
+      <section id="stepIsi" class="hidden">
+        
+        <div class="info-header">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:44px;height:44px;border-radius:12px;background:var(--maroon-soft);color:var(--maroon);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <span data-icon="calendar" class="icon-sm"></span>
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:800;font-size:15px;color:var(--ink);" id="infoPertemuan">—</div>
+              <div style="font-size:12px;color:var(--muted);font-weight:600;margin-top:2px;" id="infoPertemuan2">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEARCH BAR -->
+        <div class="search-wrap">
+          <span class="icon-left" data-icon="search" data-icon-class="icon-sm"></span>
+          <input type="text" id="searchTarget" placeholder="Cari nama guru atau sekolah..." autocomplete="off" />
+        </div>
+
+        <div class="tab-switch">
+          <button class="tsw active" data-tipe="guru">
+            <span data-icon="user" class="icon-sm"></span> Guru
+          </button>
+          <button class="tsw" data-tipe="sekolah">
+            <span data-icon="home" class="icon-sm"></span> Sekolah
+          </button>
+        </div>
+
+        <div id="targetList"></div>
+      </section>
+
+    </div>
+  </main>
+</div>
 
 <!-- SAVE BAR -->
 <div class="save-bar hidden" id="saveBar">
   <div class="save-bar-inner">
     <button class="btn btn-secondary" id="btnBatal">
-      <span data-icon="x" class="icon-sm"></span>
-      Batal
+      <span data-icon="x" class="icon-sm"></span> Batal
     </button>
     <button class="btn btn-primary" id="btnSimpan">
-      <span data-icon="check" class="icon-sm"></span>
-      Simpan Catatan
+      <span data-icon="check" class="icon-sm"></span> Simpan Catatan
     </button>
   </div>
 </div>
 
-<nav class="bottom-nav">
-  <a class="nav-item" data-nav="beranda" href="beranda.html"><span data-icon="home"></span> Beranda</a>
-  <a class="nav-item" data-nav="pertemuan" href="beranda.html#sectionPertemuan"><span data-icon="calendar"></span> Pertemuan</a>
-  <a class="nav-item" data-nav="galeri" href="galeri.html"><span data-icon="grid"></span> Galeri</a>
-  <a class="nav-item" data-nav="aktivitas" href="aktivitas.html"><span data-icon="activity"></span> Aktivitas</a>
-  <a class="nav-item" data-nav="profil" href="profil.html"><span data-icon="user"></span> Profil</a>
-</nav>
-
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/ui.js"></script>
+<script src="assets/js/app-nav.js"></script>
 <script>
+// Render Ikon
 document.querySelectorAll('[data-icon]').forEach(el => {
-  el.innerHTML = Icons.get(el.dataset.icon);
+  const cls = el.dataset.iconClass || '';
+  el.innerHTML = Icons.get(el.dataset.icon, { class: cls });
   el.style.display = 'contents';
 });
+UI.bindLogout();
 
 let profile;
 let tugasList = [];
@@ -479,6 +537,7 @@ let pertemuanAktif = null;
 let dataSesi = null;
 let catatanState = {};
 let tipeAktif = 'guru';
+let searchQuery = '';
 
 const ASPEK_GURU = [
   { key: 'bertanya',    label: 'Keaktifan bertanya' },
@@ -497,6 +556,20 @@ const ASPEK_SEKOLAH = [
 (async () => {
   profile = await Api.requireLogin();
   if (!profile) return;
+
+  // Setup User Chip (Desktop)
+  const chip = document.getElementById('userChip');
+  if (chip) {
+    const init = (profile.nama || 'A').charAt(0).toUpperCase();
+    const fotoUrl = Api.fotoSayaUrl('t');
+    chip.innerHTML = `<div class="avatar">${fotoUrl ? `<img src="${fotoUrl}" onerror="this.parentElement.textContent='${init}'">` : init}</div><span>${UI.escapeHtml(profile.nama || '-')}</span>`;
+  }
+
+  // Sembunyikan Galeri untuk Non-Admin di Sidebar Desktop
+  const isAdmin = (profile.peran || []).includes('pengurus') || (profile.peran || []).includes('super_admin');
+  if (!isAdmin) {
+    document.querySelectorAll('.galeri-menu').forEach(el => el.style.display = 'none');
+  }
 
   const res = await Api.call('pengamat.tugas_saya');
   document.getElementById('listTugas').innerHTML = '';
@@ -535,13 +608,11 @@ function renderListTugas() {
       <div class="pertemuan-info">
         <div class="pertemuan-judul">${UI.escapeHtml(t.judul)}</div>
         <div class="pertemuan-meta">
-          ${Icons.get('calendar', { class: 'icon-sm' })}
-          ${UI.formatTanggal(t.tanggal)}
+          ${Icons.get('calendar', { class: 'icon-sm' })} ${UI.formatTanggal(t.tanggal)}
         </div>
         ${t.lokasi_nama ? `
           <div class="pertemuan-meta">
-            ${Icons.get('mapPin', { class: 'icon-sm' })}
-            ${UI.escapeHtml(t.lokasi_nama)}
+            ${Icons.get('mapPin', { class: 'icon-sm' })} ${UI.escapeHtml(t.lokasi_nama)}
           </div>
         ` : ''}
       </div>
@@ -559,8 +630,8 @@ async function bukaPertemuan(id) {
   document.getElementById('stepPilih').classList.add('hidden');
   document.getElementById('stepIsi').classList.remove('hidden');
   document.getElementById('saveBar').classList.remove('hidden');
-  document.getElementById('subHeader').textContent = 'Isi Catatan';
   document.body.classList.add('has-savebar');
+  document.getElementById('subHeader').textContent = 'Isi Catatan';
 
   const el = document.getElementById('targetList');
   el.innerHTML = '<div class="skeleton" style="height:200px;border-radius:18px;"></div>';
@@ -574,8 +645,7 @@ async function bukaPertemuan(id) {
 
   dataSesi = res.data;
   document.getElementById('infoPertemuan').textContent = `Pertemuan #${dataSesi.pertemuan.urutan} · ${dataSesi.pertemuan.judul}`;
-  document.getElementById('infoPertemuan2').textContent =
-    `${UI.formatTanggal(dataSesi.pertemuan.tanggal)} · ${dataSesi.jumlah_peserta} peserta hadir`;
+  document.getElementById('infoPertemuan2').textContent = `${UI.formatTanggal(dataSesi.pertemuan.tanggal)} · ${dataSesi.jumlah_peserta} peserta hadir`;
 
   catatanState = {};
   (dataSesi.catatan || []).forEach(c => {
@@ -593,20 +663,36 @@ async function bukaPertemuan(id) {
       renderTargets();
     });
   });
+
+  // Search Listener
+  document.getElementById('searchTarget').addEventListener('input', (e) => {
+    searchQuery = e.target.value.toLowerCase().trim();
+    renderTargets();
+  });
 }
 
 function renderTargets() {
   const el = document.getElementById('targetList');
   const aspek = tipeAktif === 'guru' ? ASPEK_GURU : ASPEK_SEKOLAH;
-  const list = tipeAktif === 'guru' ? dataSesi.peserta : dataSesi.sekolah;
+  let list = tipeAktif === 'guru' ? dataSesi.peserta : dataSesi.sekolah;
+
+  // Filter Berdasarkan Pencarian
+  if (searchQuery && list) {
+    list = list.filter(t => {
+      const nama = (t.nama_lengkap || t.nama || '').toLowerCase();
+      const sub = (t.sekolah?.nama || t.npsn || '').toLowerCase();
+      return nama.includes(searchQuery) || sub.includes(searchQuery);
+    });
+  }
 
   if (!list || list.length === 0) {
     const label = tipeAktif === 'guru' ? 'peserta hadir' : 'sekolah';
+    const msg = searchQuery ? `Tidak ada hasil untuk "${searchQuery}"` : `Peserta akan muncul setelah mereka presensi.`;
     el.innerHTML = `
       <div class="empty-panel">
-        <div class="big-icon">${Icons.get('users', { class: 'icon-lg' })}</div>
-        <h3>Belum Ada ${label.charAt(0).toUpperCase() + label.slice(1)}</h3>
-        <p>${tipeAktif === 'guru' ? 'Peserta akan muncul setelah mereka presensi.' : 'Sekolah akan muncul setelah ada peserta hadir.'}</p>
+        <div class="big-icon">${Icons.get(searchQuery ? 'search' : 'users', { class: 'icon-lg' })}</div>
+        <h3>${searchQuery ? 'Tidak Ditemukan' : 'Belum Ada Data'}</h3>
+        <p>${msg}</p>
       </div>
     `;
     return;
@@ -656,6 +742,7 @@ function renderTargets() {
     `;
   }).join('');
 
+  // Bind Rating
   el.querySelectorAll('.rating').forEach(r => {
     const key = r.dataset.key;
     r.querySelectorAll('button').forEach(b => {
@@ -668,6 +755,7 @@ function renderTargets() {
     });
   });
 
+  // Bind Catatan
   el.querySelectorAll('[data-catatan-key]').forEach(ta => {
     const key = ta.dataset.catatanKey + '-__note';
     ta.addEventListener('input', () => {
@@ -677,6 +765,7 @@ function renderTargets() {
   });
 }
 
+// AKSI
 document.getElementById('btnBatal').addEventListener('click', async () => {
   const ok = await UI.konfirmasi('Batalkan', 'Catatan yang belum disimpan akan hilang. Lanjutkan?', { danger: true });
   if (ok) window.location.href = 'beranda.html';
