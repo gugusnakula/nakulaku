@@ -16,6 +16,11 @@ const peran = profile.peran || [];
 const isAdmin = peran.includes('pengurus') || peran.includes('super_admin');
 const isKS = peran.includes('ks');
 
+// Hide menu Galeri untuk non-admin (global)
+if (!isAdmin) {
+  document.querySelectorAll('.galeri-menu').forEach(el => el.style.display = 'none');
+}
+
 // --- 1. SETUP DRAWER ELEMENTS (DOM) ---
 let drawerHTML = `
 <div class="app-drawer-overlay" id="appDrawerOverlay"></div>
