@@ -4,7 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#611329" />
-<meta name="robots" content="noindex, nofollow" />
 <title>Profil Sekolah — NAKULAKU</title>
 
 <link rel="icon" type="image/png" href="assets/img/favicon.png" />
@@ -14,11 +13,14 @@
 <link rel="stylesheet" href="assets/css/nakula.css" />
 
 <style>
-  /* PUBLIC HEADER */
+  /* ═══════════════════════════════════════
+     HEADER PUBLIC-STYLE (role-aware)
+     ═══════════════════════════════════════ */
   .public-header {
     background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 100%);
     color: white;
-    padding: 14px 16px;
+    padding: 12px 16px;
+    padding-top: calc(12px + env(safe-area-inset-top));
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -26,6 +28,8 @@
     top: 0;
     z-index: 50;
     box-shadow: 0 2px 12px rgba(97,19,41,.15);
+    min-height: 60px;
+    gap: 10px;
   }
   .public-header-brand {
     display: flex;
@@ -33,11 +37,13 @@
     gap: 10px;
     text-decoration: none;
     color: white;
+    flex-shrink: 0;
+    min-width: 0;
   }
   .public-header-logo {
-    width: 40px; height: 40px;
+    width: 36px; height: 36px;
     background: white;
-    border-radius: 12px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -45,39 +51,110 @@
     flex-shrink: 0;
     overflow: hidden;
   }
-  .public-header-logo img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    transform: scale(1.25);
+  .public-header-logo img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.25); }
+  .public-header-brand-text { min-width: 0; }
+  .public-header-title { font-weight: 800; font-size: 14px; letter-spacing: .5px; line-height: 1.1; }
+  .public-header-sub { font-size: 10px; opacity: .8; }
+
+  .public-header-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-shrink: 0;
   }
   .public-header-btn {
     color: white;
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 700;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     background: rgba(255,255,255,.12);
-    padding: 8px 14px;
+    padding: 8px 12px;
     border-radius: 10px;
     transition: all .15s;
     border: none;
     cursor: pointer;
     font-family: inherit;
+    white-space: nowrap;
   }
-  .public-header-btn:hover {
-    background: rgba(255,255,255,.22);
-    color: white;
+  .public-header-btn:hover { background: rgba(255,255,255,.22); color: white; text-decoration: none; }
+  .public-header-btn.icon-only { padding: 8px; width: 36px; height: 36px; justify-content: center; }
+  .user-chip-mini {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px 4px 4px;
+    background: rgba(255,255,255,.15);
+    border-radius: 999px;
     text-decoration: none;
+    color: white;
+    transition: all .15s;
+  }
+  .user-chip-mini:hover { background: rgba(255,255,255,.25); color: white; text-decoration: none; }
+  .user-chip-avatar {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.25);
+    border: 1.5px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 11px;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .user-chip-avatar img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+  .user-chip-name {
+    font-size: 11.5px;
+    font-weight: 700;
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  @media (min-width: 480px) {
+    .user-chip-name { max-width: 140px; }
   }
 
-  /* HERO SEKOLAH */
+  /* ═══════════════════════════════════════
+     BREADCRUMB
+     ═══════════════════════════════════════ */
+  .breadcrumb-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .breadcrumb-row a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color .15s;
+  }
+  .breadcrumb-row a:hover { color: var(--maroon); }
+  .breadcrumb-row .sep { opacity: 0.4; }
+  .breadcrumb-row .current { color: var(--maroon); font-weight: 800; }
+
+  /* ═══════════════════════════════════════
+     HERO SEKOLAH
+     ═══════════════════════════════════════ */
   .hero-sekolah {
     background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 50%, #9B2649 100%);
     color: white;
     border-radius: 24px;
-    padding: 24px 20px;
+    padding: 22px 20px;
     margin-bottom: 16px;
     position: relative;
     overflow: hidden;
@@ -88,7 +165,7 @@
     content: '';
     position: absolute;
     top: -80px; right: -60px;
-    width: 240px; height: 240px;
+    width: 220px; height: 220px;
     border-radius: 50%;
     background: radial-gradient(circle, rgba(201,169,97,.22) 0%, transparent 70%);
     pointer-events: none;
@@ -97,7 +174,7 @@
     content: '';
     position: absolute;
     bottom: -60px; left: -40px;
-    width: 180px; height: 180px;
+    width: 160px; height: 160px;
     border-radius: 50%;
     background: radial-gradient(circle, rgba(201,169,97,.15) 0%, transparent 70%);
     pointer-events: none;
@@ -106,13 +183,13 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
     position: relative;
     z-index: 1;
   }
   .hero-logo-wrap {
-    width: 88px;
-    height: 88px;
+    width: 84px;
+    height: 84px;
     border-radius: 20px;
     background: white;
     border: 3px solid var(--gold);
@@ -122,43 +199,75 @@
     flex-shrink: 0;
     overflow: hidden;
     position: relative;
-    box-shadow:
-      0 12px 28px rgba(0,0,0,.25),
-      0 0 0 6px rgba(201,169,97,.12);
+    box-shadow: 0 12px 28px rgba(0,0,0,.25), 0 0 0 6px rgba(201,169,97,.12);
+    transition: transform .2s var(--ease-out);
   }
+  .hero-logo-wrap.editable { cursor: pointer; }
+  .hero-logo-wrap.editable:hover { transform: scale(1.03); }
   .hero-logo-wrap img {
     width: 100%; height: 100%;
     object-fit: cover;
   }
   .hero-logo-wrap .fallback {
-    font-size: 30px;
+    font-size: 28px;
     font-weight: 800;
     color: var(--maroon);
     letter-spacing: 1.5px;
   }
+  .hero-logo-wrap .edit-badge {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2.5px solid var(--maroon);
+    z-index: 2;
+    box-shadow: 0 4px 10px rgba(0,0,0,.25);
+  }
   .hero-info-wrap { flex: 1; min-width: 0; }
+  .hero-label-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
   .hero-label {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
+    gap: 5px;
+    padding: 3px 10px;
     background: rgba(255,255,255,.15);
-    border: 1px solid rgba(201,169,97,.5);
+    border: 1px solid rgba(201,169,97,.4);
     border-radius: 999px;
-    font-size: 10px;
-    font-weight: 700;
+    font-size: 9.5px;
+    font-weight: 800;
     letter-spacing: 0.5px;
-    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .hero-label.role-owner {
+    background: linear-gradient(135deg, rgba(201,169,97,.35) 0%, rgba(201,169,97,.15) 100%);
+    border-color: var(--gold);
+    color: var(--gold-light);
+  }
+  .hero-label.role-pelapor {
+    background: rgba(34,197,94,.2);
+    border-color: rgba(34,197,94,.5);
+    color: #86EFAC;
   }
   .hero-nama {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 800;
-    margin-bottom: 5px;
-    line-height: 1.25;
-    letter-spacing: 0.2px;
+    margin-bottom: 4px;
+    line-height: 1.3;
   }
   .hero-npsn {
-    font-size: 12.5px;
+    font-size: 11.5px;
     opacity: 0.85;
     font-weight: 600;
   }
@@ -167,85 +276,29 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 6px;
-    padding-top: 16px;
+    padding-top: 14px;
     border-top: 1px solid rgba(255,255,255,.15);
     position: relative;
     z-index: 1;
   }
   .hero-stat { text-align: center; }
-  .hero-stat .n {
-    font-size: 22px;
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: -0.5px;
-  }
+  .hero-stat .n { font-size: 20px; font-weight: 800; line-height: 1; letter-spacing: -0.5px; }
   .hero-stat .l {
     font-size: 9px;
     opacity: 0.8;
-    font-weight: 700;
-    margin-top: 6px;
-    text-transform: uppercase;
+    font-weight: 800;
     letter-spacing: 0.4px;
-  }
-
-  /* KARTU TOTAL KONTRIBUSI (tanpa poin) */
-  .kontribusi-card {
-    background: linear-gradient(135deg, #FFFFFF 0%, #FBF4E0 100%);
-    border: 1.5px solid var(--gold);
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 20px;
-    position: relative;
-    overflow: hidden;
-    animation: fade-in-up .5s var(--ease-out) .05s both;
-    box-shadow: 0 6px 20px rgba(201,169,97,.15);
-  }
-  .kontribusi-card::before {
-    content: '';
-    position: absolute;
-    top: -40px; right: -40px;
-    width: 140px; height: 140px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,169,97,.25) 0%, transparent 70%);
-  }
-  .kontribusi-head {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    font-weight: 800;
-    color: var(--gold-dark);
-    letter-spacing: 1px;
+    margin-top: 5px;
     text-transform: uppercase;
-    margin-bottom: 12px;
-    position: relative;
-  }
-  .kontribusi-value {
-    font-size: 38px;
-    font-weight: 800;
-    line-height: 1;
-    color: var(--maroon);
-    letter-spacing: -1px;
-    position: relative;
-    margin-bottom: 4px;
-  }
-  .kontribusi-sub {
-    font-size: 12.5px;
-    color: var(--muted);
-    font-weight: 600;
-    position: relative;
-    line-height: 1.5;
-  }
-  .kontribusi-sub strong {
-    color: var(--maroon);
-    font-weight: 800;
   }
 
-  /* TOMBOL SHARE */
+  /* ═══════════════════════════════════════
+     SHARE ROW
+     ═══════════════════════════════════════ */
   .share-row {
     display: flex;
     gap: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     animation: fade-in-up .5s var(--ease-out) .08s both;
   }
   .share-btn {
@@ -267,24 +320,19 @@
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
   }
-  .share-btn:hover {
-    border-color: var(--maroon);
-    color: var(--maroon);
-    transform: translateY(-2px);
-    text-decoration: none;
-  }
+  .share-btn:hover { border-color: var(--maroon); color: var(--maroon); transform: translateY(-2px); text-decoration: none; }
   .share-btn.primary {
     background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
     color: white;
     border-color: var(--maroon);
+    flex: 1.4;
   }
-  .share-btn.primary:hover {
-    color: white;
-    box-shadow: 0 8px 20px rgba(125,29,58,.3);
-  }
+  .share-btn.primary:hover { color: white; box-shadow: 0 8px 20px rgba(125,29,58,.3); }
   .share-btn svg { width: 14px; height: 14px; }
 
-  /* TAB */
+  /* ═══════════════════════════════════════
+     TAB BAR
+     ═══════════════════════════════════════ */
   .tab-row {
     display: flex;
     gap: 4px;
@@ -296,14 +344,18 @@
     overflow-x: auto;
     scrollbar-width: none;
     animation: fade-in-up .5s var(--ease-out) .1s both;
+    position: sticky;
+    top: 60px;
+    z-index: 15;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
   }
   .tab-row::-webkit-scrollbar { display: none; }
   .tab-p {
     flex: 1;
-    min-width: 90px;
-    padding: 11px 8px;
+    min-width: 84px;
+    padding: 10px 8px;
     text-align: center;
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--muted);
     border-radius: 10px;
@@ -317,14 +369,66 @@
     white-space: nowrap;
     transition: all .15s;
     font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
   }
+  .tab-p:hover { background: rgba(125,29,58,.04); }
   .tab-p.active {
     background: var(--surface);
     color: var(--maroon);
     box-shadow: 0 2px 8px rgba(125,29,58,.08);
   }
+  .tab-count {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--border);
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .tab-p.active .tab-count {
+    background: var(--maroon-soft);
+    color: var(--maroon);
+  }
 
-  /* ITEM DENGAN THUMBNAIL */
+  /* ═══════════════════════════════════════
+     ACTION BAR (Tambah Data — pelapor/KS)
+     ═══════════════════════════════════════ */
+  .action-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, var(--maroon-soft) 0%, #FDF4F7 100%);
+    border: 1.5px solid rgba(125,29,58,.12);
+    border-radius: 14px;
+    margin-bottom: 14px;
+    animation: fade-in-up .3s var(--ease-out) both;
+  }
+  .action-bar-text {
+    flex: 1;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--maroon);
+    line-height: 1.4;
+  }
+  .action-bar-text .sub {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ═══════════════════════════════════════
+     ITEM CARD (manage mode)
+     ═══════════════════════════════════════ */
   .item-publik {
     background: var(--surface);
     border: 1.5px solid var(--border);
@@ -341,7 +445,6 @@
     box-shadow: 0 8px 20px rgba(125,29,58,.08);
     transform: translateY(-2px);
   }
-
   .item-publik.prestasi::after,
   .item-publik.kegiatan::after,
   .item-publik.pembiasaan::after {
@@ -353,15 +456,9 @@
     pointer-events: none;
     opacity: 0.5;
   }
-  .item-publik.prestasi::after {
-    background: radial-gradient(circle, rgba(201,169,97,.15) 0%, transparent 70%);
-  }
-  .item-publik.kegiatan::after {
-    background: radial-gradient(circle, rgba(30,64,175,.12) 0%, transparent 70%);
-  }
-  .item-publik.pembiasaan::after {
-    background: radial-gradient(circle, rgba(21,128,61,.12) 0%, transparent 70%);
-  }
+  .item-publik.prestasi::after { background: radial-gradient(circle, rgba(201,169,97,.15) 0%, transparent 70%); }
+  .item-publik.kegiatan::after { background: radial-gradient(circle, rgba(30,64,175,.12) 0%, transparent 70%); }
+  .item-publik.pembiasaan::after { background: radial-gradient(circle, rgba(21,128,61,.12) 0%, transparent 70%); }
 
   .item-head {
     display: flex;
@@ -371,23 +468,19 @@
     position: relative;
     z-index: 1;
   }
-
-  /* THUMBNAIL */
   .item-thumb {
-    width: 88px;
-    height: 88px;
+    width: 80px;
+    height: 80px;
     border-radius: 12px;
     flex-shrink: 0;
     overflow: hidden;
     background: var(--bg);
     position: relative;
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform .2s var(--ease-out);
+    cursor: pointer;
   }
-  .item-thumb:hover { transform: scale(1.02); }
   .item-thumb img {
     width: 100%; height: 100%;
     object-fit: cover;
@@ -399,24 +492,16 @@
     justify-content: center;
     color: white;
   }
-  .item-thumb .fallback-icon svg {
-    width: 28px; height: 28px;
-  }
-  .item-thumb.prestasi .fallback-icon {
-    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-  }
-  .item-thumb.pembiasaan .fallback-icon {
-    background: linear-gradient(135deg, #22C55E 0%, #15803D 100%);
-  }
-  .item-thumb.kegiatan .fallback-icon {
-    background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
-  }
+  .item-thumb .fallback-icon svg { width: 26px; height: 26px; }
+  .item-thumb.prestasi .fallback-icon { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); }
+  .item-thumb.pembiasaan .fallback-icon { background: linear-gradient(135deg, #22C55E 0%, #15803D 100%); }
+  .item-thumb.kegiatan .fallback-icon { background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%); }
+  .item-thumb.inovasi .fallback-icon { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); }
+  .item-thumb.implementasi .fallback-icon { background: linear-gradient(135deg, #22C55E 0%, #15803D 100%); }
   .item-thumb .play-badge {
     position: absolute;
-    bottom: 4px;
-    right: 4px;
-    width: 22px;
-    height: 22px;
+    bottom: 4px; right: 4px;
+    width: 20px; height: 20px;
     border-radius: 50%;
     background: rgba(0,0,0,.65);
     color: white;
@@ -425,9 +510,8 @@
     justify-content: center;
     backdrop-filter: blur(4px);
   }
-  .item-thumb .play-badge svg { width: 12px; height: 12px; }
-
-  .item-info { flex: 1; min-width: 0; }
+  .item-thumb .play-badge svg { width: 10px; height: 10px; }
+  .item-info { flex: 1; min-width: 0; position: relative; z-index: 1; }
   .item-title {
     font-weight: 800;
     font-size: 14px;
@@ -442,8 +526,23 @@
     line-height: 1.5;
   }
 
+  .status-pill {
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 4px 9px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+    letter-spacing: 0.4px;
+    margin-top: 4px;
+  }
+  .st-menunggu { background: var(--warning-soft); color: var(--warning); }
+  .st-disetujui { background: var(--success-soft); color: var(--success); }
+  .st-ditolak { background: var(--danger-soft); color: var(--danger); }
+
   .item-extra {
-    margin-top: 8px;
+    margin-top: 6px;
     position: relative;
     z-index: 1;
   }
@@ -463,10 +562,7 @@
   .badge-tingkat.kabupaten { background: #FEF3C7; color: #B45309; }
   .badge-tingkat.provinsi { background: #FBF3D0; color: #A37E2E; }
   .badge-tingkat.nasional { background: var(--maroon-soft); color: var(--maroon); }
-  .badge-tingkat.internasional {
-    background: linear-gradient(135deg, var(--gold) 0%, var(--maroon) 100%);
-    color: white;
-  }
+  .badge-tingkat.internasional { background: linear-gradient(135deg, var(--gold) 0%, var(--maroon) 100%); color: white; }
   .badge-peringkat {
     background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
     color: white;
@@ -477,9 +573,8 @@
     letter-spacing: 0.4px;
     text-transform: uppercase;
     display: inline-block;
+    margin-bottom: 4px;
   }
-
-  /* KARYA GURU */
   .badge-jenis {
     display: inline-block;
     font-size: 10px;
@@ -491,14 +586,9 @@
     margin-right: 5px;
     margin-bottom: 4px;
   }
-  .badge-jenis.inovasi {
-    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-    color: white;
-  }
-  .badge-jenis.implementasi {
-    background: linear-gradient(135deg, #22C55E 0%, #15803D 100%);
-    color: white;
-  }
+  .badge-jenis.inovasi { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: white; }
+  .badge-jenis.implementasi { background: linear-gradient(135deg, #22C55E 0%, #15803D 100%); color: white; }
+
   .karya-author {
     display: inline-flex;
     align-items: center;
@@ -506,11 +596,13 @@
     font-size: 11px;
     color: var(--muted);
     font-weight: 700;
-    margin-top: 4px;
+    margin-top: 6px;
+    position: relative;
+    z-index: 1;
   }
   .karya-author .av {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     background: var(--maroon-soft);
     color: var(--maroon);
@@ -521,73 +613,183 @@
     font-weight: 800;
     overflow: hidden;
     position: relative;
+    border: 1.5px solid white;
   }
   .karya-author .av img {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover;
   }
-  .item-thumb.inovasi .fallback-icon {
-    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+
+  .catatan-box {
+    background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+    color: var(--danger);
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 11.5px;
+    margin-top: 8px;
+    line-height: 1.5;
+    font-weight: 600;
+    border: 1px solid rgba(185,28,28,.15);
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    position: relative;
+    z-index: 1;
   }
-  .item-thumb.implementasi .fallback-icon {
-    background: linear-gradient(135deg, #22C55E 0%, #15803D 100%);
+
+  .item-actions {
+    display: flex;
+    gap: 6px;
+    padding-top: 10px;
+    margin-top: 10px;
+    border-top: 1px dashed var(--border);
+    position: relative;
+    z-index: 1;
+  }
+  .item-actions .btn {
+    flex: 1;
+    font-size: 12px;
+    padding: 8px 12px;
   }
 
   .link-bukti {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    font-size: 11.5px;
+    font-size: 11px;
     font-weight: 800;
     color: var(--maroon);
     text-decoration: none;
-    padding: 5px 12px;
+    padding: 5px 11px;
     border-radius: 999px;
     border: 1.5px solid var(--maroon-soft);
     background: transparent;
     transition: all .15s;
-    margin-top: 10px;
+    margin-top: 8px;
     position: relative;
     z-index: 1;
   }
-  .link-bukti:hover {
-    background: var(--maroon-soft);
-    text-decoration: none;
-  }
+  .link-bukti:hover { background: var(--maroon-soft); text-decoration: none; }
 
-  /* EMPTY STATE */
+  /* ═══════════════════════════════════════
+     EMPTY STATE
+     ═══════════════════════════════════════ */
   .empty-state {
     text-align: center;
-    padding: 50px 20px;
+    padding: 44px 20px;
   }
   .empty-state .big-icon {
-    width: 90px; height: 90px;
+    width: 84px; height: 84px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
     color: var(--maroon);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 18px;
+    margin: 0 auto 16px;
     position: relative;
   }
-  .empty-state .big-icon svg { width: 40px; height: 40px; }
+  .empty-state .big-icon svg { width: 36px; height: 36px; }
   .empty-state .title {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 800;
     color: var(--ink);
     margin-bottom: 6px;
   }
   .empty-state .desc {
-    font-size: 13px;
+    font-size: 12.5px;
     color: var(--muted);
-    line-height: 1.55;
+    line-height: 1.6;
     max-width: 320px;
     margin: 0 auto;
   }
 
-  /* LIGHTBOX */
+  /* ═══════════════════════════════════════
+     BOTTOM SHEET (form)
+     ═══════════════════════════════════════ */
+  .bottom-sheet.lg { max-width: 540px; }
+  .sheet-header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .sheet-header-row > div { flex: 1; min-width: 0; }
+  .sheet-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--maroon);
+    margin-bottom: 4px;
+  }
+  .sheet-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .form-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .modal-alert {
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    background: var(--danger-soft);
+    color: var(--danger);
+    border: 1px solid rgba(185,28,28,.2);
+  }
+  .modal-alert.hidden { display: none; }
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .modal-actions .btn { flex: 1; }
+
+  .guru-pick-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .12s;
+    border: 1.5px solid transparent;
+  }
+  .guru-pick-item:hover { background: var(--bg); }
+  .guru-pick-item.selected { background: var(--maroon-faint); border-color: var(--maroon-soft); }
+  .guru-pick-item input { flex-shrink: 0; width: 18px; height: 18px; accent-color: var(--maroon); }
+  .guru-pick-body { flex: 1; min-width: 0; }
+  .guru-pick-name { font-weight: 700; font-size: 13px; }
+  .guru-pick-sub { font-size: 11px; color: var(--muted); }
+
+  /* ═══════════════════════════════════════
+     PELAPOR CARD (tab Pelapor)
+     ═══════════════════════════════════════ */
+  .info-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, var(--maroon-soft) 0%, #FDF4F7 100%);
+    border: 1.5px solid rgba(125,29,58,.15);
+    border-radius: 14px;
+    margin-bottom: 14px;
+    font-size: 12px;
+    color: var(--ink);
+    line-height: 1.55;
+    font-weight: 600;
+  }
+
+  /* ═══════════════════════════════════════
+     LIGHTBOX
+     ═══════════════════════════════════════ */
   .lightbox {
     position: fixed;
     inset: 0;
@@ -601,309 +803,499 @@
     cursor: zoom-out;
   }
   .lightbox img {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 100%; max-height: 100%;
     border-radius: 16px;
     box-shadow: 0 20px 60px rgba(0,0,0,.5);
   }
+
+  /* ═══════════════════════════════════════
+     Skeleton
+     ═══════════════════════════════════════ */
+  .skel-row { display: flex; flex-direction: column; gap: 12px; }
 </style>
 </head>
 <body>
 
-<header class="public-header">
-  <a href="beranda.html" class="public-header-brand">
-    <div class="public-header-logo">
-      <img src="assets/img/logo-mark.svg" alt="Nakula" />
-    </div>
-    <div>
-      <div style="font-weight:800;font-size:14px;letter-spacing:.5px;">NAKULAKU</div>
-      <div style="font-size:10px;opacity:.8;">KKG Gugus Nakula</div>
-    </div>
-  </a>
-  <a href="galeri.html" class="public-header-btn">
-    <span data-icon="grid" class="icon-sm"></span>
-    Galeri
-  </a>
-</header>
+<!-- ═══════════════════════════════════════
+     HEADER (role-aware content)
+     ═══════════════════════════════════════ -->
+<header class="public-header" id="header"></header>
 
 <main class="container page" style="max-width:720px;padding-top:16px;padding-bottom:40px;">
 
+  <div class="breadcrumb-row" id="breadcrumb">
+    <a href="galeri.html">Galeri</a>
+    <span class="sep">›</span>
+    <span class="current" id="bcCurrent">Memuat…</span>
+  </div>
+
   <div id="loading">
-    <div class="skeleton" style="height:220px;border-radius:24px;margin-bottom:20px;"></div>
-    <div class="skeleton" style="height:140px;border-radius:20px;margin-bottom:20px;"></div>
+    <div class="skeleton" style="height:220px;border-radius:24px;margin-bottom:16px;"></div>
     <div class="skeleton" style="height:60px;border-radius:14px;margin-bottom:16px;"></div>
-    <div class="skeleton" style="height:120px;border-radius:16px;"></div>
+    <div class="skeleton" style="height:180px;border-radius:16px;"></div>
   </div>
 
   <div id="content" class="hidden">
-
     <!-- HERO -->
-    <div class="hero-sekolah">
-      <div class="hero-top">
-        <div class="hero-logo-wrap" id="heroLogoWrap"></div>
-        <div class="hero-info-wrap">
-          <div class="hero-label">
-            <span data-icon="home" class="icon-sm"></span>
-            PROFIL SEKOLAH
-          </div>
-          <div class="hero-nama" id="heroNama">—</div>
-          <div class="hero-npsn" id="heroNpsn">NPSN —</div>
-        </div>
-      </div>
-      <div class="hero-stats">
-        <div class="hero-stat">
-          <div class="n" id="hPrestasi">—</div>
-          <div class="l">Prestasi</div>
-        </div>
-        <div class="hero-stat">
-          <div class="n" id="hPembiasaan">—</div>
-          <div class="l">Pembiasaan</div>
-        </div>
-        <div class="hero-stat">
-          <div class="n" id="hKegiatan">—</div>
-          <div class="l">Kegiatan</div>
-        </div>
-        <div class="hero-stat">
-          <div class="n" id="hGuru">—</div>
-          <div class="l">Guru</div>
-        </div>
-      </div>
-    </div>
+    <div class="hero-sekolah" id="hero"></div>
 
-    <!-- KARTU TOTAL KONTRIBUSI (tanpa poin) -->
-    <div class="kontribusi-card">
-      <div class="kontribusi-head">
-        <span data-icon="sparkles" class="icon-sm"></span>
-        Total Kontribusi Sekolah
-      </div>
-      <div class="kontribusi-value" id="heroTotal">—</div>
-      <div class="kontribusi-sub" id="heroTotalSub">
-        Prestasi · Pembiasaan · Kegiatan
-      </div>
-    </div>
-
-    <!-- TOMBOL SHARE -->
+    <!-- SHARE -->
     <div class="share-row">
       <button class="share-btn primary" id="btnShareWA">
-        <span data-icon="send"></span>
-        Share
+        <span data-icon="send"></span> Bagikan
       </button>
       <button class="share-btn" id="btnCopyLink">
-        <span data-icon="link"></span>
-        Salin Link
+        <span data-icon="link"></span> Salin Link
       </button>
     </div>
 
     <!-- TABS -->
-    <div class="tab-row">
-      <button class="tab-p active" data-tab="prestasi">
-        <span data-icon="award" class="icon-sm"></span> Prestasi
-      </button>
-      <button class="tab-p" data-tab="kegiatan">
-        <span data-icon="calendar" class="icon-sm"></span> Kegiatan
-      </button>
-      <button class="tab-p" data-tab="pembiasaan">
-        <span data-icon="sparkles" class="icon-sm"></span> Pembiasaan
-      </button>
-      <button class="tab-p" data-tab="karya">
-        <span data-icon="sparkles" class="icon-sm"></span> Karya Guru
-      </button>
-    </div>
+    <div class="tab-row" id="tabRow"></div>
 
+    <!-- ACTION BAR (kalau bisa edit) -->
+    <div id="actionBarWrap"></div>
+
+    <!-- CONTENT -->
     <div id="listItem"></div>
   </div>
 
 </main>
 
+<input type="file" id="fileLogo" accept="image/*" style="display:none;" />
+
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/ui.js"></script>
-<script src="assets/js/app-nav.js"></script>
 <script>
+// ═══════════════════════════════════════════════
+// INIT ICONS
+// ═══════════════════════════════════════════════
 document.querySelectorAll('[data-icon]').forEach(el => {
   el.innerHTML = Icons.get(el.dataset.icon);
   el.style.display = 'contents';
 });
 
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+const params = new URLSearchParams(window.location.search);
+const sidParam = Number(params.get('id'));
+
+let profile = null;
 let sekolahAktif = null;
+let role = 'public'; // public | guru | pelapor | ks | admin
+let isLoggedIn = false;
+
 let tabAktif = 'prestasi';
 let cacheItems = {};
+let cachePelapor = null;
+let cachedCounts = { prestasi: 0, kegiatan: 0, pembiasaan: 0, karya: 0, pelapor: 0 };
 
+// ═══════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════
 (async () => {
-  await Api.callSekolahPublik('ping');
-
-  const params = new URLSearchParams(window.location.search);
-  const sid = Number(params.get('id'));
-
-  if (!sid) {
-    document.getElementById('loading').classList.add('hidden');
-    document.getElementById('content').innerHTML = UI.errorHtml(
-      'Link tidak lengkap. Minta link profil ke pengurus sekolah Anda.',
-      '<a href="galeri.html" class="btn btn-primary btn-sm" style="margin-top:12px;">Lihat Galeri Sekolah</a>'
-    );
-    document.getElementById('content').classList.remove('hidden');
+  if (!sidParam) {
+    showFatalError('Link tidak lengkap. Buka dari menu Sekolah di beranda Anda.');
     return;
   }
 
-  await pilihSekolah(sid);
-
-  document.querySelectorAll('.tab-p').forEach(t => {
-    t.addEventListener('click', () => {
-      tabAktif = t.dataset.tab;
-      document.querySelectorAll('.tab-p').forEach(x => x.classList.toggle('active', x === t));
-      renderTab();
-    });
-  });
-
-  // Share WA
-  document.getElementById('btnShareWA').addEventListener('click', () => {
-    if (!sekolahAktif) return;
-    const url = window.location.href;
-    const text = `Profil Digital ${sekolahAktif.nama} — KKG Gugus Nakula\n${url}`;
-    window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
-  });
-
-  // Copy Link
-  document.getElementById('btnCopyLink').addEventListener('click', async () => {
+  // 1. Coba login (kalau ada token)
+  const token = Api.getToken();
+  if (token) {
     try {
-      await navigator.clipboard.writeText(window.location.href);
-      UI.sukses('Link disalin ke clipboard');
-    } catch {
-      UI.gagal('Gagal menyalin. Coba salin manual.');
-    }
-  });
+      profile = await Api.requireLogin();
+      if (profile) isLoggedIn = true;
+    } catch {}
+  }
+
+  // 2. Detect role
+  await detectRole(sidParam);
+
+  // 3. Render header
+  renderHeader();
+
+  // 4. Load sekolah
+  await pilihSekolah(sidParam);
+
+  // 5. Bind events
+  bindEvents();
 })();
 
-async function pilihSekolah(id) {
+// ═══════════════════════════════════════════════
+// DETECT ROLE
+// ═══════════════════════════════════════════════
+async function detectRole(sid) {
+  if (!isLoggedIn || !profile) { role = 'public'; return; }
+
+  const peran = profile.peran || [];
+  const isAdmin = peran.includes('pengurus') || peran.includes('super_admin');
+  const isKS = peran.includes('ks');
+
+  // Admin: akses semua
+  if (isAdmin) { role = 'admin'; return; }
+
+  // KS: cek apakah KS sekolah ini
+  if (isKS) {
+    const ksSekolah = profile.ks_sekolah || [];
+    if (ksSekolah.some(k => k.sekolah_id === sid && k.aktif !== false)) {
+      role = 'ks';
+      return;
+    }
+  }
+
+  // Cek pelapor (async)
+  try {
+    const res = await Api.callSekolah('pelapor.list_saya');
+    if (res.ok && Array.isArray(res.data)) {
+      const ada = res.data.some(x => x.sekolah?.id === sid || x.sekolah_id === sid);
+      if (ada) { role = 'pelapor'; return; }
+    }
+  } catch {}
+
+  // Guru biasa di sekolah ini?
+  if (profile.sekolah?.id === sid) { role = 'guru'; return; }
+
+  // Default: publik (login tapi bukan siapa-siapa di sekolah ini)
+  role = 'public';
+}
+
+function canEdit() {
+  return ['pelapor', 'ks', 'admin'].includes(role);
+}
+function isKS() { return role === 'ks' || role === 'admin'; }
+
+// ═══════════════════════════════════════════════
+// HEADER
+// ═══════════════════════════════════════════════
+function renderHeader() {
+  const el = document.getElementById('header');
+
+  if (!isLoggedIn || !profile) {
+    // Public header
+    el.innerHTML = `
+      <a href="beranda.html" class="public-header-brand">
+        <div class="public-header-logo"><img src="assets/img/logo-mark.svg" alt="Nakula" /></div>
+        <div class="public-header-brand-text">
+          <div class="public-header-title">NAKULAKU</div>
+          <div class="public-header-sub">KKG Gugus Nakula</div>
+        </div>
+      </a>
+      <div class="public-header-actions">
+        <a href="galeri.html" class="public-header-btn">
+          ${Icons.get('grid', { class: 'icon-sm' })} Galeri
+        </a>
+      </div>
+    `;
+    return;
+  }
+
+  // Logged in header
+  const init = (profile.nama || 'U').charAt(0).toUpperCase();
+  const fotoUrl = Api.fotoSayaUrl('t');
+
+  el.innerHTML = `
+    <a href="beranda.html" class="public-header-brand">
+      <div class="public-header-logo"><img src="assets/img/logo-mark.svg" alt="Nakula" /></div>
+      <div class="public-header-brand-text">
+        <div class="public-header-title">NAKULAKU</div>
+        <div class="public-header-sub">KKG Gugus Nakula</div>
+      </div>
+    </a>
+    <div class="public-header-actions">
+      <a href="beranda.html" class="user-chip-mini" title="Beranda">
+        <div class="user-chip-avatar">
+          <span style="position:relative;z-index:0;">${init}</span>
+          ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.remove()" />` : ''}
+        </div>
+        <span class="user-chip-name">${UI.escapeHtml(profile.nama || '-')}</span>
+      </a>
+      <button class="public-header-btn icon-only" id="btnLogout" title="Keluar">
+        ${Icons.get('logOut', { class: 'icon-sm' })}
+      </button>
+    </div>
+  `;
+
+  document.getElementById('btnLogout').addEventListener('click', async () => {
+    const ok = await UI.konfirmasi('Keluar', 'Yakin ingin keluar?', { danger: true, okText: 'Keluar' });
+    if (ok) Api.logout();
+  });
+}
+
+// ═══════════════════════════════════════════════
+// LOAD SEKOLAH
+// ═══════════════════════════════════════════════
+async function pilihSekolah(sid) {
   document.getElementById('loading').classList.remove('hidden');
   document.getElementById('content').classList.add('hidden');
 
-  const res = await Api.callSekolahPublik('sekolah.profil', { sekolah_id: id });
+  // Pakai callSekolah (dengan token) kalau login, publik kalau tidak
+  const res = isLoggedIn
+    ? await Api.callSekolah('sekolah.profil', { sekolah_id: sid })
+    : await Api.callSekolahPublik('sekolah.profil', { sekolah_id: sid });
 
   document.getElementById('loading').classList.add('hidden');
 
   if (!res.ok || !res.data) {
-    document.getElementById('content').innerHTML = UI.errorHtml(
-      res.error || 'Sekolah tidak ditemukan.',
-      '<a href="galeri.html" class="btn btn-primary btn-sm" style="margin-top:12px;">Lihat Galeri</a>'
-    );
-    document.getElementById('content').classList.remove('hidden');
+    showFatalError(res.error || 'Sekolah tidak ditemukan.');
     return;
   }
 
   const d = res.data;
-  const r = d.ringkasan;
-
   sekolahAktif = d.sekolah;
+  sekolahAktif._ringkasan = d.ringkasan;
 
-  document.getElementById('heroNama').textContent = d.sekolah.nama;
-  document.getElementById('heroNpsn').textContent = 'NPSN ' + (d.sekolah.npsn || '-') +
-    (d.sekolah.kecamatan ? ' · ' + d.sekolah.kecamatan : '');
-  document.getElementById('hPrestasi').textContent = r.jumlah_prestasi;
-  document.getElementById('hPembiasaan').textContent = r.jumlah_pembiasaan;
-  document.getElementById('hKegiatan').textContent = r.jumlah_kegiatan;
-  document.getElementById('hGuru').textContent = r.jumlah_guru;
+  document.title = sekolahAktif.nama + ' — NAKULAKU';
+  document.getElementById('bcCurrent').textContent = sekolahAktif.nama;
 
-  // Total kontribusi (bukan poin) — rahasia poin hanya admin
-  const totalItem = r.jumlah_prestasi + r.jumlah_pembiasaan + r.jumlah_kegiatan;
-  document.getElementById('heroTotal').textContent = totalItem;
-  document.getElementById('heroTotalSub').innerHTML =
-    `<strong>${r.jumlah_prestasi}</strong> prestasi · <strong>${r.jumlah_pembiasaan}</strong> pembiasaan · <strong>${r.jumlah_kegiatan}</strong> kegiatan`;
-
-  // Title dinamis
-  document.title = d.sekolah.nama + ' — NAKULAKU';
-
-  renderLogoHero(d.sekolah);
-
+  renderHero();
+  renderTabs();
+  renderActionBar();
   document.getElementById('content').classList.remove('hidden');
 
-  cacheItems = {};
-  await renderTab();
+  // Update counts dari ringkasan
+  cachedCounts.prestasi = d.ringkasan.jumlah_prestasi || 0;
+  cachedCounts.kegiatan = d.ringkasan.jumlah_kegiatan || 0;
+  cachedCounts.pembiasaan = d.ringkasan.jumlah_pembiasaan || 0;
+  updateTabCounts();
+
+  // Load default tab
+  await loadTab();
 }
 
-function renderLogoHero(sekolah) {
-  const wrap = document.getElementById('heroLogoWrap');
-  if (!wrap) return;
+function showFatalError(msg) {
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('content').innerHTML = UI.errorHtml(
+    msg,
+    '<a href="beranda.html" class="btn btn-primary btn-sm" style="margin-top:12px;">Kembali ke Beranda</a>'
+  );
+  document.getElementById('content').classList.remove('hidden');
+}
 
-  const url = Api.logoUrl(sekolah.id, sekolah.logo_updated_at);
-  const init = Api.inisialSekolah(sekolah.nama);
+// ═══════════════════════════════════════════════
+// HERO
+// ═══════════════════════════════════════════════
+function renderHero() {
+  const s = sekolahAktif;
+  const r = s._ringkasan || {};
+
+  const roleBadge = (() => {
+    if (role === 'ks') return `<span class="hero-label role-owner">${Icons.get('shield', { class: 'icon-sm' })} Kepala Sekolah</span>`;
+    if (role === 'pelapor') return `<span class="hero-label role-pelapor">${Icons.get('userCheck', { class: 'icon-sm' })} Pelapor</span>`;
+    if (role === 'admin') return `<span class="hero-label role-owner">${Icons.get('shield', { class: 'icon-sm' })} Admin</span>`;
+    if (role === 'guru') return `<span class="hero-label">${Icons.get('user', { class: 'icon-sm' })} Guru</span>`;
+    return '';
+  })();
+
+  document.getElementById('hero').innerHTML = `
+    <div class="hero-top">
+      <div class="hero-logo-wrap ${isKS() ? 'editable' : ''}" id="heroLogo"></div>
+      <div class="hero-info-wrap">
+        <div class="hero-label-row">
+          <span class="hero-label">${Icons.get('home', { class: 'icon-sm' })} Sekolah</span>
+          ${roleBadge}
+        </div>
+        <div class="hero-nama">${UI.escapeHtml(s.nama)}</div>
+        <div class="hero-npsn">NPSN ${UI.escapeHtml(s.npsn || '-')}${s.kecamatan ? ' · ' + UI.escapeHtml(s.kecamatan) : ''}</div>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="n">${r.jumlah_prestasi || 0}</div>
+        <div class="l">Prestasi</div>
+      </div>
+      <div class="hero-stat">
+        <div class="n">${r.jumlah_kegiatan || 0}</div>
+        <div class="l">Kegiatan</div>
+      </div>
+      <div class="hero-stat">
+        <div class="n">${r.jumlah_pembiasaan || 0}</div>
+        <div class="l">Pembiasaan</div>
+      </div>
+      <div class="hero-stat">
+        <div class="n">${r.jumlah_guru || 0}</div>
+        <div class="l">Guru</div>
+      </div>
+    </div>
+  `;
+
+  renderLogoHero();
+
+  if (isKS()) {
+    document.getElementById('heroLogo').addEventListener('click', () => {
+      document.getElementById('fileLogo').click();
+    });
+  }
+}
+
+function renderLogoHero() {
+  const wrap = document.getElementById('heroLogo');
+  if (!wrap || !sekolahAktif) return;
+
+  const s = sekolahAktif;
+  const url = Api.logoUrl(s.id, s.logo_updated_at);
+  const init = Api.inisialSekolah(s.nama);
 
   wrap.innerHTML = `
-    ${url
-      ? `<img src="${url}" alt="${UI.escapeHtml(sekolah.nama)}"
-           onerror="UI.fotoError(this)" />`
-      : ''}
+    ${url ? `<img src="${url}" alt="${UI.escapeHtml(s.nama)}" onerror="this.remove()" />` : ''}
     <div class="fallback" style="${url ? 'display:none;' : ''}">${init}</div>
+    ${isKS() ? `<div class="edit-badge">${Icons.get('camera', { class: 'icon-sm' })}</div>` : ''}
   `;
 }
 
-async function renderTab() {
-  if (!sekolahAktif) return;
+// ═══════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════
+function renderTabs() {
+  const tabs = [
+    { key: 'prestasi', icon: 'award', label: 'Prestasi' },
+    { key: 'kegiatan', icon: 'calendar', label: 'Kegiatan' },
+    { key: 'pembiasaan', icon: 'sparkles', label: 'Pembiasaan' },
+    { key: 'karya', icon: 'sparkles', label: 'Karya' },
+  ];
+
+  if (isKS()) {
+    tabs.push({ key: 'pelapor', icon: 'users', label: 'Pelapor' });
+  }
+
+  document.getElementById('tabRow').innerHTML = tabs.map(t => `
+    <button class="tab-p ${t.key === tabAktif ? 'active' : ''}" data-tab="${t.key}">
+      ${Icons.get(t.icon, { class: 'icon-sm' })}
+      ${t.label}
+      <span class="tab-count" data-count-tab="${t.key}">0</span>
+    </button>
+  `).join('');
+
+  document.querySelectorAll('.tab-p').forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabAktif = btn.dataset.tab;
+      document.querySelectorAll('.tab-p').forEach(x => x.classList.toggle('active', x === btn));
+      renderActionBar();
+      loadTab();
+    });
+  });
+
+  updateTabCounts();
+}
+
+function updateTabCounts() {
+  document.querySelectorAll('[data-count-tab]').forEach(el => {
+    const k = el.dataset.countTab;
+    el.textContent = cachedCounts[k] || 0;
+  });
+}
+
+// ═══════════════════════════════════════════════
+// ACTION BAR (Tambah)
+// ═══════════════════════════════════════════════
+function renderActionBar() {
+  const el = document.getElementById('actionBarWrap');
+  if (!el) return;
+
+  if (!canEdit() || tabAktif === 'pelapor' || tabAktif === 'karya') {
+    el.innerHTML = '';
+    return;
+  }
+
+  const label = {
+    prestasi: 'Prestasi',
+    kegiatan: 'Kegiatan',
+    pembiasaan: 'Pembiasaan',
+  }[tabAktif];
+
+  el.innerHTML = `
+    <div class="action-bar">
+      <div class="action-bar-text">
+        Tambah ${label} baru
+        <span class="sub">Akan menunggu verifikasi panitia sebelum tampil publik</span>
+      </div>
+      <button class="btn btn-primary btn-sm" id="btnTambah">
+        ${Icons.get('plus', { class: 'icon-sm' })} Tambah
+      </button>
+    </div>
+  `;
+
+  document.getElementById('btnTambah').addEventListener('click', () => tambahData());
+}
+
+// ═══════════════════════════════════════════════
+// LOAD TAB CONTENT
+// ═══════════════════════════════════════════════
+async function loadTab() {
+  if (tabAktif === 'pelapor') { await loadPelaporTab(); return; }
 
   const el = document.getElementById('listItem');
-  const cacheKey = `${tabAktif}_${sekolahAktif.id}`;
+  const cacheKey = `${tabAktif}_${sekolahAktif.id}_${canEdit() ? 'manage' : 'public'}`;
 
   if (cacheItems[cacheKey]) {
     renderList(cacheItems[cacheKey]);
     return;
   }
 
-  el.innerHTML = `
-    <div class="skeleton" style="height:120px;border-radius:16px;margin-bottom:10px;"></div>
+  el.innerHTML = `<div class="skel-row">
     <div class="skeleton" style="height:120px;border-radius:16px;"></div>
-  `;
+    <div class="skeleton" style="height:120px;border-radius:16px;"></div>
+  </div>`;
 
   let data = [];
 
   if (tabAktif === 'karya') {
-    // Karya guru (Inovasi & Aksi Nyata) — action khusus
+    // Karya guru — publik
     const res = await Api.callSekolahPublik('karya.publik', {
       sekolah_id: sekolahAktif.id,
       limit: 100,
     });
-    if (!res.ok) {
-      el.innerHTML = UI.errorHtml(res.error);
-      return;
-    }
+    if (!res.ok) { el.innerHTML = UI.errorHtml(res.error); return; }
     data = res.data.data || [];
-  } else {
-    // Prestasi / Kegiatan / Pembiasaan
-    const res = await Api.callSekolahPublik('sekolah.galeri', {
-      jenis: tabAktif,
+  } else if (canEdit()) {
+    // Pelapor/KS — semua status (manage)
+    const actionMap = {
+      prestasi: 'prestasi.list',
+      kegiatan: 'kegiatan.list',
+      pembiasaan: 'pembiasaan.list',
+    };
+    const res = await Api.callSekolah(actionMap[tabAktif], {
       sekolah_id: sekolahAktif.id,
       limit: 100,
     });
-    if (!res.ok) {
-      el.innerHTML = UI.errorHtml(res.error);
-      return;
-    }
+    if (!res.ok) { el.innerHTML = UI.errorHtml(res.error); return; }
+    data = res.data || [];
+  } else {
+    // Public / guru biasa — pakai galeri publik (filter disetujui)
+    const res = await Api.callSekolahPublik('sekolah.galeri', {
+      sekolah_id: sekolahAktif.id,
+      jenis: tabAktif,
+      limit: 100,
+    });
+    if (!res.ok) { el.innerHTML = UI.errorHtml(res.error); return; }
     data = res.data.data || [];
   }
 
   cacheItems[cacheKey] = data;
+  cachedCounts[tabAktif] = data.length;
+  updateTabCounts();
+
   renderList(data);
 }
 
+// ═══════════════════════════════════════════════
+// RENDER LIST
+// ═══════════════════════════════════════════════
 function renderList(list) {
   const el = document.getElementById('listItem');
 
-  if (list.length === 0) {
-    const label = {
-      prestasi: 'prestasi',
-      pembiasaan: 'pembiasaan',
-      kegiatan: 'kegiatan',
-      karya: 'karya guru',
-    }[tabAktif] || 'data';
-
-    const desc = tabAktif === 'karya'
-      ? 'Karya inovasi & aksi nyata guru akan muncul di sini setelah diverifikasi.'
-      : 'Data akan muncul setelah panitia verifikasi.';
+  if (!list || list.length === 0) {
+    const labelMap = { prestasi: 'prestasi', kegiatan: 'kegiatan', pembiasaan: 'pembiasaan', karya: 'karya guru' };
+    const label = labelMap[tabAktif] || 'data';
+    const descEdit = canEdit()
+      ? 'Klik tombol Tambah di atas untuk mulai mengisi.'
+      : 'Belum ada ' + label + ' yang terverifikasi untuk sekolah ini.';
 
     el.innerHTML = `
       <div class="empty-state">
         <div class="big-icon">${Icons.get('inbox', { class: 'icon-xl' })}</div>
         <div class="title">Belum Ada ${label.charAt(0).toUpperCase() + label.slice(1)}</div>
-        <div class="desc">${desc}</div>
+        <div class="desc">${descEdit}</div>
       </div>
     `;
     return;
@@ -914,17 +1306,23 @@ function renderList(list) {
     return renderItem(it, idx);
   }).join('');
 
-  // Bind lightbox thumbnail
+  // Bind actions
   el.querySelectorAll('[data-thumb]').forEach(thumb => {
     thumb.addEventListener('click', () => {
       const url = thumb.dataset.fullurl;
       if (url) showLightbox(url);
     });
   });
+  el.querySelectorAll('[data-act="edit"]').forEach(b => {
+    b.addEventListener('click', () => tambahData(Number(b.dataset.id)));
+  });
+  el.querySelectorAll('[data-act="hapus"]').forEach(b => {
+    b.addEventListener('click', () => hapusData(Number(b.dataset.id)));
+  });
 }
 
 function renderItem(it, idx) {
-  const jenis = it._jenis;
+  const jenis = it._jenis || tabAktif;
 
   let judul = '';
   let sub = '';
@@ -958,25 +1356,39 @@ function renderItem(it, idx) {
     judul = it.nama;
     sub = `${it.frekuensi || '-'}${it.bulan ? ' · Bulan ' + it.bulan : ''} ${it.tahun}`;
     extra = it.deskripsi
-      ? `<div class="item-extra" style="font-size:12.5px;color:var(--muted);line-height:1.5;">${UI.escapeHtml(it.deskripsi)}</div>`
+      ? `<div class="item-extra" style="font-size:12px;color:var(--muted);line-height:1.5;">${UI.escapeHtml(it.deskripsi)}</div>`
       : '';
   }
 
-  // Thumbnail dari bukti_url
   const thumbUrl = UI.thumbnail(it.bukti_url);
-  const iconName = jenis === 'prestasi' ? 'award' : jenis === 'kegiatan' ? 'calendar' : 'sparkles';
   const isYT = it.bukti_url && /youtube\.com|youtu\.be/.test(it.bukti_url);
+  const iconName = jenis === 'prestasi' ? 'award' : jenis === 'kegiatan' ? 'calendar' : 'sparkles';
 
-  const thumbHtml = `
-    <div class="item-thumb ${jenis}"
-         ${thumbUrl ? `data-thumb data-fullurl="${UI.escapeHtml(it.bukti_url)}"` : ''}>
-      ${thumbUrl
-        ? `<img src="${thumbUrl}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-           <div class="fallback-icon" style="display:none;">${Icons.get(iconName)}</div>
-           ${isYT ? `<div class="play-badge">${Icons.get('play')}</div>` : ''}`
-        : `<div class="fallback-icon">${Icons.get(iconName)}</div>`}
-    </div>
-  `;
+  // Status pill — hanya untuk pelapor/KS
+  const statusBadge = (canEdit() && it.status)
+    ? `<span class="status-pill st-${it.status}">${{menunggu:'Menunggu', disetujui:'Disetujui', ditolak:'Ditolak'}[it.status] || it.status}</span>`
+    : '';
+
+  // Catatan penolakan
+  const catatanHtml = (canEdit() && it.status === 'ditolak' && it.catatan_verifikator)
+    ? `<div class="catatan-box">
+         ${Icons.get('alertCircle', { class: 'icon-sm' })}
+         <span>${UI.escapeHtml(it.catatan_verifikator)}</span>
+       </div>`
+    : '';
+
+  // Aksi (hanya kalau status menunggu & bisa edit)
+  const bisaEditItem = canEdit() && it.status === 'menunggu';
+  const actionsHtml = bisaEditItem
+    ? `<div class="item-actions">
+         <button class="btn btn-secondary btn-sm" data-act="edit" data-id="${it.id}">
+           ${Icons.get('edit', { class: 'icon-sm' })} Edit
+         </button>
+         <button class="btn btn-ghost btn-sm" data-act="hapus" data-id="${it.id}" style="color:var(--danger);">
+           ${Icons.get('trash', { class: 'icon-sm' })} Hapus
+         </button>
+       </div>`
+    : '';
 
   const buktiHtml = it.bukti_url
     ? `<a href="${UI.escapeHtml(it.bukti_url)}" target="_blank" rel="noopener" class="link-bukti">
@@ -987,20 +1399,28 @@ function renderItem(it, idx) {
   return `
     <div class="item-publik ${jenis}" style="animation-delay:${idx * 0.04}s">
       <div class="item-head">
-        ${thumbHtml}
+        <div class="item-thumb ${jenis}"
+             ${thumbUrl && !isYT ? `data-thumb data-fullurl="${UI.escapeHtml(it.bukti_url)}"` : ''}>
+          ${thumbUrl
+            ? `<img src="${thumbUrl}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+               <div class="fallback-icon" style="display:none;">${Icons.get(iconName)}</div>
+               ${isYT ? `<div class="play-badge">${Icons.get('play')}</div>` : ''}`
+            : `<div class="fallback-icon">${Icons.get(iconName)}</div>`}
+        </div>
         <div class="item-info">
           <div class="item-title">${UI.escapeHtml(judul)}</div>
           <div class="item-sub">${UI.escapeHtml(sub)}</div>
           ${extra}
         </div>
+        ${statusBadge}
       </div>
+      ${catatanHtml}
       ${buktiHtml}
+      ${actionsHtml}
     </div>
   `;
 }
-// ============================================================
-// RENDER KARYA GURU (Inovasi & Aksi Nyata)
-// ============================================================
+
 function renderKaryaItem(k, idx) {
   const jenis = k.jenis;
   const user = k.user || {};
@@ -1009,45 +1429,25 @@ function renderKaryaItem(k, idx) {
   const iconName = jenis === 'inovasi' ? 'sparkles' : 'target';
 
   const jenisLabel = jenis === 'inovasi' ? 'Inovasi' : 'Aksi Nyata';
-
   const kategoriLabel = {
-    media:   'Media Pembelajaran',
-    metode:  'Metode Mengajar',
-    modul:   'Modul Ajar',
-    alat:    'Alat Peraga',
-    video:   'Video Pembelajaran',
-    lainnya: 'Lainnya',
+    media: 'Media', metode: 'Metode', modul: 'Modul Ajar',
+    alat: 'Alat Peraga', video: 'Video', lainnya: 'Lainnya',
   }[k.kategori] || '';
 
   let extra = `<span class="badge-jenis ${jenis}">${jenisLabel}</span>`;
   if (jenis === 'inovasi' && kategoriLabel) {
     extra += `<span class="badge-tingkat kabupaten">${kategoriLabel}</span>`;
   }
-  if (jenis === 'implementasi' && k.pertemuan_id) {
-    extra += `<span class="badge-tingkat kecamatan">Materi KKG</span>`;
-  }
 
-  // Author
   const init = (user.nama_lengkap || '?').charAt(0).toUpperCase();
   const fotoUrl = user.id ? Api.fotoUrl(user.id, 't') : null;
   const authorHtml = `
     <div class="karya-author">
       <span class="av">
         ${init}
-        ${fotoUrl ? `<img src="${fotoUrl}" loading="lazy" alt="" onerror="UI.fotoError(this)">` : ''}
+        ${fotoUrl ? `<img src="${fotoUrl}" loading="lazy" onerror="this.remove()" />` : ''}
       </span>
-      <span>${UI.escapeHtml(user.nama_lengkap || '-')}${user.jabatan ? ' · ' + UI.escapeHtml(user.jabatan) : ''}</span>
-    </div>
-  `;
-
-  const thumbHtml = `
-    <div class="item-thumb ${jenis}"
-         ${thumbUrl && !isYT ? `data-thumb data-fullurl="${UI.escapeHtml(k.link_url)}"` : ''}>
-      ${thumbUrl
-        ? `<img src="${thumbUrl}" alt="" loading="lazy" onerror="UI.fotoError(this)" />
-           <div class="fallback-icon" style="display:none;">${Icons.get(iconName)}</div>
-           ${isYT ? `<div class="play-badge">${Icons.get('play')}</div>` : ''}`
-        : `<div class="fallback-icon">${Icons.get(iconName)}</div>`}
+      <span>${UI.escapeHtml(user.nama_lengkap || '-')}</span>
     </div>
   `;
 
@@ -1060,7 +1460,14 @@ function renderKaryaItem(k, idx) {
   return `
     <div class="item-publik ${jenis}" style="animation-delay:${idx * 0.04}s">
       <div class="item-head">
-        ${thumbHtml}
+        <div class="item-thumb ${jenis}"
+             ${thumbUrl && !isYT ? `data-thumb data-fullurl="${UI.escapeHtml(k.link_url)}"` : ''}>
+          ${thumbUrl
+            ? `<img src="${thumbUrl}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+               <div class="fallback-icon" style="display:none;">${Icons.get(iconName)}</div>
+               ${isYT ? `<div class="play-badge">${Icons.get('play')}</div>` : ''}`
+            : `<div class="fallback-icon">${Icons.get(iconName)}</div>`}
+        </div>
         <div class="item-info">
           <div class="item-title">${UI.escapeHtml(k.judul)}</div>
           ${k.deskripsi ? `<div class="item-sub" style="margin-top:4px;">${UI.escapeHtml(k.deskripsi)}</div>` : ''}
@@ -1072,12 +1479,482 @@ function renderKaryaItem(k, idx) {
     </div>
   `;
 }
+
+// ═══════════════════════════════════════════════
+// PELAPOR TAB (KS only)
+// ═══════════════════════════════════════════════
+async function loadPelaporTab() {
+  const el = document.getElementById('listItem');
+  el.innerHTML = `<div class="skeleton" style="height:88px;border-radius:16px;"></div>`;
+
+  if (!cachePelapor) {
+    const res = await Api.callSekolah('pelapor.list', { sekolah_id: sekolahAktif.id });
+    if (!res.ok) { el.innerHTML = UI.errorHtml(res.error); return; }
+    cachePelapor = res.data || [];
+    cachedCounts.pelapor = cachePelapor.length;
+    updateTabCounts();
+  }
+
+  const list = cachePelapor;
+
+  let html = `
+    <div class="info-banner">
+      ${Icons.get('info', { class: 'icon-sm' })}
+      <div>Pelapor adalah guru yang ditunjuk membantu KS menginput data. Maks 3 guru + KS.</div>
+    </div>
+    <button class="btn btn-primary btn-full" id="btnTambahPelapor" style="margin-bottom:12px;">
+      ${Icons.get('plus', { class: 'icon-sm' })} Tunjuk Pelapor
+    </button>
+  `;
+
+  if (list.length === 0) {
+    html += `
+      <div class="empty-state">
+        <div class="big-icon">${Icons.get('users', { class: 'icon-xl' })}</div>
+        <div class="title">Belum Ada Pelapor</div>
+        <div class="desc">Klik tombol di atas untuk menunjuk guru sebagai pelapor.</div>
+      </div>
+    `;
+  } else {
+    html += list.map((p, idx) => {
+      const init = (p.user?.nama_lengkap || '?').charAt(0).toUpperCase();
+      const fotoUrl = p.user?.id ? Api.fotoUrl(p.user.id, 't') : null;
+      return `
+        <div class="item-publik" style="animation-delay:${idx * 0.04}s">
+          <div class="item-head">
+            <div class="item-thumb">
+              <div class="fallback-icon" style="background:linear-gradient(135deg,var(--maroon) 0%,var(--maroon-mid) 100%);font-size:18px;font-weight:800;color:white;">
+                ${init}
+              </div>
+              ${fotoUrl ? `<img src="${fotoUrl}" style="position:absolute;inset:0;" onerror="this.remove()" />` : ''}
+            </div>
+            <div class="item-info">
+              <div class="item-title">${UI.escapeHtml(p.user?.nama_lengkap || '-')}</div>
+              <div class="item-sub">${UI.escapeHtml(p.user?.jabatan || 'Guru')}</div>
+            </div>
+            <button class="btn-icon" data-hapus-pelapor="${p.id}" style="color:var(--danger);" title="Hapus">
+              ${Icons.get('trash', { class: 'icon-sm' })}
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  el.innerHTML = html;
+
+  document.getElementById('btnTambahPelapor')?.addEventListener('click', tambahPelapor);
+  el.querySelectorAll('[data-hapus-pelapor]').forEach(b => {
+    b.addEventListener('click', () => hapusPelapor(Number(b.dataset.hapusPelapor)));
+  });
+}
+
+async function tambahPelapor() {
+  const res = await Api.call('users.list', { sekolah_id: sekolahAktif.id, limit: 200 });
+  if (!res.ok) { UI.gagal(res.error); return; }
+
+  const guruList = res.data.hasil || [];
+  if (guruList.length === 0) { UI.gagal('Tidak ada guru di sekolah ini.'); return; }
+
+  // Filter yang sudah jadi pelapor
+  const sudahIds = new Set((cachePelapor || []).map(p => p.user?.id).filter(Boolean));
+  const available = guruList.filter(g => !sudahIds.has(g.id));
+
+  if (available.length === 0) {
+    UI.gagal('Semua guru di sekolah ini sudah menjadi pelapor.');
+    return;
+  }
+
+  const { overlay, close } = openSheet(`
+    <div class="sheet-header-row">
+      <div>
+        <div class="sheet-title">Tunjuk Pelapor</div>
+        <div class="sheet-subtitle">Pilih satu guru yang akan membantu input data.</div>
+      </div>
+      <button class="btn-icon" data-close>${Icons.get('x')}</button>
+    </div>
+    <input type="text" id="cariGuru" class="input" placeholder="Cari nama guru…" style="margin-bottom:10px;" />
+    <div id="daftarGuru" style="max-height:50vh;overflow-y:auto;border:1px solid var(--border);border-radius:12px;padding:6px;margin-bottom:14px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" data-close>Batal</button>
+      <button class="btn btn-primary" id="btnPilihGuru" style="flex:2;" disabled>Pilih & Tunjuk</button>
+    </div>
+  `, { size: 'lg' });
+
+  const daftarEl = overlay.querySelector('#daftarGuru');
+  const cariEl = overlay.querySelector('#cariGuru');
+  const btnPilih = overlay.querySelector('#btnPilihGuru');
+  let selectedId = null;
+
+  function render(filter = '') {
+    const f = filter.toLowerCase();
+    const list = available.filter(g =>
+      !f || (g.nama_lengkap || '').toLowerCase().includes(f) || (g.jabatan || '').toLowerCase().includes(f)
+    );
+    if (list.length === 0) {
+      daftarEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">Tidak ada guru.</div>';
+      return;
+    }
+    daftarEl.innerHTML = list.map(g => `
+      <label class="guru-pick-item" data-uid="${g.id}">
+        <input type="radio" name="pilihGuru" value="${g.id}" />
+        <div class="guru-pick-body">
+          <div class="guru-pick-name">${UI.escapeHtml(g.nama_lengkap)}</div>
+          <div class="guru-pick-sub">${UI.escapeHtml(g.jabatan || 'Guru')}</div>
+        </div>
+      </label>
+    `).join('');
+
+    daftarEl.querySelectorAll('.guru-pick-item').forEach(item => {
+      item.addEventListener('click', () => {
+        item.querySelector('input').checked = true;
+        selectedId = Number(item.dataset.uid);
+        daftarEl.querySelectorAll('.guru-pick-item').forEach(x => x.classList.toggle('selected', x === item));
+        btnPilih.disabled = false;
+      });
+    });
+  }
+
+  render();
+  cariEl.addEventListener('input', () => render(cariEl.value));
+
+  btnPilih.addEventListener('click', async () => {
+    if (!selectedId) return;
+    UI.btnLoading(btnPilih, 'Menyimpan…');
+    const r = await Api.callSekolah('pelapor.tambah', {
+      sekolah_id: sekolahAktif.id,
+      user_id: selectedId,
+    });
+    UI.btnReset(btnPilih);
+    if (!r.ok) { UI.gagal(r.error); return; }
+    UI.sukses('Pelapor ditambahkan.');
+    cachePelapor = null; // invalidate
+    close();
+    await loadPelaporTab();
+  });
+}
+
+async function hapusPelapor(id) {
+  const ok = await UI.konfirmasi('Hapus Pelapor', 'Cabut akses guru ini sebagai pelapor?', { danger: true, okText: 'Hapus' });
+  if (!ok) return;
+  const res = await Api.callSekolah('pelapor.hapus', { pelapor_id: id });
+  if (!res.ok) { UI.gagal(res.error); return; }
+  UI.sukses('Pelapor dihapus.');
+  cachePelapor = null;
+  await loadPelaporTab();
+}
+
+// ═══════════════════════════════════════════════
+// FORM TAMBAH/EDIT
+// ═══════════════════════════════════════════════
+function tambahData(id = null) {
+  if (!canEdit()) { UI.gagal('Hanya pelapor/KS yang bisa menambah.'); return; }
+
+  const item = id ? (cacheItems[`${tabAktif}_${sekolahAktif.id}_manage`] || []).find(x => x.id === id) : null;
+  const isEdit = !!item;
+
+  const formHtml = {
+    prestasi: () => formPrestasi(item),
+    pembiasaan: () => formPembiasaan(item),
+    kegiatan: () => formKegiatan(item),
+  }[tabAktif]?.();
+
+  if (!formHtml) return;
+
+  const label = { prestasi: 'Prestasi', pembiasaan: 'Pembiasaan', kegiatan: 'Kegiatan' }[tabAktif];
+
+  const { overlay, close } = openSheet(`
+    <div class="sheet-header-row">
+      <div>
+        <div class="sheet-title">${isEdit ? 'Edit' : 'Tambah'} ${label}</div>
+        <div class="sheet-subtitle">Data akan menunggu verifikasi panitia.</div>
+      </div>
+      <button class="btn-icon" data-close>${Icons.get('x')}</button>
+    </div>
+    <div class="form-field-group" id="formContent">${formHtml}</div>
+    <div id="formAlert" class="modal-alert hidden"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" data-close>Batal</button>
+      <button class="btn btn-primary" id="btnSimpanData" style="flex:2;">Simpan</button>
+    </div>
+  `, { size: 'lg' });
+
+  const alertBox = overlay.querySelector('#formAlert');
+
+  overlay.querySelector('#btnSimpanData').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnSimpanData');
+    alertBox.classList.add('hidden');
+
+    const data = collectForm(overlay, item?.id);
+    if (!data) return;
+
+    UI.btnLoading(btn, 'Menyimpan…');
+    const res = await Api.callSekolah(`${tabAktif}.simpan`, { data });
+    UI.btnReset(btn);
+
+    if (!res.ok) {
+      alertBox.textContent = res.error || 'Gagal menyimpan.';
+      alertBox.classList.remove('hidden');
+      return;
+    }
+
+    UI.sukses(isEdit ? 'Data diperbarui.' : 'Data ditambahkan. Menunggu verifikasi.');
+    cacheItems = {}; // invalidate semua cache
+    close();
+    await refreshCounts();
+    await loadTab();
+  });
+}
+
+async function hapusData(id) {
+  const ok = await UI.konfirmasi('Hapus Data', 'Yakin hapus data ini? Tidak bisa dibatalkan.', { danger: true, okText: 'Hapus' });
+  if (!ok) return;
+
+  const res = await Api.callSekolah(`${tabAktif}.hapus`, { id });
+  if (!res.ok) { UI.gagal(res.error); return; }
+
+  UI.sukses('Dihapus.');
+  cacheItems = {};
+  await refreshCounts();
+  await loadTab();
+}
+
+async function refreshCounts() {
+  const res = await Api.callSekolah('sekolah.profil', { sekolah_id: sekolahAktif.id });
+  if (res.ok && res.data) {
+    const r = res.data.ringkasan;
+    sekolahAktif._ringkasan = r;
+    cachedCounts.prestasi = r.jumlah_prestasi || 0;
+    cachedCounts.kegiatan = r.jumlah_kegiatan || 0;
+    cachedCounts.pembiasaan = r.jumlah_pembiasaan || 0;
+    updateTabCounts();
+    renderHero();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// FORM BUILDERS (dari ks/sekolah.html)
+// ═══════════════════════════════════════════════
+function formPrestasi(it) {
+  return `
+    <div class="field"><label class="label">Nama Siswa *</label>
+      <input type="text" id="f1" class="input" value="${UI.escapeHtml(it?.nama_siswa || '')}" /></div>
+    <div class="field"><label class="label">Kelas</label>
+      <input type="text" id="f2" class="input" value="${UI.escapeHtml(it?.kelas || '')}" placeholder="Mis: 5A" /></div>
+    <div class="field"><label class="label">Nama Lomba *</label>
+      <input type="text" id="f3" class="input" value="${UI.escapeHtml(it?.nama_lomba || '')}" /></div>
+    <div class="field"><label class="label">Jenis Lomba</label>
+      <input type="text" id="f4" class="input" value="${UI.escapeHtml(it?.jenis_lomba || '')}" /></div>
+    <div class="field"><label class="label">Tingkat *</label>
+      <select id="f5" class="input">
+        <option value="">— Pilih —</option>
+        ${['sekolah','kecamatan','kabupaten','provinsi','nasional','internasional'].map(t => `<option value="${t}" ${it?.tingkat === t ? 'selected' : ''}>${t.charAt(0).toUpperCase() + t.slice(1)}</option>`).join('')}
+      </select></div>
+    <div class="field"><label class="label">Peringkat *</label>
+      <select id="f6" class="input">
+        <option value="">— Pilih —</option>
+        <option value="juara_1" ${it?.peringkat === 'juara_1' ? 'selected' : ''}>Juara 1</option>
+        <option value="juara_2" ${it?.peringkat === 'juara_2' ? 'selected' : ''}>Juara 2</option>
+        <option value="juara_3" ${it?.peringkat === 'juara_3' ? 'selected' : ''}>Juara 3</option>
+        <option value="harapan" ${it?.peringkat === 'harapan' ? 'selected' : ''}>Harapan</option>
+      </select></div>
+    <div class="field"><label class="label">Tanggal *</label>
+      <input type="date" id="f7" class="input" value="${it?.tanggal || new Date().toISOString().slice(0,10)}" /></div>
+    <div class="field"><label class="label">Guru Pembina</label>
+      <input type="text" id="f8" class="input" value="${UI.escapeHtml(it?.guru_pembina || '')}" /></div>
+    <div class="field"><label class="label">Link Bukti</label>
+      <input type="url" id="f9" class="input" value="${UI.escapeHtml(it?.bukti_url || '')}" placeholder="https://drive.google.com/…" /></div>
+  `;
+}
+
+function formPembiasaan(it) {
+  return `
+    <div class="field"><label class="label">Nama Pembiasaan *</label>
+      <input type="text" id="f1" class="input" value="${UI.escapeHtml(it?.nama || '')}" /></div>
+    <div class="field"><label class="label">Deskripsi</label>
+      <textarea id="f2" class="input" rows="2" style="resize:vertical;">${UI.escapeHtml(it?.deskripsi || '')}</textarea></div>
+    <div class="field"><label class="label">Frekuensi</label>
+      <select id="f3" class="input">
+        <option value="harian" ${it?.frekuensi === 'harian' ? 'selected' : ''}>Harian</option>
+        <option value="mingguan" ${it?.frekuensi === 'mingguan' ? 'selected' : ''}>Mingguan</option>
+        <option value="bulanan" ${it?.frekuensi === 'bulanan' ? 'selected' : ''}>Bulanan</option>
+        <option value="insidental" ${it?.frekuensi === 'insidental' ? 'selected' : ''}>Insidental</option>
+      </select></div>
+    <div class="field"><label class="label">Bulan (opsional)</label>
+      <select id="f4" class="input">
+        <option value="">— Pilih —</option>
+        ${[1,2,3,4,5,6,7,8,9,10,11,12].map(b => `<option value="${b}" ${it?.bulan === b ? 'selected' : ''}>${b}</option>`).join('')}
+      </select></div>
+    <div class="field"><label class="label">Tahun *</label>
+      <input type="number" id="f5" class="input" value="${it?.tahun || new Date().getFullYear()}" min="2020" max="2100" /></div>
+    <div class="field"><label class="label">Link Bukti</label>
+      <input type="url" id="f6" class="input" value="${UI.escapeHtml(it?.bukti_url || '')}" /></div>
+  `;
+}
+
+function formKegiatan(it) {
+  return `
+    <div class="field"><label class="label">Nama Kegiatan *</label>
+      <input type="text" id="f1" class="input" value="${UI.escapeHtml(it?.nama || '')}" /></div>
+    <div class="field"><label class="label">Kategori</label>
+      <input type="text" id="f2" class="input" value="${UI.escapeHtml(it?.kategori || '')}" /></div>
+    <div class="field"><label class="label">Deskripsi</label>
+      <textarea id="f3" class="input" rows="2" style="resize:vertical;">${UI.escapeHtml(it?.deskripsi || '')}</textarea></div>
+    <div class="field"><label class="label">Tanggal *</label>
+      <input type="date" id="f4" class="input" value="${it?.tanggal || new Date().toISOString().slice(0,10)}" /></div>
+    <div class="field"><label class="label">Tempat</label>
+      <input type="text" id="f5" class="input" value="${UI.escapeHtml(it?.tempat || '')}" /></div>
+    <div class="field"><label class="label">Jumlah Peserta</label>
+      <input type="number" id="f6" class="input" value="${it?.jumlah_peserta || ''}" min="0" /></div>
+    <div class="field"><label class="label">Skala *</label>
+      <select id="f7" class="input">
+        <option value="">— Pilih —</option>
+        <option value="internal" ${it?.skala === 'internal' ? 'selected' : ''}>Internal Sekolah</option>
+        <option value="orang_tua" ${it?.skala === 'orang_tua' ? 'selected' : ''}>Melibatkan Orang Tua</option>
+        <option value="komunitas" ${it?.skala === 'komunitas' ? 'selected' : ''}>Melibatkan Komunitas</option>
+        <option value="kecamatan" ${it?.skala === 'kecamatan' ? 'selected' : ''}>Tingkat Kecamatan</option>
+        <option value="kabupaten_plus" ${it?.skala === 'kabupaten_plus' ? 'selected' : ''}>Kabupaten+</option>
+      </select></div>
+    <div class="field"><label class="label">Link Bukti</label>
+      <input type="url" id="f8" class="input" value="${UI.escapeHtml(it?.bukti_url || '')}" /></div>
+  `;
+}
+
+function collectForm(overlay, id) {
+  const val = (sel) => overlay.querySelector(sel)?.value.trim() || '';
+  const base = { sekolah_id: sekolahAktif.id, id: id || null };
+
+  if (tabAktif === 'prestasi') {
+    const d = { ...base, nama_siswa: val('#f1'), kelas: val('#f2'), nama_lomba: val('#f3'), jenis_lomba: val('#f4'), tingkat: val('#f5'), peringkat: val('#f6'), tanggal: val('#f7'), guru_pembina: val('#f8'), bukti_url: val('#f9') };
+    if (!d.nama_siswa || !d.nama_lomba || !d.tingkat || !d.peringkat || !d.tanggal) { UI.gagal('Lengkapi field *'); return null; }
+    return d;
+  }
+  if (tabAktif === 'pembiasaan') {
+    const d = { ...base, nama: val('#f1'), deskripsi: val('#f2'), frekuensi: val('#f3'), bulan: val('#f4') ? Number(val('#f4')) : null, tahun: Number(val('#f5')), bukti_url: val('#f6') };
+    if (!d.nama || !d.tahun) { UI.gagal('Lengkapi field *'); return null; }
+    return d;
+  }
+  if (tabAktif === 'kegiatan') {
+    const d = { ...base, nama: val('#f1'), kategori: val('#f2'), deskripsi: val('#f3'), tanggal: val('#f4'), tempat: val('#f5'), jumlah_peserta: val('#f6') ? Number(val('#f6')) : null, skala: val('#f7'), bukti_url: val('#f8') };
+    if (!d.nama || !d.tanggal || !d.skala) { UI.gagal('Lengkapi field *'); return null; }
+    return d;
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════════
+// UPLOAD LOGO
+// ═══════════════════════════════════════════════
+document.getElementById('fileLogo').addEventListener('change', (e) => {
+  if (e.target.files[0]) handleUploadLogo(e.target.files[0]);
+  e.target.value = '';
+});
+
+async function handleUploadLogo(file) {
+  if (!canEdit()) { UI.gagal('Tidak diizinkan.'); return; }
+  if (!file.type.startsWith('image/')) { UI.gagal('File harus gambar.'); return; }
+  if (file.size > 5 * 1024 * 1024) { UI.gagal('Maks 5 MB.'); return; }
+
+  UI.toast('Memproses logo…', 'info');
+
+  try {
+    const dataUrl = await kompresLogo(file, 200, 0.85);
+    const sizeKb = Math.round((dataUrl.length * 3 / 4) / 1024);
+    if (sizeKb > 500) { UI.gagal('Logo terlalu besar (' + sizeKb + ' KB).'); return; }
+
+    const res = await Api.callSekolah('sekolah.upload_logo', {
+      sekolah_id: sekolahAktif.id,
+      foto: dataUrl,
+    });
+    if (!res.ok) { UI.gagal(res.error); return; }
+
+    UI.sukses('Logo diunggah (' + res.data.size_kb + ' KB)');
+    sekolahAktif.logo_updated_at = res.data.logo_updated_at;
+    renderLogoHero();
+  } catch (err) {
+    console.error(err);
+    UI.gagal('Gagal upload logo.');
+  }
+}
+
+function kompresLogo(file, maxSize, quality) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = maxSize;
+        canvas.height = maxSize;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, maxSize, maxSize);
+        const size = Math.min(img.width, img.height);
+        const sx = (img.width - size) / 2;
+        const sy = (img.height - size) / 2;
+        ctx.drawImage(img, sx, sy, size, size, 0, 0, maxSize, maxSize);
+        resolve(canvas.toDataURL('image/webp', quality));
+      };
+      img.onerror = reject;
+      img.src = ev.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════
+function openSheet(contentHtml, opts = {}) {
+  const overlay = document.createElement('div');
+  overlay.className = 'bottom-sheet-overlay';
+  overlay.innerHTML = `<div class="bottom-sheet ${opts.size === 'lg' ? 'lg' : ''}">${contentHtml}</div>`;
+  document.body.appendChild(overlay);
+
+  const close = () => {
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity .15s';
+    setTimeout(() => overlay.remove(), 150);
+    document.removeEventListener('keydown', escHandler);
+  };
+
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  const escHandler = (e) => { if (e.key === 'Escape') close(); };
+  document.addEventListener('keydown', escHandler);
+
+  setTimeout(() => {
+    const first = overlay.querySelector('input:not([type=hidden]):not([type=checkbox]):not([type=radio]), textarea, select');
+    if (first) first.focus();
+  }, 100);
+
+  return { overlay, close };
+}
+
 function showLightbox(url) {
   const lb = document.createElement('div');
   lb.className = 'lightbox';
   lb.innerHTML = `<img src="${UI.escapeHtml(url)}" alt="">`;
   lb.addEventListener('click', () => lb.remove());
   document.body.appendChild(lb);
+}
+
+function bindEvents() {
+  document.getElementById('btnShareWA').addEventListener('click', () => {
+    if (!sekolahAktif) return;
+    const text = `Profil Digital ${sekolahAktif.nama} — KKG Gugus Nakula\n${window.location.href}`;
+    window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+  });
+
+  document.getElementById('btnCopyLink').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      UI.sukses('Link disalin.');
+    } catch {
+      UI.gagal('Gagal menyalin.');
+    }
+  });
 }
 </script>
 
