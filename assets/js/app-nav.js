@@ -147,7 +147,7 @@ menuItems.push(
 );
 }
   // MENU NARASUMBER
-  if (peranList.includes('narasumber') && !isAdmin) {
+  if (peran.includes('narasumber') && !isAdmin) {
     menuItems.push(
       { href: prefix + 'narsum.html', icon: 'edit', label: 'Penilaian Tugas', key: 'narsum' }
     );
