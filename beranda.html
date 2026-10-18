@@ -702,6 +702,9 @@ function renderMenuKhusus(p) {
 
   renderMenuList(menu);
 }
+  if (peranList.includes('narasumber') && !isAdmin) {
+    menu.push({ icon: 'edit', title: 'Penilaian Tugas', desc: 'Koreksi tugas peserta didik', href: 'narsum.html', warna: 'gold' });
+  }
 
 function renderMenuList(menu) {
   const el = document.getElementById('listMenuKhusus');
