@@ -120,6 +120,7 @@ else if (file === 'galeri.html') currentKey = 'galeri';
 else if (file === 'award.html') currentKey = 'award';
 else if (file === 'aktivitas.html') currentKey = 'aktivitas';
 else if (file === 'karya.html') currentKey = 'karya';
+else if (file === 'narsum.html') currentKey = 'narsum';
 else if (file === 'profil.html') currentKey = 'profil';
 
 const menuItems = [
