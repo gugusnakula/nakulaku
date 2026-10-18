@@ -109,6 +109,7 @@
     background: var(--surface);
     box-shadow: 0 0 0 3px rgba(125,29,58,.08);
   }
+  /* ✅ FIX: Icon lup — override display:contents dari init */
   .search-wrap .icon-left {
     position: absolute;
     left: 13px;
@@ -116,13 +117,22 @@
     transform: translateY(-50%);
     width: 18px;
     height: 18px;
-    display: flex;
     align-items: center;
     justify-content: center;
     color: var(--muted);
     pointer-events: none;
+    z-index: 1;
   }
-  .search-wrap .icon-left svg { width: 16px; height: 16px; display: block; }
+  /* paksa display flex — override inline style display:contents */
+  .search-wrap .icon-left[data-icon] {
+    display: flex !important;
+  }
+  .search-wrap .icon-left svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+    stroke-width: 2;
+  }
   .search-wrap .icon-clear {
     position: absolute;
     right: 8px;
@@ -140,7 +150,9 @@
     justify-content: center;
     padding: 0;
     transition: all .15s;
+    z-index: 1;
   }
+  .search-wrap .icon-clear svg { width: 13px; height: 13px; }
   .search-wrap .icon-clear:hover { background: var(--maroon-soft); color: var(--maroon); }
   .search-wrap.has-value .icon-clear { display: flex; }
 
@@ -170,11 +182,7 @@
     font-family: inherit;
   }
   .f-chip:hover { border-color: var(--maroon-light); color: var(--maroon); }
-  .f-chip.active {
-    background: var(--maroon);
-    border-color: var(--maroon);
-    color: white;
-  }
+  .f-chip.active { background: var(--maroon); border-color: var(--maroon); color: white; }
   .f-chip .count {
     display: inline-flex;
     align-items: center;
@@ -207,11 +215,7 @@
      ═══════════════════════════════════════ */
   .guru-list { display: flex; flex-direction: column; gap: 10px; }
   @media (min-width: 1024px) {
-    .guru-list {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
+    .guru-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   }
 
   .guru-card {
@@ -246,10 +250,7 @@
   .guru-card.has-pengamat::before { background: #3B82F6; }
   .guru-card.inactive { opacity: 0.65; }
 
-  .guru-avatar-wrap {
-    position: relative;
-    flex-shrink: 0;
-  }
+  .guru-avatar-wrap { position: relative; flex-shrink: 0; }
   .guru-avatar {
     width: 52px;
     height: 52px;
@@ -266,19 +267,15 @@
     border: 1.5px solid rgba(125,29,58,.08);
   }
   .guru-avatar img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
     object-fit: cover;
     z-index: 1;
   }
   .guru-status-dot {
     position: absolute;
-    bottom: -2px;
-    right: -2px;
-    width: 14px;
-    height: 14px;
+    bottom: -2px; right: -2px;
+    width: 14px; height: 14px;
     border-radius: 50%;
     border: 2.5px solid var(--surface);
     z-index: 2;
@@ -288,11 +285,8 @@
 
   .guru-body { flex: 1; min-width: 0; }
   .guru-name-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 3px;
-    flex-wrap: wrap;
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 3px; flex-wrap: wrap;
   }
   .guru-name {
     font-weight: 800;
@@ -314,10 +308,7 @@
     text-overflow: ellipsis;
   }
   .guru-roles {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
-    margin-top: 6px;
+    display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px;
   }
   .role-pill {
     display: inline-flex;
@@ -336,34 +327,63 @@
   .role-pill.narsum { background: #F3E8FF; color: #7C3AED; }
   .role-pill.pengamat { background: var(--info-soft); color: var(--info); }
   .role-pill.pengurus { background: #DBEAFE; color: #1E40AF; }
-  .role-pill.sa {
-    background: linear-gradient(135deg, var(--gold) 0%, var(--maroon) 100%);
+
+  /* ═══════════════════════════════════════
+     FAB — TAMBAH GURU
+     ═══════════════════════════════════════ */
+  .fab {
+    position: fixed;
+    bottom: calc(80px + env(safe-area-inset-bottom));
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
     color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(125,29,58,.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+    transition: all .2s var(--ease-out);
+  }
+  .fab:hover {
+    transform: scale(1.08);
+    box-shadow: 0 12px 32px rgba(125,29,58,.5);
+  }
+  .fab:active { transform: scale(.95); }
+  @media (min-width: 900px) {
+    .fab { bottom: 28px; right: 28px; }
+  }
+  .fab .icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .fab .icon-wrap svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2.5;
   }
 
   /* ═══════════════════════════════════════
      EMPTY STATE
      ═══════════════════════════════════════ */
-  .empty-panel {
-    text-align: center;
-    padding: 50px 20px;
-  }
+  .empty-panel { text-align: center; padding: 50px 20px; }
   .empty-panel .big-icon {
     width: 84px; height: 84px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
     color: var(--maroon);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     margin: 0 auto 16px;
   }
   .empty-panel .big-icon svg { width: 36px; height: 36px; }
   .empty-panel h3 {
-    font-size: 15px;
-    font-weight: 800;
-    color: var(--ink);
-    margin-bottom: 6px;
+    font-size: 15px; font-weight: 800;
+    color: var(--ink); margin-bottom: 6px;
   }
   .empty-panel p {
     font-size: 12.5px;
@@ -393,14 +413,11 @@
      MODAL
      ═══════════════════════════════════════ */
   .modal-backdrop {
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background: rgba(28,20,20,.55);
     backdrop-filter: blur(3px);
     z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     padding: 16px;
     animation: fade-in .2s both;
   }
@@ -422,9 +439,7 @@
   .modal-header {
     padding: 18px 22px 14px;
     border-bottom: 1.5px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: flex; align-items: center; justify-content: space-between;
     gap: 10px;
     flex-shrink: 0;
   }
@@ -432,9 +447,7 @@
     font-size: 16px;
     font-weight: 800;
     color: var(--maroon);
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: flex; align-items: center; gap: 8px;
   }
   .modal-body {
     padding: 20px 22px;
@@ -453,27 +466,21 @@
   .modal-footer .btn { flex: 1; }
 
   /* ═══════════════════════════════════════
-     DETAIL MODAL — Hero
+     DETAIL MODAL
      ═══════════════════════════════════════ */
   .detail-hero {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+    display: flex; align-items: center; gap: 16px;
     padding-bottom: 18px;
     margin-bottom: 18px;
     border-bottom: 1.5px dashed var(--border);
   }
   .detail-avatar {
-    width: 72px;
-    height: 72px;
+    width: 72px; height: 72px;
     border-radius: 20px;
     background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
     color: var(--maroon);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 28px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 28px;
     overflow: hidden;
     position: relative;
     border: 2px solid var(--gold);
@@ -481,19 +488,15 @@
     box-shadow: 0 8px 20px rgba(125,29,58,.15);
   }
   .detail-avatar img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
     object-fit: cover;
     z-index: 1;
   }
   .detail-info { flex: 1; min-width: 0; }
   .detail-name {
-    font-size: 17px;
-    font-weight: 800;
-    color: var(--ink);
-    margin-bottom: 3px;
+    font-size: 17px; font-weight: 800;
+    color: var(--ink); margin-bottom: 3px;
     line-height: 1.3;
   }
   .detail-jabatan {
@@ -508,7 +511,6 @@
     font-weight: 600;
   }
 
-  /* Detail info grid */
   .info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -521,16 +523,14 @@
     padding: 10px 12px;
   }
   .info-item .lbl {
-    font-size: 9.5px;
-    font-weight: 800;
+    font-size: 9.5px; font-weight: 800;
     color: var(--muted);
     letter-spacing: 0.5px;
     text-transform: uppercase;
     margin-bottom: 4px;
   }
   .info-item .val {
-    font-size: 12.5px;
-    font-weight: 700;
+    font-size: 12.5px; font-weight: 700;
     color: var(--ink);
     line-height: 1.4;
     word-break: break-word;
@@ -538,32 +538,23 @@
   .info-item .val.status-aktif { color: var(--success); }
   .info-item .val.status-nonaktif { color: var(--danger); }
 
-  /* Detail section */
   .detail-section {
     padding-top: 16px;
     margin-top: 16px;
     border-top: 1px dashed var(--border);
   }
   .detail-section-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 10px;
   }
   .detail-section-title {
-    font-size: 10.5px;
-    font-weight: 800;
+    font-size: 10.5px; font-weight: 800;
     color: var(--muted);
     letter-spacing: 0.6px;
     text-transform: uppercase;
   }
 
-  /* Role badges */
-  .role-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
+  .role-list { display: flex; flex-wrap: wrap; gap: 6px; }
   .role-badge {
     display: inline-flex;
     align-items: center;
@@ -586,12 +577,9 @@
     box-shadow: 0 4px 12px rgba(201,169,97,.3);
   }
 
-  /* KS assignment */
   .ks-assignment-list { display: flex; flex-direction: column; gap: 6px; }
   .ks-assignment {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: flex; align-items: center; gap: 8px;
     padding: 8px 12px;
     background: var(--bg);
     border-radius: 10px;
@@ -599,14 +587,11 @@
     font-weight: 600;
   }
 
-  /* Timeline riwayat */
   .timeline { position: relative; padding-left: 20px; }
   .timeline::before {
     content: '';
     position: absolute;
-    left: 6px;
-    top: 4px;
-    bottom: 4px;
+    left: 6px; top: 4px; bottom: 4px;
     width: 2px;
     background: var(--border);
   }
@@ -618,10 +603,8 @@
   .tl-item::before {
     content: '';
     position: absolute;
-    left: -18px;
-    top: 12px;
-    width: 10px;
-    height: 10px;
+    left: -18px; top: 12px;
+    width: 10px; height: 10px;
     border-radius: 50%;
     background: var(--surface);
     border: 2px solid var(--maroon);
@@ -639,7 +622,6 @@
     font-weight: 600;
   }
 
-  /* Detail actions */
   .detail-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -648,22 +630,17 @@
     margin-top: 16px;
     border-top: 1.5px solid var(--border);
   }
-  .detail-actions .btn-full-row {
-    grid-column: 1 / -1;
-  }
+  .detail-actions .btn-full-row { grid-column: 1 / -1; }
 
   /* ═══════════════════════════════════════
-     RESET PIN RESULT
+     PIN RESULT
      ═══════════════════════════════════════ */
   .pin-result-icon {
-    width: 72px;
-    height: 72px;
+    width: 72px; height: 72px;
     border-radius: 50%;
     background: var(--success-soft);
     color: var(--success);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     margin: 0 auto 16px;
     animation: bounce-in .5s var(--ease-spring) both;
   }
@@ -680,10 +657,12 @@
     text-align: center;
     margin-bottom: 16px;
     position: relative;
+    cursor: pointer;
+    transition: all .15s;
   }
+  .pin-display:hover { border-color: var(--maroon); background: linear-gradient(135deg, var(--maroon-faint) 0%, var(--maroon-soft) 100%); }
   .pin-display .lbl {
-    font-size: 10px;
-    font-weight: 800;
+    font-size: 10px; font-weight: 800;
     color: var(--muted);
     letter-spacing: 1.5px;
     text-transform: uppercase;
@@ -705,7 +684,7 @@
   }
 
   /* ═══════════════════════════════════════
-     KELOLA PERAN
+     PERAN & ALERT
      ═══════════════════════════════════════ */
   .peran-item {
     display: flex;
@@ -730,23 +709,17 @@
     color: var(--ink);
   }
   .peran-item .revoke-btn {
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     border-radius: 8px;
     background: transparent;
     border: none;
     color: var(--danger);
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     transition: all .15s;
   }
   .peran-item .revoke-btn:hover { background: var(--danger-soft); }
 
-  /* ═══════════════════════════════════════
-     ALERT
-     ═══════════════════════════════════════ */
   .alert {
     padding: 10px 12px;
     border-radius: 10px;
@@ -758,6 +731,77 @@
   .alert-warning { background: var(--warning-soft); color: var(--warning); border: 1px solid rgba(180,83,9,.15); }
   .alert-info { background: var(--info-soft); color: var(--info); border: 1px solid rgba(30,64,175,.15); }
   .alert.hidden { display: none; }
+
+  /* ═══════════════════════════════════════
+     FORM FIELDS (tambah guru)
+     ═══════════════════════════════════════ */
+  .form-section {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .form-section:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+  .form-section-title {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .form-row.full { grid-template-columns: 1fr; }
+  .form-row .field { margin: 0; }
+
+  .pin-row {
+    display: flex;
+    gap: 6px;
+  }
+  .pin-row input { flex: 1; }
+  .pin-row .btn-random {
+    padding: 0 14px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    color: var(--maroon);
+    font-size: 16px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .pin-row .btn-random:hover { border-color: var(--maroon); background: var(--maroon-soft); }
+
+  .role-checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .role-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .role-checkbox:hover { border-color: var(--maroon-light); background: var(--surface); }
+  .role-checkbox.checked {
+    background: var(--maroon-faint);
+    border-color: var(--maroon-soft);
+  }
+  .role-checkbox input { width: 18px; height: 18px; accent-color: var(--maroon); flex-shrink: 0; }
+  .role-checkbox .label-wrap { flex: 1; min-width: 0; }
+  .role-checkbox .label-name { font-weight: 700; font-size: 13px; color: var(--ink); }
+  .role-checkbox .label-desc { font-size: 10.5px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+  .role-checkbox input:disabled + .label-wrap .label-name { color: var(--muted); }
 </style>
 </head>
 <body class="admin-body">
@@ -780,12 +824,9 @@
 
 <div class="admin-layout">
 
-  <!-- SIDEBAR DESKTOP -->
   <aside class="admin-sidebar">
     <div class="admin-sidebar-brand">
-      <div class="admin-sidebar-logo">
-        <img src="../assets/img/logo-mark.svg" alt="Nakula" />
-      </div>
+      <div class="admin-sidebar-logo"><img src="../assets/img/logo-mark.svg" alt="Nakula" /></div>
       <div>
         <div class="admin-sidebar-name">NAKULAKU</div>
         <div class="admin-sidebar-sub">Admin Panel</div>
@@ -874,7 +915,6 @@
     </nav>
   </aside>
 
-  <!-- MAIN -->
   <main class="admin-main">
     <div class="admin-topbar">
       <h1 class="admin-topbar-title">Data Guru</h1>
@@ -888,7 +928,6 @@
 
     <div class="admin-content">
 
-      <!-- Statistik -->
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon"><span data-icon="users" class="icon-sm"></span></div>
@@ -912,7 +951,6 @@
         </div>
       </div>
 
-      <!-- Filter -->
       <div class="filter-area">
         <div class="search-wrap" id="searchWrap">
           <span class="icon-left" data-icon="search"></span>
@@ -945,10 +983,8 @@
         </div>
       </div>
 
-      <!-- Info bar -->
       <div class="info-bar" id="infoHasil">Memuat…</div>
 
-      <!-- List -->
       <div id="listGuru" class="guru-list">
         <div class="skeleton" style="height:80px;border-radius:16px;"></div>
         <div class="skeleton" style="height:80px;border-radius:16px;"></div>
@@ -960,7 +996,11 @@
   </main>
 </div>
 
-<!-- BOTTOM NAV MOBILE -->
+<!-- FAB TAMBAH GURU -->
+<button class="fab" id="btnTambahGuru" aria-label="Tambah Guru">
+  <span class="icon-wrap" id="fabIcon"></span>
+</button>
+
 <nav class="admin-bottom-nav">
   <a class="admin-nav-item" data-nav="dashboard" href="index.html">
     <span data-icon="layoutDashboard"></span> Dashboard
@@ -990,9 +1030,15 @@
 document.querySelectorAll('[data-icon]').forEach(el => {
   const cls = el.dataset.iconClass || '';
   el.innerHTML = Icons.get(el.dataset.icon, { class: cls });
-  el.style.display = 'contents';
+  // ✅ SKIP display:contents untuk .icon-left agar absolute positioning works
+  if (!el.classList.contains('icon-left')) {
+    el.style.display = 'contents';
+  }
 });
 UI.bindLogout();
+
+// FAB icon
+document.getElementById('fabIcon').innerHTML = Icons.get('plus', { class: '' });
 
 // Bottom sheet "Lainnya"
 document.getElementById('btnLainnya')?.addEventListener('click', () => {
@@ -1060,10 +1106,11 @@ window.addEventListener('load', () => {
 // ═══════════════════════════════════════════════
 let profile;
 let debounceTimer;
-let allRawList = [];      // semua data dari backend (termasuk SA)
-let filteredList = [];    // setelah filter SA
+let allRawList = [];
+let filteredList = [];
 let searchQuery = '';
 let roleFilter = '';
+let cachedSekolahList = null;
 
 const ROLE_LABELS = {
   super_admin: 'Super Admin',
@@ -1087,6 +1134,9 @@ const ROLE_LABELS = {
   }
 
   await loadGuru();
+
+  // FAB Tambah Guru
+  document.getElementById('btnTambahGuru').addEventListener('click', () => formTambahGuru());
 })();
 
 // ═══════════════════════════════════════════════
@@ -1096,16 +1146,13 @@ function hasRole(user, role) {
   const peranList = Array.isArray(user.peran) ? user.peran : [];
   return peranList.some(p => p.peran === role && p.aktif !== false);
 }
-
 function getActiveRoles(user) {
   const peranList = Array.isArray(user.peran) ? user.peran : [];
   return peranList.filter(p => p.aktif !== false).map(p => p.peran);
 }
-
 function isSuperAdmin(user) {
   return hasRole(user, 'super_admin');
 }
-
 function isCurrentUserSA() {
   return profile && (profile.peran || []).includes('super_admin');
 }
@@ -1131,8 +1178,6 @@ async function loadGuru() {
   }
 
   allRawList = res.data.hasil || [];
-
-  // ✅ EXCLUDE super_admin dari list — SA tidak dikelola di sini
   filteredList = allRawList.filter(g => !isSuperAdmin(g));
 
   updateStats();
@@ -1143,41 +1188,29 @@ async function loadGuru() {
 function updateStats() {
   document.getElementById('statTotal').textContent = filteredList.length;
 
-  // Unique sekolah
   const sekolahSet = new Set();
   filteredList.forEach(g => { if (g.sekolah?.id) sekolahSet.add(g.sekolah.id); });
   document.getElementById('statSekolah').textContent = sekolahSet.size;
 
-  // KS count
-  const jmlKS = filteredList.filter(g => hasRole(g, 'ks')).length;
-  document.getElementById('statKS').textContent = jmlKS;
-
-  // Narasumber count
-  const jmlNarsum = filteredList.filter(g => hasRole(g, 'narasumber')).length;
-  document.getElementById('statNarsum').textContent = jmlNarsum;
+  document.getElementById('statKS').textContent = filteredList.filter(g => hasRole(g, 'ks')).length;
+  document.getElementById('statNarsum').textContent = filteredList.filter(g => hasRole(g, 'narasumber')).length;
 }
 
 function updateFilterCounts() {
   const counts = {
     '': filteredList.length,
-    guru: filteredList.filter(g => getActiveRoles(g).length <= 1 || getActiveRoles(g).every(r => r === 'peserta')).length,
+    guru: filteredList.filter(g => { const r = getActiveRoles(g); return r.length <= 1 || r.every(x => x === 'peserta'); }).length,
     ks: filteredList.filter(g => hasRole(g, 'ks')).length,
     narsum: filteredList.filter(g => hasRole(g, 'narasumber')).length,
     pengamat: filteredList.filter(g => hasRole(g, 'pengamat')).length,
   };
-
   document.querySelectorAll('.f-chip [data-count]').forEach(el => {
     el.textContent = counts[el.dataset.count] || 0;
   });
 }
 
-// ═══════════════════════════════════════════════
-// FILTER & RENDER
-// ═══════════════════════════════════════════════
 function applyFilter() {
   let list = [...filteredList];
-
-  // Search
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     list = list.filter(g =>
@@ -1186,13 +1219,8 @@ function applyFilter() {
       (g.nip || '').toLowerCase().includes(q)
     );
   }
-
-  // Role filter
   if (roleFilter === 'guru') {
-    list = list.filter(g => {
-      const active = getActiveRoles(g);
-      return active.length <= 1 || active.every(r => r === 'peserta');
-    });
+    list = list.filter(g => { const r = getActiveRoles(g); return r.length <= 1 || r.every(x => x === 'peserta'); });
   } else if (roleFilter === 'ks') {
     list = list.filter(g => hasRole(g, 'ks'));
   } else if (roleFilter === 'narsum') {
@@ -1200,7 +1228,6 @@ function applyFilter() {
   } else if (roleFilter === 'pengamat') {
     list = list.filter(g => hasRole(g, 'pengamat'));
   }
-
   return list;
 }
 
@@ -1209,9 +1236,7 @@ function renderList() {
   const list = applyFilter();
 
   document.getElementById('infoHasil').textContent =
-    list.length === 0
-      ? 'Tidak ada guru ditemukan'
-      : `Menampilkan ${list.length} dari ${filteredList.length} guru`;
+    list.length === 0 ? 'Tidak ada guru ditemukan' : `Menampilkan ${list.length} dari ${filteredList.length} guru`;
 
   if (list.length === 0) {
     el.innerHTML = renderEmptyState();
@@ -1220,7 +1245,6 @@ function renderList() {
   }
 
   el.innerHTML = list.map(g => renderGuruCard(g)).join('');
-
   el.querySelectorAll('.guru-card').forEach(card => {
     card.addEventListener('click', () => bukaDetail(Number(card.dataset.id)));
   });
@@ -1232,9 +1256,7 @@ function renderEmptyState() {
     <div class="empty-panel">
       <div class="big-icon">${Icons.get('users', { class: 'icon-lg' })}</div>
       <h3>${hasFilter ? 'Tidak Ada Hasil' : 'Belum Ada Guru'}</h3>
-      <p>${hasFilter
-        ? 'Coba ubah kata kunci atau reset filter.'
-        : 'Data guru akan muncul setelah di-import dari Data Sekolah.'}</p>
+      <p>${hasFilter ? 'Coba ubah kata kunci atau reset filter.' : 'Klik tombol + di kanan bawah untuk menambah guru baru.'}</p>
       ${hasFilter ? `<button class="reset-btn" id="btnResetFilter">
         ${Icons.get('rotateCcw', { class: 'icon-sm' })} Reset Filter
       </button>` : ''}
@@ -1247,16 +1269,14 @@ function renderGuruCard(g) {
   const fotoUrl = g.foto_thumb_url || Api.fotoUrl(g.id, 't');
   const activeRoles = getActiveRoles(g);
 
-  // Card border color based on primary role
   let cardCls = '';
   if (hasRole(g, 'ks')) cardCls = 'has-ks';
   else if (hasRole(g, 'narasumber')) cardCls = 'has-narsum';
   else if (hasRole(g, 'pengamat')) cardCls = 'has-pengamat';
   if (!g.aktif) cardCls += ' inactive';
 
-  // Role pills
   const rolePills = activeRoles
-    .filter(r => r !== 'super_admin') // safety — SA sudah difilter di atas
+    .filter(r => r !== 'super_admin')
     .map(r => {
       const label = r === 'peserta' ? 'Guru' : r === 'ks' ? 'KS' : r === 'narasumber' ? 'Narsum' : r === 'pengamat' ? 'Pengamat' : r === 'pengurus' ? 'Pengurus' : r;
       const cls = r === 'peserta' ? 'guru' : r === 'ks' ? 'ks' : r === 'narasumber' ? 'narsum' : r === 'pengamat' ? 'pengamat' : r === 'pengurus' ? 'pengurus' : 'guru';
@@ -1300,7 +1320,6 @@ function resetFilter() {
 document.getElementById('inputCari').addEventListener('input', (e) => {
   const wrap = document.getElementById('searchWrap');
   wrap.classList.toggle('has-value', !!e.target.value.trim());
-
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(() => {
     searchQuery = e.target.value.trim();
@@ -1325,14 +1344,277 @@ document.querySelectorAll('.f-chip').forEach(c => {
 });
 
 // ═══════════════════════════════════════════════
+// FORM TAMBAH GURU
+// ═══════════════════════════════════════════════
+async function formTambahGuru() {
+  // Load sekolah list
+  if (!cachedSekolahList) {
+    const resS = await Api.call('sekolah.list');
+    if (!resS.ok) { UI.gagal(resS.error); return; }
+    cachedSekolahList = resS.data || [];
+  }
+
+  const sekolahOptions = cachedSekolahList.map(s =>
+    `<option value="${s.id}">${UI.escapeHtml(s.nama)}${s.npsn ? ' · ' + s.npsn : ''}</option>`
+  ).join('');
+
+  // Pre-select sekolah kalau user adalah KS
+  const defaultSekolahId = profile.peran.includes('ks') && profile.ks_sekolah?.[0]?.sekolah_id
+    ? profile.ks_sekolah[0].sekolah_id
+    : (profile.sekolah?.id || '');
+
+  // Pre-generate PIN 5 digit
+  const defaultPin = String(Math.floor(10000 + Math.random() * 90000));
+
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-backdrop';
+  overlay.innerHTML = `
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">${Icons.get('user', { class: 'icon-sm' })} Tambah Guru Baru</div>
+        <button class="btn-icon" data-close>${Icons.get('x')}</button>
+      </div>
+      <div class="modal-body">
+
+        <!-- SECTION: Data Utama -->
+        <div class="form-section">
+          <div class="form-section-title">Data Utama</div>
+
+          <div class="form-row full">
+            <div class="field">
+              <label class="label">Nama Lengkap *</label>
+              <input type="text" id="tNama" class="input" placeholder="Mis: Budi Santoso, S.Pd." />
+            </div>
+          </div>
+
+          <div class="form-row full">
+            <div class="field">
+              <label class="label">Email *</label>
+              <input type="email" id="tEmail" class="input" placeholder="guru@sekolah.sch.id" />
+              <div style="font-size:10.5px;color:var(--muted);margin-top:4px;font-weight:600;">Akan jadi username login</div>
+            </div>
+          </div>
+
+          <div class="form-row full">
+            <div class="field">
+              <label class="label">Sekolah *</label>
+              <select id="tSekolah" class="input">
+                <option value="">— Pilih Sekolah —</option>
+                ${sekolahOptions}
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label class="label">Jabatan</label>
+              <input type="text" id="tJabatan" class="input" placeholder="Mis: Guru Kelas" />
+            </div>
+            <div class="field">
+              <label class="label">NIP</label>
+              <input type="text" id="tNip" class="input" placeholder="Opsional" />
+            </div>
+          </div>
+
+          <div class="form-row full">
+            <div class="field">
+              <label class="label">Jenis GTK</label>
+              <input type="text" id="tJenisGtk" class="input" placeholder="Mis: Guru Kelas SD, Guru Mapel" />
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION: Akses -->
+        <div class="form-section">
+          <div class="form-section-title">Akses & Login</div>
+
+          <div class="form-row full">
+            <div class="field">
+              <label class="label">PIN *</label>
+              <div class="pin-row">
+                <input type="text" id="tPin" class="input" inputmode="numeric" maxlength="6" value="${defaultPin}" />
+                <button type="button" class="btn-random" id="btnPinRandom" title="Acak PIN">🎲</button>
+              </div>
+              <div style="font-size:10.5px;color:var(--muted);margin-top:4px;font-weight:600;">5–6 digit angka. Klik 🎲 untuk acak.</div>
+            </div>
+          </div>
+
+          <div class="form-row full">
+            <div class="field">
+              <label class="label">Status Akun</label>
+              <select id="tStatus" class="input">
+                <option value="1" selected>Aktif — bisa login</option>
+                <option value="0">Nonaktif — tidak bisa login</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION: Role Awal -->
+        <div class="form-section">
+          <div class="form-section-title">Role Awal</div>
+          <div class="role-checkbox-group">
+            <label class="role-checkbox checked" style="opacity:0.7;cursor:not-allowed;">
+              <input type="checkbox" checked disabled />
+              <div class="label-wrap">
+                <div class="label-name">Guru (Peserta) ✓</div>
+                <div class="label-desc">Wajib — semua guru otomatis jadi peserta</div>
+              </div>
+            </label>
+            <label class="role-checkbox" data-role="ks">
+              <input type="checkbox" value="ks" />
+              <div class="label-wrap">
+                <div class="label-name">Kepala Sekolah</div>
+                <div class="label-desc">Bisa verifikasi izin, override presensi, kelola pelapor</div>
+              </div>
+            </label>
+            <label class="role-checkbox" data-role="narasumber">
+              <input type="checkbox" value="narasumber" />
+              <div class="label-wrap">
+                <div class="label-name">Narasumber</div>
+                <div class="label-desc">Bisa koreksi tugas di pertemuan yang diajar</div>
+              </div>
+            </label>
+            <label class="role-checkbox" data-role="pengamat">
+              <input type="checkbox" value="pengamat" />
+              <div class="label-wrap">
+                <div class="label-name">Pengamat</div>
+                <div class="label-desc">Bisa tally guru & rating sekolah di pertemuan</div>
+              </div>
+            </label>
+            ${isCurrentUserSA() || profile.peran.includes('pengurus') ? `
+              <label class="role-checkbox" data-role="pengurus">
+                <input type="checkbox" value="pengurus" />
+                <div class="label-wrap">
+                  <div class="label-name">Pengurus</div>
+                  <div class="label-desc">Akses admin panel lengkap</div>
+                </div>
+              </label>
+            ` : ''}
+          </div>
+          <div style="font-size:10.5px;color:var(--muted);margin-top:10px;font-weight:600;">
+            ℹ️ Super Admin <strong>tidak bisa</strong> dibuat dari sini — gunakan Kelola Peran setelah guru dibuat.
+          </div>
+        </div>
+
+        <div id="tAlert" class="alert alert-error hidden"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close>Batal</button>
+        <button class="btn btn-primary" id="btnSimpanGuru" style="flex:2;">Simpan & Buat Akun</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+  // Pre-select sekolah
+  if (defaultSekolahId) {
+    overlay.querySelector('#tSekolah').value = String(defaultSekolahId);
+  }
+
+  // PIN random
+  overlay.querySelector('#btnPinRandom').addEventListener('click', () => {
+    overlay.querySelector('#tPin').value = String(Math.floor(10000 + Math.random() * 90000));
+  });
+
+  // Role checkbox toggle
+  overlay.querySelectorAll('.role-checkbox').forEach(label => {
+    const cb = label.querySelector('input[type=checkbox]');
+    if (!cb || cb.disabled) return;
+    label.addEventListener('click', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      cb.checked = !cb.checked;
+      label.classList.toggle('checked', cb.checked);
+    });
+    cb.addEventListener('change', () => {
+      label.classList.toggle('checked', cb.checked);
+    });
+  });
+
+  // Submit
+  const alertBox = overlay.querySelector('#tAlert');
+  overlay.querySelector('#btnSimpanGuru').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#btnSimpanGuru');
+    alertBox.classList.add('hidden');
+
+    const nama = overlay.querySelector('#tNama').value.trim();
+    const email = overlay.querySelector('#tEmail').value.trim().toLowerCase();
+    const sekolahId = overlay.querySelector('#tSekolah').value;
+    const jabatan = overlay.querySelector('#tJabatan').value.trim();
+    const nip = overlay.querySelector('#tNip').value.trim();
+    const jenisGtk = overlay.querySelector('#tJenisGtk').value.trim();
+    const pin = overlay.querySelector('#tPin').value.trim();
+    const aktif = overlay.querySelector('#tStatus').value === '1';
+
+    // Validasi
+    if (!nama) { alertBox.textContent = 'Nama wajib diisi.'; alertBox.classList.remove('hidden'); return; }
+    if (!email) { alertBox.textContent = 'Email wajib diisi.'; alertBox.classList.remove('hidden'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alertBox.textContent = 'Format email tidak valid.'; alertBox.classList.remove('hidden'); return; }
+    if (!sekolahId) { alertBox.textContent = 'Sekolah wajib dipilih.'; alertBox.classList.remove('hidden'); return; }
+    if (!pin || !/^\d{5,6}$/.test(pin)) { alertBox.textContent = 'PIN harus 5–6 digit angka.'; alertBox.classList.remove('hidden'); return; }
+
+    // Kumpulkan role
+    const peran = ['peserta'];
+    overlay.querySelectorAll('.role-checkbox input[type=checkbox]').forEach(cb => {
+      if (cb.disabled) return;
+      if (cb.checked && cb.value) peran.push(cb.value);
+    });
+
+    const konfirmasi = await UI.konfirmasi(
+      'Buat Akun Guru',
+      `Buat akun baru:\n\nNama: ${nama}\nEmail: ${email}\nPIN: ${pin}\nRole: ${peran.map(r => ROLE_LABELS[r]).join(', ')}\n\nLanjutkan?`,
+      { okText: 'Ya, Buat' }
+    );
+    if (!konfirmasi) return;
+
+    UI.btnLoading(btn, 'Membuat akun…');
+
+    const payload = {
+      nama_lengkap: nama,
+      email,
+      sekolah_id: Number(sekolahId),
+      jabatan: jabatan || null,
+      nip: nip || null,
+      jenis_gtk: jenisGtk || null,
+      pin,
+      aktif,
+      peran,
+    };
+
+    const res = await Api.call('admin.users.create', payload);
+    UI.btnReset(btn);
+
+    if (!res.ok) {
+      alertBox.textContent = res.error || 'Gagal membuat akun.';
+      alertBox.classList.remove('hidden');
+      return;
+    }
+
+    close();
+
+    // Reload list
+    await loadGuru();
+
+    // Show PIN result
+    showPinResult({
+      nama: res.data.nama || nama,
+      email: res.data.email || email,
+      pin_baru: res.data.pin_baru || pin,
+      peran: res.data.peran || peran,
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════
 // DETAIL GURU
 // ═══════════════════════════════════════════════
 async function bukaDetail(id) {
   const res = await Api.call('users.detail', { user_id: id });
-  if (!res.ok) {
-    UI.gagal(res.error || 'Gagal memuat detail.');
-    return;
-  }
+  if (!res.ok) { UI.gagal(res.error || 'Gagal memuat detail.'); return; }
   showDetailModal(res.data);
 }
 
@@ -1341,7 +1623,6 @@ function showDetailModal(data) {
   const init = (u.nama_lengkap || 'G').charAt(0).toUpperCase();
   const fotoUrl = u.foto_thumb_url || Api.fotoUrl(u.id, 't');
 
-  // Role list
   const activeRoles = (data.peran || []).filter(p => p.aktif !== false);
   const roleBadges = activeRoles.length > 0
     ? activeRoles.map(p => {
@@ -1357,7 +1638,6 @@ function showDetailModal(data) {
       }).join('')
     : '<span style="font-size:12px;color:var(--muted);">Belum ada role aktif</span>';
 
-  // KS assignment
   const ksInfo = (data.ks_sekolah || []).map(k => `
     <div class="ks-assignment">
       <span class="role-badge ${k.jenis === 'induk' ? 'ks' : 'pengamat'}" style="font-size:9px;">
@@ -1378,9 +1658,7 @@ function showDetailModal(data) {
         <div class="modal-title">Detail Guru</div>
         <button class="btn-icon" data-close>${Icons.get('x')}</button>
       </div>
-
       <div class="modal-body">
-        <!-- Hero -->
         <div class="detail-hero">
           <div class="detail-avatar">
             <span style="position:relative;z-index:0;">${init}</span>
@@ -1393,7 +1671,6 @@ function showDetailModal(data) {
           </div>
         </div>
 
-        <!-- Info grid -->
         <div class="info-grid">
           <div class="info-item">
             <div class="lbl">Email</div>
@@ -1415,7 +1692,6 @@ function showDetailModal(data) {
           </div>
         </div>
 
-        <!-- Roles -->
         <div class="detail-section">
           <div class="detail-section-head">
             <div class="detail-section-title">Role & Akses</div>
@@ -1433,7 +1709,6 @@ function showDetailModal(data) {
           </div>
         ` : ''}
 
-        <!-- Riwayat -->
         <div class="detail-section">
           <div class="detail-section-head">
             <div class="detail-section-title">Riwayat Sekolah</div>
@@ -1446,7 +1721,6 @@ function showDetailModal(data) {
           </div>
         </div>
 
-        <!-- Actions -->
         <div class="detail-actions">
           <button class="btn btn-secondary btn-sm" id="btnResetPin">
             ${Icons.get('lock', { class: 'icon-sm' })} Reset PIN
@@ -1469,7 +1743,6 @@ function showDetailModal(data) {
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
   overlay.querySelector('[data-close]').addEventListener('click', close);
 
-  // Handlers
   overlay.querySelector('#btnResetPin').addEventListener('click', () => {
     close();
     formResetPin(data.user);
@@ -1494,7 +1767,6 @@ function showDetailModal(data) {
     });
   }
 
-  // Load riwayat
   loadRiwayatSekolah(data.user.id, overlay.querySelector('#riwayatSekolah'));
 }
 
@@ -1515,7 +1787,7 @@ async function loadRiwayatSekolah(userId, el) {
     induk: 'Induk', plt: 'PLT', pindah_masuk: 'Pindah Masuk', pindah_keluar: 'Pindah Keluar',
   };
 
-  el.innerHTML = list.map((r, idx) => {
+  el.innerHTML = list.map(r => {
     const dari = UI.formatTanggalPendek(r.dari_tanggal);
     const sampai = r.sampai_tanggal ? UI.formatTanggalPendek(r.sampai_tanggal) : 'Sekarang';
     const isCurrent = !r.sampai_tanggal;
@@ -1550,7 +1822,7 @@ function formResetPin(user) {
           <label class="label">PIN Baru (opsional)</label>
           <input type="text" id="pinBaru" class="input" inputmode="numeric" maxlength="6" placeholder="Kosongkan untuk auto-generate" />
           <div style="font-size:11px;color:var(--muted);margin-top:6px;font-weight:600;">
-            PIN 5–6 digit. Kalau kosong, sistem buat otomatis dan tampilkan di hasil.
+            PIN 5–6 digit. Kalau kosong, sistem buat otomatis.
           </div>
         </div>
 
@@ -1579,32 +1851,20 @@ function formResetPin(user) {
     alertBox.classList.add('hidden');
 
     const pinBaru = overlay.querySelector('#pinBaru').value.trim();
-
     if (pinBaru && !/^\d{5,6}$/.test(pinBaru)) {
       alertBox.textContent = 'PIN harus 5–6 digit angka.';
       alertBox.classList.remove('hidden');
       return;
     }
 
-    const ok = await UI.konfirmasi(
-      'Reset PIN',
-      `Reset PIN ${user.nama_lengkap}? Guru ini akan logout otomatis.`,
-      { okText: 'Reset', danger: true }
-    );
+    const ok = await UI.konfirmasi('Reset PIN', `Reset PIN ${user.nama_lengkap}? Guru akan logout otomatis.`, { okText: 'Reset', danger: true });
     if (!ok) return;
 
     UI.btnLoading(btn, 'Memproses…');
-    const res = await Api.call('admin.reset_pin', {
-      user_id: user.id,
-      pin_baru: pinBaru || undefined,
-    });
+    const res = await Api.call('admin.reset_pin', { user_id: user.id, pin_baru: pinBaru || undefined });
     UI.btnReset(btn);
 
-    if (!res.ok) {
-      alertBox.textContent = res.error;
-      alertBox.classList.remove('hidden');
-      return;
-    }
+    if (!res.ok) { alertBox.textContent = res.error; alertBox.classList.remove('hidden'); return; }
 
     close();
     showPinResult(res.data);
@@ -1613,35 +1873,42 @@ function formResetPin(user) {
 
 function showPinResult(data) {
   const waText = encodeURIComponent(
-    `Halo ${data.nama},\n\nPIN NAKULAKU Anda telah direset.\n\nEmail: ${data.email}\nPIN baru: *${data.pin_baru}*\n\nSilakan login di:\nhttps://gugusnakula.github.io/nakulaku/login.html`
+    `Halo ${data.nama},\n\nPIN NAKULAKU Anda telah ${data.peran ? 'dibuat' : 'direset'}.\n\nEmail: ${data.email}\nPIN: *${data.pin_baru}*\n${data.peran ? '\nRole: ' + (data.peran.map(p => ROLE_LABELS[p] || p).join(', ')) + '\n' : ''}\nSilakan login di:\nhttps://gugusnakula.github.io/nakulaku/login.html`
   );
   const waLink = 'https://wa.me/?text=' + waText;
+  const isNewUser = !!data.peran;
+
+  const rolesHtml = data.peran && data.peran.length > 0
+    ? `<div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5;">
+         Role: ${data.peran.map(p => ROLE_LABELS[p] || p).join(', ')}
+       </div>`
+    : '';
 
   const overlay = document.createElement('div');
   overlay.className = 'modal-backdrop';
   overlay.innerHTML = `
     <div class="modal" style="max-width:440px;text-align:center;">
       <div class="modal-body">
-        <div class="pin-result-icon">
-          ${Icons.get('checkCircle', { class: 'icon-xl' })}
-        </div>
-        <h3 style="font-size:17px;color:var(--maroon);margin-bottom:6px;font-weight:800;">PIN Berhasil Direset</h3>
+        <div class="pin-result-icon">${Icons.get('checkCircle', { class: 'icon-xl' })}</div>
+        <h3 style="font-size:17px;color:var(--maroon);margin-bottom:6px;font-weight:800;">
+          ${isNewUser ? 'Akun Berhasil Dibuat' : 'PIN Berhasil Direset'}
+        </h3>
         <p style="font-size:12.5px;color:var(--muted);margin-bottom:18px;font-weight:600;">
-          Sampaikan PIN baru ini ke guru:
+          Sampaikan PIN ini ke guru:
         </p>
 
-        <div class="pin-display">
-          <div class="lbl">PIN BARU</div>
+        <div class="pin-display" id="pinDisplayBox">
+          <div class="lbl">PIN</div>
           <div class="pin-val" id="pinDisplay">${UI.escapeHtml(data.pin_baru)}</div>
-          <div class="copy-hint">Klik PIN untuk menyalin</div>
+          <div class="copy-hint">Klik untuk menyalin</div>
         </div>
 
         <div style="font-size:11.5px;color:var(--muted);margin-bottom:16px;line-height:1.5;">
           Nama: <strong style="color:var(--ink);">${UI.escapeHtml(data.nama)}</strong><br />
           Email: ${UI.escapeHtml(data.email || '-')}
+          ${rolesHtml}
         </div>
       </div>
-
       <div class="modal-footer">
         <button class="btn btn-secondary" id="btnTutup">Tutup</button>
         <a href="${waLink}" target="_blank" rel="noopener" class="btn btn-primary" style="text-decoration:none;">
@@ -1652,14 +1919,11 @@ function showPinResult(data) {
   `;
   document.body.appendChild(overlay);
 
-  // Copy PIN on click
-  document.getElementById('pinDisplay').addEventListener('click', async () => {
+  document.getElementById('pinDisplayBox').addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(data.pin_baru);
       UI.sukses('PIN disalin ke clipboard.');
-    } catch {
-      UI.gagal('Gagal menyalin.');
-    }
+    } catch { UI.gagal('Gagal menyalin.'); }
   });
 
   overlay.querySelector('#btnTutup').addEventListener('click', () => overlay.remove());
@@ -1670,7 +1934,6 @@ function showPinResult(data) {
 // FORM KELOLA PERAN
 // ═══════════════════════════════════════════════
 async function formKelolaPeran(user, initialPeran = null) {
-  // Ambil peran terkini
   const res = await Api.call('admin.peran.list', { user_id: user.id });
   if (!res.ok) { UI.gagal(res.error); return; }
 
@@ -1686,7 +1949,6 @@ async function formKelolaPeran(user, initialPeran = null) {
         <button class="btn-icon" data-close>${Icons.get('x')}</button>
       </div>
       <div class="modal-body">
-
         <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:18px;">
           <div style="font-weight:700;font-size:13.5px;color:var(--ink);">${UI.escapeHtml(user.nama_lengkap)}</div>
           <div style="font-size:12px;color:var(--muted);margin-top:2px;">${UI.escapeHtml(user.email || '')}</div>
@@ -1714,12 +1976,8 @@ async function formKelolaPeran(user, initialPeran = null) {
             </button>
           </div>
           ${isCurrentUserSA()
-            ? `<div style="font-size:11px;color:var(--warning);margin-top:8px;font-weight:700;">
-                ⚠️ Super Admin hanya untuk yang benar-benar dipercaya
-              </div>`
-            : `<div style="font-size:11px;color:var(--muted);margin-top:8px;font-weight:600;">
-                Hanya Super Admin yang bisa menambahkan role Super Admin
-              </div>`}
+            ? `<div style="font-size:11px;color:var(--warning);margin-top:8px;font-weight:700;">⚠️ Super Admin hanya untuk yang benar-benar dipercaya</div>`
+            : `<div style="font-size:11px;color:var(--muted);margin-top:8px;font-weight:600;">Hanya Super Admin yang bisa menambahkan role Super Admin</div>`}
         </div>
 
         <div id="peranAlert" class="alert alert-error hidden" style="margin-top:14px;"></div>
@@ -1739,8 +1997,6 @@ async function formKelolaPeran(user, initialPeran = null) {
     listEl.querySelectorAll('[data-hapus-peran]').forEach(b => {
       b.addEventListener('click', async () => {
         const peran = b.dataset.hapusPeran;
-
-        // ✅ Guardrail SA revoke
         if (peran === 'super_admin') {
           const ok = await UI.konfirmasi(
             '⚠️ Cabut Akses Super Admin?',
@@ -1750,21 +2006,12 @@ async function formKelolaPeran(user, initialPeran = null) {
           if (!ok) return;
         } else {
           const label = ROLE_LABELS[peran] || peran;
-          const ok = await UI.konfirmasi(
-            'Hapus Peran',
-            `Hapus peran "${label}" dari ${user.nama_lengkap}?`,
-            { danger: true, okText: 'Hapus' }
-          );
+          const ok = await UI.konfirmasi('Hapus Peran', `Hapus peran "${label}" dari ${user.nama_lengkap}?`, { danger: true, okText: 'Hapus' });
           if (!ok) return;
         }
-
         alertBox.classList.add('hidden');
         const r = await Api.call('admin.peran.hapus', { user_id: user.id, peran });
-        if (!r.ok) {
-          alertBox.textContent = r.error;
-          alertBox.classList.remove('hidden');
-          return;
-        }
+        if (!r.ok) { alertBox.textContent = r.error; alertBox.classList.remove('hidden'); return; }
         UI.sukses(`Peran ${ROLE_LABELS[peran] || peran} dicabut.`);
         await reload();
         await loadGuru();
@@ -1787,7 +2034,6 @@ async function formKelolaPeran(user, initialPeran = null) {
 
     if (!peran) { alertBox.textContent = 'Pilih peran dulu.'; alertBox.classList.remove('hidden'); return; }
 
-    // ✅ Guardrail SA assign
     if (peran === 'super_admin') {
       const ok = await UI.konfirmasi(
         '⚠️ Beri Akses Super Admin?',
@@ -1801,11 +2047,7 @@ async function formKelolaPeran(user, initialPeran = null) {
     const r = await Api.call('admin.peran.tambah', { user_id: user.id, peran });
     UI.btnReset(btn);
 
-    if (!r.ok) {
-      alertBox.textContent = r.error;
-      alertBox.classList.remove('hidden');
-      return;
-    }
+    if (!r.ok) { alertBox.textContent = r.error; alertBox.classList.remove('hidden'); return; }
     UI.sukses(`Peran ${ROLE_LABELS[peran] || peran} ditambahkan.`);
     overlay.querySelector('#pilihPeran').value = '';
     await reload();
@@ -1817,14 +2059,12 @@ function renderPeranList(peranList) {
   if (!peranList || peranList.length === 0) {
     return '<div style="text-align:center;padding:14px;color:var(--muted);font-size:13px;">Belum punya role khusus.</div>';
   }
-
   return peranList
     .filter(p => p.aktif !== false)
     .map(p => {
       const isSA = p.peran === 'super_admin';
       const canRevoke = p.peran !== 'super_admin' || isCurrentUserSA();
       const label = ROLE_LABELS[p.peran] || p.peran;
-
       return `
         <div class="peran-item ${isSA ? 'sa' : ''}">
           <span class="role-badge ${p.peran === 'peserta' ? 'guru' : p.peran === 'ks' ? 'ks' : p.peran === 'narasumber' ? 'narsum' : p.peran === 'pengamat' ? 'pengamat' : p.peran === 'pengurus' ? 'pengurus' : 'sa'}">
@@ -1860,9 +2100,7 @@ async function formMutasi(user) {
       <div class="modal-body">
         <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:14px;">
           <div style="font-weight:700;font-size:13.5px;color:var(--ink);">${UI.escapeHtml(user.nama_lengkap)}</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:2px;">
-            Sekolah saat ini: ${UI.escapeHtml(user.sekolah?.nama || '-')}
-          </div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">Sekolah saat ini: ${UI.escapeHtml(user.sekolah?.nama || '-')}</div>
         </div>
 
         <div class="alert alert-info">
@@ -1879,7 +2117,6 @@ async function formMutasi(user) {
               <option value="pindah_masuk">Pindah Masuk (dari luar gugus)</option>
             </select>
           </div>
-
           <div class="field">
             <label class="label">Sekolah Baru *</label>
             <select id="mSekolah" class="input">
@@ -1887,15 +2124,10 @@ async function formMutasi(user) {
               ${opsiSekolah}
             </select>
           </div>
-
           <div class="field">
             <label class="label">Tanggal Mulai *</label>
             <input type="date" id="mTanggal" class="input" value="${new Date().toISOString().slice(0, 10)}" />
-            <div style="font-size:11px;color:var(--muted);margin-top:4px;font-weight:600;">
-              Riwayat sekolah lama akan ditutup H-1 dari tanggal ini.
-            </div>
           </div>
-
           <div class="field">
             <label class="label">Catatan (opsional)</label>
             <textarea id="mCatatan" class="input" rows="2" style="resize:vertical;" placeholder="Mis: SK Mutasi No. 123/2026"></textarea>
@@ -1929,11 +2161,7 @@ async function formMutasi(user) {
     if (!sekolahBaru) { alertBox.textContent = 'Pilih sekolah baru.'; alertBox.classList.remove('hidden'); return; }
     if (!tanggal) { alertBox.textContent = 'Tanggal wajib.'; alertBox.classList.remove('hidden'); return; }
 
-    const ok = await UI.konfirmasi(
-      'Konfirmasi Mutasi',
-      `Mutasi ${user.nama_lengkap} ke sekolah baru?\n\nData historis (presensi, tugas) tetap tersimpan.`,
-      { okText: 'Ya, Mutasi' }
-    );
+    const ok = await UI.konfirmasi('Konfirmasi Mutasi', `Mutasi ${user.nama_lengkap} ke sekolah baru?\n\nData historis tetap tersimpan.`, { okText: 'Ya, Mutasi' });
     if (!ok) return;
 
     UI.btnLoading(btn, 'Memproses…');
@@ -1946,12 +2174,7 @@ async function formMutasi(user) {
     });
     UI.btnReset(btn);
 
-    if (!res.ok) {
-      alertBox.textContent = res.error;
-      alertBox.classList.remove('hidden');
-      return;
-    }
-
+    if (!res.ok) { alertBox.textContent = res.error; alertBox.classList.remove('hidden'); return; }
     UI.sukses(res.data.pesan);
     close();
     await loadGuru();
@@ -1975,9 +2198,7 @@ function formHapusGuru(user) {
       <div class="modal-body">
         <div class="alert alert-warning" style="margin-bottom:14px;">
           ${Icons.get('alertTriangle', { class: 'icon-sm' })}
-          <div>
-            <strong>Perhatian:</strong> Kalau sudah punya aktivitas (presensi/tugas/feedback), akun akan <strong>dinonaktifkan</strong> — bukan dihapus permanen.
-          </div>
+          <div>Kalau sudah punya aktivitas (presensi/tugas/feedback), akun akan <strong>dinonaktifkan</strong> — bukan dihapus permanen.</div>
         </div>
 
         <div style="padding:12px;background:var(--bg);border-radius:12px;margin-bottom:14px;">
@@ -2024,12 +2245,7 @@ function formHapusGuru(user) {
     });
 
     UI.btnReset(btnProses);
-
-    if (!res.ok) {
-      alertBox.textContent = res.error;
-      alertBox.classList.remove('hidden');
-      return;
-    }
+    if (!res.ok) { alertBox.textContent = res.error; alertBox.classList.remove('hidden'); return; }
 
     close();
     UI.sukses(res.data.pesan);
