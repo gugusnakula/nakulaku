@@ -15,15 +15,36 @@
 
 <style>
   /* HEADER RATA KIRI */
-  .app-header-brand {
-    flex: 1; /* Memastikan brand mengambil sisa ruang */
-    justify-content: flex-start;
+  .app-header-brand { flex: 1; justify-content: flex-start; }
+  .app-header-text { text-align: left; }
+
+  /* ═══════════════════════════════════════════════
+     FIX AVATAR OVERLAP — foto harus menutupi initial
+     ═══════════════════════════════════════════════ */
+  .hero-avatar,
+  .user-chip .avatar,
+  .drawer-user-avatar,
+  .sub-avatar,
+  .profile-avatar {
+    position: relative;
   }
-  .app-header-text {
-    text-align: left;
+  .hero-avatar img,
+  .user-chip .avatar img,
+  .drawer-user-avatar img,
+  .sub-avatar img,
+  .profile-avatar img {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    z-index: 1;
+    border-radius: inherit;
   }
 
-  /* HERO PROFIL PREMIUM */
+  /* ═══════════════════════════════════════════════
+     HERO PROFIL PREMIUM
+     ═══════════════════════════════════════════════ */
   .hero-profil {
     background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 50%, #9B2649 100%);
     color: white;
@@ -45,55 +66,35 @@
     pointer-events: none;
   }
   .hero-profil-inner {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    position: relative;
-    z-index: 1;
+    display: flex; align-items: center; gap: 16px;
+    position: relative; z-index: 1;
   }
   .hero-avatar {
     width: 64px; height: 64px;
     border-radius: 18px;
     background: rgba(255,255,255,.15);
     border: 2px solid var(--gold);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 26px;
-    font-weight: 800;
-    color: white;
-    flex-shrink: 0;
-    overflow: hidden;
-    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 800; color: white;
+    flex-shrink: 0; overflow: hidden;
     box-shadow: 0 8px 20px rgba(0,0,0,.2);
-  }
-  .hero-avatar img {
-    width: 100%; height: 100%; object-fit: cover;
-    position: absolute; inset: 0;
   }
   .hero-info { flex: 1; min-width: 0; }
   .hero-greeting {
-    font-size: 12px;
-    opacity: 0.8;
-    font-weight: 600;
-    margin-bottom: 4px;
+    font-size: 12px; opacity: 0.85;
+    font-weight: 600; margin-bottom: 4px;
     letter-spacing: 0.5px;
+    display: flex; align-items: center; gap: 4px;
   }
   .hero-nama {
-    font-size: 18px;
-    font-weight: 800;
-    margin-bottom: 4px;
-    letter-spacing: 0.2px;
+    font-size: 18px; font-weight: 800;
+    margin-bottom: 4px; letter-spacing: 0.2px;
     line-height: 1.3;
   }
   .hero-sekolah {
-    font-size: 12px;
-    opacity: 0.85;
-    margin-bottom: 8px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 12px; opacity: 0.85;
+    margin-bottom: 8px; font-weight: 600;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .hero-badges { display: flex; gap: 5px; flex-wrap: wrap; }
   .hero-badges .badge {
@@ -104,7 +105,68 @@
     padding: 3px 10px;
   }
 
-  /* KARTU PROGRES */
+  /* ═══════════════════════════════════════════════
+     QUICK STATS (dalam hero)
+     ═══════════════════════════════════════════════ */
+  .hero-stats-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,.15);
+    position: relative;
+    z-index: 1;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat-val {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.3px;
+  }
+  .hero-stat-of {
+    font-size: 12px;
+    opacity: 0.7;
+    font-weight: 700;
+  }
+  .hero-stat-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    opacity: 0.75;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-top: 2px;
+  }
+  .hero-stat-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(255,255,255,.2);
+  }
+
+  /* ═══════════════════════════════════════════════
+     STREAK BADGE (opsional, di hero)
+     ═══════════════════════════════════════════════ */
+  .streak-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+    color: white;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    margin-top: 8px;
+    box-shadow: 0 4px 12px rgba(255,107,53,.3);
+    animation: fade-in-up .5s var(--ease-out) .3s both;
+  }
+
+  /* ═══════════════════════════════════════════════
+     KARTU PROGRES
+     ═══════════════════════════════════════════════ */
   .progress-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -113,73 +175,40 @@
     margin-bottom: 24px;
     box-shadow: var(--sh-sm);
     animation: fade-in-up .5s var(--ease-out) .05s both;
-    position: relative;
   }
   .progress-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-    gap: 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px; gap: 12px;
   }
   .progress-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--maroon);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 800; color: var(--maroon);
+    letter-spacing: 0.5px; text-transform: uppercase;
   }
   .progress-count {
-    font-size: 12.5px;
-    font-weight: 800;
-    color: var(--maroon);
-    background: var(--maroon-soft);
-    padding: 5px 12px;
-    border-radius: 999px;
+    font-size: 12.5px; font-weight: 800;
+    color: var(--maroon); background: var(--maroon-soft);
+    padding: 5px 12px; border-radius: 999px;
   }
   .progress-bar-wrap {
-    height: 10px;
-    background: var(--bg);
-    border-radius: 999px;
-    overflow: hidden;
-    margin-bottom: 14px;
-    position: relative;
+    height: 10px; background: var(--bg);
+    border-radius: 999px; overflow: hidden;
+    margin-bottom: 14px; position: relative;
   }
   .progress-bar-wrap > div {
     height: 100%;
     background: linear-gradient(90deg, var(--maroon) 0%, var(--maroon-light) 50%, var(--gold) 100%);
     border-radius: 999px;
     transition: width 1s var(--ease-out);
-    position: relative;
-    overflow: hidden;
-  }
-  .progress-bar-wrap > div::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.35) 50%, transparent 100%);
-    animation: shimmer 2s infinite;
-    background-size: 200% 100%;
   }
   .progress-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--ink);
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 700; color: var(--ink);
   }
   .progress-info-icon {
     width: 30px; height: 30px;
     border-radius: 9px;
-    background: var(--gold-soft);
-    color: var(--gold-dark);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
   .progress-cta {
@@ -206,7 +235,53 @@
     color: white;
   }
 
-  /* MENU KHUSUS GRID */
+  /* ═══════════════════════════════════════════════
+     COUNTDOWN CARD
+     ═══════════════════════════════════════════════ */
+  .countdown-card {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+    border: 1.5px solid rgba(180,83,9,.2);
+    border-radius: 16px;
+    margin-bottom: 16px;
+    text-decoration: none;
+    color: inherit;
+    transition: all .2s var(--ease-out);
+    animation: fade-in-up .4s var(--ease-out) both;
+  }
+  .countdown-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(180,83,9,.15);
+    border-color: var(--warning);
+    text-decoration: none;
+  }
+  .countdown-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: white;
+    color: var(--warning);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  }
+  .countdown-body { flex: 1; min-width: 0; }
+  .countdown-title {
+    font-size: 13px; font-weight: 800;
+    color: #78350F;
+    margin-bottom: 3px;
+  }
+  .countdown-desc {
+    font-size: 11.5px;
+    color: #92400E;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .countdown-chevron { color: #B45309; opacity: 0.7; flex-shrink: 0; }
+
+  /* ═══════════════════════════════════════════════
+     MENU KHUSUS GRID
+     ═══════════════════════════════════════════════ */
   .menu-khusus-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -225,6 +300,7 @@
     transition: all .2s var(--ease-out);
     -webkit-tap-highlight-color: transparent;
     box-shadow: var(--sh-xs);
+    position: relative;
   }
   .menu-khusus-card:hover {
     border-color: var(--maroon-light);
@@ -232,29 +308,22 @@
     transform: translateY(-3px);
   }
   .menu-khusus-icon {
-    width: 48px;
-    height: 48px;
+    width: 48px; height: 48px;
     border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
     background: var(--maroon-soft);
     color: var(--maroon);
     transition: transform .2s var(--ease-out);
   }
-  .menu-khusus-card:hover .menu-khusus-icon {
-    transform: scale(1.08);
-  }
+  .menu-khusus-card:hover .menu-khusus-icon { transform: scale(1.08); }
   .menu-khusus-card.gold .menu-khusus-icon {
     background: var(--gold-soft);
     color: var(--gold-dark);
   }
   .menu-khusus-title {
-    font-weight: 800;
-    font-size: 14px;
-    line-height: 1.3;
-    color: var(--ink);
+    font-weight: 800; font-size: 14px;
+    line-height: 1.3; color: var(--ink);
   }
   .menu-khusus-desc {
     font-size: 11.5px;
@@ -263,20 +332,33 @@
     line-height: 1.4;
     margin-top: 3px;
   }
+  /* Badge notifikasi kecil di pojok menu */
+  .menu-khusus-badge {
+    position: absolute;
+    top: 10px; right: 10px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background: var(--danger);
+    color: white;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 6px rgba(185,28,28,.4);
+    animation: pulse 2s infinite;
+  }
 
-  /* SECTION HEAD */
+  /* ═══════════════════════════════════════════════
+     SECTION HEAD
+     ═══════════════════════════════════════════════ */
   .section-head-premium {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 14px;
   }
   .section-head-premium h3 {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 15px;
-    font-weight: 800;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 15px; font-weight: 800;
     color: var(--maroon);
     letter-spacing: 0.3px;
   }
@@ -284,30 +366,13 @@
     width: 28px; height: 28px;
     border-radius: 8px;
     background: var(--maroon-soft);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--maroon);
-  }
-  .section-head-premium .more {
-    font-size: 11.5px;
-    color: var(--muted);
-    font-weight: 700;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 5px 10px;
-    border-radius: 999px;
-    background: var(--bg);
-    transition: all .15s;
-  }
-  .section-head-premium .more:hover {
-    background: var(--maroon-soft);
+    display: flex; align-items: center; justify-content: center;
     color: var(--maroon);
   }
 
-  /* PENGUMUMAN */
+  /* ═══════════════════════════════════════════════
+     PENGUMUMAN
+     ═══════════════════════════════════════════════ */
   .announce-premium {
     background: var(--surface);
     border-radius: 16px;
@@ -328,16 +393,12 @@
     background: linear-gradient(135deg, #FFFFFF 0%, #FBF4E0 100%);
   }
   .announce-head-premium {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: flex; align-items: center; gap: 8px;
     margin-bottom: 6px;
   }
   .announce-title-premium {
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--ink);
-    line-height: 1.4;
+    font-size: 14px; font-weight: 800;
+    color: var(--ink); line-height: 1.4;
   }
   .announce-body-premium {
     font-size: 12.5px;
@@ -350,19 +411,50 @@
     color: var(--muted-soft);
     margin-top: 10px;
     font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+    display: inline-flex; align-items: center; gap: 4px;
   }
 
-  /* PERTEMUAN ITEM */
+  /* ═══════════════════════════════════════════════
+     MOTIVASI HARIAN (kalau pengumuman kosong)
+     ═══════════════════════════════════════════════ */
+  .motivasi-card {
+    background: linear-gradient(135deg, #FDF4F7 0%, #FCE7F3 100%);
+    border: 1.5px solid rgba(125,29,58,.12);
+    border-radius: 16px;
+    padding: 18px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    animation: fade-in-up .4s var(--ease-out) both;
+  }
+  .motivasi-icon {
+    font-size: 28px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .motivasi-body { flex: 1; min-width: 0; }
+  .motivasi-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--maroon);
+    margin-bottom: 4px;
+  }
+  .motivasi-text {
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.6;
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  /* ═══════════════════════════════════════════════
+     PERTEMUAN ITEM
+     ═══════════════════════════════════════════════ */
   .pertemuan-premium {
     background: var(--surface);
     border-radius: 16px;
     padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
+    display: flex; align-items: center; gap: 14px;
     border: 1px solid var(--border);
     box-shadow: var(--sh-xs);
     margin-bottom: 10px;
@@ -381,17 +473,13 @@
     background: var(--bg);
   }
   .pertemuan-num-premium {
-    width: 52px;
-    height: 52px;
+    width: 52px; height: 52px;
     border-radius: 14px;
     background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
     color: var(--maroon);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    flex-shrink: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-weight: 800; flex-shrink: 0;
     border: 1.5px solid rgba(125,29,58,.1);
   }
   .pertemuan-premium.selesai .pertemuan-num-premium {
@@ -402,21 +490,13 @@
 
   .pertemuan-body-premium { flex: 1; min-width: 0; }
   .pertemuan-title-premium {
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--ink);
-    margin-bottom: 5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 14px; font-weight: 800;
+    color: var(--ink); margin-bottom: 5px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .pertemuan-meta-premium {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11.5px;
-    color: var(--muted);
-    font-weight: 700;
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11.5px; color: var(--muted); font-weight: 700;
   }
   .chevron-premium {
     color: #C8BFC3;
@@ -434,15 +514,15 @@
     .hero-profil { padding: 32px 28px; }
     .hero-nama { font-size: 20px; }
     .hero-avatar { width: 76px; height: 76px; font-size: 30px; }
+    .hero-stat-val { font-size: 22px; }
   }
 </style>
 </head>
 <body>
 
-<!-- HEADER MOBILE (Rata Kiri) -->
+<!-- HEADER MOBILE -->
 <header class="app-header">
   <div class="app-header-brand" style="display:flex; align-items:center; gap:10px;">
-    <!-- Tombol hamburger otomatis disisipkan di sini oleh app-nav.js -->
     <div class="app-header-text" style="text-align:left;">
       <div class="app-header-title">Beranda</div>
       <div class="app-header-sub">KKG Gugus Nakula</div>
@@ -488,7 +568,6 @@
 
   <!-- MAIN CONTENT -->
   <main class="desktop-main">
-
     <div class="desktop-topbar">
       <h2>Beranda</h2>
       <div style="display:flex;align-items:center;gap:10px;">
@@ -504,14 +583,30 @@
       <!-- HERO PROFIL -->
       <section class="hero-profil">
         <div class="hero-profil-inner">
-          <!-- ID Foto Profil -->
           <div class="hero-avatar" id="heroAvatarEl"></div>
-          
           <div class="hero-info">
             <div class="hero-greeting" id="heroGreeting">Selamat Datang</div>
             <div class="hero-nama" id="heroNama">Memuat…</div>
             <div class="hero-sekolah" id="heroSekolah">—</div>
             <div class="hero-badges" id="heroBadges"></div>
+            <div id="streakWrap"></div>
+          </div>
+        </div>
+        <!-- QUICK STATS (diisi via JS) -->
+        <div class="hero-stats-row" id="heroStatsRow">
+          <div class="hero-stat">
+            <div class="hero-stat-val">—</div>
+            <div class="hero-stat-label">Presensi</div>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <div class="hero-stat-val">—</div>
+            <div class="hero-stat-label">Tugas</div>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <div class="hero-stat-val">—</div>
+            <div class="hero-stat-label">Selesai</div>
           </div>
         </div>
       </section>
@@ -539,6 +634,9 @@
           <span id="progressCtaText">Lanjut</span>
         </a>
       </section>
+
+      <!-- COUNTDOWN NEXT PERTEMUAN -->
+      <div id="countdownNext" class="hidden"></div>
 
       <!-- MENU KHUSUS -->
       <section id="panelKhusus" class="hidden content-section">
@@ -582,6 +680,9 @@
 <script src="assets/js/ui.js"></script>
 <script src="assets/js/app-nav.js"></script>
 <script>
+// ═══════════════════════════════════════════════
+// INIT ICONS
+// ═══════════════════════════════════════════════
 document.querySelectorAll('[data-icon]').forEach(el => {
   el.innerHTML = Icons.get(el.dataset.icon);
   el.style.display = 'contents';
@@ -589,6 +690,7 @@ document.querySelectorAll('[data-icon]').forEach(el => {
 
 UI.bindLogout();
 
+// Smooth scroll untuk anchor link
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', (e) => {
     const targetId = a.getAttribute('href');
@@ -604,49 +706,65 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   });
 });
 
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
 let daftarPertemuan = [];
 let totalPertemuan = 0;
+let profileGlobal = null;
 
+// ═══════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════
 (async () => {
   const profile = await Api.requireLogin();
   if (!profile) return;
+  profileGlobal = profile;
 
   const peranList = profile.peran || [];
   const isAdmin = peranList.includes('pengurus') || peranList.includes('super_admin');
 
-  // Sembunyikan menu Galeri di Sidebar jika bukan Admin
   if (!isAdmin) {
     document.querySelectorAll('.galeri-menu').forEach(el => el.style.display = 'none');
   }
 
   renderProfil(profile);
   UI.renderUserHeader(profile);
-  renderMenuKhusus(profile);
+  await renderMenuKhusus(profile);
 
   loadPengumuman();
   loadPertemuan();
 })();
 
+// ═══════════════════════════════════════════════
+// RENDER PROFIL + GREETING + STATS
+// ═══════════════════════════════════════════════
 function renderProfil(p) {
-  // 1. Sapaan Dinamis
+  // 1. Sapaan Dinamis + Emoji
   const jam = new Date().getHours();
   let sapaan = 'Selamat Pagi';
-  if (jam >= 11 && jam < 15) sapaan = 'Selamat Siang';
-  else if (jam >= 15 && jam < 19) sapaan = 'Selamat Sore';
-  else if (jam >= 19 || jam < 4) sapaan = 'Selamat Malam';
-  document.getElementById('heroGreeting').textContent = sapaan + ', Bapak/Ibu';
+  let emoji = '🌅';
+  if (jam >= 11 && jam < 15) { sapaan = 'Selamat Siang'; emoji = '🌤️'; }
+  else if (jam >= 15 && jam < 19) { sapaan = 'Selamat Sore'; emoji = '🌇'; }
+  else if (jam >= 19 || jam < 4) { sapaan = 'Selamat Malam'; emoji = '🌙'; }
 
-  // 2. Render Foto (Bersih, tanpa kode nyasar)
+  const greetEl = document.getElementById('heroGreeting');
+  greetEl.innerHTML = `${sapaan}, Bapak/Ibu <span style="font-size:14px;opacity:0.9;margin-left:2px;">${emoji}</span>`;
+
+  // 2. Foto (bersih, satu elemen — no overlap)
   const avatarEl = document.getElementById('heroAvatarEl');
-  avatarEl.innerHTML = ''; // Kosongkan kontainer
+  avatarEl.innerHTML = '';
   const fotoUrl = Api.fotoSayaUrl('t');
   const init = (p.nama || 'G').charAt(0).toUpperCase();
 
   if (fotoUrl) {
     const img = document.createElement('img');
     img.src = fotoUrl;
-    img.alt = p.nama;
-    img.onerror = () => { avatarEl.textContent = init; }; // Fallback jika gambar gagal
+    img.alt = p.nama || 'Foto';
+    img.onerror = () => {
+      avatarEl.innerHTML = '';
+      avatarEl.textContent = init;
+    };
     avatarEl.appendChild(img);
   } else {
     avatarEl.textContent = init;
@@ -656,17 +774,20 @@ function renderProfil(p) {
   document.getElementById('heroNama').textContent = p.nama || '-';
   document.getElementById('heroSekolah').textContent = p.sekolah ? p.sekolah.nama : (p.jabatan || '-');
 
-  // 4. Render Badges (Peserta -> Guru)
+  // 4. Badges
   const badges = document.getElementById('heroBadges');
   badges.innerHTML = (p.peran || []).map(r => {
     let label = r.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-    if (r === 'peserta') label = 'Guru'; // Ubah teks peserta jadi guru
+    if (r === 'peserta') label = 'Guru';
     if (r === 'ks') label = 'Kepala Sekolah';
     return `<span class="badge">${UI.escapeHtml(label)}</span>`;
   }).join('');
 }
 
-function renderMenuKhusus(p) {
+// ═══════════════════════════════════════════════
+// RENDER MENU KHUSUS (dengan FIX narasumber)
+// ═══════════════════════════════════════════════
+async function renderMenuKhusus(p) {
   const menu = [];
   const peranList = p.peran || [];
   const isAdmin = peranList.includes('pengurus') || peranList.includes('super_admin');
@@ -679,7 +800,7 @@ function renderMenuKhusus(p) {
     menu.push({ icon: 'shield', title: 'Dashboard Admin', desc: 'Kelola seluruh sistem', href: 'admin/index.html', warna: 'maroon' });
   }
 
-  // 2. MENU KS (Hanya Sekolahku & Verifikasi)
+  // 2. MENU KS
   if (isKS && !isAdmin) {
     menu.push({ icon: 'home', title: 'Sekolahku', desc: 'Input prestasi & kegiatan', href: 'ks/sekolah.html', warna: 'maroon' });
     menu.push({ icon: 'checkCircle', title: 'Verifikasi Izin', desc: 'Verifikasi Izin & Sakit', href: 'ks/verifikasi.html', warna: 'gold' });
@@ -692,19 +813,29 @@ function renderMenuKhusus(p) {
     }
   }
 
-  // 4. MENU UMUM
+  // 4. MENU NARASUMBER (FIX: sebelumnya di luar fungsi)
+  if (peranList.includes('narasumber') && !isAdmin) {
+    menu.push({
+      icon: 'edit',
+      title: 'Penilaian Tugas',
+      desc: 'Koreksi tugas peserta didik',
+      href: 'narsum.html',
+      warna: 'gold',
+    });
+  }
+
+  // 5. MENU UMUM
   menu.push({ icon: 'activity', title: 'Aktivitas Saya', desc: 'Rapor digital Anda', href: 'aktivitas.html', warna: 'maroon' });
   menu.push({ icon: 'sparkles', title: 'Karya Saya', desc: 'Inovasi & aksi nyata', href: 'karya.html', warna: 'gold' });
 
-  cekTugasPengamat();
-
-  if (menu.length === 0) return;
-
-  renderMenuList(menu);
-}
-  if (peranList.includes('narasumber') && !isAdmin) {
-    menu.push({ icon: 'edit', title: 'Penilaian Tugas', desc: 'Koreksi tugas peserta didik', href: 'narsum.html', warna: 'gold' });
+  // 6. Render dulu menu dasar
+  if (menu.length > 0) {
+    renderMenuList(menu);
   }
+
+  // 7. Tambah kartu pengamat (async, setelah menu dasar tampil)
+  await cekTugasPengamat();
+}
 
 function renderMenuList(menu) {
   const el = document.getElementById('listMenuKhusus');
@@ -727,11 +858,12 @@ async function cekTugasPengamat() {
   const res = await Api.call('pengamat.tugas_saya');
   if (!res.ok || !res.data || res.data.length === 0) return;
 
-  const panel = document.getElementById('panelKhusus');
   const listEl = document.getElementById('listMenuKhusus');
+  if (!listEl) return;
 
   const menuBaru = `
-    <a href="pengamat.html" class="menu-khusus-card gold">
+    <a href="pengamat.html" class="menu-khusus-card gold" style="position:relative;">
+      <div class="menu-khusus-badge">${res.data.length}</div>
       <div class="menu-khusus-icon">${Icons.get('eye', { class: 'icon' })}</div>
       <div>
         <div class="menu-khusus-title">Tugas Pengamat</div>
@@ -741,7 +873,25 @@ async function cekTugasPengamat() {
   `;
 
   listEl.innerHTML = menuBaru + listEl.innerHTML;
-  panel.classList.remove('hidden');
+  document.getElementById('panelKhusus').classList.remove('hidden');
+}
+
+// ═══════════════════════════════════════════════
+// PENGUMUMAN + MOTIVASI
+// ═══════════════════════════════════════════════
+const MOTIVASI_HARIAN = [
+  { icon: '✨', text: 'Guru yang hebat adalah guru yang terus belajar.' },
+  { icon: '🌟', text: 'Setiap pertemuan adalah kesempatan untuk tumbuh bersama.' },
+  { icon: '💡', text: 'Ilmu yang dibagikan akan terus bertumbuh dan berbuah.' },
+  { icon: '🌱', text: 'Pendidikan adalah investasi paling berharga untuk generasi.' },
+  { icon: '🚀', text: 'Mulai dari hal kecil, lakukan dengan luar biasa.' },
+  { icon: '🎯', text: 'Fokus pada proses, hasil akan mengikuti.' },
+  { icon: '📚', text: 'Membaca adalah jendela dunia, mengajar adalah kuncinya.' },
+];
+
+function getMotivasiHariIni() {
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+  return MOTIVASI_HARIAN[dayOfYear % MOTIVASI_HARIAN.length];
 }
 
 async function loadPengumuman() {
@@ -754,8 +904,19 @@ async function loadPengumuman() {
     el.innerHTML = UI.errorHtml(res.error || 'Gagal memuat pengumuman.');
     return;
   }
+
   if (!res.data || res.data.length === 0) {
-    el.innerHTML = UI.emptyHtml('megaphone', 'Belum ada pengumuman');
+    // Tampilkan motivasi harian
+    const m = getMotivasiHariIni();
+    el.innerHTML = `
+      <div class="motivasi-card">
+        <div class="motivasi-icon">${m.icon}</div>
+        <div class="motivasi-body">
+          <div class="motivasi-title">Motivasi Hari Ini</div>
+          <div class="motivasi-text">"${UI.escapeHtml(m.text)}"</div>
+        </div>
+      </div>
+    `;
     return;
   }
 
@@ -774,6 +935,9 @@ async function loadPengumuman() {
   `).join('');
 }
 
+// ═══════════════════════════════════════════════
+// PERTEMUAN + STATS + COUNTDOWN
+// ═══════════════════════════════════════════════
 async function loadPertemuan() {
   const el = document.getElementById('listPertemuan');
   el.innerHTML = UI.skeletonList(2, 72);
@@ -785,19 +949,111 @@ async function loadPertemuan() {
     return;
   }
   if (!res.data || res.data.length === 0) {
-    el.innerHTML = UI.emptyHtml('calendar', 'Belum ada pertemuan', 'Jadwal akan muncul di sini.');
+    el.innerHTML = UI.emptyHtml(
+      'calendar',
+      'Belum ada pertemuan',
+      'Jadwal pertemuan akan muncul di sini setelah panitia menambahkannya.'
+    );
     document.getElementById('kartuProgres').classList.add('hidden');
+    renderHeroStats();
     return;
   }
 
   daftarPertemuan = res.data;
   totalPertemuan = daftarPertemuan.length;
 
+  renderHeroStats();
+  renderStreak();
   renderKartuProgres();
-  renderAksiDibutuhkan();
+  renderCountdownNext();
   renderListPertemuan();
 }
 
+// QUICK STATS di hero
+function renderHeroStats() {
+  const el = document.getElementById('heroStatsRow');
+  if (!el) return;
+
+  if (totalPertemuan === 0) {
+    el.innerHTML = `
+      <div class="hero-stat">
+        <div class="hero-stat-val">—</div>
+        <div class="hero-stat-label">Presensi</div>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">—</div>
+        <div class="hero-stat-label">Tugas</div>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">—</div>
+        <div class="hero-stat-label">Selesai</div>
+      </div>
+    `;
+    return;
+  }
+
+  const hadir = daftarPertemuan.filter(p => p.progres?.ada_presensi).length;
+  const selesai = daftarPertemuan.filter(p => p.selesai).length;
+
+  let tugasTotal = 0, tugasKumpul = 0;
+  daftarPertemuan.forEach(p => {
+    if (p.progres) {
+      tugasTotal += p.progres.tugas_total || 0;
+      tugasKumpul += p.progres.tugas_kumpul || 0;
+    }
+  });
+
+  el.innerHTML = `
+    <div class="hero-stat">
+      <div class="hero-stat-val">${hadir}<span class="hero-stat-of">/${totalPertemuan}</span></div>
+      <div class="hero-stat-label">Presensi</div>
+    </div>
+    <div class="hero-stat-divider"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-val">${tugasKumpul}<span class="hero-stat-of">/${tugasTotal}</span></div>
+      <div class="hero-stat-label">Tugas</div>
+    </div>
+    <div class="hero-stat-divider"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-val">${selesai}<span class="hero-stat-of">/${totalPertemuan}</span></div>
+      <div class="hero-stat-label">Selesai</div>
+    </div>
+  `;
+}
+
+// STREAK — berapa pertemuan berturut-turut user hadir
+function renderStreak() {
+  const wrap = document.getElementById('streakWrap');
+  if (!wrap) return;
+
+  const sorted = [...daftarPertemuan]
+    .filter(p => p.tanggal)
+    .sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+
+  let streak = 0;
+  const now = new Date();
+  for (const p of sorted) {
+    const sudahLewat = new Date(p.tanggal + 'T23:59:59') <= now;
+    if (!sudahLewat) continue;
+    if (p.progres?.ada_presensi) streak++;
+    else break;
+  }
+
+  if (streak < 3) {
+    wrap.innerHTML = '';
+    return;
+  }
+
+  wrap.innerHTML = `
+    <div class="streak-badge">
+      🔥 ${streak}× berturut-turut hadir
+    </div>
+  `;
+}
+
+// PROGRESS CARD
 function renderKartuProgres() {
   const selesai = daftarPertemuan.filter(p => p.selesai).length;
   const total = totalPertemuan;
@@ -843,53 +1099,50 @@ function renderKartuProgres() {
   }
 }
 
-function renderAksiDibutuhkan() {
-  const section = document.getElementById('sectionAksi');
-  if (!section) return;
-  const el = document.getElementById('listAksi');
+// COUNTDOWN NEXT PERTEMUAN (≤7 hari)
+function renderCountdownNext() {
+  const el = document.getElementById('countdownNext');
+  if (!el) return;
 
-  const perluPresensiBuka = daftarPertemuan.filter(p => p.presensi_status === 'buka' && !(p.progres?.ada_presensi));
-  const perluPresensiTutup = daftarPertemuan.filter(p => p.presensi_status === 'tutup' && !(p.progres?.ada_presensi) && !p.selesai);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
 
-  const kartuList = [];
+  const upcoming = daftarPertemuan
+    .filter(p => p.tanggal)
+    .map(p => ({ ...p, _tgl: new Date(p.tanggal + 'T00:00:00') }))
+    .filter(p => p._tgl >= now)
+    .sort((a, b) => a._tgl - b._tgl)[0];
 
-  perluPresensiBuka.forEach(p => {
-    const tutupStr = p.presensi_tutup ? new Date(p.presensi_tutup).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '';
-    kartuList.push(`
-      <a href="presensi.html?id=${p.id}" class="aksi-card urgent">
-        <div class="aksi-icon">${Icons.get('camera')}</div>
-        <div class="aksi-body">
-          <div class="aksi-title">Presensi Sedang Dibuka <span class="aksi-badge">!</span></div>
-          <div class="aksi-desc">Pertemuan #${p.urutan} — ${UI.escapeHtml(p.judul)}${tutupStr ? ` · Tutup pukul ${tutupStr} WIB` : ''}</div>
+  if (!upcoming) { el.classList.add('hidden'); return; }
+
+  const diffDays = Math.round((upcoming._tgl - now) / (1000 * 60 * 60 * 24));
+  if (diffDays > 7) { el.classList.add('hidden'); return; }
+
+  let text = '';
+  if (diffDays === 0) text = 'Hari ini!';
+  else if (diffDays === 1) text = 'Besok';
+  else text = `${diffDays} hari lagi`;
+
+  el.innerHTML = `
+    <a href="pertemuan.html?id=${upcoming.id}" class="countdown-card">
+      <div class="countdown-icon">
+        ${Icons.get('calendar', { class: 'icon' })}
+      </div>
+      <div class="countdown-body">
+        <div class="countdown-title">⏰ Pertemuan berikutnya ${text}</div>
+        <div class="countdown-desc">
+          #${upcoming.urutan} — ${UI.escapeHtml(upcoming.judul)}
+          · ${UI.formatTanggalPendek(upcoming.tanggal)}
+          ${upcoming.lokasi_nama ? '· ' + UI.escapeHtml(upcoming.lokasi_nama) : ''}
         </div>
-        <span class="aksi-chevron">${Icons.get('chevronRight')}</span>
-      </a>
-    `);
-  });
-
-  perluPresensiTutup.forEach(p => {
-    kartuList.push(`
-      <a href="ajukan.html?id=${p.id}" class="aksi-card danger">
-        <div class="aksi-icon">${Icons.get('fileText')}</div>
-        <div class="aksi-body">
-          <div class="aksi-title">Presensi Terlewat</div>
-          <div class="aksi-desc">Pertemuan #${p.urutan} — ${UI.escapeHtml(p.judul)} · Ajukan izin kalau berhalangan</div>
-        </div>
-        <span class="aksi-chevron">${Icons.get('chevronRight')}</span>
-      </a>
-    `);
-  });
-
-  if (kartuList.length === 0) {
-    section.classList.add('hidden');
-    el.innerHTML = '';
-    return;
-  }
-
-  el.innerHTML = kartuList.join('');
-  section.classList.remove('hidden');
+      </div>
+      <span class="countdown-chevron">${Icons.get('chevronRight', { class: 'icon' })}</span>
+    </a>
+  `;
+  el.classList.remove('hidden');
 }
 
+// LIST PERTEMUAN
 function renderListPertemuan() {
   const el = document.getElementById('listPertemuan');
 
@@ -937,6 +1190,9 @@ function renderListPertemuan() {
   }).join('');
 }
 
+// ═══════════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════════
 function bukaPertemuan(id) { window.location.href = 'pertemuan.html?id=' + id; }
 function showLocked(id) {
   const p = daftarPertemuan.find(x => x.id === id);
