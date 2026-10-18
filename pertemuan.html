@@ -1318,7 +1318,7 @@
       <a class="sidebar-item active" data-nav="pertemuan" href="beranda.html#sectionPertemuan">
         <span data-icon="calendar"></span> Pertemuan
       </a>
-      <a class="sidebar-item" data-nav="galeri" href="galeri.html">
+      <a class="sidebar-item galeri-menu" data-nav="galeri" href="galeri.html">
         <span data-icon="grid"></span> Galeri Sekolah
       </a>
       <a class="sidebar-item" data-nav="aktivitas" href="aktivitas.html">
@@ -1424,7 +1424,7 @@
   <a class="nav-item active" data-nav="pertemuan" href="#">
     <span data-icon="calendar"></span> Pertemuan
   </a>
-  <a class="nav-item" data-nav="galeri" href="galeri.html">
+  <a class="nav-item galeri-menu" data-nav="galeri" href="galeri.html">
     <span data-icon="grid"></span> Galeri
   </a>
   <a class="nav-item" data-nav="aktivitas" href="aktivitas.html">
@@ -1476,6 +1476,12 @@ if (!pertemuanId) {
   if (!pertemuanId) return;
   profile = await Api.requireLogin();
   if (!profile) return;
+
+  // Hide menu Galeri untuk non-admin (guru & KS)
+  const isAdmin = (profile.peran || []).includes('pengurus') || (profile.peran || []).includes('super_admin');
+  if (!isAdmin) {
+    document.querySelectorAll('.galeri-menu').forEach(el => el.style.display = 'none');
+  }
 
   // Render user chip
   const chip = document.getElementById('userChip');
