@@ -13,29 +13,23 @@
 <link rel="stylesheet" href="assets/css/nakula.css" />
 
 <style>
+  /* HEADER MOBILE */
+  .app-header-brand { flex: 1; justify-content: flex-start; }
+  .app-header-text { text-align: left; }
+
   .ajukan-stage {
-    max-width: 480px;
+    max-width: 600px;
     margin: 0 auto;
     padding: 20px 16px 40px;
   }
 
-  .stage-card {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 24px;
-    padding: 24px 20px;
-    box-shadow: 0 8px 24px rgba(125,29,58,.06);
-    margin-bottom: 16px;
-    animation: fade-in-up .5s var(--ease-out) both;
-  }
-
-  /* PROGRESS BAR */
+  /* STEP PROGRESS */
   .step-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 24px;
-    padding: 0 8px;
+    padding: 0 10px;
   }
   .step-item {
     display: flex;
@@ -43,7 +37,8 @@
     align-items: center;
     flex: 1;
     position: relative;
-    gap: 6px;
+    gap: 8px;
+    z-index: 1;
   }
   .step-item:not(:last-child)::after {
     content: '';
@@ -52,34 +47,34 @@
     left: 50%;
     width: 100%;
     height: 2px;
-    background: var(--border);
+    background: var(--border-strong);
     z-index: -1;
+    transition: background .3s;
   }
   .step-item.done:not(:last-child)::after,
   .step-item.active:not(:last-child)::after {
     background: var(--maroon);
   }
   .step-num {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    background: var(--bg);
-    border: 2px solid var(--border);
+    background: var(--surface);
+    border: 2px solid var(--border-strong);
     color: var(--muted);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 12px;
     font-weight: 800;
-    transition: all .25s;
-    position: relative;
+    transition: all .25s var(--ease-spring);
     z-index: 1;
   }
   .step-item.active .step-num {
     background: var(--maroon);
     border-color: var(--maroon);
     color: white;
-    transform: scale(1.1);
+    transform: scale(1.15);
     box-shadow: 0 4px 12px rgba(125,29,58,.3);
   }
   .step-item.done .step-num {
@@ -88,8 +83,8 @@
     color: white;
   }
   .step-label {
-    font-size: 10px;
-    font-weight: 700;
+    font-size: 10.5px;
+    font-weight: 800;
     color: var(--muted);
     letter-spacing: 0.3px;
     text-transform: uppercase;
@@ -97,451 +92,325 @@
   .step-item.active .step-label { color: var(--maroon); }
   .step-item.done .step-label { color: var(--success); }
 
-  /* TITLE */
-  .stage-title {
-    text-align: center;
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--maroon);
-    margin-bottom: 6px;
-    letter-spacing: 0.3px;
-  }
-  .stage-desc {
-    text-align: center;
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.55;
-    font-weight: 500;
-    max-width: 340px;
-    margin: 0 auto 20px;
-  }
-
-  /* KARTU KATEGORI */
+  /* KATEGORI GRID */
   .kategori-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 8px;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media (min-width: 600px) {
+    .kategori-grid { grid-template-columns: 1fr 1fr; }
   }
   .kat-card {
     display: flex;
-    flex-direction: column;
-    padding: 14px 12px;
-    background: var(--bg);
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px;
+    background: var(--surface);
     border: 2px solid var(--border);
     border-radius: 16px;
     cursor: pointer;
     transition: all .2s var(--ease-out);
-    -webkit-tap-highlight-color: transparent;
     position: relative;
-    overflow: hidden;
-    min-height: 110px;
   }
-  .kat-card:active { transform: scale(.97); }
+  .kat-card:hover { border-color: var(--maroon-light); background: var(--bg); }
   .kat-card.selected {
     background: linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 100%);
     border-color: var(--maroon);
-    box-shadow: 0 6px 16px rgba(125,29,58,.15);
+    box-shadow: 0 6px 16px rgba(125,29,58,.12);
   }
   .kat-card.selected::after {
     content: '';
     position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
+    top: 12px; right: 12px;
+    width: 18px; height: 18px;
     background: var(--maroon);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 800;
+    border-radius: 50%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+    background-size: 12px;
+    background-position: center;
+    background-repeat: no-repeat;
   }
   .kat-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 8px;
-    background: var(--maroon-soft);
-    color: var(--maroon);
-  }
-  .kat-icon svg { width: 20px; height: 20px; }
-  .kat-nama {
-    font-size: 12px;
-    font-weight: 800;
-    color: var(--ink);
-    line-height: 1.3;
-    margin-bottom: 4px;
-    flex: 1;
-  }
-  .kat-poin {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    font-size: 10px;
-    font-weight: 800;
-    color: var(--maroon);
-    background: var(--maroon-soft);
-    padding: 2px 8px;
-    border-radius: 999px;
-    align-self: flex-start;
-  }
-
-  /* FORM */
-  .form-group {
-    margin-bottom: 16px;
-  }
-  .form-lbl {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 800;
-    color: var(--ink);
-    margin-bottom: 6px;
-    letter-spacing: 0.3px;
-  }
-  .form-lbl .req { color: var(--danger); }
-  .form-lbl .opt {
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--muted);
-    background: var(--bg);
-    padding: 1px 6px;
-    border-radius: 4px;
-  }
-  .form-hint {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 4px;
-    line-height: 1.5;
-  }
-  .form-input,
-  .form-textarea {
-    width: 100%;
-    padding: 12px 14px;
-    background: var(--bg);
-    border: 1.5px solid var(--border);
+    width: 44px; height: 44px;
     border-radius: 12px;
-    font-size: 14px;
-    font-family: inherit;
-    color: var(--ink);
-    transition: all .15s;
-    outline: none;
-    font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    flex-shrink: 0;
   }
-  .form-input:focus,
-  .form-textarea:focus {
-    border-color: var(--maroon);
-    background: var(--surface);
-    box-shadow: 0 0 0 3px rgba(125,29,58,.08);
-  }
-  .form-textarea {
-    resize: vertical;
-    min-height: 90px;
-    line-height: 1.55;
-  }
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
+  .kat-card.selected .kat-icon { background: var(--maroon); color: white; }
+  .kat-icon svg { width: 24px; height: 24px; }
+  .kat-body { flex: 1; min-width: 0; }
+  .kat-nama { font-size: 14.5px; font-weight: 800; color: var(--ink); margin-bottom: 4px; line-height: 1.3; }
+  .kat-desc { font-size: 12px; color: var(--muted); font-weight: 600; line-height: 1.4; }
 
-  /* REVIEW BOX */
+  /* FORM DETAIL */
+  .form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: var(--sh-sm);
+    margin-bottom: 20px;
+  }
+  
+  /* REVIEW BOX (Seperti Struk) */
   .review-box {
     background: var(--bg);
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
   }
   .review-row {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding: 10px 0;
-    border-bottom: 1px dashed var(--border);
-    gap: 12px;
-    font-size: 13px;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--border-strong);
+    gap: 16px;
   }
   .review-row:last-child { border-bottom: none; }
-  .review-lbl {
-    font-weight: 700;
-    color: var(--muted);
-    flex-shrink: 0;
-    font-size: 12px;
-    min-width: 90px;
-  }
-  .review-val {
-    font-weight: 700;
-    color: var(--ink);
-    text-align: right;
-    line-height: 1.5;
-    word-break: break-word;
-  }
-  .review-val.link {
-    color: var(--maroon);
-    text-decoration: underline;
-    font-size: 12px;
-  }
+  .review-lbl { font-size: 12.5px; font-weight: 700; color: var(--muted); flex-shrink: 0; min-width: 100px; }
+  .review-val { font-size: 13.5px; font-weight: 800; color: var(--ink); text-align: right; line-height: 1.5; word-break: break-word; }
 
-  /* SUKSES */
-  .success-icon {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--success-soft) 0%, #D1FAE5 100%);
-    color: var(--success);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  /* STATUS CARD (EXISTING REQUEST) */
+  .status-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: var(--sh-sm);
+  }
+  .status-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .status-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .status-icon.menunggu { background: var(--warning-soft); color: var(--warning); }
+  .status-icon.disetujui { background: var(--success-soft); color: var(--success); }
+  .status-icon.ditolak { background: var(--danger-soft); color: var(--danger); }
+  .status-icon svg { width: 24px; height: 24px; }
+  .status-title { font-size: 16px; font-weight: 800; color: var(--ink); margin-bottom: 2px; }
+  .status-sub { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+
+  /* SUKSES / ERROR SCREEN */
+  .big-icon-wrap {
+    width: 96px; height: 96px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
     margin: 0 auto 20px;
-    box-shadow: 0 0 0 12px rgba(21,128,61,.08);
   }
-  .success-icon svg { width: 48px; height: 48px; }
-
-  /* ERROR */
-  .error-icon {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--danger-soft) 0%, #FEE2E2 100%);
-    color: var(--danger);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    box-shadow: 0 0 0 12px rgba(185,28,28,.08);
-  }
-  .error-icon svg { width: 48px; height: 48px; }
-
-  /* EXISTING INFO */
-  .existing-info {
-    background: linear-gradient(135deg, #FFFCF3 0%, #FEF3C7 100%);
-    border: 1.5px solid rgba(180,83,9,.2);
-    border-radius: 14px;
-    padding: 14px;
-    margin-bottom: 16px;
-    font-size: 12px;
-    color: #92400E;
-    font-weight: 600;
-    line-height: 1.55;
-    display: flex;
-    gap: 10px;
-  }
-  .existing-info svg { flex-shrink: 0; width: 18px; height: 18px; }
-
-  .actions-row {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-  }
-  .actions-row .btn { flex: 1; }
-  .actions-row .btn-primary { flex: 1.5; }
-
+  .big-icon-wrap.success { background: var(--success-soft); color: var(--success); box-shadow: 0 0 0 12px rgba(21,128,61,.05); }
+  .big-icon-wrap.error { background: var(--danger-soft); color: var(--danger); box-shadow: 0 0 0 12px rgba(185,28,28,.05); }
+  .big-icon-wrap svg { width: 48px; height: 48px; }
+  
   .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
+<!-- HEADER MOBILE -->
 <header class="app-header">
-  <div class="app-header-brand">
-    <a href="beranda.html" class="header-btn" style="text-decoration:none;">
-      <span data-icon="chevronLeft"></span>
-    </a>
-    <div class="app-header-text">
+  <div class="app-header-brand" style="display:flex; align-items:center; gap:10px;">
+    <div class="app-header-text" style="text-align:left;">
       <div class="app-header-title">Ajukan Izin</div>
-      <div class="app-header-sub">KKG Gugus Nakula</div>
+      <div class="app-header-sub">Formulir Ketidakhadiran</div>
     </div>
   </div>
-  <button class="header-btn" data-act="logout">
+  <button class="header-btn" data-act="logout" aria-label="Keluar">
     <span data-icon="logOut"></span>
   </button>
 </header>
 
-<main class="ajukan-stage">
+<div class="desktop-layout">
 
-  <!-- STAGE 1: LOADING -->
-  <section id="stageLoading">
-    <div class="stage-card">
-      <div class="stage-title">Memuat…</div>
-      <div class="stage-desc">Mengambil kategori ajuan & data pertemuan.</div>
+  <!-- SIDEBAR DESKTOP -->
+  <aside class="desktop-sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-logo">
+        <img src="assets/img/logo-mark.svg" alt="Nakula" />
+      </div>
+      <div class="sidebar-brand-text">
+        <div class="name">NAKULAKU</div>
+        <div class="sub">KKG Gugus Nakula</div>
+      </div>
     </div>
-  </section>
 
-  <!-- STAGE 2: FORM (wizard) -->
-  <section id="stageForm" class="hidden">
-    <div class="stage-card">
-      <!-- Progress -->
-      <div class="step-bar">
-        <div class="step-item active" data-step="1">
-          <div class="step-num">1</div>
-          <div class="step-label">Kategori</div>
-        </div>
-        <div class="step-item" data-step="2">
-          <div class="step-num">2</div>
-          <div class="step-label">Detail</div>
-        </div>
-        <div class="step-item" data-step="3">
-          <div class="step-num">3</div>
-          <div class="step-label">Kirim</div>
-        </div>
+    <nav class="sidebar-menu">
+      <a class="sidebar-item" data-nav="beranda" href="beranda.html"><span data-icon="home"></span> Beranda</a>
+      <a class="sidebar-item" data-nav="pertemuan" href="beranda.html#sectionPertemuan"><span data-icon="calendar"></span> Pertemuan</a>
+      <a class="sidebar-item" data-nav="aktivitas" href="aktivitas.html"><span data-icon="activity"></span> Aktivitas Saya</a>
+      <a class="sidebar-item" data-nav="profil" href="profil.html"><span data-icon="user"></span> Profil</a>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="desktop-main">
+    <div class="desktop-topbar">
+      <h2>Formulir Ajuan</h2>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="user-chip" id="userChip"></div>
+        <button class="btn-icon" data-act="logout" aria-label="Keluar"><span data-icon="logOut"></span></button>
       </div>
+    </div>
 
-      <div class="stage-title" id="formTitle">Pilih Kategori</div>
-      <div class="stage-desc" id="formDesc">Pilih alasan Anda tidak bisa hadir di pertemuan ini.</div>
+    <div class="ajukan-stage">
 
-      <div id="existingInfoWrap"></div>
+      <!-- STAGE 1: LOADING -->
+      <section id="stageLoading" style="text-align:center; padding: 40px 0;">
+        <div class="skeleton" style="width:80px; height:80px; border-radius:24px; margin: 0 auto 20px;"></div>
+        <div class="skeleton" style="height:24px; width:200px; margin: 0 auto 12px;"></div>
+        <div class="skeleton" style="height:16px; width:280px; margin: 0 auto;"></div>
+      </section>
 
-      <!-- STEP 1: KATEGORI -->
-      <div id="step1">
-        <div class="kategori-grid" id="kategoriGrid">
-          <!-- Render via JS -->
-        </div>
-        <div class="actions-row">
-          <button class="btn btn-primary btn-full" id="btnNext1" disabled>
-            Lanjut
-            <span data-icon="arrowRight" class="icon-sm"></span>
-          </button>
-        </div>
-      </div>
-
-      <!-- STEP 2: DETAIL -->
-      <div id="step2" class="hidden">
-        <div class="form-group">
-          <label class="form-lbl">
-            <span data-icon="fileText" class="icon-sm"></span>
-            Alasan <span class="req">*</span>
-          </label>
-          <textarea class="form-textarea" id="inputAlasan" placeholder="Contoh: Demam tinggi sejak semalam, disertai surat dokter."></textarea>
-          <div class="form-hint">Jelaskan alasan Anda secara singkat dan jelas.</div>
-        </div>
-
-        <div class="form-group hidden" id="groupTanggal">
-          <label class="form-lbl">
-            <span data-icon="calendar" class="icon-sm"></span>
-            Periode <span class="req">*</span>
-          </label>
-          <div class="form-row">
-            <input type="date" class="form-input" id="inputMulai" />
-            <input type="date" class="form-input" id="inputSelesai" />
+      <!-- STAGE 2: FORM WIZARD -->
+      <section id="stageForm" class="hidden">
+        
+        <!-- Progress Bar -->
+        <div class="step-bar">
+          <div class="step-item active" data-step="1">
+            <div class="step-num">1</div>
+            <div class="step-label">Kategori</div>
           </div>
-          <div class="form-hint">Tanggal mulai & selesai.</div>
+          <div class="step-item" data-step="2">
+            <div class="step-num">2</div>
+            <div class="step-label">Detail</div>
+          </div>
+          <div class="step-item" data-step="3">
+            <div class="step-num">3</div>
+            <div class="step-label">Kirim</div>
+          </div>
         </div>
 
-        <div class="form-group" id="groupLampiran">
-          <label class="form-lbl">
-            <span data-icon="link" class="icon-sm"></span>
-            Lampiran <span id="lampiranReq" class="req hidden">*</span>
-            <span id="lampiranOpt" class="opt">opsional</span>
-          </label>
-          <input type="url" class="form-input" id="inputLampiran" placeholder="https://drive.google.com/..." />
-          <div class="form-hint" id="lampiranHint">Link ke bukti/foto/surat (Google Drive, dsb).</div>
-        </div>
+        <div id="existingInfoWrap"></div>
 
-        <div class="actions-row">
-          <button class="btn btn-secondary" id="btnBack2">
-            <span data-icon="chevronLeft" class="icon-sm"></span>
-            Kembali
-          </button>
-          <button class="btn btn-primary" id="btnNext2">
-            Lanjut
+        <!-- STEP 1: KATEGORI -->
+        <div id="step1">
+          <div style="text-align:center; margin-bottom:20px;">
+            <h3 style="font-size:18px; color:var(--maroon); margin-bottom:6px;">Pilih Alasan</h3>
+            <p style="font-size:13px; color:var(--muted); font-weight:500;">Mengapa Anda tidak bisa hadir di pertemuan ini?</p>
+          </div>
+          <div class="kategori-grid" id="kategoriGrid">
+            <!-- Render via JS -->
+          </div>
+          <button class="btn btn-primary btn-full" id="btnNext1" disabled>
+            Lanjut Isi Detail
             <span data-icon="arrowRight" class="icon-sm"></span>
           </button>
         </div>
-      </div>
 
-      <!-- STEP 3: KONFIRMASI -->
-      <div id="step3" class="hidden">
-        <div class="review-box" id="reviewBox"></div>
+        <!-- STEP 2: DETAIL -->
+        <div id="step2" class="hidden">
+          <div class="form-card">
+            <div class="form-group">
+              <label class="form-lbl">Alasan Lengkap <span style="color:var(--danger);">*</span></label>
+              <textarea class="input" id="inputAlasan" rows="4" placeholder="Jelaskan alasan Anda secara singkat dan jelas. Contoh: Demam tinggi sejak semalam, disertai surat dokter."></textarea>
+            </div>
 
-        <div class="actions-row">
-          <button class="btn btn-secondary" id="btnBack3">
-            <span data-icon="chevronLeft" class="icon-sm"></span>
-            Ubah
-          </button>
-          <button class="btn btn-primary" id="btnKirim">
-            <span data-icon="send" class="icon-sm"></span>
-            Kirim Ajuan
-          </button>
+            <div class="form-group hidden" id="groupTanggal" style="margin-top:16px;">
+              <label class="form-lbl">Periode Tanggal <span style="color:var(--danger);">*</span></label>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div>
+                  <div style="font-size:11px; font-weight:700; color:var(--muted); margin-bottom:4px;">Mulai</div>
+                  <input type="date" class="input" id="inputMulai" />
+                </div>
+                <div>
+                  <div style="font-size:11px; font-weight:700; color:var(--muted); margin-bottom:4px;">Selesai</div>
+                  <input type="date" class="input" id="inputSelesai" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group" id="groupLampiran" style="margin-top:16px;">
+              <label class="form-lbl">
+                Link Bukti / Lampiran 
+                <span id="lampiranReq" style="color:var(--danger); display:none;">*</span>
+                <span id="lampiranOpt" style="color:var(--muted); font-size:10px; font-weight:600;">(Opsional)</span>
+              </label>
+              <input type="url" class="input" id="inputLampiran" placeholder="https://drive.google.com/..." />
+              <div class="form-help" id="lampiranHint">Opsional: Link surat dokter, foto, atau bukti pendukung lainnya.</div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-secondary" id="btnBack2" style="flex:1;">Kembali</button>
+            <button class="btn btn-primary" id="btnNext2" style="flex:2;">Review Ajuan</button>
+          </div>
         </div>
-      </div>
+
+        <!-- STEP 3: KONFIRMASI -->
+        <div id="step3" class="hidden">
+          <div style="text-align:center; margin-bottom:20px;">
+            <h3 style="font-size:18px; color:var(--maroon); margin-bottom:6px;">Konfirmasi Ajuan</h3>
+            <p style="font-size:13px; color:var(--muted); font-weight:500;">Pastikan data di bawah ini sudah benar.</p>
+          </div>
+
+          <div class="review-box" id="reviewBox"></div>
+
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-secondary" id="btnBack3" style="flex:1;">Ubah</button>
+            <button class="btn btn-primary" id="btnKirim" style="flex:2;">
+              <span data-icon="send" class="icon-sm"></span> Kirim Ajuan
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- STAGE 3: SUKSES -->
+      <section id="stageSukses" class="hidden">
+        <div class="form-card" style="text-align:center;">
+          <div class="big-icon-wrap success">
+            <span data-icon="checkCircle"></span>
+          </div>
+          <h2 style="font-size:22px; color:var(--ink); margin-bottom:8px;">Ajuan Terkirim!</h2>
+          <p style="font-size:13.5px; color:var(--muted); line-height:1.6; margin-bottom:24px;">
+            Ajuan Anda telah diteruskan ke Kepala Sekolah untuk diverifikasi. Pantau statusnya secara berkala.
+          </p>
+
+          <div style="text-align:left; background:var(--bg); border-radius:14px; padding:16px; margin-bottom:24px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="font-size:12.5px; font-weight:700; color:var(--muted);">Kategori Ajuan</span>
+              <span style="font-size:13.5px; font-weight:800; color:var(--ink);" id="suksesKategori">—</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:12.5px; font-weight:700; color:var(--muted);">Status Saat Ini</span>
+              <span style="font-size:12px; font-weight:800; color:var(--warning); background:var(--warning-soft); padding:4px 10px; border-radius:999px;">Menunggu KS</span>
+            </div>
+          </div>
+
+          <a href="beranda.html" class="btn btn-primary btn-full" style="text-decoration:none;">Kembali ke Beranda</a>
+        </div>
+      </section>
+
+      <!-- STAGE 4: ERROR -->
+      <section id="stageError" class="hidden">
+        <div class="form-card" style="text-align:center;">
+          <div class="big-icon-wrap error">
+            <span data-icon="alertCircle"></span>
+          </div>
+          <h2 style="font-size:20px; color:var(--ink); margin-bottom:8px;">Tidak Bisa Mengajukan</h2>
+          <p style="font-size:13.5px; color:var(--muted); line-height:1.6; margin-bottom:24px;" id="errorDesc">—</p>
+          <a href="beranda.html" class="btn btn-primary btn-full" style="text-decoration:none;">Kembali ke Beranda</a>
+        </div>
+      </section>
+
     </div>
-  </section>
-
-  <!-- STAGE 3: SUKSES -->
-  <section id="stageSukses" class="hidden">
-    <div class="stage-card">
-      <div class="success-icon">
-        <span data-icon="checkCircle"></span>
-      </div>
-      <div class="stage-title" style="font-size:20px;">Ajuan Terkirim!</div>
-      <div class="stage-desc" style="margin-bottom:20px;">
-        Ajuan Anda menunggu verifikasi Kepala Sekolah.
-      </div>
-
-      <div class="info-row highlight" style="padding:12px 14px;background:linear-gradient(135deg,#F5FDF9 0%,#ECFDF5 100%);border-radius:14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:12px;font-weight:700;color:var(--muted);">Kategori</span>
-        <span style="font-size:13px;font-weight:800;color:var(--ink);" id="suksesKategori">—</span>
-      </div>
-      <div style="padding:12px 14px;background:var(--bg);border-radius:14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:12px;font-weight:700;color:var(--muted);">Status</span>
-        <span style="font-size:13px;font-weight:800;color:var(--warning);">Menunggu KS</span>
-      </div>
-      <div style="padding:12px 14px;background:var(--bg);border-radius:14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:12px;font-weight:700;color:var(--muted);">Poin (jika disetujui)</span>
-        <span style="font-size:13px;font-weight:800;color:var(--success);" id="suksesPoin">—</span>
-      </div>
-
-      <a href="beranda.html" class="btn btn-primary btn-full" style="margin-top:20px;text-decoration:none;text-align:center;">
-        Kembali ke Beranda
-      </a>
-    </div>
-  </section>
-
-  <!-- STAGE 4: ERROR -->
-  <section id="stageError" class="hidden">
-    <div class="stage-card">
-      <div class="error-icon">
-        <span data-icon="alertCircle"></span>
-      </div>
-      <div class="stage-title" style="font-size:20px;">Tidak Bisa Mengajukan</div>
-      <div class="stage-desc" id="errorDesc" style="margin-bottom:20px;">—</div>
-      <a href="beranda.html" class="btn btn-primary btn-full" style="text-decoration:none;text-align:center;">
-        Kembali ke Beranda
-      </a>
-    </div>
-  </section>
-
-</main>
-
-<nav class="bottom-nav">
-  <a class="nav-item" data-nav="beranda" href="beranda.html"><span data-icon="home"></span> Beranda</a>
-  <a class="nav-item" data-nav="pertemuan" href="beranda.html#sectionPertemuan"><span data-icon="calendar"></span> Pertemuan</a>
-  <a class="nav-item" data-nav="galeri" href="galeri.html"><span data-icon="grid"></span> Galeri</a>
-  <a class="nav-item" data-nav="aktivitas" href="aktivitas.html"><span data-icon="activity"></span> Aktivitas</a>
-  <a class="nav-item" data-nav="profil" href="profil.html"><span data-icon="user"></span> Profil</a>
-</nav>
+  </main>
+</div>
 
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/api.js"></script>
 <script src="assets/js/ui.js"></script>
 <script src="assets/js/app-nav.js"></script>
 <script>
-// Render ikon
+// Render Ikon
 document.querySelectorAll('[data-icon]').forEach(el => {
   el.innerHTML = Icons.get(el.dataset.icon);
   el.style.display = 'contents';
 });
 UI.bindLogout();
 
-// =====================================================
-// STATE
-// =====================================================
+// State
 let profile;
 let pertemuanId = null;
 let pertemuanData = null;
@@ -552,9 +421,6 @@ let step = 1;
 const params = new URLSearchParams(window.location.search);
 pertemuanId = params.get('id');
 
-// =====================================================
-// HELPERS
-// =====================================================
 function showStage(nama) {
   ['stageLoading', 'stageForm', 'stageSukses', 'stageError']
     .forEach(id => document.getElementById(id).classList.toggle('hidden', id !== nama));
@@ -572,14 +438,6 @@ function setStep(n) {
   document.getElementById('step1').classList.toggle('hidden', n !== 1);
   document.getElementById('step2').classList.toggle('hidden', n !== 2);
   document.getElementById('step3').classList.toggle('hidden', n !== 3);
-
-  const titles = {
-    1: ['Pilih Kategori', 'Pilih alasan Anda tidak bisa hadir di pertemuan ini.'],
-    2: ['Isi Detail', 'Lengkapi alasan dan bukti pendukung.'],
-    3: ['Konfirmasi', 'Periksa kembali sebelum mengirim.'],
-  };
-  document.getElementById('formTitle').textContent = titles[n][0];
-  document.getElementById('formDesc').textContent = titles[n][1];
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -591,12 +449,24 @@ function formatTanggal(str) {
   } catch { return str; }
 }
 
-// =====================================================
 // INIT
-// =====================================================
 (async () => {
   profile = await Api.requireLogin();
   if (!profile) return;
+
+  // Setup User Chip (Desktop)
+  const chip = document.getElementById('userChip');
+  if (chip) {
+    const init = (profile.nama || 'A').charAt(0).toUpperCase();
+    const fotoUrl = Api.fotoSayaUrl('t');
+    chip.innerHTML = `<div class="avatar">${fotoUrl ? `<img src="${fotoUrl}" onerror="this.parentElement.textContent='${init}'">` : init}</div><span>${UI.escapeHtml(profile.nama || '-')}</span>`;
+  }
+
+  // Sembunyikan Galeri untuk Non-Admin di Sidebar Desktop
+  const isAdmin = (profile.peran || []).includes('pengurus') || (profile.peran || []).includes('super_admin');
+  if (!isAdmin) {
+    document.querySelectorAll('.sidebar-item[href="galeri.html"]').forEach(el => el.style.display = 'none');
+  }
 
   if (!pertemuanId) {
     showStage('stageError');
@@ -604,7 +474,7 @@ function formatTanggal(str) {
     return;
   }
 
-  // Ambil kategori + pertemuan secara paralel
+  // Ambil kategori + pertemuan
   const [resKat, resPertemuan] = await Promise.all([
     Api.call('kategori_ajuan.list'),
     Api.call('pertemuan.detail', { pertemuan_id: Number(pertemuanId) }),
@@ -621,24 +491,21 @@ function formatTanggal(str) {
     return;
   }
 
-  // Filter kategori: hanya yang bisa diajukan (bukan sistem)
+  // Filter kategori sistem
   const KATEGORI_SISTEM = ['tepat_waktu', 'terlambat', 'luar_radius', 'alfa'];
   kategoriList = (resKat.data || []).filter(k => !KATEGORI_SISTEM.includes(k.kode));
-
   pertemuanData = resPertemuan.data.pertemuan;
 
-  // Kalau sudah ada pengajuan, tampilkan status
+  // Cek existing ajuan
   const existing = await Api.call('izin.saya', { pertemuan_id: Number(pertemuanId) });
   if (existing.ok && existing.data) {
     tampilkanExisting(existing.data);
     return;
   }
 
-  // Kalau sudah presensi, tidak bisa ajukan
   if (resPertemuan.data.presensi_saya) {
     showStage('stageError');
-    document.getElementById('errorDesc').textContent =
-      'Anda sudah tercatat presensi di pertemuan ini.';
+    document.getElementById('errorDesc').textContent = 'Anda sudah tercatat presensi di pertemuan ini.';
     return;
   }
 
@@ -647,62 +514,100 @@ function formatTanggal(str) {
   showStage('stageForm');
 })();
 
-// =====================================================
-// TAMPILKAN EXISTING
-// =====================================================
+// RENDER EXISTING
 function tampilkanExisting(izin) {
   const kat = kategoriList.find(k => k.kode === (izin.kategori_kode || izin.jenis)) || {};
   const wrap = document.getElementById('existingInfoWrap');
+  
+  let statusClass = 'menunggu';
+  let statusIcon = 'clock';
+  let statusTitle = 'Menunggu Verifikasi';
+  let statusDesc = 'Ajuan Anda sedang ditinjau oleh Kepala Sekolah.';
 
-  const statusLabel = {
-    menunggu: 'Menunggu Verifikasi KS',
-    disetujui: 'Disetujui KS',
-    ditolak: 'Ditolak KS',
-  }[izin.status_ks] || izin.status_ks;
+  if (izin.status_ks === 'disetujui') {
+    statusClass = 'disetujui';
+    statusIcon = 'checkCircle';
+    statusTitle = 'Ajuan Disetujui';
+    statusDesc = 'Ajuan Anda telah disetujui.';
+  } else if (izin.status_ks === 'ditolak') {
+    statusClass = 'ditolak';
+    statusIcon = 'xCircle';
+    statusTitle = 'Ajuan Ditolak';
+    statusDesc = 'Ajuan Anda ditolak oleh Kepala Sekolah.';
+  }
 
   wrap.innerHTML = `
-    <div class="existing-info">
-      ${Icons.get('info')}
-      <div>
-        <div style="font-weight:800;margin-bottom:4px;">
-          Anda sudah mengajukan ${UI.escapeHtml(kat.nama || izin.jenis)}
+    <div class="status-card" style="margin-bottom:20px;">
+      <div class="status-header">
+        <div class="status-icon ${statusClass}">
+          ${Icons.get(statusIcon, { class: 'icon-lg' })}
         </div>
-        <div style="font-weight:600;opacity:.9;">
-          Status: <strong>${UI.escapeHtml(statusLabel)}</strong>
-          ${izin.catatan_ks ? `<br>Catatan KS: ${UI.escapeHtml(izin.catatan_ks)}` : ''}
+        <div>
+          <div class="status-title">${statusTitle}</div>
+          <div class="status-sub">${UI.escapeHtml(kat.nama || izin.jenis)}</div>
         </div>
       </div>
+      <p style="font-size:13px; line-height:1.6; color:var(--muted); margin-bottom:16px;">
+        ${statusDesc}
+      </p>
+      <div style="background:var(--bg); padding:12px 14px; border-radius:12px; font-size:12.5px; color:var(--ink); margin-bottom:8px;">
+        <strong>Alasan Anda:</strong><br>${UI.escapeHtml(izin.alasan)}
+      </div>
+      ${izin.catatan_ks ? `
+        <div style="background:var(--maroon-soft); padding:12px 14px; border-radius:12px; font-size:12.5px; color:var(--maroon);">
+          <strong>Catatan KS:</strong><br>${UI.escapeHtml(izin.catatan_ks)}
+        </div>
+      ` : ''}
     </div>
   `;
 
   renderKategoriGrid();
   setStep(1);
   showStage('stageForm');
+  document.getElementById('btnNext1').disabled = true; // Disable next if they already have one
 }
 
-// =====================================================
 // RENDER KATEGORI GRID
-// =====================================================
 function renderKategoriGrid() {
   const grid = document.getElementById('kategoriGrid');
   if (!kategoriList.length) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:20px;">Belum ada kategori tersedia.</div>';
+    grid.innerHTML = '<div style="text-align:center;color:var(--muted);padding:20px;">Belum ada kategori tersedia.</div>';
     return;
   }
 
-  grid.innerHTML = kategoriList.map(k => `
-    <div class="kat-card" data-kode="${k.kode}">
-      <div class="kat-icon">
-        ${Icons.get(k.ikon || 'circle')}
-      </div>
-      <div class="kat-nama">${UI.escapeHtml(k.nama)}</div>
-      <div class="kat-poin">
-        <span>${k.poin}</span> poin
-      </div>
-    </div>
-  `).join('');
+  // Mapping icon dan deskripsi premium (tanpa poin)
+  const iconMap = {
+    izin_pribadi: 'userX',
+    sakit: 'heartPulse',
+    sakit_tanpa_surat: 'heart',
+    dinas_luar: 'briefcase',
+    cuti_melahirkan: 'baby',
+    cuti: 'calendarX'
+  };
 
-  // Bind klik
+  const descMap = {
+    izin_pribadi: 'Keperluan mendesak di luar tugas kedinasan',
+    sakit: 'Kondisi kesehatan menurun dengan surat dokter',
+    sakit_tanpa_surat: 'Kondisi kesehatan menurun tanpa surat dokter',
+    dinas_luar: 'Menjalankan tugas resmi dari sekolah/dinas',
+    cuti_melahirkan: 'Hak cuti melahirkan bagi guru perempuan',
+    cuti: 'Cuti tahunan atau keperluan lainnya'
+  };
+
+  grid.innerHTML = kategoriList.map(k => {
+    const icon = iconMap[k.kode] || 'fileText';
+    const desc = descMap[k.kode] || 'Alasan ketidakhadiran';
+    return `
+      <div class="kat-card" data-kode="${k.kode}">
+        <div class="kat-icon">${Icons.get(icon)}</div>
+        <div class="kat-body">
+          <div class="kat-nama">${UI.escapeHtml(k.nama)}</div>
+          <div class="kat-desc">${desc}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
   grid.querySelectorAll('.kat-card').forEach(el => {
     el.addEventListener('click', () => {
       grid.querySelectorAll('.kat-card').forEach(c => c.classList.remove('selected'));
@@ -713,33 +618,28 @@ function renderKategoriGrid() {
   });
 }
 
-// =====================================================
-// STEP 1 → STEP 2
-// =====================================================
+// STEP NAVIGATION
 document.getElementById('btnNext1').addEventListener('click', () => {
   if (!kategoriDipilih) return;
 
-  // Set form sesuai kategori
   document.getElementById('groupTanggal').classList.toggle('hidden', !kategoriDipilih.multi_hari);
-  document.getElementById('lampiranReq').classList.toggle('hidden', !kategoriDipilih.butuh_lampiran);
-  document.getElementById('lampiranOpt').classList.toggle('hidden', kategoriDipilih.butuh_lampiran);
+  document.getElementById('lampiranReq').style.display = kategoriDipilih.butuh_lampiran ? 'inline' : 'none';
+  document.getElementById('lampiranOpt').style.display = kategoriDipilih.butuh_lampiran ? 'none' : 'inline';
+  
+  if (kategoriDipilih.butuh_lampiran) {
+    document.getElementById('lampiranHint').innerHTML = '<span style="color:var(--danger);">Wajib:</span> Kategori ini memerlukan bukti (surat dokter/surat tugas).';
+  } else {
+    document.getElementById('lampiranHint').textContent = 'Opsional: Link surat dokter, foto, atau bukti pendukung.';
+  }
 
-  // Pre-fill tanggal pertemuan kalau multi-hari
   if (kategoriDipilih.multi_hari && pertemuanData?.tanggal) {
-    if (!document.getElementById('inputMulai').value) {
-      document.getElementById('inputMulai').value = pertemuanData.tanggal;
-    }
-    if (!document.getElementById('inputSelesai').value) {
-      document.getElementById('inputSelesai').value = pertemuanData.tanggal;
-    }
+    if (!document.getElementById('inputMulai').value) document.getElementById('inputMulai').value = pertemuanData.tanggal;
+    if (!document.getElementById('inputSelesai').value) document.getElementById('inputSelesai').value = pertemuanData.tanggal;
   }
 
   setStep(2);
 });
 
-// =====================================================
-// STEP 2 → STEP 3
-// =====================================================
 document.getElementById('btnBack2').addEventListener('click', () => setStep(1));
 
 document.getElementById('btnNext2').addEventListener('click', () => {
@@ -748,38 +648,24 @@ document.getElementById('btnNext2').addEventListener('click', () => {
   const mulai = document.getElementById('inputMulai').value;
   const selesai = document.getElementById('inputSelesai').value;
 
-  if (!alasan) {
-    UI.gagal('Alasan wajib diisi.');
-    return;
-  }
-  if (kategoriDipilih.butuh_lampiran && !lampiran) {
-    UI.gagal('Kategori ini wajib melampirkan bukti.');
-    return;
-  }
-  if (lampiran && !/^https?:\/\/.+/i.test(lampiran)) {
-    UI.gagal('Link lampiran harus dimulai dengan http:// atau https://');
-    return;
-  }
+  if (!alasan) { UI.gagal('Alasan wajib diisi.'); return; }
+  if (kategoriDipilih.butuh_lampiran && !lampiran) { UI.gagal('Kategori ini wajib melampirkan bukti.'); return; }
+  if (lampiran && !/^https?:\/\/.+/i.test(lampiran)) { UI.gagal('Link harus dimulai http:// atau https://'); return; }
   if (kategoriDipilih.multi_hari) {
     if (!mulai) { UI.gagal('Tanggal mulai wajib diisi.'); return; }
     if (!selesai) { UI.gagal('Tanggal selesai wajib diisi.'); return; }
     if (selesai < mulai) { UI.gagal('Tanggal selesai harus >= tanggal mulai.'); return; }
   }
 
-  // Render review
   renderReview(alasan, lampiran, mulai, selesai);
   setStep(3);
 });
 
-// =====================================================
-// RENDER REVIEW
-// =====================================================
 function renderReview(alasan, lampiran, mulai, selesai) {
   const rows = [
     ['Kategori', kategoriDipilih.nama],
-    ['Poin', `${kategoriDipilih.poin} poin`],
     ['Pertemuan', `#${pertemuanData.urutan} — ${pertemuanData.judul}`],
-    ['Tanggal Pertemuan', formatTanggal(pertemuanData.tanggal)],
+    ['Tanggal', formatTanggal(pertemuanData.tanggal)]
   ];
 
   if (kategoriDipilih.multi_hari) {
@@ -787,9 +673,8 @@ function renderReview(alasan, lampiran, mulai, selesai) {
   }
 
   rows.push(['Alasan', alasan]);
-
   if (lampiran) {
-    rows.push(['Lampiran', `<a class="review-val link" href="${UI.escapeHtml(lampiran)}" target="_blank" rel="noopener">Lihat Bukti</a>`]);
+    rows.push(['Lampiran', `<a href="${UI.escapeHtml(lampiran)}" target="_blank" style="color:var(--maroon);text-decoration:underline;">Lihat Bukti</a>`]);
   }
 
   document.getElementById('reviewBox').innerHTML = rows.map(([lbl, val]) => `
@@ -800,9 +685,6 @@ function renderReview(alasan, lampiran, mulai, selesai) {
   `).join('');
 }
 
-// =====================================================
-// STEP 3 → KIRIM
-// =====================================================
 document.getElementById('btnBack3').addEventListener('click', () => setStep(2));
 
 document.getElementById('btnKirim').addEventListener('click', async () => {
@@ -826,21 +708,14 @@ document.getElementById('btnKirim').addEventListener('click', async () => {
   }
 
   const res = await Api.call('izin.ajukan', payload);
-
   UI.btnReset(btn);
 
-  if (!res.ok) {
-    UI.gagal(res.error || 'Gagal mengirim ajuan.');
-    return;
-  }
+  if (!res.ok) { UI.gagal(res.error || 'Gagal mengirim ajuan.'); return; }
 
   document.getElementById('suksesKategori').textContent = kategoriDipilih.nama;
-  document.getElementById('suksesPoin').textContent = `+${kategoriDipilih.poin} poin`;
-
   showStage('stageSukses');
   UI.sukses('Ajuan terkirim!');
 });
-
 </script>
 
 </body>
