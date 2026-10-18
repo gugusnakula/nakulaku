@@ -84,7 +84,7 @@
     border-radius: 18px; padding: 16px; margin-bottom: 16px; box-shadow: var(--sh-xs);
   }
 
-  /* SEARCH BAR (FIXED) */
+  /* SEARCH BAR */
   .search-wrap { position: relative; margin-bottom: 16px; }
   .search-wrap input {
     width: 100%; padding: 12px 16px 12px 42px;
@@ -98,7 +98,7 @@
     position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
     color: var(--muted); pointer-events: none; display: flex; align-items: center; justify-content: center;
   }
-  .search-wrap .icon-left svg { width: 18px; height: 18px; } /* Ikon lebih presisi */
+  .search-wrap .icon-left svg { width: 18px; height: 18px; }
 
   /* TAB SWITCH */
   .tab-switch {
@@ -138,7 +138,7 @@
     display: flex; align-items: center; gap: 4px;
   }
 
-  /* MODAL / BOTTOM SHEET (TALLY COUNTER) */
+  /* MODAL / BOTTOM SHEET */
   .modal-sheet {
     position: fixed; inset: 0; background: rgba(28,20,20,.5); backdrop-filter: blur(2px);
     z-index: 1000; display: flex; align-items: flex-end; justify-content: center;
@@ -155,6 +155,7 @@
   }
   .modal-handle { width: 40px; height: 5px; background: var(--border-strong); border-radius: 999px; margin: 0 auto 16px; }
   
+  /* TALLY (GURU) */
   .tally-row {
     display: flex; align-items: center; justify-content: space-between;
     padding: 12px 0; border-bottom: 1px solid var(--border);
@@ -172,7 +173,20 @@
   .btn-tally.minus:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-soft); }
   .btn-tally.plus:hover { border-color: var(--success); color: var(--success); background: var(--success-soft); }
   .tally-val {
-    font-size: 16px; font-weight: 800; color: var(--ink); min-width: 24px; text-align: center;
+    font-size: 18px; font-weight: 800; color: var(--maroon); min-width: 30px; text-align: center;
+  }
+
+  /* RATING (SEKOLAH) */
+  .rating-pick { display: flex; gap: 6px; flex-shrink: 0; }
+  .rating-pick button {
+    width: 38px; height: 38px; border-radius: 10px; border: 1.5px solid var(--border);
+    background: var(--surface); font-size: 14px; font-weight: 800; color: var(--muted);
+    cursor: pointer; transition: all .15s; font-family: inherit;
+  }
+  .rating-pick button:hover { border-color: var(--maroon); color: var(--maroon); }
+  .rating-pick button.on {
+    background: var(--maroon); color: white; border-color: var(--maroon);
+    box-shadow: 0 4px 10px rgba(125,29,58,.25); transform: translateY(-1px);
   }
 
   /* SAVE BAR */
@@ -249,7 +263,7 @@
         <div class="hero-pengamat">
           <div class="hero-icon"><span data-icon="eye" class="icon-xl"></span></div>
           <div class="hero-title">Tugas Pengamatan</div>
-          <div class="hero-desc">Catat keaktifan peserta dan kekompakan sekolah. Klik nama guru untuk mencatat poin keaktifannya.</div>
+          <div class="hero-desc">Catat keaktifan guru (tally) dan nilai kekompakan sekolah. Data akan direkap oleh admin.</div>
         </div>
 
         <div class="section-title">
@@ -295,7 +309,7 @@
   </main>
 </div>
 
-<!-- SAVE BAR (Hanya muncul jika ada perubahan) -->
+<!-- SAVE BAR -->
 <div class="save-bar hidden" id="saveBar">
   <div class="save-bar-inner">
     <button class="btn btn-secondary" id="btnBatal">
@@ -323,7 +337,7 @@ let profile;
 let tugasList = [];
 let pertemuanAktif = null;
 let dataSesi = null;
-let catatanState = {}; // { guru-123: { bertanya: 2, menjawab: 1, catatan: "" } }
+let catatanState = {}; // { guru-123: { bertanya: 2, ... , catatan: "" } }
 let tipeAktif = 'guru';
 let searchQuery = '';
 
@@ -345,7 +359,6 @@ const ASPEK_SEKOLAH = [
   profile = await Api.requireLogin();
   if (!profile) return;
 
-  // Setup User Chip
   const chip = document.getElementById('userChip');
   if (chip) {
     const init = (profile.nama || 'A').charAt(0).toUpperCase();
@@ -424,14 +437,12 @@ async function bukaPertemuan(id) {
   document.getElementById('infoPertemuan').textContent = `Pertemuan #${dataSesi.pertemuan.urutan} · ${dataSesi.pertemuan.judul}`;
   document.getElementById('infoPertemuan2').textContent = `${UI.formatTanggal(dataSesi.pertemuan.tanggal)} · ${dataSesi.jumlah_peserta} peserta hadir`;
 
-  // Load catatan awal dari DB ke state (format: guru-123-bertanya)
   catatanState = {};
   (dataSesi.catatan || []).forEach(c => {
     const targetId = c.target_tipe === 'guru' ? c.target_user_id : c.target_sekolah_id;
     const baseKey = `${c.target_tipe}-${targetId}`;
     if (!catatanState[baseKey]) catatanState[baseKey] = { catatan: '' };
     
-    // Simpan skor per aspek
     if (c.aspek !== '__umum') {
       catatanState[baseKey][c.aspek] = (catatanState[baseKey][c.aspek] || 0) + c.skor;
     } else {
@@ -489,15 +500,15 @@ function renderTargets() {
     const key = `${tipeAktif}-${targetId}`;
     const state = catatanState[key] || {};
     
-    // Hitung total skor yang sudah diisi
+    // Cek apakah sudah ada data yang diisi (Diamati/Dinilai)
     const aspekList = isSekolah ? ASPEK_SEKOLAH : ASPEK_GURU;
-    let totalSkor = 0;
-    aspekList.forEach(a => totalSkor += (state[a.key] || 0));
+    let hasData = false;
+    aspekList.forEach(a => { if (state[a.key] > 0) hasData = true; });
 
     const fotoUrl = t.foto_thumb_url || (t.id ? Api.fotoUrl(t.id, 't') : null);
 
     return `
-      <div class="guru-row" onclick="bukaModalTally('${tipeAktif}', ${targetId}, '${UI.escapeHtml(nama)}')">
+      <div class="guru-row" onclick="bukaModal('${tipeAktif}', ${targetId}, '${UI.escapeHtml(nama)}')">
         <div class="guru-avatar">
           <span>${init}</span>
           ${fotoUrl && !isSekolah ? `<img src="${fotoUrl}" onerror="this.remove()">` : ''}
@@ -506,9 +517,9 @@ function renderTargets() {
           <div class="guru-nama">${UI.escapeHtml(nama || '-')}</div>
           <div class="guru-sub">${UI.escapeHtml(sub)}</div>
         </div>
-        ${totalSkor > 0 ? `
+        ${hasData ? `
           <div class="badge-diamati">
-            ${Icons.get('check', { class: 'icon-sm' })} Diamati
+            ${Icons.get('check', { class: 'icon-sm' })} ${isSekolah ? 'Dinilai' : 'Diamati'}
           </div>
         ` : ''}
       </div>
@@ -517,14 +528,13 @@ function renderTargets() {
 }
 
 // ==========================================
-// MODAL TALLY COUNTER
+// MODAL (TALLY GURU / RATING SEKOLAH)
 // ==========================================
-function bukaModalTally(tipe, targetId, nama) {
+function bukaModal(tipe, targetId, nama) {
   const isSekolah = tipe === 'sekolah';
   const aspekList = isSekolah ? ASPEK_SEKOLAH : ASPEK_GURU;
   const key = `${tipe}-${targetId}`;
   
-  // Ambil state saat ini (atau init 0)
   const state = catatanState[key] || { catatan: '' };
   const aspekState = {};
   aspekList.forEach(a => aspekState[a.key] = state[a.key] || 0);
@@ -536,7 +546,7 @@ function bukaModalTally(tipe, targetId, nama) {
       <div class="modal-handle"></div>
       
       <div style="text-align:center; margin-bottom:20px;">
-        <h3 style="font-size:18px; color:var(--maroon); margin-bottom:4px;">Catat Keaktifan</h3>
+        <h3 style="font-size:18px; color:var(--maroon); margin-bottom:4px;">${isSekolah ? 'Nilai Kekompakan' : 'Catat Keaktifan'}</h3>
         <p style="font-size:13px; color:var(--muted); font-weight:600;">${UI.escapeHtml(nama)}</p>
       </div>
 
@@ -544,11 +554,16 @@ function bukaModalTally(tipe, targetId, nama) {
         ${aspekList.map(a => `
           <div class="tally-row">
             <div class="tally-label">${a.label}</div>
-            <div class="tally-controls">
-              <button class="btn-tally minus" data-aksi="minus" data-aspek="${a.key}">−</button>
-              <div class="tally-val" id="val-${a.key}">${aspekState[a.key]}</div>
-              <button class="btn-tally plus" data-aksi="plus" data-aspek="${a.key}">+</button>
-            </div>
+            ${isSekolah 
+              ? `<div class="rating-pick" data-aspek="${a.key}">
+                   ${[1,2,3,4,5].map(n => `<button type="button" data-skor="${n}" class="${aspekState[a.key] === n ? 'on' : ''}">${n}</button>`).join('')}
+                 </div>`
+              : `<div class="tally-controls">
+                   <button class="btn-tally minus" data-aksi="minus" data-aspek="${a.key}">−</button>
+                   <div class="tally-val" id="val-${a.key}">${aspekState[a.key]}</div>
+                   <button class="btn-tally plus" data-aksi="plus" data-aspek="${a.key}">+</button>
+                 </div>`
+            }
           </div>
         `).join('')}
       </div>
@@ -566,7 +581,7 @@ function bukaModalTally(tipe, targetId, nama) {
   `;
   document.body.appendChild(overlay);
 
-  // Bind Tally Buttons
+  // Bind Tally Buttons (Khusus Guru)
   overlay.querySelectorAll('.btn-tally').forEach(btn => {
     btn.addEventListener('click', () => {
       const aspek = btn.dataset.aspek;
@@ -574,11 +589,23 @@ function bukaModalTally(tipe, targetId, nama) {
       const elVal = overlay.querySelector(`#val-${aspek}`);
       let cur = Number(elVal.textContent);
       
-      if (aksi === 'plus' && cur < 5) cur++; // Max 5 per aspek
+      if (aksi === 'plus' && cur < 99) cur++; // Max 99
       if (aksi === 'minus' && cur > 0) cur--;
       
       elVal.textContent = cur;
       aspekState[aspek] = cur;
+    });
+  });
+
+  // Bind Rating Buttons (Khusus Sekolah)
+  overlay.querySelectorAll('.rating-pick').forEach(r => {
+    const aspek = r.dataset.aspek;
+    r.querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', () => {
+        r.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+        b.classList.add('on');
+        aspekState[aspek] = Number(b.dataset.skor);
+      });
     });
   });
 
@@ -587,10 +614,9 @@ function bukaModalTally(tipe, targetId, nama) {
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
 
   overlay.querySelector('#btnSimpanTally').addEventListener('click', () => {
-    // Simpan ke state global
     catatanState[key] = { ...aspekState, catatan: overlay.querySelector('#tallyCatatan').value.trim() };
     close();
-    renderTargets(); // Update badge di belakang
+    renderTargets();
     UI.sukses('Catatan tersimpan di daftar.');
   });
 }
@@ -605,14 +631,12 @@ document.getElementById('btnSimpan').addEventListener('click', async () => {
   const btn = document.getElementById('btnSimpan');
   UI.btnLoading(btn, 'Menyimpan ke Server…');
 
-  // Konversi catatanState ke format items backend
   const items = [];
   Object.keys(catatanState).forEach(baseKey => {
     const [tipe, targetIdStr] = baseKey.split('-');
     const targetId = Number(targetIdStr);
     const state = catatanState[baseKey];
     
-    // Kirim skor aspek
     Object.keys(state).forEach(k => {
       if (k === 'catatan') return;
       if (state[k] > 0) {
@@ -626,13 +650,12 @@ document.getElementById('btnSimpan').addEventListener('click', async () => {
       }
     });
 
-    // Kirim catatan teks jika ada
     if (state.catatan && state.catatan.trim()) {
       items.push({
         target_tipe: tipe,
         target_id: targetId,
         aspek: '__umum',
-        skor: 1, // skor dummy untuk catatan umum
+        skor: 1,
         catatan: state.catatan.trim(),
       });
     }
