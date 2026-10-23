@@ -18,7 +18,9 @@
 
   .tugas-stage { max-width: 720px; margin: 0 auto; padding: 20px 16px 40px; }
   
-  /* CARD UTAMA TUGAS */
+  /* ═══════════════════════════════════════
+     CARD UTAMA TUGAS
+     ═══════════════════════════════════════ */
   .tugas-card {
     background: var(--surface); border: 1.5px solid var(--border);
     border-radius: 20px; padding: 20px; margin-bottom: 20px;
@@ -36,10 +38,240 @@
   .tugas-meta-box {
     display: flex; gap: 12px; padding: 12px; background: var(--bg);
     border-radius: 12px; font-size: 12.5px; font-weight: 700; color: var(--ink);
+    flex-wrap: wrap;
   }
   .tugas-meta-box span { display: flex; align-items: center; gap: 6px; }
 
-  /* FORM PENGUMPULAN */
+  /* ═══════════════════════════════════════
+     LINK PILL — platform-aware
+     ═══════════════════════════════════════ */
+  .link-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 11px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1.5px solid transparent;
+    transition: all .15s var(--ease-out);
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    cursor: pointer;
+    line-height: 1.2;
+  }
+  .link-pill .pi { width: 14px; height: 14px; flex-shrink: 0; }
+  .link-pill .pl {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .link-pill .pe {
+    width: 11px; height: 11px;
+    opacity: 0.65;
+    flex-shrink: 0;
+    margin-left: 1px;
+  }
+
+  .link-pill.youtube {
+    background: #FEE2E2; color: #DC2626;
+    border-color: rgba(220,38,38,.15);
+  }
+  .link-pill.youtube:hover {
+    background: #DC2626; color: white;
+    border-color: #DC2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220,38,38,.25);
+  }
+
+  .link-pill.drive {
+    background: #FEF3C7; color: #D97706;
+    border-color: rgba(217,119,6,.15);
+  }
+  .link-pill.drive:hover {
+    background: #D97706; color: white;
+    border-color: #D97706;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(217,119,6,.25);
+  }
+
+  .link-pill.docs {
+    background: #DBEAFE; color: #2563EB;
+    border-color: rgba(37,99,235,.15);
+  }
+  .link-pill.docs:hover {
+    background: #2563EB; color: white;
+    border-color: #2563EB;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37,99,235,.25);
+  }
+
+  .link-pill.form {
+    background: #F3E8FF; color: #7C3AED;
+    border-color: rgba(124,58,237,.15);
+  }
+  .link-pill.form:hover {
+    background: #7C3AED; color: white;
+    border-color: #7C3AED;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(124,58,237,.25);
+  }
+
+  .link-pill.pdf {
+    background: #FEE2E2; color: #B91C1C;
+    border-color: rgba(185,28,28,.15);
+  }
+  .link-pill.pdf:hover {
+    background: #B91C1C; color: white;
+    border-color: #B91C1C;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(185,28,28,.25);
+  }
+
+  .link-pill.image {
+    background: #D1FAE5; color: #059669;
+    border-color: rgba(5,150,105,.15);
+  }
+  .link-pill.image:hover {
+    background: #059669; color: white;
+    border-color: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(5,150,105,.25);
+  }
+
+  .link-pill.web {
+    background: var(--bg); color: var(--muted);
+    border-color: var(--border);
+  }
+  .link-pill.web:hover {
+    background: var(--maroon); color: white;
+    border-color: var(--maroon);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(125,29,58,.25);
+  }
+
+  /* Link submission box (dengan thumbnail) */
+  .link-submit-box {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+  .link-submit-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .link-thumb-wrap {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface);
+    cursor: pointer;
+    position: relative;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    transition: all .2s var(--ease-out);
+  }
+  .link-thumb-wrap:hover {
+    border-color: var(--maroon);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(125,29,58,.1);
+  }
+  .link-thumb-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .link-thumb-wrap .play-ov {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,.2);
+    transition: background .2s;
+  }
+  .link-thumb-wrap:hover .play-ov { background: rgba(0,0,0,.35); }
+  .link-thumb-wrap .play-ov .pb {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: rgba(0,0,0,.75);
+    backdrop-filter: blur(6px);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,.4);
+  }
+  .link-thumb-wrap .play-ov .pb svg { width: 20px; height: 20px; margin-left: 2px; }
+
+  /* Live preview di form */
+  .link-preview-live {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .link-preview-live:empty { display: none; }
+  .link-preview-live .live-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    margin-right: 4px;
+  }
+
+  /* Nilai badge */
+  .nilai-badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    padding: 8px 14px;
+    background: linear-gradient(135deg, var(--success-soft) 0%, #D1FAE5 100%);
+    border: 1.5px solid rgba(21,128,61,.2);
+    border-radius: 12px;
+    margin-bottom: 16px;
+  }
+  .nilai-badge .label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--success);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-right: 4px;
+    align-self: center;
+  }
+  .nilai-badge .n {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--success);
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+  .nilai-badge .d {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--success);
+    opacity: 0.7;
+    align-self: center;
+  }
+
+  /* ═══════════════════════════════════════
+     FORM PENGUMPULAN
+     ═══════════════════════════════════════ */
   .kumpul-card {
     background: var(--surface); border: 1.5px solid var(--border);
     border-radius: 20px; padding: 20px; margin-bottom: 20px;
@@ -54,7 +286,47 @@
   .status-banner.ditolak { background: var(--danger-soft); color: var(--danger); }
   .status-banner.menunggu { background: var(--info-soft); color: var(--info); }
 
-  /* KOMENTAR */
+  /* Info box untuk komentar terkunci */
+  .komentar-locked-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px;
+    background: var(--info-soft);
+    border: 1.5px solid rgba(30,64,175,.15);
+    border-radius: 14px;
+    font-size: 12.5px;
+    color: var(--info);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  /* ═══════════════════════════════════════
+     KOMENTAR
+     ═══════════════════════════════════════ */
+  .komentar-section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .komentar-section-title h3 {
+    font-size: 15px;
+    font-weight: 800;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .komentar-count {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--maroon);
+    background: var(--maroon-soft);
+    padding: 3px 9px;
+    border-radius: 999px;
+  }
+
   .komentar-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
   .komentar-item {
     display: flex; gap: 12px; padding: 14px;
@@ -66,26 +338,38 @@
     color: var(--maroon); display: flex; align-items: center; justify-content: center;
     font-weight: 800; font-size: 14px; flex-shrink: 0; overflow: hidden; position: relative;
   }
-  .kom-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .kom-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
   .kom-body { flex: 1; min-width: 0; }
-  .kom-name { font-size: 12.5px; font-weight: 800; color: var(--ink); margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
-  .kom-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: var(--maroon); color: white; text-transform: uppercase; }
-  .kom-text { font-size: 13px; color: var(--ink); line-height: 1.5; margin-top: 4px; }
+  .kom-name { font-size: 12.5px; font-weight: 800; color: var(--ink); margin-bottom: 2px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .kom-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: var(--maroon); color: white; text-transform: uppercase; letter-spacing: 0.3px; }
+  .kom-text { font-size: 13px; color: var(--ink); line-height: 1.5; margin-top: 4px; white-space: pre-wrap; word-break: break-word; }
   .kom-time { font-size: 10.5px; color: var(--muted); font-weight: 600; margin-top: 4px; }
 
   .komentar-input-wrap {
     display: flex; gap: 10px; align-items: flex-end;
     background: var(--surface); border: 1.5px solid var(--border);
     border-radius: 16px; padding: 10px;
+    transition: all .15s;
+  }
+  .komentar-input-wrap:focus-within {
+    border-color: var(--maroon);
+    box-shadow: 0 0 0 3px rgba(125,29,58,.06);
   }
   .komentar-input-wrap textarea {
     flex: 1; border: none; background: transparent; padding: 8px;
     font-size: 13.5px; font-family: inherit; resize: none; outline: none; min-height: 44px;
+    color: var(--ink);
   }
+  .komentar-input-wrap textarea::placeholder { color: var(--muted-soft); }
   .btn-send {
     width: 44px; height: 44px; border-radius: 12px; border: none;
     background: var(--maroon); color: white; display: flex; align-items: center; justify-content: center;
     cursor: pointer; flex-shrink: 0;
+    transition: all .15s;
+  }
+  .btn-send:hover:not(:disabled) {
+    background: var(--maroon-dark);
+    transform: scale(1.03);
   }
   .btn-send:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>
@@ -140,12 +424,15 @@
 
         <!-- Komentar -->
         <div class="kumpul-card" id="komentarArea">
-          <h3 style="font-size:15px;font-weight:800;margin-bottom:16px;">Diskusi & Komentar</h3>
-          <div class="komentar-list" id="komentarList"></div>
-          <div class="komentar-input-wrap">
-            <textarea id="komentarInput" placeholder="Tulis komentar atau pertanyaan..." rows="1"></textarea>
-            <button class="btn-send" id="btnKirimKomentar" disabled><span data-icon="send"></span></button>
+          <div class="komentar-section-title">
+            <h3>
+              ${'' /* filled by JS */}
+              <span data-icon="messageCircle" class="icon-sm"></span>
+              Diskusi & Komentar
+            </h3>
+            <span class="komentar-count" id="komentarCount">0</span>
           </div>
+          <div id="komentarContent"></div>
         </div>
       </div>
     </div>
@@ -157,6 +444,9 @@
 <script src="assets/js/ui.js"></script>
 <script src="assets/js/app-nav.js"></script>
 <script>
+// ═══════════════════════════════════════════════
+// INIT ICONS
+// ═══════════════════════════════════════════════
 document.querySelectorAll('[data-icon]').forEach(el => {
   el.innerHTML = Icons.get(el.dataset.icon);
   el.style.display = 'contents';
@@ -168,6 +458,53 @@ const tugasId = Number(params.get('id'));
 let profile = null;
 let dataTugas = null;
 
+// ═══════════════════════════════════════════════
+// HELPERS: detectPlatform + renderLinkPill
+// ═══════════════════════════════════════════════
+function detectPlatform(url) {
+  if (!url || typeof url !== 'string') {
+    return { cls: 'web', icon: 'link', label: 'Buka Link' };
+  }
+  if (/docs\.google\.com\/forms/i.test(url)) {
+    return { cls: 'form', icon: 'clipboard', label: 'Google Form' };
+  }
+  if (/drive\.google\.com/i.test(url)) {
+    return { cls: 'drive', icon: 'fileText', label: 'Google Drive' };
+  }
+  if (/docs\.google\.com/i.test(url)) {
+    return { cls: 'docs', icon: 'fileText', label: 'Google Docs' };
+  }
+  if (/youtube\.com|youtu\.be/i.test(url)) {
+    return { cls: 'youtube', icon: 'play', label: 'YouTube' };
+  }
+  if (/\.pdf(\?|#|$)/i.test(url)) {
+    return { cls: 'pdf', icon: 'fileText', label: 'PDF' };
+  }
+  if (/\.(jpg|jpeg|png|webp|gif|avif|svg)(\?|#|$)/i.test(url)) {
+    return { cls: 'image', icon: 'camera', label: 'Gambar' };
+  }
+  return { cls: 'web', icon: 'externalLink', label: 'Buka Link' };
+}
+
+function renderLinkPill(url, opts = {}) {
+  if (!url || !/^https?:\/\//i.test(url)) return '';
+  const plat = detectPlatform(url);
+  const label = opts.label || plat.label;
+
+  return `
+    <a href="${UI.escapeHtml(url)}" target="_blank" rel="noopener noreferrer"
+       class="link-pill ${plat.cls}"
+       title="${UI.escapeHtml(url)}">
+      ${Icons.get(plat.icon, { class: 'pi' })}
+      <span class="pl">${UI.escapeHtml(label)}</span>
+      ${Icons.get('externalLink', { class: 'pe' })}
+    </a>
+  `;
+}
+
+// ═══════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════
 (async () => {
   profile = await Api.requireLogin();
   if (!profile) return;
@@ -177,7 +514,13 @@ let dataTugas = null;
   if (chip) {
     const init = (profile.nama || 'A').charAt(0).toUpperCase();
     const fotoUrl = Api.fotoSayaUrl('t');
-    chip.innerHTML = `<div class="avatar">${fotoUrl ? `<img src="${fotoUrl}" onerror="this.parentElement.textContent='${init}'">` : init}</div><span>${UI.escapeHtml(profile.nama || '-')}</span>`;
+    chip.innerHTML = `
+      <div class="avatar" style="position:relative;">
+        <span style="position:relative;z-index:0;">${init}</span>
+        ${fotoUrl ? `<img src="${fotoUrl}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;z-index:1;" onerror="this.remove()">` : ''}
+      </div>
+      <span>${UI.escapeHtml(profile.nama || '-')}</span>
+    `;
   }
 
   if (!tugasId) { UI.gagal('Tugas tidak ditemukan.'); return; }
@@ -199,18 +542,11 @@ async function loadData() {
   renderTugas();
   renderKumpul();
   renderKomentar();
-
-  // Setup Komentar
-  const ta = document.getElementById('komentarInput');
-  const btn = document.getElementById('btnKirimKomentar');
-  ta.addEventListener('input', () => {
-    btn.disabled = !ta.value.trim();
-    ta.style.height = 'auto';
-    ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
-  });
-  btn.addEventListener('click', kirimKomentar);
 }
 
+// ═══════════════════════════════════════════════
+// RENDER TUGAS DETAIL
+// ═══════════════════════════════════════════════
 function renderTugas() {
   const t = dataTugas.tugas;
   const p = dataTugas.pertemuan;
@@ -226,6 +562,9 @@ function renderTugas() {
   `;
 }
 
+// ═══════════════════════════════════════════════
+// RENDER KUMPUL / FORM
+// ═══════════════════════════════════════════════
 function renderKumpul() {
   const el = document.getElementById('kumpulArea');
   const k = dataTugas.pengumpulan_saya;
@@ -241,40 +580,99 @@ function renderKumpul() {
     };
     const s = statusMap[k.status] || statusMap.menunggu;
 
+    // Status banner
     html += `
       <div class="status-banner ${s.cls}">
         ${Icons.get(s.icon, { class: 'icon-sm' })} ${s.text}
       </div>
-      <div style="margin-bottom:16px;">
-        <div style="font-size:11px;font-weight:800;color:var(--muted);margin-bottom:4px;">LINK ANDA:</div>
-        <a href="${UI.escapeHtml(k.link)}" target="_blank" style="font-size:13.5px;font-weight:700;color:var(--maroon);text-decoration:underline;">${UI.escapeHtml(k.link)}</a>
-      </div>
-      ${k.nilai !== null ? `<div style="font-size:14px;font-weight:800;color:var(--success);margin-bottom:16px;">Nilai: ${k.nilai}</div>` : ''}
     `;
+
+    // Link pill + thumbnail (jika ada)
+    const thumb = UI.thumbnail(k.link);
+    const plat = detectPlatform(k.link);
+    const isYT = plat.cls === 'youtube';
+
+    html += `
+      <div class="link-submit-box">
+        <div class="link-submit-label">
+          ${Icons.get('link', { class: 'icon-sm' })}
+          Link Tugas Anda
+        </div>
+        ${thumb ? `
+          <div class="link-thumb-wrap" onclick="window.open('${UI.escapeHtml(k.link)}','_blank','noopener')">
+            <img src="${UI.escapeHtml(thumb)}" alt="" loading="lazy" onerror="this.parentElement.style.display='none'" />
+            ${isYT ? `<div class="play-ov"><div class="pb">${Icons.get('play')}</div></div>` : ''}
+          </div>
+        ` : ''}
+        ${renderLinkPill(k.link)}
+      </div>
+    `;
+
+    // Nilai badge (jika ada)
+    if (k.nilai !== null && k.nilai !== undefined) {
+      html += `
+        <div class="nilai-badge">
+          <span class="label">NILAI</span>
+          <span class="n">${k.nilai}</span>
+          <span class="d">/ 100</span>
+        </div>
+      `;
+    }
   }
 
-  // Form (Selalu ada untuk edit/upload baru)
+  // Form (selalu ada)
   html += `
-    <h3 style="font-size:15px;font-weight:800;margin-bottom:12px;margin-top:${k ? '16px' : '0'};">${k ? 'Perbarui Pengumpulan' : 'Kumpulkan Tugas'}</h3>
+    <h3 style="font-size:15px;font-weight:800;margin-bottom:12px;margin-top:${k ? '16px' : '0'};display:flex;align-items:center;gap:8px;">
+      ${Icons.get(k ? 'edit' : 'upload', { class: 'icon-sm' })}
+      ${k ? 'Perbarui Pengumpulan' : 'Kumpulkan Tugas'}
+    </h3>
     <div class="field" style="margin-bottom:12px;">
       <label class="label">Link Tugas (Google Drive, YouTube, dll) *</label>
       <input type="url" id="inputLink" class="input" placeholder="https://..." value="${k ? UI.escapeHtml(k.link) : ''}" />
+      <div class="link-preview-live" id="linkPreview"></div>
     </div>
     <div class="field" style="margin-bottom:16px;">
       <label class="label">Catatan (Opsional)</label>
-      <textarea id="inputCatatan" class="input" rows="2" style="resize:vertical;">${k ? UI.escapeHtml(k.catatan || '') : ''}</textarea>
+      <textarea id="inputCatatan" class="input" rows="2" style="resize:vertical;" placeholder="Tambahkan catatan untuk narasumber…">${k ? UI.escapeHtml(k.catatan || '') : ''}</textarea>
     </div>
-    <button class="btn btn-primary btn-full" id="btnKumpul">${k ? 'Perbarui Tugas' : 'Kumpulkan Tugas'}</button>
+    <button class="btn btn-primary btn-full" id="btnKumpul">
+      ${Icons.get(k ? 'refreshCw' : 'upload', { class: 'icon-sm' })}
+      ${k ? 'Perbarui Tugas' : 'Kumpulkan Tugas'}
+    </button>
   `;
 
   el.innerHTML = html;
 
+  // Live preview link
+  const inputLink = document.getElementById('inputLink');
+  const preview = document.getElementById('linkPreview');
+  
+  function updatePreview() {
+    const val = inputLink.value.trim();
+    if (!val || !/^https?:\/\//i.test(val)) {
+      preview.innerHTML = '';
+      return;
+    }
+    preview.innerHTML = `
+      <span class="live-label">Preview:</span>
+      ${renderLinkPill(val)}
+    `;
+  }
+  
+  inputLink.addEventListener('input', updatePreview);
+  updatePreview(); // Initial
+
+  // Submit handler
   document.getElementById('btnKumpul').addEventListener('click', async () => {
     const btn = document.getElementById('btnKumpul');
-    const link = document.getElementById('inputLink').value.trim();
+    const link = inputLink.value.trim();
     const catatan = document.getElementById('inputCatatan').value.trim();
     
     if (!link) { UI.gagal('Link wajib diisi.'); return; }
+    if (!/^https?:\/\//i.test(link)) {
+      UI.gagal('Link harus dimulai dengan http:// atau https://');
+      return;
+    }
     
     UI.btnLoading(btn, 'Menyimpan…');
     const res = await Api.call('tugas.kumpul', { tugas_id: tugasId, link, catatan });
@@ -286,40 +684,114 @@ function renderKumpul() {
   });
 }
 
+// ═══════════════════════════════════════════════
+// RENDER KOMENTAR
+// ═══════════════════════════════════════════════
 function renderKomentar() {
-  const el = document.getElementById('komentarList');
+  const contentEl = document.getElementById('komentarContent');
+  const countEl = document.getElementById('komentarCount');
   const list = dataTugas.komentar || [];
-  
-  if (list.length === 0) {
-    el.innerHTML = '<div style="text-align:center;font-size:12.5px;color:var(--muted);padding:10px;">Belum ada komentar.</div>';
+  const hasSubmission = !!dataTugas.pengumpulan_saya;
+
+  countEl.textContent = list.length;
+
+  // Kalau belum ada submission → tampilkan info box, tidak bisa komentar
+  if (!hasSubmission) {
+    contentEl.innerHTML = `
+      <div class="komentar-locked-box">
+        ${Icons.get('info', { class: 'icon-sm' })}
+        <div>
+          <strong>Kumpulkan tugas dulu untuk berkomentar.</strong><br>
+          Setelah Anda mengumpulkan tugas, narasumber bisa mengoreksi dan memberi feedback di sini.
+        </div>
+      </div>
+      ${list.length > 0 ? renderKomentarList(list) : ''}
+    `;
     return;
   }
 
-  el.innerHTML = list.map(c => {
-    const isNarsum = c.peran_penulis === 'narasumber' || c.peran_penulis === 'pengurus';
-    const init = (c.penulis?.nama_lengkap || '?').charAt(0).toUpperCase();
-    const fotoUrl = c.penulis?.foto_thumb_url || (c.penulis?.id ? Api.fotoUrl(c.penulis.id, 't') : null);
+  // Sudah ada submission → tampilkan list + input
+  contentEl.innerHTML = `
+    <div class="komentar-list" id="komentarList"></div>
+    <div class="komentar-input-wrap">
+      <textarea id="komentarInput" placeholder="Tulis komentar atau pertanyaan..." rows="1"></textarea>
+      <button class="btn-send" id="btnKirimKomentar" disabled>
+        <span data-icon="send"></span>
+      </button>
+    </div>
+  `;
 
-    return `
-      <div class="komentar-item ${isNarsum ? 'narsum' : ''}">
-        <div class="kom-avatar">
-          <span>${init}</span>
-          ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.remove()">` : ''}
-        </div>
-        <div class="kom-body">
-          <div class="kom-name">
-            ${UI.escapeHtml(c.penulis?.nama_lengkap || '-')}
-            ${isNarsum ? `<span class="kom-badge">${c.peran_penulis === 'narasumber' ? 'Narsum' : 'Admin'}</span>` : ''}
-          </div>
-          <div class="kom-text">${UI.escapeHtml(c.isi)}</div>
-          <div class="kom-time">${UI.timeAgo(c.dibuat_pada)}</div>
-        </div>
+  // Re-init icon inside baru
+  document.querySelectorAll('[data-icon]').forEach(el => {
+    if (!el.innerHTML.trim()) {
+      el.innerHTML = Icons.get(el.dataset.icon);
+      el.style.display = 'contents';
+    }
+  });
+
+  // Render list
+  const listEl = document.getElementById('komentarList');
+  if (list.length === 0) {
+    listEl.innerHTML = `
+      <div style="text-align:center;font-size:12.5px;color:var(--muted);padding:14px;">
+        Belum ada komentar. Tulis pertanyaan atau tanggapan Anda di bawah.
       </div>
     `;
-  }).join('');
+  } else {
+    listEl.innerHTML = list.map(renderKomentarItem).join('');
+  }
+
+  // Setup input
+  const ta = document.getElementById('komentarInput');
+  const btn = document.getElementById('btnKirimKomentar');
+  
+  ta.addEventListener('input', () => {
+    btn.disabled = !ta.value.trim();
+    ta.style.height = 'auto';
+    ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+  });
+  
+  btn.addEventListener('click', kirimKomentar);
 }
 
+function renderKomentarList(list) {
+  if (list.length === 0) return '';
+  return `<div class="komentar-list">${list.map(renderKomentarItem).join('')}</div>`;
+}
+
+function renderKomentarItem(c) {
+  const isNarsum = c.peran_penulis === 'narasumber' || c.peran_penulis === 'pengurus';
+  const init = (c.penulis?.nama_lengkap || '?').charAt(0).toUpperCase();
+  const fotoUrl = c.penulis?.foto_thumb_url || (c.penulis?.id ? Api.fotoUrl(c.penulis.id, 't') : null);
+
+  return `
+    <div class="komentar-item ${isNarsum ? 'narsum' : ''}">
+      <div class="kom-avatar">
+        <span style="position:relative;z-index:0;">${init}</span>
+        ${fotoUrl ? `<img src="${fotoUrl}" onerror="this.remove()">` : ''}
+      </div>
+      <div class="kom-body">
+        <div class="kom-name">
+          ${UI.escapeHtml(c.penulis?.nama_lengkap || '-')}
+          ${isNarsum ? `<span class="kom-badge">${c.peran_penulis === 'narasumber' ? 'Narsum' : 'Admin'}</span>` : ''}
+        </div>
+        <div class="kom-text">${UI.escapeHtml(c.isi)}</div>
+        <div class="kom-time">${UI.timeAgo(c.dibuat_pada)}</div>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════
+// KIRIM KOMENTAR
+// ═══════════════════════════════════════════════
 async function kirimKomentar() {
+  // Guard: wajib sudah ada submission
+  if (!dataTugas.pengumpulan_saya) {
+    UI.gagal('Kumpulkan tugas dulu untuk berkomentar.');
+    return;
+  }
+
   const ta = document.getElementById('komentarInput');
   const btn = document.getElementById('btnKirimKomentar');
   const isi = ta.value.trim();
@@ -343,7 +815,7 @@ async function kirimKomentar() {
   
   ta.value = '';
   ta.style.height = '44px';
-  await loadData(); // Reload untuk dapat komentar baru
+  await loadData();
 }
 </script>
 </body>
