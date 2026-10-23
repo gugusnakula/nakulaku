@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#611329" />
 <title>Kelola Pengumuman — NAKULAKU Admin</title>
 
@@ -11,102 +11,718 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="../assets/css/nakula.css" />
+<link rel="stylesheet" href="layout.css" />
 
 <style>
-  .p-item {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    transition: all .15s;
+  /* ═══════════════════════════════════════
+     STAT GRID
+     ═══════════════════════════════════════ */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
   }
-  .p-item:hover { box-shadow: var(--sh-md); }
-  .p-item-head {
+  @media (min-width: 768px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: all .2s var(--ease-out);
+  }
+  .stat-card:hover {
+    border-color: var(--maroon-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(125,29,58,.08);
+  }
+  .stat-icon {
+    width: 32px; height: 32px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+  }
+  .stat-icon.green { background: var(--success-soft); color: var(--success); }
+  .stat-icon.gold { background: var(--gold-soft); color: var(--gold-dark); }
+  .stat-icon.gray { background: var(--border); color: var(--muted); }
+  .stat-val {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 10.5px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  /* ═══════════════════════════════════════
+     FILTER AREA
+     ═══════════════════════════════════════ */
+  .filter-area {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 16px;
+    position: sticky;
+    top: 60px;
+    z-index: 15;
+    box-shadow: 0 2px 12px rgba(97,19,41,.04);
+  }
+  @media (min-width: 768px) { .filter-area { top: 0; } }
+
+  .search-wrap {
+    position: relative;
+    margin-bottom: 10px;
+  }
+  .search-wrap input {
+    width: 100%;
+    height: 44px;
+    padding: 0 40px 0 42px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--ink);
+    font-weight: 600;
+    outline: none;
+    transition: all .15s;
+    box-sizing: border-box;
+  }
+  .search-wrap input::placeholder { color: var(--muted-soft); font-weight: 500; }
+  .search-wrap input:focus {
+    border-color: var(--maroon);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(125,29,58,.08);
+  }
+  .search-wrap .icon-left {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .search-wrap .icon-left svg { width: 16px; height: 16px; display: block; }
+  .search-wrap .icon-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all .15s;
+    z-index: 1;
+  }
+  .search-wrap .icon-clear svg { width: 13px; height: 13px; }
+  .search-wrap .icon-clear:hover { background: var(--maroon-soft); color: var(--maroon); }
+  .search-wrap.has-value .icon-clear { display: flex; }
+
+  .filter-chips {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+  .filter-chips::-webkit-scrollbar { display: none; }
+  .f-chip {
+    flex-shrink: 0;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all .15s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .f-chip:hover { border-color: var(--maroon-light); color: var(--maroon); }
+  .f-chip.active { background: var(--maroon); border-color: var(--maroon); color: white; }
+  .f-chip .count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--border);
+    color: var(--muted);
+    font-size: 9.5px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .f-chip.active .count { background: rgba(255,255,255,.25); color: white; }
+
+  /* ═══════════════════════════════════════
+     PENGUMUMAN CARD
+     ═══════════════════════════════════════ */
+  .p-list { display: flex; flex-direction: column; gap: 10px; }
+  @media (min-width: 1024px) {
+    .p-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  }
+
+  .p-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: all .2s var(--ease-out);
+    animation: fade-in-up .35s var(--ease-out) both;
+  }
+  .p-card:hover {
+    border-color: var(--maroon-light);
+    box-shadow: 0 10px 24px rgba(125,29,58,.08);
+    transform: translateY(-2px);
+  }
+  .p-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--border);
+    transition: background .2s;
+  }
+  .p-card.penting::before { background: var(--gold); }
+  .p-card.aktif::before { background: var(--success); }
+  .p-card.nonaktif { opacity: 0.7; }
+  .p-card.nonaktif::before { background: var(--muted-soft); }
+
+  .p-head {
     display: flex;
     align-items: flex-start;
     gap: 10px;
     margin-bottom: 8px;
   }
-  .p-item-body { flex: 1; min-width: 0; }
-  .p-item-title {
+  .p-badges { display: flex; gap: 4px; flex-wrap: wrap; flex-shrink: 0; }
+  .p-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 9px;
     font-weight: 800;
-    font-size: 14px;
-    margin-bottom: 4px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    line-height: 1.2;
   }
-  .p-item-isi {
+  .p-badge.penting { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: white; }
+  .p-badge.aktif { background: var(--success-soft); color: var(--success); }
+  .p-badge.nonaktif { background: var(--border); color: var(--muted); }
+
+  .p-title {
+    font-weight: 800;
+    font-size: 14.5px;
+    color: var(--ink);
+    line-height: 1.4;
+    margin-bottom: 6px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .p-isi {
     font-size: 12.5px;
     color: var(--muted);
-    line-height: 1.5;
+    line-height: 1.55;
     white-space: pre-line;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    margin-bottom: 10px;
   }
-  .p-item-meta {
+  .p-meta {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
-    font-size: 11px;
+    gap: 8px;
+    font-size: 10.5px;
     color: var(--muted);
-    font-weight: 600;
-    flex-wrap: wrap;
+    font-weight: 700;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border);
+    margin-bottom: 10px;
   }
-  .p-item-meta .dot {
-    width: 4px; height: 4px; border-radius: 50%; background: var(--border-strong);
+  .p-meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border-strong); }
+  .p-meta .link-ikon {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    color: var(--maroon);
+    text-decoration: none;
   }
-  .p-item-actions {
+  .p-meta .link-ikon:hover { text-decoration: underline; }
+
+  .p-actions {
     display: flex;
     gap: 6px;
-    margin-top: 10px;
   }
-  .p-item-actions .btn { flex: 1; }
+  .p-actions .btn { flex: 1; font-size: 12px; padding: 8px 12px; }
+
+  /* ═══════════════════════════════════════
+     FAB
+     ═══════════════════════════════════════ */
+  .fab {
+    position: fixed;
+    bottom: calc(80px + env(safe-area-inset-bottom));
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(125,29,58,.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+    transition: all .2s var(--ease-out);
+  }
+  .fab:hover { transform: scale(1.08); box-shadow: 0 12px 32px rgba(125,29,58,.5); }
+  .fab:active { transform: scale(.95); }
+  @media (min-width: 900px) { .fab { bottom: 28px; right: 28px; } }
+  .fab .icon-wrap svg { width: 24px; height: 24px; stroke-width: 2.5; }
+
+  /* ═══════════════════════════════════════
+     EMPTY STATE
+     ═══════════════════════════════════════ */
+  .empty-panel { text-align: center; padding: 50px 20px; }
+  .empty-panel .big-icon {
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
+    color: var(--maroon);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+  .empty-panel .big-icon svg { width: 36px; height: 36px; }
+  .empty-panel h3 {
+    font-size: 15px; font-weight: 800;
+    color: var(--ink); margin-bottom: 6px;
+  }
+  .empty-panel p {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 320px;
+    margin: 0 auto 16px;
+  }
+  .empty-panel .reset-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    background: var(--maroon);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .empty-panel .reset-btn:hover { background: var(--maroon-dark); box-shadow: 0 6px 16px rgba(125,29,58,.25); }
+
+  /* ═══════════════════════════════════════
+     FORM (bottom sheet)
+     ═══════════════════════════════════════ */
+  .bottom-sheet.lg { max-width: 560px; }
+  .sheet-header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .sheet-header-row > div { flex: 1; min-width: 0; }
+  .sheet-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--maroon);
+    margin-bottom: 4px;
+  }
+  .sheet-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .form-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .toggle-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toggle-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .toggle-item:hover { border-color: var(--maroon-light); background: var(--surface); }
+  .toggle-item.checked {
+    background: var(--maroon-faint);
+    border-color: var(--maroon-soft);
+  }
+  .toggle-item input { width: 18px; height: 18px; accent-color: var(--maroon); flex-shrink: 0; }
+  .toggle-item .label-wrap { flex: 1; }
+  .toggle-item .label-name { font-weight: 800; font-size: 13px; color: var(--ink); }
+  .toggle-item .label-desc { font-size: 11px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+
+  .modal-alert {
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    background: var(--danger-soft);
+    color: var(--danger);
+    border: 1px solid rgba(185,28,28,.2);
+  }
+  .modal-alert.hidden { display: none; }
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .modal-actions .btn { flex: 1; }
+
+  /* Preview mini */
+  .preview-box {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1.5px dashed var(--border);
+    border-radius: 12px;
+  }
+  .preview-box-label {
+    font-size: 9.5px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .preview-box-content {
+    font-size: 12px;
+    color: var(--ink);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .preview-box-content.is-muted { color: var(--muted); font-style: italic; }
 </style>
 </head>
-<body>
+<body class="admin-body">
 
-<header class="app-header">
-  <div class="app-header-brand">
-    <a href="../beranda.html" class="header-btn" style="text-decoration:none;">
+<header class="admin-header">
+  <div class="admin-header-left">
+    <a href="index.html" class="admin-header-btn" aria-label="Kembali">
       <span data-icon="chevronLeft"></span>
     </a>
-    <div class="app-header-text">
-      <div class="app-header-title">Kelola Pengumuman</div>
-      <div class="app-header-sub">Admin NAKULAKU</div>
+    <div class="admin-header-title">
+      <div class="admin-header-title-1">KELOLA PENGUMUMAN</div>
+      <div class="admin-header-title-2">Admin NAKULAKU</div>
     </div>
   </div>
+  <button class="admin-header-btn" data-act="logout" aria-label="Keluar">
+    <span data-icon="logOut"></span>
+  </button>
 </header>
 
-<main class="container page" style="max-width:720px;padding-top:16px;">
+<div class="admin-layout">
 
-  <button class="btn btn-primary btn-full" id="btnTambah" style="margin-bottom:16px;">
-    <span data-icon="plus"></span>
-    Buat Pengumuman
-  </button>
+  <!-- SIDEBAR DESKTOP -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <div class="admin-sidebar-logo">
+        <img src="../assets/img/logo-mark.svg" alt="Nakula" />
+      </div>
+      <div>
+        <div class="admin-sidebar-name">NAKULAKU</div>
+        <div class="admin-sidebar-sub">Admin Panel</div>
+      </div>
+    </div>
 
-  <div id="listPengumuman">
-    <div class="skeleton" style="height:100px;border-radius:16px;margin-bottom:10px;"></div>
-    <div class="skeleton" style="height:100px;border-radius:16px;"></div>
-  </div>
+    <nav class="admin-sidebar-menu">
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Dashboard</div>
+        <a class="admin-sidebar-item" data-nav="dashboard" href="index.html">
+          <span data-icon="layoutDashboard"></span> Dashboard
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Data</div>
+        <a class="admin-sidebar-item" data-nav="guru" href="guru.html">
+          <span data-icon="users"></span> Data Guru
+        </a>
+        <a class="admin-sidebar-item" data-nav="bulk" href="guru-bulk.html">
+          <span data-icon="checkSquare"></span> Bulk Action
+        </a>
+        <a class="admin-sidebar-item" data-nav="impor" href="impor.html">
+          <span data-icon="upload"></span> Impor CSV
+        </a>
+        <a class="admin-sidebar-item" data-nav="master" href="master-data.html">
+          <span data-icon="database"></span> Master Data
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Kegiatan</div>
+        <a class="admin-sidebar-item" data-nav="periode" href="periode.html">
+          <span data-icon="calendar"></span> Kelola Periode
+        </a>
+        <a class="admin-sidebar-item" data-nav="pertemuan" href="pertemuan.html">
+          <span data-icon="list"></span> Kelola Pertemuan
+        </a>
+        <a class="admin-sidebar-item active" data-nav="pengumuman" href="pengumuman.html">
+          <span data-icon="megaphone"></span> Pengumuman
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Evaluasi</div>
+        <a class="admin-sidebar-item" data-nav="verifikasi-sekolah" href="verifikasi-sekolah.html">
+          <span data-icon="sparkles"></span> Verifikasi Sekolah
+        </a>
+        <a class="admin-sidebar-item" data-nav="karya" href="karya.html">
+          <span data-icon="sparkles"></span> Verifikasi Karya
+        </a>
+        <a class="admin-sidebar-item" data-nav="verifikasi-presensi" href="../ks/verifikasi.html">
+          <span data-icon="checkCircle"></span> Verifikasi Presensi
+        </a>
+        <a class="admin-sidebar-item" data-nav="alihkan" href="alihkan-verifikasi.html">
+          <span data-icon="refreshCw"></span> Alihkan Verifikasi
+        </a>
+        <a class="admin-sidebar-item" data-nav="feedback" href="feedback.html">
+          <span data-icon="messageSquare"></span> Rekap Feedback
+        </a>
+        <a class="admin-sidebar-item" data-nav="award" href="award.html">
+          <span data-icon="award"></span> Kelola Award
+        </a>
+        <a class="admin-sidebar-item" data-nav="sertifikat" href="sertifikat.html">
+          <span data-icon="fileText"></span> Sertifikat
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Laporan</div>
+        <a class="admin-sidebar-item" data-nav="analitik" href="analitik.html">
+          <span data-icon="activity"></span> Analitik
+        </a>
+        <a class="admin-sidebar-item" data-nav="laporan" href="laporan.html">
+          <span data-icon="download"></span> Export Laporan
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Sistem</div>
+        <a class="admin-sidebar-item" data-nav="kategori-ajuan" href="kategori-ajuan.html">
+          <span data-icon="tag"></span> Kategori Ajuan
+        </a>
+        <a class="admin-sidebar-item" data-nav="log" href="log.html">
+          <span data-icon="list"></span> Log Aktivitas
+        </a>
+        <a class="admin-sidebar-item" data-nav="pengaturan" href="pengaturan.html">
+          <span data-icon="settings"></span> Pengaturan
+        </a>
+      </div>
+    </nav>
+  </aside>
 
-</main>
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-topbar-title">Kelola Pengumuman</h1>
+      <div class="admin-topbar-right">
+        <div class="admin-user-chip" id="userChip"></div>
+        <button class="btn-icon" data-act="logout" aria-label="Keluar" title="Keluar">
+          <span data-icon="logOut"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- Statistik -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><span data-icon="megaphone" class="icon-sm"></span></div>
+          <div class="stat-val" id="statTotal">—</div>
+          <div class="stat-label">Total</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon gold"><span data-icon="sparkles" class="icon-sm"></span></div>
+          <div class="stat-val" id="statPenting">—</div>
+          <div class="stat-label">Penting</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><span data-icon="checkCircle" class="icon-sm"></span></div>
+          <div class="stat-val" id="statAktif">—</div>
+          <div class="stat-label">Aktif</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon gray"><span data-icon="eyeOff" class="icon-sm"></span></div>
+          <div class="stat-val" id="statNonaktif">—</div>
+          <div class="stat-label">Non-Aktif</div>
+        </div>
+      </div>
+
+      <!-- Filter -->
+      <div class="filter-area">
+        <div class="search-wrap" id="searchWrap">
+          <span class="icon-left" data-icon="search"></span>
+          <input type="text" id="inputCari" placeholder="Cari judul atau isi pengumuman…" />
+          <button class="icon-clear" id="btnClearSearch" title="Hapus" aria-label="Hapus pencarian">
+            <span data-icon="x"></span>
+          </button>
+        </div>
+        <div class="filter-chips">
+          <button class="f-chip active" data-filter="">
+            Semua <span class="count" data-count="">0</span>
+          </button>
+          <button class="f-chip" data-filter="penting">
+            <span data-icon="sparkles" data-icon-class="icon-sm"></span> Penting
+            <span class="count" data-count="penting">0</span>
+          </button>
+          <button class="f-chip" data-filter="aktif">
+            <span data-icon="checkCircle" data-icon-class="icon-sm"></span> Aktif
+            <span class="count" data-count="aktif">0</span>
+          </button>
+          <button class="f-chip" data-filter="nonaktif">
+            <span data-icon="eyeOff" data-icon-class="icon-sm"></span> Non-Aktif
+            <span class="count" data-count="nonaktif">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- List -->
+      <div id="listPengumuman" class="p-list">
+        <div class="skeleton" style="height:130px;border-radius:16px;"></div>
+        <div class="skeleton" style="height:130px;border-radius:16px;"></div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- FAB -->
+<button class="fab" id="btnTambah" aria-label="Buat Pengumuman">
+  <span class="icon-wrap" id="fabIcon"></span>
+</button>
+
+<!-- BOTTOM NAV MOBILE -->
+<nav class="admin-bottom-nav">
+  <a class="admin-nav-item" data-nav="dashboard" href="index.html">
+    <span data-icon="layoutDashboard"></span> Dashboard
+  </a>
+  <a class="admin-nav-item" data-nav="guru" href="guru.html">
+    <span data-icon="users"></span> Guru
+  </a>
+  <a class="admin-nav-item" data-nav="pertemuan" href="pertemuan.html">
+    <span data-icon="calendar"></span> Pertemuan
+  </a>
+  <a class="admin-nav-item active" data-nav="pengumuman" href="pengumuman.html">
+    <span data-icon="megaphone"></span> Pengumuman
+  </a>
+  <a class="admin-nav-item" data-nav="verifikasi" href="verifikasi-sekolah.html">
+    <span data-icon="checkCircle"></span> Verifikasi
+  </a>
+</nav>
 
 <script src="../assets/js/icons.js"></script>
 <script src="../assets/js/api.js"></script>
 <script src="../assets/js/ui.js"></script>
+<script src="../assets/js/app-nav.js"></script>
 <script>
+// ═══════════════════════════════════════════════
+// INIT ICONS
+// ═══════════════════════════════════════════════
 document.querySelectorAll('[data-icon]').forEach(el => {
-  el.innerHTML = Icons.get(el.dataset.icon);
-  el.style.display = 'contents';
+  const cls = el.dataset.iconClass || '';
+  el.innerHTML = Icons.get(el.dataset.icon, { class: cls });
+  if (!el.classList.contains('icon-left')) {
+    el.style.display = 'contents';
+  }
+});
+UI.bindLogout();
+
+// FAB icon
+document.getElementById('fabIcon').innerHTML = Icons.get('plus', { class: '' });
+
+// User chip
+window.addEventListener('load', () => {
+  const p = Api.getProfile();
+  if (!p) return;
+  const chip = document.getElementById('userChip');
+  if (chip) {
+    const init = (p.nama || 'A').charAt(0).toUpperCase();
+    const fotoUrl = Api.fotoSayaUrl('t');
+    chip.innerHTML = `
+      <div class="avatar" style="position:relative;">
+        <span style="position:relative;z-index:0;">${init}</span>
+        ${fotoUrl ? `<img src="${fotoUrl}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;z-index:1;" onerror="this.remove()">` : ''}
+      </div>
+      <span>${UI.escapeHtml(p.nama || '-')}</span>
+    `;
+  }
 });
 
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
 let profile;
-let listPengumuman = [];
+let semuaPengumuman = [];
+let searchQuery = '';
+let filterStatus = '';
+let debounceSearch;
 
+// ═══════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════
 (async () => {
   profile = await Api.requireLogin();
   if (!profile) return;
@@ -117,57 +733,137 @@ let listPengumuman = [];
   }
 
   await load();
+
   document.getElementById('btnTambah').addEventListener('click', () => formPengumuman(null));
 })();
 
+// ═══════════════════════════════════════════════
+// LOAD
+// ═══════════════════════════════════════════════
 async function load() {
   const el = document.getElementById('listPengumuman');
-  el.innerHTML = '<div class="skeleton" style="height:100px;border-radius:16px;"></div>';
+  el.innerHTML = `
+    <div class="skeleton" style="height:130px;border-radius:16px;"></div>
+    <div class="skeleton" style="height:130px;border-radius:16px;"></div>
+  `;
 
   const res = await Api.call('admin.pengumuman.list');
   if (!res.ok) { el.innerHTML = UI.errorHtml(res.error); return; }
 
-  listPengumuman = res.data || [];
+  semuaPengumuman = res.data || [];
+  updateStats();
+  updateFilterCounts();
+  renderList();
+}
 
-  if (listPengumuman.length === 0) {
-    el.innerHTML = UI.emptyHtml('megaphone', 'Belum ada pengumuman', 'Klik tombol di atas untuk membuat.');
-    return;
-  }
+function updateStats() {
+  document.getElementById('statTotal').textContent = semuaPengumuman.length;
+  document.getElementById('statPenting').textContent = semuaPengumuman.filter(p => p.penting).length;
+  document.getElementById('statAktif').textContent = semuaPengumuman.filter(p => p.aktif).length;
+  document.getElementById('statNonaktif').textContent = semuaPengumuman.filter(p => !p.aktif).length;
+}
 
-  el.innerHTML = listPengumuman.map(p => renderItem(p)).join('');
-
-  listPengumuman.forEach(p => {
-    const item = document.getElementById('p-' + p.id);
-    if (!item) return;
-    item.querySelector('[data-act="edit"]').addEventListener('click', () => formPengumuman(p));
-    item.querySelector('[data-act="hapus"]').addEventListener('click', () => hapus(p.id));
+function updateFilterCounts() {
+  const counts = {
+    '': semuaPengumuman.length,
+    penting: semuaPengumuman.filter(p => p.penting).length,
+    aktif: semuaPengumuman.filter(p => p.aktif).length,
+    nonaktif: semuaPengumuman.filter(p => !p.aktif).length,
+  };
+  document.querySelectorAll('.f-chip [data-count]').forEach(el => {
+    el.textContent = counts[el.dataset.count] || 0;
   });
 }
 
-function renderItem(p) {
+// ═══════════════════════════════════════════════
+// FILTER & RENDER
+// ═══════════════════════════════════════════════
+function applyFilter() {
+  let list = [...semuaPengumuman];
+
+  if (filterStatus === 'penting') list = list.filter(p => p.penting);
+  else if (filterStatus === 'aktif') list = list.filter(p => p.aktif);
+  else if (filterStatus === 'nonaktif') list = list.filter(p => !p.aktif);
+
+  if (searchQuery) {
+    list = list.filter(p => {
+      const hay = `${p.judul || ''} ${p.isi || ''}`.toLowerCase();
+      return hay.includes(searchQuery);
+    });
+  }
+
+  return list;
+}
+
+function renderList() {
+  const el = document.getElementById('listPengumuman');
+  const list = applyFilter();
+
+  if (list.length === 0) {
+    const hasFilter = !!searchQuery || !!filterStatus;
+    el.innerHTML = `
+      <div class="empty-panel" style="grid-column:1/-1;">
+        <div class="big-icon">${Icons.get('megaphone', { class: 'icon-lg' })}</div>
+        <h3>${hasFilter ? 'Tidak Ada Hasil' : 'Belum Ada Pengumuman'}</h3>
+        <p>${hasFilter ? 'Coba ubah kata kunci atau reset filter.' : 'Klik tombol + di kanan bawah untuk membuat pengumuman pertama.'}</p>
+        ${hasFilter ? `<button class="reset-btn" id="btnResetFilter">
+          ${Icons.get('rotateCcw', { class: 'icon-sm' })} Reset Filter
+        </button>` : ''}
+      </div>
+    `;
+    document.getElementById('btnResetFilter')?.addEventListener('click', resetFilter);
+    return;
+  }
+
+  el.innerHTML = list.map((p, idx) => renderCard(p, idx)).join('');
+
+  el.querySelectorAll('[data-act="edit"]').forEach(b => {
+    const id = Number(b.dataset.id);
+    b.addEventListener('click', () => {
+      const p = semuaPengumuman.find(x => x.id === id);
+      if (p) formPengumuman(p);
+    });
+  });
+  el.querySelectorAll('[data-act="hapus"]').forEach(b => {
+    const id = Number(b.dataset.id);
+    b.addEventListener('click', () => hapus(id));
+  });
+}
+
+function renderCard(p, idx) {
   const badges = [];
-  if (p.penting) badges.push('<span class="badge badge-gold">Penting</span>');
-  if (!p.aktif) badges.push('<span class="badge badge-danger">Non-aktif</span>');
-  else badges.push('<span class="badge badge-success">Aktif</span>');
+  if (p.penting) badges.push(`<span class="p-badge penting">${Icons.get('sparkles', { class: 'icon-sm' })} Penting</span>`);
+  if (p.aktif) badges.push(`<span class="p-badge aktif">✓ Aktif</span>`);
+  else badges.push(`<span class="p-badge nonaktif">Non-Aktif</span>`);
+
+  let cardCls = '';
+  if (!p.aktif) cardCls = 'nonaktif';
+  else if (p.penting) cardCls = 'penting';
+  else cardCls = 'aktif';
+
+  const lampiranLink = p.lampiran_url
+    ? `<a href="${UI.escapeHtml(p.lampiran_url)}" target="_blank" rel="noopener" class="link-ikon">
+         ${Icons.get('externalLink', { class: 'icon-sm' })} Lampiran
+       </a>`
+    : '';
 
   return `
-    <div class="p-item" id="p-${p.id}">
-      <div class="p-item-head">
-        <div style="flex:1;min-width:0;">
-          <div class="p-item-title">${UI.escapeHtml(p.judul)}</div>
-          ${p.isi ? `<div class="p-item-isi">${UI.escapeHtml(p.isi)}</div>` : ''}
-        </div>
+    <div class="p-card ${cardCls}" style="animation-delay:${idx * 0.03}s">
+      <div class="p-head">
+        <div class="p-badges">${badges.join('')}</div>
       </div>
-      <div class="p-item-meta">
-        ${badges.join(' ')}
-        <span class="dot"></span>
-        <span>${UI.timeAgo(p.dibuat_pada)}</span>
+      <div class="p-title">${UI.escapeHtml(p.judul)}</div>
+      ${p.isi ? `<div class="p-isi">${UI.escapeHtml(p.isi)}</div>` : ''}
+      <div class="p-meta">
+        ${Icons.get('clock', { class: 'icon-sm' })}
+        ${UI.timeAgo(p.dibuat_pada)}
+        ${lampiranLink ? `<span class="dot"></span>${lampiranLink}` : ''}
       </div>
-      <div class="p-item-actions">
-        <button class="btn btn-secondary btn-sm" data-act="edit">
+      <div class="p-actions">
+        <button class="btn btn-secondary btn-sm" data-act="edit" data-id="${p.id}">
           ${Icons.get('edit', { class: 'icon-sm' })} Edit
         </button>
-        <button class="btn btn-ghost btn-sm" data-act="hapus" style="color:var(--danger);">
+        <button class="btn btn-ghost btn-sm" data-act="hapus" data-id="${p.id}" style="color:var(--danger);">
           ${Icons.get('trash', { class: 'icon-sm' })} Hapus
         </button>
       </div>
@@ -175,81 +871,171 @@ function renderItem(p) {
   `;
 }
 
+function resetFilter() {
+  searchQuery = '';
+  filterStatus = '';
+  document.getElementById('inputCari').value = '';
+  document.getElementById('searchWrap').classList.remove('has-value');
+  document.querySelectorAll('.f-chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.filter === '');
+  });
+  renderList();
+}
+
+// ═══════════════════════════════════════════════
+// EVENTS
+// ═══════════════════════════════════════════════
+document.getElementById('inputCari').addEventListener('input', (e) => {
+  const wrap = document.getElementById('searchWrap');
+  wrap.classList.toggle('has-value', !!e.target.value.trim());
+
+  clearTimeout(debounceSearch);
+  debounceSearch = setTimeout(() => {
+    searchQuery = e.target.value.trim().toLowerCase();
+    renderList();
+  }, 300);
+});
+
+document.getElementById('btnClearSearch').addEventListener('click', () => {
+  document.getElementById('inputCari').value = '';
+  document.getElementById('searchWrap').classList.remove('has-value');
+  searchQuery = '';
+  renderList();
+  document.getElementById('inputCari').focus();
+});
+
+document.querySelectorAll('.f-chip').forEach(c => {
+  c.addEventListener('click', () => {
+    filterStatus = c.dataset.filter;
+    document.querySelectorAll('.f-chip').forEach(x => x.classList.toggle('active', x === c));
+    renderList();
+  });
+});
+
+// ═══════════════════════════════════════════════
+// HAPUS
+// ═══════════════════════════════════════════════
 async function hapus(id) {
-  const ok = await UI.konfirmasi('Hapus Pengumuman', 'Hapus pengumuman ini?', { danger: true, okText: 'Hapus' });
+  const p = semuaPengumuman.find(x => x.id === id);
+  if (!p) return;
+
+  const ok = await UI.konfirmasi(
+    'Hapus Pengumuman',
+    `Hapus "${p.judul}"? Tidak bisa dibatalkan.`,
+    { danger: true, okText: 'Hapus' }
+  );
   if (!ok) return;
+
   const res = await Api.call('admin.pengumuman.hapus', { pengumuman_id: id });
   if (!res.ok) { UI.gagal(res.error); return; }
   UI.sukses('Pengumuman dihapus.');
   await load();
 }
 
+// ═══════════════════════════════════════════════
+// FORM PENGUMUMAN
+// ═══════════════════════════════════════════════
 function formPengumuman(p) {
   const isEdit = !!p;
   const data = p || {};
 
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
-  overlay.innerHTML = `
-    <div style="background:white;border-radius:20px;padding:24px;max-width:520px;width:100%;box-shadow:var(--sh-xl);max-height:90vh;overflow-y:auto;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-        <h3 style="font-size:17px;color:var(--maroon);margin:0;">${isEdit ? 'Edit' : 'Buat'} Pengumuman</h3>
-        <button data-close class="btn-icon">${Icons.get('x')}</button>
+  const { overlay, close } = openSheet(`
+    <div class="sheet-header-row">
+      <div>
+        <div class="sheet-title">${isEdit ? 'Edit' : 'Buat'} Pengumuman</div>
+        <div class="sheet-subtitle">
+          ${isEdit ? 'Perubahan langsung terlihat di beranda guru.' : 'Pengumuman aktif akan tampil di beranda guru.'}
+        </div>
+      </div>
+      <button class="btn-icon" data-close>${Icons.get('x')}</button>
+    </div>
+
+    <div class="form-field-group">
+      <div class="field">
+        <label class="label">Judul *</label>
+        <input type="text" id="pJudul" class="input" value="${UI.escapeHtml(data.judul || '')}" placeholder="Judul pengumuman…" maxlength="120" />
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:14px;">
-        <div class="field">
-          <label class="label">Judul *</label>
-          <input type="text" id="pJudul" class="input" value="${UI.escapeHtml(data.judul || '')}" placeholder="Judul pengumuman…" />
-        </div>
-
-        <div class="field">
-          <label class="label">Isi</label>
-          <textarea id="pIsi" class="input" rows="5" style="resize:vertical;" placeholder="Isi pengumuman…">${UI.escapeHtml(data.isi || '')}</textarea>
-        </div>
-
-        <div class="field">
-          <label class="label">Link Lampiran (opsional)</label>
-          <input type="url" id="pLink" class="input" value="${UI.escapeHtml(data.lampiran_url || '')}" placeholder="https://drive.google.com/…" />
-        </div>
-
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px;border-radius:10px;border:1px solid var(--border);">
-            <input type="checkbox" id="pPenting" ${data.penting ? 'checked' : ''} style="width:18px;height:18px;accent-color:var(--maroon);" />
-            <div>
-              <div style="font-weight:700;font-size:13px;">Tandai Penting</div>
-              <div style="font-size:11px;color:var(--muted);">Muncul di atas & diberi tanda khusus</div>
-            </div>
-          </label>
-
-          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px;border-radius:10px;border:1px solid var(--border);">
-            <input type="checkbox" id="pAktif" ${data.aktif !== false ? 'checked' : ''} style="width:18px;height:18px;accent-color:var(--maroon);" />
-            <div>
-              <div style="font-weight:700;font-size:13px;">Aktif</div>
-              <div style="font-size:11px;color:var(--muted);">Tampil di beranda guru</div>
-            </div>
-          </label>
+      <div class="field">
+        <label class="label">Isi</label>
+        <textarea id="pIsi" class="input" rows="5" style="resize:vertical;" placeholder="Isi pengumuman…">${UI.escapeHtml(data.isi || '')}</textarea>
+        <div style="font-size:10.5px;color:var(--muted);margin-top:4px;font-weight:600;">
+          Line break akan dipertahankan saat ditampilkan.
         </div>
       </div>
 
-      <div id="pAlert" class="alert alert-error" style="margin-top:14px;"></div>
+      <div class="field">
+        <label class="label">Link Lampiran (opsional)</label>
+        <input type="url" id="pLink" class="input" value="${UI.escapeHtml(data.lampiran_url || '')}" placeholder="https://drive.google.com/…" />
+        <div style="font-size:10.5px;color:var(--muted);margin-top:4px;font-weight:600;">
+          PDF, Drive, YouTube, atau web lain.
+        </div>
+      </div>
 
-      <div style="display:flex;gap:8px;margin-top:20px;">
-        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
-        <button class="btn btn-primary" id="btnSimpanP" style="flex:2;">${isEdit ? 'Simpan' : 'Terbitkan'}</button>
+      <div class="toggle-row">
+        <label class="toggle-item ${data.penting ? 'checked' : ''}">
+          <input type="checkbox" id="pPenting" ${data.penting ? 'checked' : ''} />
+          <div class="label-wrap">
+            <div class="label-name">⭐ Tandai Penting</div>
+            <div class="label-desc">Muncul di atas & diberi badge emas</div>
+          </div>
+        </label>
+
+        <label class="toggle-item ${data.aktif !== false ? 'checked' : ''}">
+          <input type="checkbox" id="pAktif" ${data.aktif !== false ? 'checked' : ''} />
+          <div class="label-wrap">
+            <div class="label-name">✓ Aktif</div>
+            <div class="label-desc">Tampil di beranda guru</div>
+          </div>
+        </label>
+      </div>
+
+      <!-- Preview -->
+      <div class="preview-box">
+        <div class="preview-box-label">Preview</div>
+        <div class="preview-box-content is-muted" id="previewJudul">Judul akan muncul di sini…</div>
       </div>
     </div>
-  `;
-  document.body.appendChild(overlay);
 
-  const close = () => overlay.remove();
-  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
-  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+    <div id="pAlert" class="modal-alert hidden"></div>
 
+    <div class="modal-actions">
+      <button class="btn btn-secondary" data-close>Batal</button>
+      <button class="btn btn-primary" id="btnSimpanP" style="flex:2;">
+        ${isEdit ? 'Simpan Perubahan' : 'Terbitkan'}
+      </button>
+    </div>
+  `, { size: 'lg' });
+
+  // Live preview
+  const judulInput = overlay.querySelector('#pJudul');
+  const previewEl = overlay.querySelector('#previewJudul');
+  const updatePreview = () => {
+    const v = judulInput.value.trim();
+    previewEl.textContent = v || 'Judul akan muncul di sini…';
+    previewEl.classList.toggle('is-muted', !v);
+  };
+  judulInput.addEventListener('input', updatePreview);
+  updatePreview();
+
+  // Toggle visual
+  overlay.querySelectorAll('.toggle-item').forEach(label => {
+    const cb = label.querySelector('input[type=checkbox]');
+    label.addEventListener('click', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      cb.checked = !cb.checked;
+      label.classList.toggle('checked', cb.checked);
+    });
+    cb.addEventListener('change', () => {
+      label.classList.toggle('checked', cb.checked);
+    });
+  });
+
+  // Submit
   overlay.querySelector('#btnSimpanP').addEventListener('click', async () => {
     const btn = overlay.querySelector('#btnSimpanP');
     const alertBox = overlay.querySelector('#pAlert');
-    alertBox.classList.remove('show');
+    alertBox.classList.add('hidden');
 
     const payload = {
       id: data.id || null,
@@ -260,18 +1046,62 @@ function formPengumuman(p) {
       aktif: overlay.querySelector('#pAktif').checked,
     };
 
-    if (!payload.judul) { alertBox.textContent = 'Judul wajib.'; alertBox.classList.add('show'); return; }
+    if (!payload.judul) {
+      alertBox.textContent = 'Judul wajib diisi.';
+      alertBox.classList.remove('hidden');
+      return;
+    }
+
+    if (payload.lampiran_url && !/^https?:\/\//i.test(payload.lampiran_url)) {
+      alertBox.textContent = 'Link harus dimulai http:// atau https://';
+      alertBox.classList.remove('hidden');
+      return;
+    }
 
     UI.btnLoading(btn, 'Menyimpan…');
     const res = await Api.call('admin.pengumuman.simpan', { pengumuman: payload });
     UI.btnReset(btn);
 
-    if (!res.ok) { alertBox.textContent = res.error; alertBox.classList.add('show'); return; }
+    if (!res.ok) {
+      alertBox.textContent = res.error || 'Gagal menyimpan.';
+      alertBox.classList.remove('hidden');
+      return;
+    }
 
-    UI.sukses(isEdit ? 'Diperbarui.' : 'Diterbitkan.');
+    UI.sukses(isEdit ? 'Pengumuman diperbarui.' : 'Pengumuman diterbitkan.');
     close();
     await load();
   });
+}
+
+// ═══════════════════════════════════════════════
+// HELPER: Open Sheet
+// ═══════════════════════════════════════════════
+function openSheet(contentHtml, opts = {}) {
+  const overlay = document.createElement('div');
+  overlay.className = 'bottom-sheet-overlay';
+  overlay.innerHTML = `<div class="bottom-sheet ${opts.size === 'lg' ? 'lg' : ''}">${contentHtml}</div>`;
+  document.body.appendChild(overlay);
+
+  const close = () => {
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity .15s';
+    setTimeout(() => overlay.remove(), 150);
+    document.removeEventListener('keydown', escHandler);
+  };
+
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+
+  const escHandler = (e) => { if (e.key === 'Escape') close(); };
+  document.addEventListener('keydown', escHandler);
+
+  setTimeout(() => {
+    const first = overlay.querySelector('input:not([type=hidden]):not([type=checkbox]):not([type=radio]), textarea');
+    if (first) first.focus();
+  }, 100);
+
+  return { overlay, close };
 }
 </script>
 
