@@ -419,8 +419,16 @@ body.app-nav-active .page { padding-bottom: calc(24px + env(safe-area-inset-bott
 .admin-menu-btn:hover {
   background: rgba(255,255,255,.22);
 }
+
+/* ============================================================
+   COMPONENT EXTENSIONS v3
+   Tambahan dari upgrade multi-halaman — reusable across pages
+   ============================================================ */
+
 /* ═══════════════════════════════════════
-   LINK PILL — platform-aware
+   LINK PILL — Platform-aware
+   Untuk menampilkan link eksternal tanpa URL panjang
+   Pemakaian: <a class="link-pill youtube" href="...">
    ═══════════════════════════════════════ */
 .link-pill {
   display: inline-flex;
@@ -452,23 +460,631 @@ body.app-nav-active .page { padding-bottom: calc(24px + env(safe-area-inset-bott
   margin-left: 1px;
 }
 
-.link-pill.youtube { background: #FEE2E2; color: #DC2626; border-color: rgba(220,38,38,.15); }
-.link-pill.youtube:hover { background: #DC2626; color: white; border-color: #DC2626; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(220,38,38,.25); }
+.link-pill.youtube {
+  background: #FEE2E2; color: #DC2626;
+  border-color: rgba(220,38,38,.15);
+}
+.link-pill.youtube:hover {
+  background: #DC2626; color: white;
+  border-color: #DC2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220,38,38,.25);
+}
 
-.link-pill.drive { background: #FEF3C7; color: #D97706; border-color: rgba(217,119,6,.15); }
-.link-pill.drive:hover { background: #D97706; color: white; border-color: #D97706; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(217,119,6,.25); }
+.link-pill.drive {
+  background: #FEF3C7; color: #D97706;
+  border-color: rgba(217,119,6,.15);
+}
+.link-pill.drive:hover {
+  background: #D97706; color: white;
+  border-color: #D97706;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(217,119,6,.25);
+}
 
-.link-pill.docs { background: #DBEAFE; color: #2563EB; border-color: rgba(37,99,235,.15); }
-.link-pill.docs:hover { background: #2563EB; color: white; border-color: #2563EB; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,.25); }
+.link-pill.docs {
+  background: #DBEAFE; color: #2563EB;
+  border-color: rgba(37,99,235,.15);
+}
+.link-pill.docs:hover {
+  background: #2563EB; color: white;
+  border-color: #2563EB;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37,99,235,.25);
+}
 
-.link-pill.form { background: #F3E8FF; color: #7C3AED; border-color: rgba(124,58,237,.15); }
-.link-pill.form:hover { background: #7C3AED; color: white; border-color: #7C3AED; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(124,58,237,.25); }
+.link-pill.form {
+  background: #F3E8FF; color: #7C3AED;
+  border-color: rgba(124,58,237,.15);
+}
+.link-pill.form:hover {
+  background: #7C3AED; color: white;
+  border-color: #7C3AED;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(124,58,237,.25);
+}
 
-.link-pill.pdf { background: #FEE2E2; color: #B91C1C; border-color: rgba(185,28,28,.15); }
-.link-pill.pdf:hover { background: #B91C1C; color: white; border-color: #B91C1C; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(185,28,28,.25); }
+.link-pill.pdf {
+  background: #FEE2E2; color: #B91C1C;
+  border-color: rgba(185,28,28,.15);
+}
+.link-pill.pdf:hover {
+  background: #B91C1C; color: white;
+  border-color: #B91C1C;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(185,28,28,.25);
+}
 
-.link-pill.image { background: #D1FAE5; color: #059669; border-color: rgba(5,150,105,.15); }
-.link-pill.image:hover { background: #059669; color: white; border-color: #059669; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(5,150,105,.25); }
+.link-pill.image {
+  background: #D1FAE5; color: #059669;
+  border-color: rgba(5,150,105,.15);
+}
+.link-pill.image:hover {
+  background: #059669; color: white;
+  border-color: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(5,150,105,.25);
+}
 
-.link-pill.web { background: var(--bg); color: var(--muted); border-color: var(--border); }
-.link-pill.web:hover { background: var(--maroon); color: white; border-color: var(--maroon); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(125,29,58,.25); }
+.link-pill.web {
+  background: var(--bg); color: var(--muted);
+  border-color: var(--border);
+}
+.link-pill.web:hover {
+  background: var(--maroon); color: white;
+  border-color: var(--maroon);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(125,29,58,.25);
+}
+
+/* ═══════════════════════════════════════
+   FAB — Floating Action Button
+   Untuk tombol aksi utama di admin pages
+   Pemakaian: <button class="fab"><span class="icon-wrap">+</span></button>
+   ═══════════════════════════════════════ */
+.fab {
+  position: fixed;
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+  color: white;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(125,29,58,.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+  transition: all .2s var(--ease-out);
+}
+.fab:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 32px rgba(125,29,58,.5);
+}
+.fab:active { transform: scale(.95); }
+.fab .icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fab .icon-wrap svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2.5;
+}
+@media (min-width: 900px) {
+  .fab { bottom: 28px; right: 28px; }
+}
+
+/* ═══════════════════════════════════════
+   STAT CARDS — Dashboard statistics
+   Pemakaian: <div class="stats-grid"><div class="stat-card">...</div></div>
+   ═══════════════════════════════════════ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+@media (min-width: 768px) {
+  .stats-grid { grid-template-columns: repeat(4, 1fr); }
+}
+.stat-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all .2s var(--ease-out);
+}
+.stat-card:hover {
+  border-color: var(--maroon-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(125,29,58,.08);
+}
+.stat-card.active-filter {
+  border-color: var(--maroon);
+  background: var(--maroon-faint);
+}
+.stat-icon {
+  width: 32px; height: 32px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--maroon-soft);
+  color: var(--maroon);
+}
+.stat-icon.green { background: var(--success-soft); color: var(--success); }
+.stat-icon.blue,
+.stat-icon.info { background: var(--info-soft); color: var(--info); }
+.stat-icon.gold { background: var(--gold-soft); color: var(--gold-dark); }
+.stat-icon.gray { background: var(--border); color: var(--muted); }
+.stat-val {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+.stat-label {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* ═══════════════════════════════════════
+   SEARCH WRAP — Input dengan icon kiri/kanan
+   Pemakaian: <div class="search-wrap">
+                <span class="icon-left" data-icon="search"></span>
+                <input type="text" />
+                <button class="icon-clear">×</button>
+              </div>
+   ═══════════════════════════════════════ */
+.search-wrap {
+  position: relative;
+  margin-bottom: 10px;
+}
+.search-wrap input {
+  width: 100%;
+  height: 44px;
+  padding: 0 40px 0 42px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--ink);
+  font-weight: 600;
+  outline: none;
+  transition: all .15s;
+  box-sizing: border-box;
+}
+.search-wrap input::placeholder {
+  color: var(--muted-soft);
+  font-weight: 500;
+}
+.search-wrap input:focus {
+  border-color: var(--maroon);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px rgba(125,29,58,.08);
+}
+.search-wrap .icon-left {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  pointer-events: none;
+  z-index: 1;
+}
+.search-wrap .icon-left svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  stroke-width: 2;
+}
+.search-wrap .icon-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all .15s;
+  z-index: 1;
+}
+.search-wrap .icon-clear svg { width: 13px; height: 13px; }
+.search-wrap .icon-clear:hover {
+  background: var(--maroon-soft);
+  color: var(--maroon);
+}
+.search-wrap.has-value .icon-clear { display: flex; }
+
+/* ═══════════════════════════════════════
+   FILTER CHIPS — Kategori/filter horizontal
+   Pemakaian: <div class="filter-chips">
+                <button class="f-chip active" data-filter="">Semua <span class="count">5</span></button>
+              </div>
+   ═══════════════════════════════════════ */
+.filter-chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+.filter-chips::-webkit-scrollbar { display: none; }
+.f-chip {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all .15s;
+  white-space: nowrap;
+  font-family: inherit;
+}
+.f-chip:hover {
+  border-color: var(--maroon-light);
+  color: var(--maroon);
+}
+.f-chip.active {
+  background: var(--maroon);
+  border-color: var(--maroon);
+  color: white;
+}
+.f-chip .count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--border);
+  color: var(--muted);
+  font-size: 9.5px;
+  font-weight: 800;
+  line-height: 1;
+}
+.f-chip.active .count {
+  background: rgba(255,255,255,.25);
+  color: white;
+}
+
+/* ═══════════════════════════════════════
+   FILTER AREA — Container untuk search + chips
+   ═══════════════════════════════════════ */
+.filter-area {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(97,19,41,.04);
+}
+@media (max-width: 767px) {
+  .filter-area { position: sticky; top: 60px; z-index: 15; }
+}
+@media (min-width: 768px) {
+  .filter-area { position: sticky; top: 0; z-index: 15; }
+}
+
+/* ═══════════════════════════════════════
+   TAB SWITCH — Tab pill (untuk halaman detail)
+   Pemakaian: <div class="tab-switch">
+                <button class="tsw active"><span data-icon="..."></span> Tab <span class="tsw-count">3</span></button>
+              </div>
+   ═══════════════════════════════════════ */
+.tab-switch {
+  display: flex;
+  gap: 4px;
+  background: var(--bg);
+  padding: 4px;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  border: 1.5px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+  position: sticky;
+  top: 60px;
+  z-index: 15;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+.tab-switch::-webkit-scrollbar { display: none; }
+@media (min-width: 900px) {
+  .tab-switch { top: 0; }
+}
+.tsw {
+  flex: 1;
+  min-width: 84px;
+  padding: 11px 8px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  border-radius: 10px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  white-space: nowrap;
+  transition: all .15s;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+.tsw:hover { background: rgba(125,29,58,.04); }
+.tsw.active {
+  background: var(--surface);
+  color: var(--maroon);
+  box-shadow: 0 2px 8px rgba(125,29,58,.08);
+}
+.tsw-count {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--border);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: all .2s;
+}
+.tsw.active .tsw-count {
+  background: var(--maroon-soft);
+  color: var(--maroon);
+}
+.tsw-count.urgent {
+  background: var(--danger);
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+/* ═══════════════════════════════════════
+   MODAL STANDARD — untuk form/dialog
+   Pemakaian: <div class="modal-backdrop"><div class="modal">...</div></div>
+   ═══════════════════════════════════════ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(28,20,20,.55);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fade-in .2s both;
+}
+.modal {
+  background: var(--surface);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 64px rgba(0,0,0,.3);
+  animation: slide-up .3s var(--ease-out) both;
+}
+@keyframes slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.modal-header {
+  padding: 18px 22px 14px;
+  border-bottom: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.modal-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--maroon);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.modal-title.danger { color: var(--danger); }
+.modal-body {
+  padding: 20px 22px;
+  overflow-y: auto;
+  flex: 1;
+}
+.modal-footer {
+  padding: 14px 22px;
+  border-top: 1.5px solid var(--border);
+  background: var(--bg);
+  border-radius: 0 0 20px 20px;
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.modal-footer .btn { flex: 1; }
+
+/* ═══════════════════════════════════════
+   BOTTOM SHEET EXTENSIONS
+   Base .bottom-sheet sudah ada di nakula.css v3
+   Ini tambahan modifier + komponen internal
+   ═══════════════════════════════════════ */
+.bottom-sheet.lg { max-width: 540px; }
+
+.sheet-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.sheet-header-row > div { flex: 1; min-width: 0; }
+.sheet-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--maroon);
+  margin-bottom: 4px;
+}
+.sheet-title.danger { color: var(--danger); }
+.sheet-subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* ═══════════════════════════════════════
+   FORM HELPERS — untuk modal/bottom sheet
+   ═══════════════════════════════════════ */
+.form-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.form-row .field { margin: 0; }
+
+.modal-alert {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  background: var(--danger-soft);
+  color: var(--danger);
+  border: 1px solid rgba(185,28,28,.2);
+}
+.modal-alert.hidden { display: none; }
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+.modal-actions .btn { flex: 1; }
+
+/* Info/Warning box di dalam modal */
+.info-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.info-box.sukses {
+  background: linear-gradient(135deg, var(--success-soft) 0%, #ECFDF5 100%);
+  border: 1px solid rgba(21,128,61,.15);
+  color: var(--success);
+}
+.info-box.danger {
+  background: linear-gradient(135deg, var(--danger-soft) 0%, #FEF2F2 100%);
+  border: 1px solid rgba(185,28,28,.15);
+  color: var(--danger);
+}
+
+/* ═══════════════════════════════════════
+   EMPTY PANEL — Empty state dengan reset button
+   Pemakaian: <div class="empty-panel">
+                <div class="big-icon">...</div>
+                <h3>Judul</h3>
+                <p>Deskripsi</p>
+                <button class="reset-btn">Reset</button>
+              </div>
+   ═══════════════════════════════════════ */
+.empty-panel {
+  text-align: center;
+  padding: 50px 20px;
+}
+.empty-panel .big-icon {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
+  color: var(--maroon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+.empty-panel .big-icon.success {
+  background: linear-gradient(135deg, var(--success-soft) 0%, #D1FAE5 100%);
+  color: var(--success);
+}
+.empty-panel .big-icon svg { width: 36px; height: 36px; }
+.empty-panel h3 {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.empty-panel p {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 320px;
+  margin: 0 auto 16px;
+}
+.empty-panel .reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: var(--maroon);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .15s;
+}
+.empty-panel .reset-btn:hover {
+  background: var(--maroon-dark);
+  box-shadow: 0 6px 16px rgba(125,29,58,.25);
+}
