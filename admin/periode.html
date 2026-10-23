@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#611329" />
 <title>Kelola Periode — NAKULAKU Admin</title>
 
@@ -11,28 +11,207 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="../assets/css/nakula.css" />
+<link rel="stylesheet" href="layout.css" />
 
 <style>
+  /* STAT GRID */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  @media (min-width: 768px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+  .stat-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: all .2s var(--ease-out);
+  }
+  .stat-card:hover {
+    border-color: var(--maroon-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(125,29,58,.08);
+  }
+  .stat-icon {
+    width: 32px; height: 32px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+  }
+  .stat-icon.green { background: var(--success-soft); color: var(--success); }
+  .stat-icon.gold { background: var(--gold-soft); color: var(--gold-dark); }
+  .stat-icon.gray { background: var(--border); color: var(--muted); }
+  .stat-val {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 10.5px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  /* FILTER */
+  .filter-area {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 16px;
+    position: sticky;
+    top: 60px;
+    z-index: 15;
+    box-shadow: 0 2px 12px rgba(97,19,41,.04);
+  }
+  @media (min-width: 768px) { .filter-area { top: 0; } }
+
+  .search-wrap {
+    position: relative;
+    margin-bottom: 10px;
+  }
+  .search-wrap input {
+    width: 100%;
+    height: 44px;
+    padding: 0 40px 0 42px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--ink);
+    font-weight: 600;
+    outline: none;
+    transition: all .15s;
+    box-sizing: border-box;
+  }
+  .search-wrap input::placeholder { color: var(--muted-soft); font-weight: 500; }
+  .search-wrap input:focus {
+    border-color: var(--maroon);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(125,29,58,.08);
+  }
+  .search-wrap .icon-left {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .search-wrap .icon-left svg { width: 16px; height: 16px; display: block; }
+  .search-wrap .icon-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all .15s;
+    z-index: 1;
+  }
+  .search-wrap .icon-clear svg { width: 13px; height: 13px; }
+  .search-wrap .icon-clear:hover { background: var(--maroon-soft); color: var(--maroon); }
+  .search-wrap.has-value .icon-clear { display: flex; }
+
+  .filter-chips {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+  .filter-chips::-webkit-scrollbar { display: none; }
+  .f-chip {
+    flex-shrink: 0;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all .15s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .f-chip:hover { border-color: var(--maroon-light); color: var(--maroon); }
+  .f-chip.active { background: var(--maroon); border-color: var(--maroon); color: white; }
+  .f-chip .count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--border);
+    color: var(--muted);
+    font-size: 9.5px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .f-chip.active .count { background: rgba(255,255,255,.25); color: white; }
+
+  /* PERIODE CARD */
+  .periode-list { display: flex; flex-direction: column; gap: 12px; }
+  @media (min-width: 1024px) {
+    .periode-list { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  }
+
   .periode-card {
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
     padding: 16px;
-    margin-bottom: 12px;
-    transition: all .15s;
     position: relative;
     overflow: hidden;
+    transition: all .2s var(--ease-out);
+    animation: fade-in-up .35s var(--ease-out) both;
   }
-  .periode-card:hover { box-shadow: var(--sh-md); }
+  .periode-card:hover {
+    border-color: var(--maroon-light);
+    box-shadow: 0 10px 24px rgba(125,29,58,.08);
+    transform: translateY(-2px);
+  }
   .periode-card.aktif {
-    border: 1.5px solid var(--maroon);
+    border-color: var(--maroon);
     background: linear-gradient(135deg, #FFFFFF 0%, var(--maroon-faint) 100%);
   }
   .periode-card.aktif::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 4px;
+    height: 3px;
     background: linear-gradient(90deg, var(--maroon), var(--gold));
   }
   .periode-card.arsip {
@@ -45,22 +224,21 @@
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
   }
   .periode-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: var(--maroon-soft);
+    width: 48px; height: 48px;
+    border-radius: 13px;
+    background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
     color: var(--maroon);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
+    border: 1.5px solid rgba(125,29,58,.08);
   }
   .periode-card.aktif .periode-icon {
-    background: var(--maroon);
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
     color: white;
+    border-color: var(--maroon);
   }
   .periode-card.arsip .periode-icon {
     background: var(--border);
@@ -70,7 +248,9 @@
   .periode-nama {
     font-size: 15px;
     font-weight: 800;
-    margin-bottom: 4px;
+    color: var(--ink);
+    line-height: 1.35;
+    margin-bottom: 6px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -83,91 +263,469 @@
     display: flex;
     align-items: center;
     gap: 5px;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
+    line-height: 1.5;
   }
+  .periode-meta svg { flex-shrink: 0; }
 
-  .periode-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-  }
-  .periode-stat {
-    text-align: center;
-  }
-  .periode-stat .n {
-    font-size: 18px;
+  .badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 9px;
     font-weight: 800;
-    color: var(--maroon);
-    line-height: 1;
-  }
-  .periode-stat .l {
-    font-size: 9.5px;
-    color: var(--muted);
-    font-weight: 700;
-    letter-spacing: 0.3px;
-    margin-top: 4px;
+    letter-spacing: 0.4px;
     text-transform: uppercase;
+    line-height: 1.2;
+    white-space: nowrap;
   }
+  .badge-status.aktif { background: var(--success-soft); color: var(--success); }
+  .badge-status.arsip { background: var(--border); color: var(--muted); }
+  .badge-status.nonaktif { background: var(--warning-soft); color: var(--warning); }
 
+  /* Progress */
+  .progress-mini {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  .progress-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--muted);
+  }
+  .progress-head .persen { color: var(--maroon); font-size: 13px; }
+  .progress-bar {
+    height: 8px;
+    background: var(--surface);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.04);
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--maroon) 0%, var(--maroon-light) 50%, var(--gold) 100%);
+    border-radius: 999px;
+    transition: width .5s var(--ease-out);
+    box-shadow: 0 0 8px rgba(201,169,97,.4);
+  }
+  .progress-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .progress-stats strong { color: var(--ink); }
+
+  /* Actions */
   .periode-actions {
     display: flex;
     gap: 6px;
-    margin-top: 12px;
     padding-top: 12px;
     border-top: 1px dashed var(--border);
     flex-wrap: wrap;
   }
-  .periode-actions .btn { flex: 1; min-width: 100px; }
+  .periode-actions .btn { flex: 1; min-width: 100px; font-size: 12px; padding: 8px 12px; }
+
+  /* FAB */
+  .fab {
+    position: fixed;
+    bottom: calc(80px + env(safe-area-inset-bottom));
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(125,29,58,.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+    transition: all .2s var(--ease-out);
+  }
+  .fab:hover { transform: scale(1.08); box-shadow: 0 12px 32px rgba(125,29,58,.5); }
+  .fab:active { transform: scale(.95); }
+  @media (min-width: 900px) { .fab { bottom: 28px; right: 28px; } }
+  .fab .icon-wrap svg { width: 24px; height: 24px; stroke-width: 2.5; }
+
+  /* EMPTY */
+  .empty-panel { text-align: center; padding: 50px 20px; }
+  .empty-panel .big-icon {
+    width: 84px; height: 84px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--maroon-soft) 0%, #F9DDE6 100%);
+    color: var(--maroon);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+  .empty-panel .big-icon svg { width: 36px; height: 36px; }
+  .empty-panel h3 {
+    font-size: 15px; font-weight: 800;
+    color: var(--ink); margin-bottom: 6px;
+  }
+  .empty-panel p {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 320px;
+    margin: 0 auto 16px;
+  }
+  .empty-panel .reset-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    background: var(--maroon);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .empty-panel .reset-btn:hover { background: var(--maroon-dark); box-shadow: 0 6px 16px rgba(125,29,58,.25); }
+
+  /* FORM */
+  .bottom-sheet.lg { max-width: 540px; }
+  .sheet-header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .sheet-header-row > div { flex: 1; min-width: 0; }
+  .sheet-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--maroon);
+    margin-bottom: 4px;
+  }
+  .sheet-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .form-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .form-row .field { margin: 0; }
+  .modal-alert {
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    background: var(--danger-soft);
+    color: var(--danger);
+    border: 1px solid rgba(185,28,28,.2);
+  }
+  .modal-alert.hidden { display: none; }
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .modal-actions .btn { flex: 1; }
+
+  .info-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--info-soft);
+    border: 1px solid rgba(30,64,175,.15);
+    border-radius: 10px;
+    font-size: 11.5px;
+    color: var(--info);
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
 </style>
 </head>
-<body>
+<body class="admin-body">
 
-<header class="app-header">
-  <div class="app-header-brand">
-    <a href="../beranda.html" class="header-btn" style="text-decoration:none;">
+<header class="admin-header">
+  <div class="admin-header-left">
+    <a href="index.html" class="admin-header-btn" aria-label="Kembali">
       <span data-icon="chevronLeft"></span>
     </a>
-    <div class="app-header-text">
-      <div class="app-header-title">Kelola Periode</div>
-      <div class="app-header-sub">Admin NAKULAKU</div>
+    <div class="admin-header-title">
+      <div class="admin-header-title-1">KELOLA PERIODE</div>
+      <div class="admin-header-title-2">Admin NAKULAKU</div>
     </div>
   </div>
+  <button class="admin-header-btn" data-act="logout" aria-label="Keluar">
+    <span data-icon="logOut"></span>
+  </button>
 </header>
 
-<main class="container page" style="max-width:820px;padding-top:16px;">
+<div class="admin-layout">
 
-  <div class="card" style="margin-bottom:16px;font-size:12.5px;line-height:1.6;color:var(--muted);">
-    <strong style="color:var(--ink);">Periode</strong> adalah tahun ajaran KKG. Hanya <strong>satu periode aktif</strong> dalam satu waktu.
-    Periode lama bisa <strong>diarsipkan</strong> (data tetap tersimpan) atau dihapus (kalau belum ada pertemuan).
-  </div>
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-brand">
+      <div class="admin-sidebar-logo">
+        <img src="../assets/img/logo-mark.svg" alt="Nakula" />
+      </div>
+      <div>
+        <div class="admin-sidebar-name">NAKULAKU</div>
+        <div class="admin-sidebar-sub">Admin Panel</div>
+      </div>
+    </div>
 
-  <button class="btn btn-primary btn-full" id="btnTambah" style="margin-bottom:16px;">
-    <span data-icon="plus"></span>
-    Buat Periode Baru
-  </button>
+    <nav class="admin-sidebar-menu">
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Dashboard</div>
+        <a class="admin-sidebar-item" data-nav="dashboard" href="index.html">
+          <span data-icon="layoutDashboard"></span> Dashboard
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Data</div>
+        <a class="admin-sidebar-item" data-nav="guru" href="guru.html">
+          <span data-icon="users"></span> Data Guru
+        </a>
+        <a class="admin-sidebar-item" data-nav="bulk" href="guru-bulk.html">
+          <span data-icon="checkSquare"></span> Bulk Action
+        </a>
+        <a class="admin-sidebar-item" data-nav="impor" href="impor.html">
+          <span data-icon="upload"></span> Impor CSV
+        </a>
+        <a class="admin-sidebar-item" data-nav="master" href="master-data.html">
+          <span data-icon="database"></span> Master Data
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Kegiatan</div>
+        <a class="admin-sidebar-item active" data-nav="periode" href="periode.html">
+          <span data-icon="calendar"></span> Kelola Periode
+        </a>
+        <a class="admin-sidebar-item" data-nav="pertemuan" href="pertemuan.html">
+          <span data-icon="list"></span> Kelola Pertemuan
+        </a>
+        <a class="admin-sidebar-item" data-nav="pengumuman" href="pengumuman.html">
+          <span data-icon="megaphone"></span> Pengumuman
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Evaluasi</div>
+        <a class="admin-sidebar-item" data-nav="verifikasi-sekolah" href="verifikasi-sekolah.html">
+          <span data-icon="sparkles"></span> Verifikasi Sekolah
+        </a>
+        <a class="admin-sidebar-item" data-nav="karya" href="karya.html">
+          <span data-icon="sparkles"></span> Verifikasi Karya
+        </a>
+        <a class="admin-sidebar-item" data-nav="verifikasi-presensi" href="../ks/verifikasi.html">
+          <span data-icon="checkCircle"></span> Verifikasi Presensi
+        </a>
+        <a class="admin-sidebar-item" data-nav="alihkan" href="alihkan-verifikasi.html">
+          <span data-icon="refreshCw"></span> Alihkan Verifikasi
+        </a>
+        <a class="admin-sidebar-item" data-nav="feedback" href="feedback.html">
+          <span data-icon="messageSquare"></span> Rekap Feedback
+        </a>
+        <a class="admin-sidebar-item" data-nav="award" href="award.html">
+          <span data-icon="award"></span> Kelola Award
+        </a>
+        <a class="admin-sidebar-item" data-nav="sertifikat" href="sertifikat.html">
+          <span data-icon="fileText"></span> Sertifikat
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Laporan</div>
+        <a class="admin-sidebar-item" data-nav="analitik" href="analitik.html">
+          <span data-icon="activity"></span> Analitik
+        </a>
+        <a class="admin-sidebar-item" data-nav="laporan" href="laporan.html">
+          <span data-icon="download"></span> Export Laporan
+        </a>
+      </div>
+      <div class="admin-sidebar-group">
+        <div class="admin-sidebar-group-title">Sistem</div>
+        <a class="admin-sidebar-item" data-nav="kategori-ajuan" href="kategori-ajuan.html">
+          <span data-icon="tag"></span> Kategori Ajuan
+        </a>
+        <a class="admin-sidebar-item" data-nav="log" href="log.html">
+          <span data-icon="list"></span> Log Aktivitas
+        </a>
+        <a class="admin-sidebar-item" data-nav="pengaturan" href="pengaturan.html">
+          <span data-icon="settings"></span> Pengaturan
+        </a>
+      </div>
+    </nav>
+  </aside>
 
-  <div id="listPeriode">
-    <div class="skeleton" style="height:180px;border-radius:16px;margin-bottom:12px;"></div>
-    <div class="skeleton" style="height:180px;border-radius:16px;"></div>
-  </div>
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1 class="admin-topbar-title">Kelola Periode</h1>
+      <div class="admin-topbar-right">
+        <div class="admin-user-chip" id="userChip"></div>
+        <button class="btn-icon" data-act="logout" aria-label="Keluar" title="Keluar">
+          <span data-icon="logOut"></span>
+        </button>
+      </div>
+    </div>
 
-</main>
+    <div class="admin-content">
+
+      <!-- Info banner -->
+      <div class="info-box">
+        <span data-icon="info" data-icon-class="icon-sm" style="display:contents;"></span>
+        <div>
+          <strong>Periode</strong> adalah tahun ajaran KKG. Hanya <strong>satu periode aktif</strong> dalam satu waktu.
+          Periode lama bisa <strong>diarsipkan</strong> (data tetap tersimpan) atau dihapus (kalau belum ada pertemuan).
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><span data-icon="calendar" class="icon-sm"></span></div>
+          <div class="stat-val" id="statTotal">—</div>
+          <div class="stat-label">Total Periode</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><span data-icon="checkCircle" class="icon-sm"></span></div>
+          <div class="stat-val" id="statAktif">—</div>
+          <div class="stat-label">Aktif</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon gold"><span data-icon="list" class="icon-sm"></span></div>
+          <div class="stat-val" id="statPertemuan">—</div>
+          <div class="stat-label">Total Pertemuan</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon gray"><span data-icon="archive" class="icon-sm"></span></div>
+          <div class="stat-val" id="statArsip">—</div>
+          <div class="stat-label">Arsip</div>
+        </div>
+      </div>
+
+      <!-- Filter -->
+      <div class="filter-area">
+        <div class="search-wrap" id="searchWrap">
+          <span class="icon-left" data-icon="search"></span>
+          <input type="text" id="inputCari" placeholder="Cari nama periode…" />
+          <button class="icon-clear" id="btnClearSearch" title="Hapus" aria-label="Hapus pencarian">
+            <span data-icon="x"></span>
+          </button>
+        </div>
+        <div class="filter-chips">
+          <button class="f-chip active" data-filter="">
+            Semua <span class="count" data-count="">0</span>
+          </button>
+          <button class="f-chip" data-filter="aktif">
+            <span data-icon="checkCircle" data-icon-class="icon-sm"></span> Aktif
+            <span class="count" data-count="aktif">0</span>
+          </button>
+          <button class="f-chip" data-filter="arsip">
+            <span data-icon="archive" data-icon-class="icon-sm"></span> Arsip
+            <span class="count" data-count="arsip">0</span>
+          </button>
+          <button class="f-chip" data-filter="tidak_aktif">
+            <span data-icon="clock" data-icon-class="icon-sm"></span> Tidak Aktif
+            <span class="count" data-count="tidak_aktif">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- List -->
+      <div id="listPeriode" class="periode-list">
+        <div class="skeleton" style="height:200px;border-radius:18px;"></div>
+        <div class="skeleton" style="height:200px;border-radius:18px;"></div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<button class="fab" id="btnTambah" aria-label="Buat Periode">
+  <span class="icon-wrap" id="fabIcon"></span>
+</button>
+
+<nav class="admin-bottom-nav">
+  <a class="admin-nav-item" data-nav="dashboard" href="index.html">
+    <span data-icon="layoutDashboard"></span> Dashboard
+  </a>
+  <a class="admin-nav-item" data-nav="guru" href="guru.html">
+    <span data-icon="users"></span> Guru
+  </a>
+  <a class="admin-nav-item active" data-nav="periode" href="periode.html">
+    <span data-icon="calendar"></span> Periode
+  </a>
+  <a class="admin-nav-item" data-nav="pertemuan" href="pertemuan.html">
+    <span data-icon="list"></span> Pertemuan
+  </a>
+  <a class="admin-nav-item" data-nav="verifikasi" href="verifikasi-sekolah.html">
+    <span data-icon="checkCircle"></span> Verifikasi
+  </a>
+</nav>
 
 <script src="../assets/js/icons.js"></script>
 <script src="../assets/js/api.js"></script>
 <script src="../assets/js/ui.js"></script>
+<script src="../assets/js/app-nav.js"></script>
 <script>
+// INIT ICONS
 document.querySelectorAll('[data-icon]').forEach(el => {
-  el.innerHTML = Icons.get(el.dataset.icon);
-  el.style.display = 'contents';
+  const cls = el.dataset.iconClass || '';
+  el.innerHTML = Icons.get(el.dataset.icon, { class: cls });
+  if (!el.classList.contains('icon-left')) {
+    el.style.display = 'contents';
+  }
+});
+UI.bindLogout();
+
+document.getElementById('fabIcon').innerHTML = Icons.get('plus', { class: '' });
+
+window.addEventListener('load', () => {
+  const p = Api.getProfile();
+  if (!p) return;
+  const chip = document.getElementById('userChip');
+  if (chip) {
+    const init = (p.nama || 'A').charAt(0).toUpperCase();
+    const fotoUrl = Api.fotoSayaUrl('t');
+    chip.innerHTML = `
+      <div class="avatar" style="position:relative;">
+        <span style="position:relative;z-index:0;">${init}</span>
+        ${fotoUrl ? `<img src="${fotoUrl}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;z-index:1;" onerror="this.remove()">` : ''}
+      </div>
+      <span>${UI.escapeHtml(p.nama || '-')}</span>
+    `;
+  }
 });
 
+// STATE
 let profile;
-let daftarPeriode = [];
+let semuaPeriode = [];
+let searchQuery = '';
+let filterStatus = '';
+let debounceSearch;
 
+// BOOT
 (async () => {
   profile = await Api.requireLogin();
   if (!profile) return;
@@ -181,41 +739,113 @@ let daftarPeriode = [];
   document.getElementById('btnTambah').addEventListener('click', () => formPeriode(null));
 })();
 
+// LOAD
 async function load() {
   const el = document.getElementById('listPeriode');
-  el.innerHTML = '<div class="skeleton" style="height:180px;border-radius:16px;"></div>';
+  el.innerHTML = `
+    <div class="skeleton" style="height:200px;border-radius:18px;"></div>
+    <div class="skeleton" style="height:200px;border-radius:18px;"></div>
+  `;
 
   const res = await Api.call('admin.periode.list');
   if (!res.ok) { el.innerHTML = UI.errorHtml(res.error); return; }
 
-  daftarPeriode = res.data || [];
+  semuaPeriode = res.data || [];
 
-  // Sortir: aktif dulu, lalu yang tidak arsip, lalu arsip
-  daftarPeriode.sort((a, b) => {
+  // Sort: aktif dulu, lalu tidak arsip, lalu arsip
+  semuaPeriode.sort((a, b) => {
     if (a.aktif !== b.aktif) return a.aktif ? -1 : 1;
     if (a.diarsipkan !== b.diarsipkan) return a.diarsipkan ? 1 : -1;
     return new Date(b.mulai) - new Date(a.mulai);
   });
 
-  if (daftarPeriode.length === 0) {
-    el.innerHTML = UI.emptyHtml('calendar', 'Belum ada periode', 'Klik tombol di atas untuk membuat.');
-    return;
-  }
+  updateStats();
+  updateFilterCounts();
+  renderList();
+}
 
-  el.innerHTML = daftarPeriode.map(p => renderItem(p)).join('');
+function updateStats() {
+  document.getElementById('statTotal').textContent = semuaPeriode.length;
+  document.getElementById('statAktif').textContent = semuaPeriode.filter(p => p.aktif).length;
+  document.getElementById('statPertemuan').textContent = semuaPeriode.reduce((s, p) => s + (p.jumlah_pertemuan || 0), 0);
+  document.getElementById('statArsip').textContent = semuaPeriode.filter(p => p.diarsipkan).length;
+}
 
-  daftarPeriode.forEach(p => {
-    const c = document.getElementById('periode-' + p.id);
-    if (!c) return;
-    c.querySelector('[data-act="edit"]')?.addEventListener('click', () => formPeriode(p));
-    c.querySelector('[data-act="aktifkan"]')?.addEventListener('click', () => aktifkan(p));
-    c.querySelector('[data-act="arsipkan"]')?.addEventListener('click', () => arsipkan(p));
-    c.querySelector('[data-act="pulihkan"]')?.addEventListener('click', () => pulihkan(p));
-    c.querySelector('[data-act="hapus"]')?.addEventListener('click', () => hapusPeriode(p));
+function updateFilterCounts() {
+  const counts = {
+    '': semuaPeriode.length,
+    aktif: semuaPeriode.filter(p => p.aktif).length,
+    arsip: semuaPeriode.filter(p => p.diarsipkan).length,
+    tidak_aktif: semuaPeriode.filter(p => !p.aktif && !p.diarsipkan).length,
+  };
+  document.querySelectorAll('.f-chip [data-count]').forEach(el => {
+    el.textContent = counts[el.dataset.count] || 0;
   });
 }
 
-function renderItem(p) {
+// FILTER
+function applyFilter() {
+  let list = [...semuaPeriode];
+
+  if (filterStatus === 'aktif') list = list.filter(p => p.aktif);
+  else if (filterStatus === 'arsip') list = list.filter(p => p.diarsipkan);
+  else if (filterStatus === 'tidak_aktif') list = list.filter(p => !p.aktif && !p.diarsipkan);
+
+  if (searchQuery) {
+    list = list.filter(p => (p.nama || '').toLowerCase().includes(searchQuery));
+  }
+
+  return list;
+}
+
+function renderList() {
+  const el = document.getElementById('listPeriode');
+  const list = applyFilter();
+
+  if (list.length === 0) {
+    const hasFilter = !!searchQuery || !!filterStatus;
+    el.innerHTML = `
+      <div class="empty-panel" style="grid-column:1/-1;">
+        <div class="big-icon">${Icons.get('calendar', { class: 'icon-lg' })}</div>
+        <h3>${hasFilter ? 'Tidak Ada Hasil' : 'Belum Ada Periode'}</h3>
+        <p>${hasFilter ? 'Coba ubah kata kunci atau reset filter.' : 'Klik tombol + di kanan bawah untuk membuat periode pertama.'}</p>
+        ${hasFilter ? `<button class="reset-btn" id="btnResetFilter">
+          ${Icons.get('rotateCcw', { class: 'icon-sm' })} Reset Filter
+        </button>` : ''}
+      </div>
+    `;
+    document.getElementById('btnResetFilter')?.addEventListener('click', resetFilter);
+    return;
+  }
+
+  el.innerHTML = list.map((p, idx) => renderCard(p, idx)).join('');
+
+  el.querySelectorAll('[data-act="edit"]').forEach(b => {
+    const id = Number(b.dataset.id);
+    b.addEventListener('click', () => {
+      const p = semuaPeriode.find(x => x.id === id);
+      if (p) formPeriode(p);
+    });
+  });
+  el.querySelectorAll('[data-act="aktifkan"]').forEach(b => {
+    const id = Number(b.dataset.id);
+    b.addEventListener('click', () => aktifkan(id));
+  });
+  el.querySelectorAll('[data-act="arsipkan"]').forEach(b => {
+    const id = Number(b.dataset.id);
+    b.addEventListener('click', () => arsipkan(id));
+  });
+  el.querySelectorAll('[data-act="pulihkan"]').forEach(b => {
+    const id = Number(b.dataset.id);
+    b.addEventListener('click', () => pulihkan(id));
+  });
+  el.querySelectorAll('[data-act="hapus"]').forEach(b => {
+    const id = Number(b.dataset.id);
+    b.addEventListener('click', () => hapusPeriode(id));
+  });
+}
+
+function renderCard(p, idx) {
   const cls = p.aktif ? 'aktif' : (p.diarsipkan ? 'arsip' : '');
   const mulai = UI.formatTanggalPendek(p.mulai);
   const selesai = UI.formatTanggalPendek(p.selesai);
@@ -223,49 +853,50 @@ function renderItem(p) {
   // Badge status
   let badge = '';
   if (p.aktif) {
-    badge = `<span class="badge badge-success" style="display:inline-flex;align-items:center;gap:4px;">
-      ${Icons.get('checkCircle', { class: 'icon-sm' })} AKTIF
-    </span>`;
+    badge = `<span class="badge-status aktif">${Icons.get('checkCircle', { class: 'icon-sm' })} Aktif</span>`;
   } else if (p.diarsipkan) {
-    badge = `<span class="badge" style="background:var(--border);color:var(--muted);display:inline-flex;align-items:center;gap:4px;">
-      ${Icons.get('archive', { class: 'icon-sm' })} ARSIP
-    </span>`;
+    badge = `<span class="badge-status arsip">${Icons.get('archive', { class: 'icon-sm' })} Arsip</span>`;
   } else {
-    badge = `<span class="badge badge-warning">TIDAK AKTIF</span>`;
+    badge = `<span class="badge-status nonaktif">Tidak Aktif</span>`;
   }
 
-  // Tombol aksi
+  // Progress
+  const target = p.target_pertemuan || 16;
+  const jumlah = p.jumlah_pertemuan || 0;
+  const persen = target > 0 ? Math.min(100, Math.round((jumlah / target) * 100)) : 0;
+
+  // Actions kontekstual
   let actions = '';
   if (p.aktif) {
     actions = `
-      <button class="btn btn-secondary btn-sm" data-act="edit">
+      <button class="btn btn-secondary btn-sm" data-act="edit" data-id="${p.id}">
         ${Icons.get('edit', { class: 'icon-sm' })} Edit
       </button>
     `;
   } else if (p.diarsipkan) {
     actions = `
-      <button class="btn btn-secondary btn-sm" data-act="pulihkan" style="color:var(--maroon);">
+      <button class="btn btn-secondary btn-sm" data-act="pulihkan" data-id="${p.id}" style="color:var(--maroon);">
         ${Icons.get('rotateCcw', { class: 'icon-sm' })} Pulihkan
       </button>
       ${profile.peran.includes('super_admin') ? `
-        <button class="btn btn-ghost btn-sm" data-act="hapus" style="color:var(--danger);">
+        <button class="btn btn-ghost btn-sm" data-act="hapus" data-id="${p.id}" style="color:var(--danger);">
           ${Icons.get('trash', { class: 'icon-sm' })} Hapus
         </button>
       ` : ''}
     `;
   } else {
     actions = `
-      <button class="btn btn-primary btn-sm" data-act="aktifkan">
+      <button class="btn btn-primary btn-sm" data-act="aktifkan" data-id="${p.id}">
         ${Icons.get('checkCircle', { class: 'icon-sm' })} Aktifkan
       </button>
-      <button class="btn btn-secondary btn-sm" data-act="edit">
+      <button class="btn btn-secondary btn-sm" data-act="edit" data-id="${p.id}">
         ${Icons.get('edit', { class: 'icon-sm' })} Edit
       </button>
-      <button class="btn btn-ghost btn-sm" data-act="arsipkan" style="color:var(--warning);">
+      <button class="btn btn-ghost btn-sm" data-act="arsipkan" data-id="${p.id}" style="color:var(--warning);">
         ${Icons.get('archive', { class: 'icon-sm' })} Arsipkan
       </button>
       ${profile.peran.includes('super_admin') ? `
-        <button class="btn btn-ghost btn-sm" data-act="hapus" style="color:var(--danger);">
+        <button class="btn btn-ghost btn-sm" data-act="hapus" data-id="${p.id}" style="color:var(--danger);">
           ${Icons.get('trash', { class: 'icon-sm' })} Hapus
         </button>
       ` : ''}
@@ -273,7 +904,7 @@ function renderItem(p) {
   }
 
   return `
-    <div class="periode-card ${cls}" id="periode-${p.id}">
+    <div class="periode-card ${cls}" style="animation-delay:${idx * 0.04}s">
       <div class="periode-head">
         <div class="periode-icon">${Icons.get('calendar', { class: 'icon-lg' })}</div>
         <div class="periode-info">
@@ -286,7 +917,7 @@ function renderItem(p) {
             ${mulai} — ${selesai}
           </div>
           ${p.catatan_target ? `
-            <div class="periode-meta" style="color:var(--muted);font-style:italic;">
+            <div class="periode-meta" style="font-style:italic;">
               ${Icons.get('info', { class: 'icon-sm' })}
               ${UI.escapeHtml(p.catatan_target)}
             </div>
@@ -294,18 +925,17 @@ function renderItem(p) {
         </div>
       </div>
 
-      <div class="periode-stats">
-        <div class="periode-stat">
-          <div class="n">${p.jumlah_pertemuan}</div>
-          <div class="l">Pertemuan</div>
+      <div class="progress-mini">
+        <div class="progress-head">
+          <span>Pertemuan Tercatat</span>
+          <span class="persen">${persen}%</span>
         </div>
-        <div class="periode-stat">
-          <div class="n">${p.target_pertemuan || 16}</div>
-          <div class="l">Target</div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:${persen}%"></div>
         </div>
-        <div class="periode-stat">
-          <div class="n">${p.jumlah_pertemuan >= (p.target_pertemuan || 16) ? '✓' : (p.jumlah_pertemuan + '/' + (p.target_pertemuan || 16))}</div>
-          <div class="l">Progress</div>
+        <div class="progress-stats">
+          <span><strong>${jumlah}</strong> dari ${target} target</span>
+          <span>${target - jumlah > 0 ? `Sisa ${target - jumlah}` : '✓ Tercapai'}</span>
         </div>
       </div>
 
@@ -316,10 +946,50 @@ function renderItem(p) {
   `;
 }
 
-// ============================================================
+function resetFilter() {
+  searchQuery = '';
+  filterStatus = '';
+  document.getElementById('inputCari').value = '';
+  document.getElementById('searchWrap').classList.remove('has-value');
+  document.querySelectorAll('.f-chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.filter === '');
+  });
+  renderList();
+}
+
+// EVENTS
+document.getElementById('inputCari').addEventListener('input', (e) => {
+  const wrap = document.getElementById('searchWrap');
+  wrap.classList.toggle('has-value', !!e.target.value.trim());
+
+  clearTimeout(debounceSearch);
+  debounceSearch = setTimeout(() => {
+    searchQuery = e.target.value.trim().toLowerCase();
+    renderList();
+  }, 300);
+});
+
+document.getElementById('btnClearSearch').addEventListener('click', () => {
+  document.getElementById('inputCari').value = '';
+  document.getElementById('searchWrap').classList.remove('has-value');
+  searchQuery = '';
+  renderList();
+  document.getElementById('inputCari').focus();
+});
+
+document.querySelectorAll('.f-chip').forEach(c => {
+  c.addEventListener('click', () => {
+    filterStatus = c.dataset.filter;
+    document.querySelectorAll('.f-chip').forEach(x => x.classList.toggle('active', x === c));
+    renderList();
+  });
+});
+
 // AKSI
-// ============================================================
-async function aktifkan(p) {
+async function aktifkan(id) {
+  const p = semuaPeriode.find(x => x.id === id);
+  if (!p) return;
+
   const ok = await UI.konfirmasi(
     'Aktifkan Periode',
     `Jadikan "${p.nama}" sebagai periode aktif?\n\nPeriode lain akan otomatis dinonaktifkan.`,
@@ -327,27 +997,33 @@ async function aktifkan(p) {
   );
   if (!ok) return;
 
-  const res = await Api.call('admin.periode.aktifkan', { periode_id: p.id });
+  const res = await Api.call('admin.periode.aktifkan', { periode_id: id });
   if (!res.ok) { UI.gagal(res.error); return; }
-  UI.sukses(res.data.pesan);
+  UI.sukses(res.data.pesan || 'Periode diaktifkan.');
   await load();
 }
 
-async function arsipkan(p) {
+async function arsipkan(id) {
+  const p = semuaPeriode.find(x => x.id === id);
+  if (!p) return;
+
   const ok = await UI.konfirmasi(
     'Arsipkan Periode',
-    `Arsipkan "${p.nama}"?\n\nPeriode akan disembunyikan dari daftar aktif, tapi data tetap tersimpan dan bisa dipulihkan.`,
+    `Arsipkan "${p.nama}"?\n\nData tetap tersimpan dan bisa dipulihkan.`,
     { okText: 'Arsipkan' }
   );
   if (!ok) return;
 
-  const res = await Api.call('admin.periode.arsipkan', { periode_id: p.id });
+  const res = await Api.call('admin.periode.arsipkan', { periode_id: id });
   if (!res.ok) { UI.gagal(res.error); return; }
-  UI.sukses(res.data.pesan);
+  UI.sukses(res.data.pesan || 'Periode diarsipkan.');
   await load();
 }
 
-async function pulihkan(p) {
+async function pulihkan(id) {
+  const p = semuaPeriode.find(x => x.id === id);
+  if (!p) return;
+
   const ok = await UI.konfirmasi(
     'Pulihkan Periode',
     `Pulihkan "${p.nama}" dari arsip?`,
@@ -355,90 +1031,91 @@ async function pulihkan(p) {
   );
   if (!ok) return;
 
-  const res = await Api.call('admin.periode.pulihkan', { periode_id: p.id });
+  const res = await Api.call('admin.periode.pulihkan', { periode_id: id });
   if (!res.ok) { UI.gagal(res.error); return; }
   UI.sukses('Periode dipulihkan.');
   await load();
 }
 
-async function hapusPeriode(p) {
+async function hapusPeriode(id) {
+  const p = semuaPeriode.find(x => x.id === id);
+  if (!p) return;
+
   const ok = await UI.konfirmasi(
     'Hapus Periode',
-    `Hapus "${p.nama}" permanen?\n\nHanya bisa dihapus kalau belum ada pertemuan.`,
-    { danger: true, okText: 'Hapus' }
+    `Hapus "${p.nama}" permanen?\n\nHanya bisa dihapus kalau belum ada pertemuan. Tindakan ini tidak bisa dibatalkan.`,
+    { danger: true, okText: 'Hapus Permanen' }
   );
   if (!ok) return;
 
-  const res = await Api.call('admin.periode.hapus', { periode_id: p.id });
+  const res = await Api.call('admin.periode.hapus', { periode_id: id });
   if (!res.ok) { UI.gagal(res.error); return; }
-  UI.sukses(res.data.pesan);
+  UI.sukses(res.data.pesan || 'Periode dihapus.');
   await load();
 }
 
-// ============================================================
 // FORM
-// ============================================================
 function formPeriode(periode) {
   const isEdit = !!periode;
   const p = periode || {};
   const tahun = new Date().getFullYear();
 
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(28,20,20,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000;';
-  overlay.innerHTML = `
-    <div style="background:white;border-radius:20px;padding:24px;max-width:520px;width:100%;box-shadow:var(--sh-xl);max-height:90vh;overflow-y:auto;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-        <h3 style="font-size:17px;color:var(--maroon);margin:0;">${isEdit ? 'Edit' : 'Buat'} Periode</h3>
-        <button data-close class="btn-icon">${Icons.get('x')}</button>
+  const { overlay, close } = openSheet(`
+    <div class="sheet-header-row">
+      <div>
+        <div class="sheet-title">${isEdit ? 'Edit' : 'Buat'} Periode</div>
+        <div class="sheet-subtitle">
+          ${isEdit ? 'Perubahan tidak memengaruhi periode lain.' : 'Setelah dibuat, klik "Aktifkan" untuk jadi periode aktif.'}
+        </div>
+      </div>
+      <button class="btn-icon" data-close>${Icons.get('x')}</button>
+    </div>
+
+    <div class="form-field-group">
+      <div class="field">
+        <label class="label">Nama Periode *</label>
+        <input type="text" id="pNama" class="input" value="${UI.escapeHtml(p.nama || 'Periode ' + tahun)}" placeholder="Mis: Periode 2026" maxlength="80" />
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="form-row">
         <div class="field">
-          <label class="label">Nama Periode *</label>
-          <input type="text" id="pNama" class="input" value="${UI.escapeHtml(p.nama || 'Periode ' + tahun)}" placeholder="Mis: Periode 2026" />
+          <label class="label">Tanggal Mulai *</label>
+          <input type="date" id="pMulai" class="input" value="${p.mulai || (tahun + '-01-01')}" />
         </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <div class="field">
-            <label class="label">Tanggal Mulai *</label>
-            <input type="date" id="pMulai" class="input" value="${p.mulai || (tahun + '-01-01')}" />
-          </div>
-          <div class="field">
-            <label class="label">Tanggal Selesai *</label>
-            <input type="date" id="pSelesai" class="input" value="${p.selesai || (tahun + '-12-31')}" />
-          </div>
-        </div>
-
         <div class="field">
-          <label class="label">Target Pertemuan</label>
-          <input type="number" id="pTarget" class="input" value="${p.target_pertemuan || 16}" min="1" max="50" />
-          <div style="font-size:11px;color:var(--muted);margin-top:4px;">Rencana awal. Bisa berubah, tidak memengaruhi perhitungan.</div>
-        </div>
-
-        <div class="field">
-          <label class="label">Catatan (opsional)</label>
-          <textarea id="pCatatan" class="input" rows="2" style="resize:vertical;" placeholder="Mis: Target awal 16, berkurang 1 karena kegiatan dinas">${UI.escapeHtml(p.catatan_target || '')}</textarea>
+          <label class="label">Tanggal Selesai *</label>
+          <input type="date" id="pSelesai" class="input" value="${p.selesai || (tahun + '-12-31')}" />
         </div>
       </div>
 
-      <div id="pAlert" class="alert alert-error" style="margin-top:14px;"></div>
+      <div class="field">
+        <label class="label">Target Pertemuan</label>
+        <input type="number" id="pTarget" class="input" value="${p.target_pertemuan || 16}" min="1" max="50" />
+        <div style="font-size:10.5px;color:var(--muted);margin-top:4px;font-weight:600;">
+          Rencana awal. Digunakan untuk progress & formula award.
+        </div>
+      </div>
 
-      <div style="display:flex;gap:8px;margin-top:20px;">
-        <button class="btn btn-secondary" data-close style="flex:1;">Batal</button>
-        <button class="btn btn-primary" id="btnSimpanP" style="flex:2;">Simpan</button>
+      <div class="field">
+        <label class="label">Catatan (opsional)</label>
+        <textarea id="pCatatan" class="input" rows="2" style="resize:vertical;" placeholder="Mis: Target awal 16, berkurang 1 karena kegiatan dinas">${UI.escapeHtml(p.catatan_target || '')}</textarea>
       </div>
     </div>
-  `;
-  document.body.appendChild(overlay);
 
-  const close = () => overlay.remove();
-  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
-  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+    <div id="pAlert" class="modal-alert hidden"></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" data-close>Batal</button>
+      <button class="btn btn-primary" id="btnSimpanP" style="flex:2;">
+        ${isEdit ? 'Simpan Perubahan' : 'Buat Periode'}
+      </button>
+    </div>
+  `, { size: 'lg' });
 
   overlay.querySelector('#btnSimpanP').addEventListener('click', async () => {
     const btn = overlay.querySelector('#btnSimpanP');
     const alertBox = overlay.querySelector('#pAlert');
-    alertBox.classList.remove('show');
+    alertBox.classList.add('hidden');
 
     const payload = {
       id: p.id || null,
@@ -449,11 +1126,19 @@ function formPeriode(periode) {
       catatan_target: overlay.querySelector('#pCatatan').value.trim() || null,
     };
 
-    if (!payload.nama) { alertBox.textContent = 'Nama wajib.'; alertBox.classList.add('show'); return; }
-    if (!payload.mulai || !payload.selesai) { alertBox.textContent = 'Tanggal wajib.'; alertBox.classList.add('show'); return; }
+    if (!payload.nama) {
+      alertBox.textContent = 'Nama wajib diisi.';
+      alertBox.classList.remove('hidden');
+      return;
+    }
+    if (!payload.mulai || !payload.selesai) {
+      alertBox.textContent = 'Tanggal mulai & selesai wajib.';
+      alertBox.classList.remove('hidden');
+      return;
+    }
     if (new Date(payload.mulai) > new Date(payload.selesai)) {
       alertBox.textContent = 'Tanggal selesai harus setelah tanggal mulai.';
-      alertBox.classList.add('show');
+      alertBox.classList.remove('hidden');
       return;
     }
 
@@ -461,12 +1146,44 @@ function formPeriode(periode) {
     const res = await Api.call('admin.periode.simpan', { periode: payload });
     UI.btnReset(btn);
 
-    if (!res.ok) { alertBox.textContent = res.error; alertBox.classList.add('show'); return; }
+    if (!res.ok) {
+      alertBox.textContent = res.error || 'Gagal menyimpan.';
+      alertBox.classList.remove('hidden');
+      return;
+    }
 
-    UI.sukses(isEdit ? 'Diperbarui.' : 'Periode baru dibuat.');
+    UI.sukses(isEdit ? 'Periode diperbarui.' : 'Periode berhasil dibuat.');
     close();
     await load();
   });
+}
+
+// HELPER
+function openSheet(contentHtml, opts = {}) {
+  const overlay = document.createElement('div');
+  overlay.className = 'bottom-sheet-overlay';
+  overlay.innerHTML = `<div class="bottom-sheet ${opts.size === 'lg' ? 'lg' : ''}">${contentHtml}</div>`;
+  document.body.appendChild(overlay);
+
+  const close = () => {
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity .15s';
+    setTimeout(() => overlay.remove(), 150);
+    document.removeEventListener('keydown', escHandler);
+  };
+
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+  overlay.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+
+  const escHandler = (e) => { if (e.key === 'Escape') close(); };
+  document.addEventListener('keydown', escHandler);
+
+  setTimeout(() => {
+    const first = overlay.querySelector('input:not([type=hidden]):not([type=checkbox]):not([type=radio]), textarea');
+    if (first) first.focus();
+  }, 100);
+
+  return { overlay, close };
 }
 </script>
 
