@@ -1,0 +1,2397 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>Panduan Admin — NAKULAKU</title>
+<meta name="description" content="Panduan lengkap penggunaan NAKULAKU untuk Pengurus & Super Admin KKG Gugus Nakula — kelola guru, pertemuan, verifikasi, award, laporan, backup." />
+
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lora:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/nakula.css" />
+
+<style>
+  /* ═══════════════════════════════════════
+     SCROLL PROGRESS
+     ═══════════════════════════════════════ */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--maroon) 0%, var(--gold) 100%);
+    z-index: 100;
+    width: 0%;
+    transition: width .1s linear;
+    box-shadow: 0 0 8px rgba(201,169,97,.5);
+  }
+
+  /* ═══════════════════════════════════════
+     PUBLIC HEADER
+     ═══════════════════════════════════════ */
+  .public-header {
+    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 100%);
+    color: white;
+    padding: 12px 16px;
+    padding-top: calc(12px + env(safe-area-inset-top));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 2px 12px rgba(97,19,41,.15);
+    min-height: 60px;
+    gap: 10px;
+  }
+  .public-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: white;
+    min-width: 0;
+    flex-shrink: 0;
+  }
+  .public-header-logo {
+    width: 36px; height: 36px;
+    background: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--gold);
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .public-header-logo img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.25); }
+  .public-header-text { min-width: 0; }
+  .public-header-title { font-weight: 800; font-size: 14px; letter-spacing: .5px; line-height: 1.1; }
+  .public-header-sub { font-size: 10px; opacity: .8; }
+
+  .public-header-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+  .header-cta-btn {
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    padding: 8px 14px;
+    border-radius: 10px;
+    transition: all .15s;
+    box-shadow: 0 4px 12px rgba(201,169,97,.3);
+    white-space: nowrap;
+  }
+  .header-cta-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(201,169,97,.4); color: white; text-decoration: none; }
+  .header-cta-btn svg { width: 14px; height: 14px; }
+
+  /* ═══════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════ */
+  .guide-hero {
+    background:
+      radial-gradient(ellipse at top right, rgba(201,169,97,.35) 0%, transparent 50%),
+      linear-gradient(135deg, #2C0714 0%, #4A0D1F 40%, #7D1D3A 100%);
+    color: white;
+    padding: 40px 24px 32px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+  .guide-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23C9A961' stroke-width='0.6' opacity='0.15'%3E%3Ccircle cx='20' cy='20' r='12'/%3E%3Ccircle cx='60' cy='20' r='12'/%3E%3Ccircle cx='20' cy='60' r='12'/%3E%3Ccircle cx='60' cy='60' r='12'/%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .guide-hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .guide-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(201,169,97,.5);
+    border-radius: 999px;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    backdrop-filter: blur(6px);
+  }
+  .guide-hero-title {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+    color: white;
+  }
+  .guide-hero-title .accent {
+    display: block;
+    background: linear-gradient(135deg, #E8C877 0%, #C9A961 50%, #A37E2E 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 36px;
+    margin-top: 4px;
+    filter: drop-shadow(0 4px 16px rgba(201,169,97,.4));
+  }
+  @media (min-width: 720px) {
+    .guide-hero { padding: 56px 24px 44px; }
+    .guide-hero-title { font-size: 34px; }
+    .guide-hero-title .accent { font-size: 48px; }
+  }
+  .guide-hero-desc {
+    font-family: 'Lora', Georgia, serif;
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.55;
+    color: rgba(255,255,255,.9);
+    max-width: 540px;
+    margin: 0 auto 18px;
+    font-weight: 500;
+  }
+  .guide-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+  .hero-meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,.95);
+  }
+  .hero-meta-chip svg { width: 13px; height: 13px; }
+  .guide-hero-cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 12px 22px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: all .2s var(--ease-out);
+  }
+  .hero-cta.primary {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
+    box-shadow: 0 8px 20px rgba(201,169,97,.4);
+  }
+  .hero-cta.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(201,169,97,.5);
+    color: white;
+    text-decoration: none;
+  }
+  .hero-cta.secondary {
+    background: rgba(255,255,255,.12);
+    color: white;
+    border: 1.5px solid rgba(255,255,255,.25);
+  }
+  .hero-cta.secondary:hover {
+    background: rgba(255,255,255,.2);
+    color: white;
+    text-decoration: none;
+  }
+  .hero-cta svg { width: 16px; height: 16px; }
+
+  /* ═══════════════════════════════════════
+     MAIN LAYOUT
+     ═══════════════════════════════════════ */
+  .guide-main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px 16px 60px;
+  }
+  @media (min-width: 1024px) {
+    .guide-main {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+      padding: 40px 32px 80px;
+    }
+  }
+
+  /* ═══════════════════════════════════════
+     SIDEBAR TOC
+     ═══════════════════════════════════════ */
+  .guide-toc { display: none; }
+  @media (min-width: 1024px) {
+    .guide-toc {
+      display: block;
+      position: sticky;
+      top: 80px;
+      height: fit-content;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+      padding-right: 8px;
+      align-self: start;
+    }
+    .guide-toc::-webkit-scrollbar { width: 4px; }
+    .guide-toc::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border-radius: 4px;
+    }
+  }
+  .toc-title {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding-left: 12px;
+  }
+  .toc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-left: 2px solid var(--border);
+    padding-left: 4px;
+  }
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--muted);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all .15s;
+    position: relative;
+  }
+  .toc-item:hover {
+    background: var(--maroon-faint);
+    color: var(--maroon);
+    text-decoration: none;
+  }
+  .toc-item.active {
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    font-weight: 800;
+  }
+  .toc-item .toc-num {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all .15s;
+  }
+  .toc-item.active .toc-num {
+    background: var(--maroon);
+    color: white;
+  }
+  .toc-item .toc-badge {
+    font-size: 8px;
+    font-weight: 800;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--gold-soft);
+    color: var(--gold-dark);
+    letter-spacing: 0.3px;
+    margin-left: auto;
+  }
+
+  /* ═══════════════════════════════════════
+     MOBILE STEP PICKER
+     ═══════════════════════════════════════ */
+  .step-picker-mobile {
+    display: block;
+    margin-bottom: 24px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 8px;
+    position: sticky;
+    top: 60px;
+    z-index: 20;
+    box-shadow: 0 2px 12px rgba(97,19,41,.06);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .step-picker-mobile::-webkit-scrollbar { display: none; }
+  @media (min-width: 1024px) {
+    .step-picker-mobile { display: none; }
+  }
+  .step-picker-chips {
+    display: flex;
+    gap: 6px;
+  }
+  .step-picker-chip {
+    flex-shrink: 0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--bg);
+    border: 1.5px solid transparent;
+    font-size: 11.5px;
+    font-weight: 800;
+    color: var(--muted);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all .15s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .step-picker-chip:hover {
+    border-color: var(--maroon-light);
+    color: var(--maroon);
+    text-decoration: none;
+  }
+  .step-picker-chip.active {
+    background: var(--maroon);
+    color: white;
+  }
+
+  /* ═══════════════════════════════════════
+     GUIDE CONTENT
+     ═══════════════════════════════════════ */
+  .guide-content { min-width: 0; }
+
+  .guide-intro-card {
+    background: linear-gradient(135deg, var(--maroon-faint) 0%, #FDF4F7 100%);
+    border: 1.5px solid rgba(125,29,58,.12);
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .guide-intro-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--maroon);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 6px 16px rgba(125,29,58,.25);
+  }
+  .guide-intro-body { flex: 1; min-width: 0; }
+  .guide-intro-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--maroon);
+    margin-bottom: 4px;
+  }
+  .guide-intro-desc {
+    font-size: 12.5px;
+    color: var(--ink);
+    line-height: 1.6;
+    font-weight: 500;
+  }
+
+  /* Divider antar blok */
+  .block-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 32px 0 24px;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .block-divider::before,
+  .block-divider::after {
+    content: '';
+    flex: 1;
+    height: 1.5px;
+    background: var(--border);
+  }
+  .block-divider .divider-badge {
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--gold-soft);
+    color: var(--gold-dark);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid rgba(201,169,97,.3);
+  }
+
+  .guide-section {
+    margin-bottom: 48px;
+    scroll-margin-top: 80px;
+  }
+  @media (min-width: 1024px) {
+    .guide-section { scroll-margin-top: 24px; }
+  }
+
+  .section-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .section-num {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+    position: relative;
+    box-shadow: 0 6px 16px rgba(0,0,0,.15);
+  }
+  .section-num.maroon { background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%); }
+  .section-num.gold { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); }
+  .section-num.success { background: linear-gradient(135deg, #22C55E 0%, #15803D 100%); }
+  .section-num.info { background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%); }
+  .section-num.purple { background: linear-gradient(135deg, #A855F7 0%, #7C3AED 100%); }
+  .section-num.warning { background: linear-gradient(135deg, #F59E0B 0%, #B45309 100%); }
+
+  .section-title-wrap { flex: 1; min-width: 0; }
+  .section-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .section-label .sa-badge {
+    padding: 1px 7px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
+    font-size: 8px;
+    letter-spacing: 0.5px;
+  }
+  .section-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.3;
+    letter-spacing: -0.3px;
+  }
+  @media (min-width: 720px) {
+    .section-title { font-size: 24px; }
+  }
+
+  .section-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 20px;
+  }
+  .section-desc strong { color: var(--ink); font-weight: 700; }
+
+  /* Mock UI card */
+  .mock-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+    position: relative;
+    box-shadow: 0 4px 16px rgba(97,19,41,.05);
+  }
+  .mock-header {
+    font-size: 9.5px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .mock-header svg { width: 14px; height: 14px; }
+
+  .mock-hero-mini {
+    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .mock-hero-mini .mh-label {
+    font-size: 9px;
+    opacity: 0.8;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .mock-hero-mini .mh-title {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .mock-hero-mini .mh-meta {
+    font-size: 10.5px;
+    opacity: 0.85;
+    font-weight: 600;
+  }
+
+  .mock-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 12px;
+    background: var(--bg);
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .mock-row:last-child { margin-bottom: 0; }
+  .mock-avatar-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .mock-info-sm { flex: 1; min-width: 0; }
+  .mock-info-sm .t {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .mock-info-sm .s {
+    font-size: 10.5px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .mock-badge-sm {
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .mock-badge-sm.success { background: var(--success-soft); color: var(--success); }
+  .mock-badge-sm.warning { background: var(--warning-soft); color: var(--warning); }
+  .mock-badge-sm.info { background: var(--info-soft); color: var(--info); }
+  .mock-badge-sm.danger { background: var(--danger-soft); color: var(--danger); }
+  .mock-badge-sm.gold { background: var(--gold-soft); color: var(--gold-dark); }
+
+  .mock-btn-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .mock-btn-mini {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: inherit;
+    border: none;
+  }
+  .mock-btn-mini.primary { background: var(--maroon); color: white; }
+  .mock-btn-mini.secondary {
+    background: var(--surface);
+    color: var(--maroon);
+    border: 1.5px solid var(--border);
+  }
+  .mock-btn-mini.danger { background: var(--danger); color: white; }
+  .mock-btn-mini.success { background: var(--success); color: white; }
+
+  /* Stat grid mini */
+  .mock-stats-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .mock-stat-box {
+    padding: 8px;
+    background: var(--bg);
+    border-radius: 8px;
+    text-align: center;
+  }
+  .mock-stat-box .n {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--maroon);
+    line-height: 1.1;
+  }
+  .mock-stat-box .l {
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  /* Tips box */
+  .tip-box {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 14px 16px;
+    border-radius: 14px;
+    margin-bottom: 12px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    font-weight: 500;
+  }
+  .tip-box:last-child { margin-bottom: 0; }
+  .tip-box svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .tip-box strong { font-weight: 800; }
+  .tip-box.info {
+    background: linear-gradient(135deg, var(--info-soft) 0%, #EFF6FF 100%);
+    border: 1px solid rgba(30,64,175,.15);
+    color: var(--info);
+  }
+  .tip-box.success {
+    background: linear-gradient(135deg, var(--success-soft) 0%, #ECFDF5 100%);
+    border: 1px solid rgba(21,128,61,.15);
+    color: var(--success);
+  }
+  .tip-box.warning {
+    background: linear-gradient(135deg, var(--warning-soft) 0%, #FFFBEB 100%);
+    border: 1px solid rgba(180,83,9,.15);
+    color: var(--warning);
+  }
+  .tip-box.danger {
+    background: linear-gradient(135deg, var(--danger-soft) 0%, #FEF2F2 100%);
+    border: 1px solid rgba(185,28,28,.15);
+    color: var(--danger);
+  }
+
+  /* Action list */
+  .action-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .action-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+  }
+  .action-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    font-size: 11px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .action-text {
+    flex: 1;
+    font-size: 12.5px;
+    color: var(--ink);
+    line-height: 1.55;
+    font-weight: 500;
+  }
+  .action-text strong { font-weight: 800; }
+
+  /* Page link */
+  .page-link-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1.5px dashed var(--border-strong);
+    border-radius: 12px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .page-link-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .page-link-label strong { color: var(--ink); }
+  .page-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 14px;
+    background: var(--maroon);
+    color: white;
+    border-radius: 8px;
+    font-size: 11.5px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: all .15s;
+    flex-shrink: 0;
+  }
+  .page-link-btn:hover {
+    background: var(--maroon-dark);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(125,29,58,.25);
+  }
+  .page-link-btn svg { width: 13px; height: 13px; }
+
+  /* Admin mini sidebar mock */
+  .mock-admin-layout {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 8px;
+    background: var(--bg);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .mock-sidebar {
+    background: linear-gradient(180deg, #4A0D1F 0%, #7D1D3A 100%);
+    padding: 10px 8px;
+    color: white;
+  }
+  .mock-sidebar-item {
+    padding: 6px 8px;
+    border-radius: 5px;
+    font-size: 9px;
+    font-weight: 700;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: rgba(255,255,255,.75);
+  }
+  .mock-sidebar-item.active {
+    background: rgba(255,255,255,.15);
+    color: white;
+  }
+  .mock-sidebar-item svg { width: 10px; height: 10px; }
+  .mock-main {
+    padding: 10px;
+    background: var(--surface);
+  }
+
+  /* ═══════════════════════════════════════
+     FAQ
+     ═══════════════════════════════════════ */
+  .faq-section {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1.5px dashed var(--border);
+  }
+  .faq-header { text-align: center; margin-bottom: 24px; }
+  .faq-header .faq-icon-wrap {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 12px;
+    box-shadow: 0 8px 20px rgba(201,169,97,.3);
+  }
+  .faq-header .faq-icon-wrap svg { width: 26px; height: 26px; }
+  .faq-title {
+    font-size: 22px; font-weight: 800;
+    color: var(--ink); margin-bottom: 6px;
+  }
+  .faq-sub { font-size: 13px; color: var(--muted); font-weight: 500; }
+  .faq-list {
+    display: flex; flex-direction: column; gap: 8px;
+    max-width: 720px; margin: 0 auto;
+  }
+  .faq-item {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: all .15s;
+  }
+  .faq-item[open] {
+    border-color: var(--maroon-light);
+    box-shadow: 0 4px 12px rgba(125,29,58,.06);
+  }
+  .faq-item summary {
+    padding: 14px 18px;
+    font-size: 13.5px;
+    font-weight: 800;
+    color: var(--ink);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    transition: background .15s;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary:hover { background: var(--bg); }
+  .faq-item summary .faq-chevron {
+    flex-shrink: 0;
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--maroon);
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+  }
+  .faq-item summary .faq-chevron svg { width: 12px; height: 12px; }
+  .faq-item[open] summary .faq-chevron {
+    background: var(--maroon);
+    color: white;
+    transform: rotate(180deg);
+  }
+  .faq-answer {
+    padding: 0 18px 16px;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.65;
+    font-weight: 500;
+  }
+  .faq-answer strong { color: var(--ink); font-weight: 800; }
+  .faq-answer a { color: var(--maroon); font-weight: 700; }
+
+  /* Footer CTA */
+  .guide-footer-cta {
+    margin-top: 48px;
+    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 100%);
+    color: white;
+    border-radius: 22px;
+    padding: 32px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .guide-footer-cta::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,169,97,.3) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .guide-footer-cta-inner { position: relative; z-index: 1; }
+  .guide-footer-cta h3 {
+    font-size: 20px; font-weight: 800;
+    margin-bottom: 8px; color: white;
+  }
+  .guide-footer-cta p {
+    font-size: 13px; opacity: 0.85;
+    margin-bottom: 20px; line-height: 1.5;
+  }
+  .guide-footer-cta-actions {
+    display: flex; flex-wrap: wrap;
+    justify-content: center; gap: 10px;
+  }
+
+  /* Back to top */
+  .back-to-top {
+    position: fixed;
+    bottom: 24px; right: 20px;
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: var(--maroon);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 20px rgba(125,29,58,.35);
+    opacity: 0; visibility: hidden;
+    transition: all .2s var(--ease-out);
+    z-index: 40;
+  }
+  .back-to-top.show { opacity: 1; visibility: visible; }
+  .back-to-top:hover {
+    background: var(--maroon-dark);
+    transform: translateY(-2px);
+  }
+  .back-to-top svg { width: 20px; height: 20px; }
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<header class="public-header">
+  <a href="beranda.html" class="public-header-brand">
+    <div class="public-header-logo">
+      <img src="assets/img/logo-mark.svg" alt="Nakula" />
+    </div>
+    <div class="public-header-text">
+      <div class="public-header-title">NAKULAKU</div>
+      <div class="public-header-sub">KKG Gugus Nakula</div>
+    </div>
+  </a>
+  <div class="public-header-actions">
+    <a href="#" id="headerBtn" class="header-cta-btn">
+      <span id="headerBtnIcon"></span>
+      <span id="headerBtnText">Masuk</span>
+    </a>
+  </div>
+</header>
+
+<section class="guide-hero">
+  <div class="guide-hero-inner">
+    <div class="guide-hero-badge">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);"></span>
+      Panduan Admin · Pengurus & Super Admin
+    </div>
+    <h1 class="guide-hero-title">
+      Kendali Penuh
+      <span class="accent">NAKULAKU</span>
+    </h1>
+    <p class="guide-hero-desc">
+      12 bab panduan lengkap — dari kelola guru, verifikasi, award,
+      sampai backup database. Untuk Pengurus & Super Admin.
+    </p>
+    <div class="guide-hero-meta">
+      <span class="hero-meta-chip" id="metaSteps"></span>
+      <span class="hero-meta-chip" id="metaDurasi"></span>
+      <span class="hero-meta-chip" id="metaRole"></span>
+    </div>
+    <div class="guide-hero-cta-row">
+      <a href="login.html" class="hero-cta primary">
+        <span id="ctaIconLogin"></span>
+        Mulai Login
+      </a>
+      <a href="#step-1" class="hero-cta secondary">
+        <span id="ctaIconDown"></span>
+        Lihat Panduan
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="guide-main">
+
+  <aside class="guide-toc" id="tocSidebar">
+    <div class="toc-title">Daftar Langkah</div>
+    <nav class="toc-list" id="tocList"></nav>
+  </aside>
+
+  <main class="guide-content">
+
+    <div class="step-picker-mobile">
+      <div class="step-picker-chips" id="stepPickerChips"></div>
+    </div>
+
+    <div class="guide-intro-card">
+      <div class="guide-intro-icon" id="introIcon"></div>
+      <div class="guide-intro-body">
+        <div class="guide-intro-title">Peran Admin: Pengurus vs Super Admin</div>
+        <div class="guide-intro-desc">
+          <strong>Pengurus</strong> — kelola operasional harian: guru, pertemuan, verifikasi, award, laporan.
+          <strong>Super Admin</strong> — semua akses Pengurus <strong>+</strong> hapus permanen, backup database,
+          transfer super admin. Bab <strong>10–12</strong> khusus Super Admin (ditandai <strong>👑 SA</strong>).
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 1 -->
+    <section class="guide-section" id="step-1">
+      <div class="section-head">
+        <div class="section-num maroon">1</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Langkah Pertama</div>
+          <h2 class="section-title">Login Admin & Kenali Peran</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Login sebagai admin dengan email + PIN. Setelah login, Anda masuk ke <strong>Admin Panel</strong>
+        (bukan beranda guru). Ada <strong>sidebar desktop</strong> + <strong>bottom nav mobile</strong> untuk navigasi.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconLayout"></span> Admin Panel Layout
+        </div>
+        <div class="mock-admin-layout">
+          <div class="mock-sidebar">
+            <div style="font-size:9px;font-weight:800;letter-spacing:0.3px;opacity:0.6;margin-bottom:6px;padding:0 4px;">DASHBOARD</div>
+            <div class="mock-sidebar-item active"><span id="msIconLayout"></span> Dashboard</div>
+            <div style="font-size:9px;font-weight:800;letter-spacing:0.3px;opacity:0.6;margin:8px 0 4px;padding:0 4px;">DATA</div>
+            <div class="mock-sidebar-item"><span id="msIconUsers"></span> Data Guru</div>
+            <div class="mock-sidebar-item"><span id="msIconUpload"></span> Bulk Action</div>
+            <div class="mock-sidebar-item"><span id="msIconDB"></span> Master Data</div>
+            <div style="font-size:9px;font-weight:800;letter-spacing:0.3px;opacity:0.6;margin:8px 0 4px;padding:0 4px;">KEGIATAN</div>
+            <div class="mock-sidebar-item"><span id="msIconCal"></span> Periode</div>
+            <div class="mock-sidebar-item"><span id="msIconList"></span> Pertemuan</div>
+          </div>
+          <div class="mock-main">
+            <div style="font-size:10px;font-weight:800;color:var(--ink);margin-bottom:6px;">Dashboard Admin</div>
+            <div class="mock-stats-4" style="grid-template-columns:1fr 1fr;">
+              <div class="mock-stat-box">
+                <div class="n">95</div>
+                <div class="l">Guru Aktif</div>
+              </div>
+              <div class="mock-stat-box">
+                <div class="n">10</div>
+                <div class="l">Sekolah</div>
+              </div>
+            </div>
+            <div style="padding:8px;background:var(--bg);border-radius:6px;font-size:9px;color:var(--muted);font-weight:600;">
+              Statistik, aktivitas, dan quick action...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text">Buka <strong>login.html</strong> → isi email + PIN admin.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text">Anda masuk ke <strong>admin/index.html</strong> — Dashboard Admin.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text">Navigasi via <strong>sidebar kiri</strong> (desktop) atau <strong>bottom nav</strong> (mobile).</div>
+        </div>
+      </div>
+
+      <div class="tip-box info">
+        <span id="tipInfoLogin"></span>
+        <div>
+          <strong>Ke Beranda Guru?</strong> Klik <strong>profil user chip</strong> (kanan atas) atau buka <strong>beranda.html</strong> langsung. Admin tetap bisa presensi & kumpul tugas sebagai guru KKG.
+        </div>
+      </div>
+
+      <div class="tip-box warning">
+        <span id="tipWarnSA"></span>
+        <div>
+          <strong>Super Admin:</strong> Role ini <strong>tidak bisa dibuat</strong> via UI biasa. Kalau perlu menambah SA, lihat <a href="#step-12" style="color:var(--warning);font-weight:800;text-decoration:underline;">Bab 12</a>.
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 2 -->
+    <section class="guide-section" id="step-2">
+      <div class="section-head">
+        <div class="section-num gold">2</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Kenali Dashboard</div>
+          <h2 class="section-title">Dashboard Admin</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Dashboard Admin menampilkan <strong>ringkasan sistem</strong> — jumlah guru aktif, sekolah, pertemuan,
+        dan quick action ke bagian yang sering dipakai.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconDash"></span> Dashboard Overview
+        </div>
+        <div class="mock-stats-4">
+          <div class="mock-stat-box"><div class="n">95</div><div class="l">Guru</div></div>
+          <div class="mock-stat-box"><div class="n">10</div><div class="l">Sekolah</div></div>
+          <div class="mock-stat-box"><div class="n">16</div><div class="l">Pertemuan</div></div>
+          <div class="mock-stat-box"><div class="n">3</div><div class="l">Pending</div></div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:var(--warning-soft);color:var(--warning);">⏳</div>
+          <div class="mock-info-sm">
+            <div class="t">3 Luar Radius Menunggu</div>
+            <div class="s">Verifikasi sekarang</div>
+          </div>
+          <button class="mock-btn-mini primary" style="font-size:9px;padding:4px 8px;">Buka</button>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text"><strong>Statistik</strong> — guru, sekolah, pertemuan, pending verifikasi.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text"><strong>Pending alert</strong> — klik untuk langsung ke halaman verifikasi.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text"><strong>Quick action</strong> — shortcut ke bagian yang sering dipakai.</div>
+        </div>
+      </div>
+
+      <div class="tip-box info">
+        <span id="tipInfoDash"></span>
+        <div><strong>KS diblokir</strong> dari Dashboard Admin. Kalau login sebagai KS dan buka <strong>admin/index.html</strong>, akan error. KS pakai menu khusus di beranda.</div>
+      </div>
+    </section>
+
+    <!-- STEP 3 -->
+    <section class="guide-section" id="step-3">
+      <div class="section-head">
+        <div class="section-num success">3</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Data Master</div>
+          <h2 class="section-title">Kelola Data Guru</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Ini halaman paling sering dipakai admin. Anda bisa <strong>tambah guru baru</strong>,
+        <strong>edit data</strong>, <strong>reset PIN</strong>, <strong>mutasi</strong>, dan <strong>kelola peran</strong>.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconUsers"></span> Data Guru
+        </div>
+        <div class="mock-stats-4">
+          <div class="mock-stat-box"><div class="n">95</div><div class="l">Total</div></div>
+          <div class="mock-stat-box"><div class="n">10</div><div class="l">Sekolah</div></div>
+          <div class="mock-stat-box"><div class="n">10</div><div class="l">KS</div></div>
+          <div class="mock-stat-box"><div class="n">15</div><div class="l">Narsum</div></div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm">B</div>
+          <div class="mock-info-sm">
+            <div class="t">Budi Santoso, S.Pd.</div>
+            <div class="s">SD Negeri 1 Krisak · Guru Kelas</div>
+          </div>
+          <span class="mock-badge-sm success">Aktif</span>
+        </div>
+        <button class="mock-btn-mini primary" style="width:100%;justify-content:center;margin-top:10px;">
+          <span id="mockPlusIcon"></span> Tambah Guru Baru
+        </button>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text"><strong>Tambah guru</strong> — klik FAB <strong>+</strong> di kanan bawah → isi form → simpan.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text"><strong>Edit data</strong> — klik kartu guru → edit → simpan.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text"><strong>Reset PIN</strong> — klik guru → tombol <strong>Reset PIN</strong> → PIN baru tampil & bisa copy/share WA.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">4</div>
+          <div class="action-text"><strong>Mutasi</strong> — klik guru → <strong>Mutasi</strong> → pilih sekolah baru.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">5</div>
+          <div class="action-text"><strong>Kelola peran</strong> — klik guru → <strong>Kelola Peran</strong> → tambah/cabut role.</div>
+        </div>
+      </div>
+
+      <div class="tip-box success">
+        <span id="tipOkGuru"></span>
+        <div>
+          <strong>Super Admin tidak muncul</strong> di list ini. Akun SA dikelola terpisah — supaya tidak salah dihapus/nonaktifkan oleh bulk action.
+        </div>
+      </div>
+
+      <div class="tip-box warning">
+        <span id="tipWarnMutasi"></span>
+        <div>
+          <strong>Mutasi:</strong> Data historis (presensi, tugas) tetap tersimpan di sekolah lama. Snapshot <strong>sekolah_id_saat_itu</strong> di presensi memastikan award periode lama tidak berubah.
+        </div>
+      </div>
+
+      <div class="page-link-box">
+        <div class="page-link-label"><strong>Kelola data guru →</strong></div>
+        <a href="admin/guru.html" class="page-link-btn">
+          <span id="pageLinkIconGuru"></span> Data Guru
+        </a>
+      </div>
+    </section>
+
+    <!-- STEP 4 -->
+    <section class="guide-section" id="step-4">
+      <div class="section-head">
+        <div class="section-num info">4</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Bulk Operations</div>
+          <h2 class="section-title">Bulk Action & Import CSV</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Untuk <strong>setup awal</strong> atau operasi massal, pakai <strong>Bulk Action</strong> (reset PIN massal, nonaktifkan, assign peran)
+        atau <strong>Import CSV</strong> (tambah puluhan guru sekaligus).
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconBulk"></span> Bulk Action
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:var(--info-soft);color:var(--info);">
+            <input type="checkbox" checked style="width:14px;height:14px;accent-color:var(--maroon);" />
+          </div>
+          <div class="mock-info-sm">
+            <div class="t">Budi Santoso</div>
+            <div class="s">SD Negeri 1 Krisak</div>
+          </div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:var(--info-soft);color:var(--info);">
+            <input type="checkbox" checked style="width:14px;height:14px;accent-color:var(--maroon);" />
+          </div>
+          <div class="mock-info-sm">
+            <div class="t">Ani Wijaya</div>
+            <div class="s">SD Negeri 1 Krisak</div>
+          </div>
+        </div>
+        <div style="padding:8px 12px;background:var(--maroon);color:white;border-radius:8px;font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+          <span>2 dipilih</span>
+          <div style="display:flex;gap:6px;">
+            <button class="mock-btn-mini secondary" style="font-size:9px;padding:4px 8px;">Reset PIN</button>
+            <button class="mock-btn-mini primary" style="font-size:9px;padding:4px 8px;">Nonaktifkan</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconImport"></span> Import CSV
+        </div>
+        <div style="padding:14px;background:var(--bg);border:1.5px dashed var(--border-strong);border-radius:10px;text-align:center;">
+          <div style="font-size:11px;font-weight:800;color:var(--ink);margin-bottom:4px;">Drop CSV di sini</div>
+          <div style="font-size:9.5px;color:var(--muted);font-weight:600;">Atau klik untuk pilih file</div>
+        </div>
+        <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:10px;font-weight:700;color:var(--muted);margin-top:8px;">
+          Format: email, nama_lengkap, nip, pin, jabatan, npsn, status_akun
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text"><strong>Bulk Reset PIN</strong> — centang guru → Reset PIN → PIN baru per guru.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text"><strong>Bulk Nonaktifkan</strong> — untuk guru pensiun/mutasi keluar.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text"><strong>Bulk Assign Peran</strong> — assign role narasumber/pengamat ke banyak guru sekaligus.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">4</div>
+          <div class="action-text"><strong>Import CSV</strong> — upload file → preview → commit. Auto-create sekolah kalau NPSN belum ada.</div>
+        </div>
+      </div>
+
+      <div class="tip-box success">
+        <span id="tipOkImport"></span>
+        <div>
+          <strong>Import CSV auto-handle:</strong> Jabatan "Kepala Sekolah" → auto role <strong>ks</strong> + <strong>ks_sekolah induk</strong>. NPSN baru → auto-create sekolah.
+        </div>
+      </div>
+
+      <div class="page-link-box">
+        <div class="page-link-label"><strong>Operasi massal →</strong></div>
+        <a href="admin/guru-bulk.html" class="page-link-btn">
+          <span id="pageLinkIconBulk"></span> Bulk Action
+        </a>
+      </div>
+    </section>
+
+    <!-- STEP 5 -->
+    <section class="guide-section" id="step-5">
+      <div class="section-head">
+        <div class="section-num purple">5</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Master Data</div>
+          <h2 class="section-title">Kelola Sekolah & Jabatan</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Master Data adalah <strong>referensi dasar</strong> — sekolah & jabatan. Data di sini dipakai di semua modul (pertemuan, presensi, award, dll).
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconMaster"></span> Master Data
+        </div>
+        <div style="display:flex;gap:4px;padding:4px;background:var(--bg);border-radius:8px;margin-bottom:10px;">
+          <div style="padding:6px 10px;background:var(--surface);color:var(--maroon);border-radius:6px;font-size:10px;font-weight:800;flex:1;text-align:center;">Sekolah</div>
+          <div style="padding:6px 10px;color:var(--muted);border-radius:6px;font-size:10px;font-weight:700;flex:1;text-align:center;">Jabatan</div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm">S1</div>
+          <div class="mock-info-sm">
+            <div class="t">SD Negeri 1 Krisak</div>
+            <div class="s">NPSN 20301234 · 28 guru</div>
+          </div>
+          <span class="mock-badge-sm success">Aktif</span>
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm">S2</div>
+          <div class="mock-info-sm">
+            <div class="t">SD Negeri 2 Krisak</div>
+            <div class="s">NPSN 20301235 · 22 guru</div>
+          </div>
+          <span class="mock-badge-sm success">Aktif</span>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text"><strong>Tab Sekolah</strong> — CRUD sekolah (nama, NPSN, jenjang, alamat, kecamatan).</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text"><strong>Nonaktifkan sekolah</strong> — tidak bisa dihapus kalau masih ada guru. Pakai <strong>toggle aktif/nonaktif</strong>.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text"><strong>Tab Jabatan</strong> — CRUD jabatan (Guru Kelas, Guru Mapel, Kepala Sekolah, dll).</div>
+        </div>
+      </div>
+
+      <div class="tip-box danger">
+        <span id="tipDangerSekolah"></span>
+        <div>
+          <strong>Hapus sekolah = SA only:</strong> Super Admin bisa hapus permanen, tapi hanya kalau <strong>tidak ada data terkait</strong> (guru, presensi, prestasi, dll). Kalau ada, sistem akan tolak dan sarankan <strong>nonaktifkan</strong>.
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 6 -->
+    <section class="guide-section" id="step-6">
+      <div class="section-head">
+        <div class="section-num warning">6</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Kegiatan Inti</div>
+          <h2 class="section-title">Periode, Pertemuan, Pengumuman</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Kelola <strong>periode</strong> (tahun ajaran KKG), <strong>pertemuan</strong> (agenda), dan <strong>pengumuman</strong> (tampil di beranda guru).
+        Satu periode punya banyak pertemuan — hanya satu periode aktif.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconCal"></span> Periode Aktif
+        </div>
+        <div class="mock-hero-mini">
+          <div class="mh-label">PERIODE AKTIF</div>
+          <div class="mh-title">Periode 2026</div>
+          <div class="mh-meta">01 Jan 2026 — 31 Des 2026 · 16 target pertemuan</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;">
+          <div class="mock-stat-box"><div class="n">6</div><div class="l">Pertemuan</div></div>
+          <div class="mock-stat-box"><div class="n">16</div><div class="l">Target</div></div>
+          <div class="mock-stat-box"><div class="n">37%</div><div class="l">Progress</div></div>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text"><strong>Buat periode</strong> → klik <strong>+</strong> di admin/periode.html → isi form → simpan.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text"><strong>Aktifkan periode</strong> → klik tombol <strong>Aktifkan</strong> di kartu periode.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text"><strong>Tambah pertemuan</strong> → admin/pertemuan.html → FAB <strong>+</strong> → isi detail (tanggal, jam, lokasi, narsum).</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">4</div>
+          <div class="action-text"><strong>Isi materi & tugas</strong> → buka detail pertemuan → tab Materi / Tugas → tambah.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">5</div>
+          <div class="action-text"><strong>Buat pengumuman</strong> → admin/pengumuman.html → isi judul + isi → terbitkan.</div>
+        </div>
+      </div>
+
+      <div class="tip-box info">
+        <span id="tipInfoWindow"></span>
+        <div>
+          <strong>Window presensi otomatis:</strong> Buka 30 menit sebelum jam mulai, tutup 30 menit setelah jam selesai. Tidak perlu setting manual — sistem hitung otomatis dari jam pertemuan.
+        </div>
+      </div>
+
+      <div class="tip-box success">
+        <span id="tipOkNarsum"></span>
+        <div>
+          <strong>Tunjuk narasumber:</strong> Di form pertemuan, pilih narasumber dari dropdown (guru ber-role <strong>narasumber</strong>). Kalau narsum luar, isi nama manual — admin bisa nilai tugas sebagai backup.
+        </div>
+      </div>
+
+      <div class="page-link-box">
+        <div class="page-link-label"><strong>Kelola kegiatan →</strong></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <a href="admin/periode.html" class="page-link-btn">
+            <span id="pageLinkIconPeriode"></span> Periode
+          </a>
+          <a href="admin/pertemuan.html" class="page-link-btn">
+            <span id="pageLinkIconPertemuan"></span> Pertemuan
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 7 -->
+    <section class="guide-section" id="step-7">
+      <div class="section-head">
+        <div class="section-num info">7</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Quality Control</div>
+          <h2 class="section-title">Verifikasi Multi-Jenis</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Admin memverifikasi <strong>4 jenis data</strong>: presensi luar radius, submission sekolah, karya guru, dan alihkan verifikasi KS.
+        Klik masing-masing untuk lihat alur.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconCheck"></span> 4 Jenis Verifikasi
+        </div>
+
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:var(--warning-soft);color:var(--warning);">📍</div>
+          <div class="mock-info-sm">
+            <div class="t">Luar Radius</div>
+            <div class="s">Setujui (50 poin) atau tolak (alfa)</div>
+          </div>
+          <span class="mock-badge-sm warning">3</span>
+        </div>
+
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:var(--gold-soft);color:var(--gold-dark);">🏆</div>
+          <div class="mock-info-sm">
+            <div class="t">Submission Sekolah</div>
+            <div class="s">Prestasi, kegiatan, pembiasaan</div>
+          </div>
+          <span class="mock-badge-sm gold">5</span>
+        </div>
+
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:var(--info-soft);color:var(--info);">💡</div>
+          <div class="mock-info-sm">
+            <div class="t">Karya Guru</div>
+            <div class="s">Inovasi (15 poin) atau aksi nyata (10 poin)</div>
+          </div>
+          <span class="mock-badge-sm info">2</span>
+        </div>
+
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:var(--success-soft);color:var(--success);">🔄</div>
+          <div class="mock-info-sm">
+            <div class="t">Alihkan Verifikasi</div>
+            <div class="s">Pending KS lama → KS baru</div>
+          </div>
+          <span class="mock-badge-sm success">—</span>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text"><strong>Luar Radius</strong> — buka pertemuan → tab Verifikasi → cek foto + jarak → setujui/tolak.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text"><strong>Submission Sekolah</strong> — admin/verifikasi-sekolah.html → filter jenis → setujui/tolak. Bisa <strong>bulk approve</strong>.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text"><strong>Karya Guru</strong> — admin/karya.html → cek link + thumbnail → approve/reject.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">4</div>
+          <div class="action-text"><strong>Alihkan Verifikasi</strong> — admin/alihkan-verifikasi.html → pilih sekolah → pindah pending dari KS lama ke KS baru.</div>
+        </div>
+      </div>
+
+      <div class="tip-box success">
+        <span id="tipOkBulk"></span>
+        <div>
+          <strong>Bulk approve:</strong> Di verifikasi-sekolah, centang banyak submission → "Setujui Semua" → hemat waktu untuk verifikasi puluhan submission sekaligus.
+        </div>
+      </div>
+
+      <div class="page-link-box">
+        <div class="page-link-label"><strong>Verifikasi →</strong></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <a href="admin/verifikasi-sekolah.html" class="page-link-btn">
+            <span id="pageLinkIconVerifSekolah"></span> Sekolah
+          </a>
+          <a href="admin/karya.html" class="page-link-btn">
+            <span id="pageLinkIconKarya"></span> Karya
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 8 -->
+    <section class="guide-section" id="step-8">
+      <div class="section-head">
+        <div class="section-num purple">8</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Kustomisasi</div>
+          <h2 class="section-title">Kelola Kategori Ajuan</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Kategori ajuan adalah <strong>jenis izin</strong> yang bisa dipilih guru — sakit, izin pribadi, dinas luar, cuti, dll.
+        Setiap kategori punya <strong>poin</strong>, warna, ikon, dan aturan (wajib lampiran? multi-hari?).
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconTag"></span> Kategori Ajuan
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:#FEE2E2;color:#B91C1C;">🤒</div>
+          <div class="mock-info-sm">
+            <div class="t">Sakit</div>
+            <div class="s">90 poin · Wajib surat dokter · Multi-hari</div>
+          </div>
+          <span class="mock-badge-sm success">Aktif</span>
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:#FEF3C7;color:#B45309;">📝</div>
+          <div class="mock-info-sm">
+            <div class="t">Sakit (tanpa surat)</div>
+            <div class="s">60 poin · Tanpa lampiran · Single hari</div>
+          </div>
+          <span class="mock-badge-sm success">Aktif</span>
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:#DBEAFE;color:#1E40AF;">📄</div>
+          <div class="mock-info-sm">
+            <div class="t">Izin Pribadi</div>
+            <div class="s">60 poin · Tanpa lampiran · Single hari</div>
+          </div>
+          <span class="mock-badge-sm success">Aktif</span>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text">Buka <strong>admin/kategori-ajuan.html</strong>.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text">Klik <strong>+ Kategori Baru</strong> → isi kode, nama, poin, warna, ikon.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text">Toggle <strong>butuh lampiran</strong> & <strong>multi-hari</strong> sesuai kebutuhan.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">4</div>
+          <div class="action-text">Untuk nonaktifkan: klik <strong>Hapus</strong> (soft-delete, tetap tersimpan untuk data historis).</div>
+        </div>
+      </div>
+
+      <div class="tip-box danger">
+        <span id="tipDangerSistem"></span>
+        <div>
+          <strong>Kategori sistem</strong> (tepat_waktu, terlambat, luar_radius, alfa) <strong>tidak bisa dihapus</strong>. Ini dipakai internal presensi.
+        </div>
+      </div>
+
+      <div class="tip-box info">
+        <span id="tipInfoPoin"></span>
+        <div>
+          <strong>Poin di kategori</strong> hanya admin yang bisa lihat. Guru tidak melihat poin di UI — mereka hanya melihat status (izin, sakit, dll). Poin dipakai untuk award.
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 9 -->
+    <section class="guide-section" id="step-9">
+      <div class="section-head">
+        <div class="section-num gold">9</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Evaluasi & Arsip</div>
+          <h2 class="section-title">Award, Sertifikat, Laporan & Analitik</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Di akhir periode, Anda <strong>hitung nominasi award</strong>, <strong>terbitkan sertifikat</strong>,
+        dan <strong>export laporan</strong> untuk arsip. Semua bisa dilihat juga di <strong>Analitik</strong> untuk insight.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconAward"></span> Kelola Award
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:var(--gold-soft);color:var(--gold-dark);">🏆</div>
+          <div class="mock-info-sm">
+            <div class="t">Guru Terbaik</div>
+            <div class="s">Kategori Guru · Formula otomatis</div>
+          </div>
+          <span class="mock-badge-sm gold">20 nominasi</span>
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:var(--gold-soft);color:var(--gold-dark);">🏫</div>
+          <div class="mock-info-sm">
+            <div class="t">Sekolah Terbaik</div>
+            <div class="s">Kategori Sekolah · Snapshot sekolah</div>
+          </div>
+          <span class="mock-badge-sm warning">Belum diumumkan</span>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text"><strong>Hitung Award</strong> — admin/award.html → buat award → klik <strong>Hitung</strong> → nominasi otomatis dari presensi/pengamat/tugas.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text"><strong>Set Juara</strong> — pilih nominasi → tetapkan juara 1/2/3 manual.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text"><strong>Umumkan</strong> — toggle <strong>umumkan</strong> → award tampil di beranda guru & halaman award.html.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">4</div>
+          <div class="action-text"><strong>Sertifikat</strong> — admin/sertifikat.html → import CSV (email/NIP + URL PDF) → preview → commit.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">5</div>
+          <div class="action-text"><strong>Laporan</strong> — admin/laporan.html → pilih jenis → export CSV. KS hanya bisa export sekolahnya.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">6</div>
+          <div class="action-text"><strong>Analitik</strong> — admin/analitik.html → grafik presensi per pertemuan, statistik sekolah, top 10 guru.</div>
+        </div>
+      </div>
+
+      <div class="tip-box success">
+        <span id="tipOkAward"></span>
+        <div>
+          <strong>Formula award guru:</strong> (poin presensi × 0.5) + (tally pengamat × 0.3) + (nilai tugas × 0.2). <strong>Pengamat:</strong> total tally / jumlah kehadiran × 10.
+        </div>
+      </div>
+
+      <div class="tip-box warning">
+        <span id="tipWarnSnapshot"></span>
+        <div>
+          <strong>Snapshot sekolah:</strong> Award sekolah pakai <strong>sekolah_id_saat_itu</strong> (bukan sekolah saat ini). Jadi kalau guru mutasi, poin lama tidak pindah ke sekolah baru.
+        </div>
+      </div>
+
+      <div class="page-link-box">
+        <div class="page-link-label"><strong>Evaluasi & laporan →</strong></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <a href="admin/award.html" class="page-link-btn">
+            <span id="pageLinkIconAward"></span> Award
+          </a>
+          <a href="admin/laporan.html" class="page-link-btn">
+            <span id="pageLinkIconLaporan"></span> Laporan
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- DIVIDER SA -->
+    <div class="block-divider">
+      <span class="divider-badge"><span id="dividerIconCrown"></span> Bab Khusus Super Admin</span>
+    </div>
+
+    <!-- STEP 10 -->
+    <section class="guide-section" id="step-10">
+      <div class="section-head">
+        <div class="section-num maroon">10</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Super Admin <span class="sa-badge">👑 SA</span></div>
+          <h2 class="section-title">Hapus Permanen Guru & Sekolah</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Hanya <strong>Super Admin</strong> yang bisa <strong>hapus permanen</strong> guru/sekolah.
+        Pengurus hanya bisa <strong>nonaktifkan</strong>. Sistem punya <strong>guardrail</strong> untuk mencegah data corruption.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconTrash"></span> Konfirmasi Hapus
+        </div>
+        <div style="padding:12px;background:var(--danger-soft);border-radius:10px;font-size:11px;color:var(--danger);font-weight:700;line-height:1.5;margin-bottom:12px;">
+          ⚠️ <strong>Perhatian:</strong> Akun yang sudah punya aktivitas (presensi/tugas/feedback) akan <strong>dinonaktifkan</strong>, bukan dihapus. Hanya akun tanpa aktivitas yang bisa dihapus permanen.
+        </div>
+        <div style="padding:10px 12px;background:var(--bg);border-radius:8px;font-size:11px;font-weight:700;color:var(--ink);margin-bottom:10px;">
+          Ketik nama lengkap guru: <span style="color:var(--maroon);font-weight:800;">Budi Santoso</span>
+        </div>
+        <input type="text" placeholder="Ketik nama persis…" style="width:100%;padding:10px 12px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;font-size:11px;font-weight:600;margin-bottom:10px;" disabled />
+        <button class="mock-btn-mini danger" style="width:100%;justify-content:center;">Hapus Permanen</button>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text">Buka <strong>Data Guru</strong> → klik guru → <strong>Hapus / Nonaktifkan</strong>.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text">Sistem akan cek aktivitas — kalau ada, guru hanya <strong>dinonaktifkan</strong> (soft delete).</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text">Kalau tidak ada aktivitas → perlu konfirmasi <strong>ketik nama persis</strong> → hapus permanen.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">4</div>
+          <div class="action-text">Untuk <strong>sekolah</strong> — sama, cek dulu semua relasi (guru, prestasi, dll). Kalau ada, sistem sarankan <strong>nonaktifkan</strong>.</div>
+        </div>
+      </div>
+
+      <div class="tip-box danger">
+        <span id="tipDangerDelete"></span>
+        <div>
+          <strong>Rekomendasi:</strong> Jangan hapus permanen kecuali benar-benar perlu (misal typo/duplikat). Selalu <strong>nonaktifkan</strong> saja untuk audit trail yang lebih baik.
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 11 -->
+    <section class="guide-section" id="step-11">
+      <div class="section-head">
+        <div class="section-num gold">11</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Super Admin <span class="sa-badge">👑 SA</span></div>
+          <h2 class="section-title">Backup Database</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Backup = jaring pengaman. Sebelum <strong>reset data testing</strong>, <strong>pindah server</strong>,
+        atau operasi besar lain — backup dulu via <strong>admin/pengaturan.html</strong>.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconBackup"></span> Backup Info
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:var(--maroon-soft);color:var(--maroon);">📊</div>
+          <div class="mock-info-sm">
+            <div class="t">users</div>
+            <div class="s">95 baris</div>
+          </div>
+          <button class="mock-btn-mini secondary" style="font-size:9px;padding:4px 8px;">Export</button>
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:var(--maroon-soft);color:var(--maroon);">📊</div>
+          <div class="mock-info-sm">
+            <div class="t">presensi</div>
+            <div class="s">1,240 baris</div>
+          </div>
+          <button class="mock-btn-mini secondary" style="font-size:9px;padding:4px 8px;">Export</button>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text">Buka <strong>admin/pengaturan.html</strong> → tab <strong>Backup</strong>.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text">Lihat daftar tabel + jumlah baris. Klik <strong>Export</strong> per tabel untuk download JSON.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text">File JSON bisa disimpan lokal atau upload ke Google Drive sebagai arsip.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">4</div>
+          <div class="action-text">Kolom <strong>pin_hash</strong> di tabel <strong>users</strong> otomatis dibuang dari export (security).</div>
+        </div>
+      </div>
+
+      <div class="tip-box warning">
+        <span id="tipWarnBackup"></span>
+        <div>
+          <strong>Batas 5000 baris per tabel.</strong> Kalau data Anda lebih dari 5000 baris, backup manual via <strong>Supabase Dashboard → Database → Backups</strong> (full backup, harian otomatis).
+        </div>
+      </div>
+
+      <div class="tip-box success">
+        <span id="tipOkBackup"></span>
+        <div>
+          <strong>Rutinitas yang baik:</strong> Backup mingguan + backup sebelum publish ke production. Simpan 3 versi terakhir (rotasi).
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 12 -->
+    <section class="guide-section" id="step-12">
+      <div class="section-head">
+        <div class="section-num purple">12</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Super Admin <span class="sa-badge">👑 SA</span></div>
+          <h2 class="section-title">Tambah & Transfer Super Admin</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Kalau perlu <strong>tambah SA baru</strong> (misal backup), gunakan <strong>Kelola Peran</strong> di Data Guru.
+        Kalau perlu <strong>rotasi SA</strong> (SA lama pensiun), pakai <strong>Transfer</strong> di Pengaturan.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconCrown"></span> 2 Cara Kelola SA
+        </div>
+
+        <div style="padding:12px;background:var(--gold-soft);border-radius:10px;margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:800;color:var(--gold-dark);margin-bottom:4px;">Cara 1: Tambah SA (Backup)</div>
+          <div style="font-size:10.5px;color:var(--ink);font-weight:600;line-height:1.5;">
+            Data Guru → klik user → <strong>Kelola Peran</strong> → pilih <strong>👑 Super Admin</strong> → konfirmasi warning merah.
+          </div>
+        </div>
+
+        <div style="padding:12px;background:var(--maroon-soft);border-radius:10px;">
+          <div style="font-size:11px;font-weight:800;color:var(--maroon);margin-bottom:4px;">Cara 2: Transfer SA (Rotasi)</div>
+          <div style="font-size:10.5px;color:var(--ink);font-weight:600;line-height:1.5;">
+            Pengaturan → tab <strong>Transfer</strong> → pilih user target → ketik nama konfirmasi → transfer.
+            SA lama otomatis turun jadi <strong>pengurus</strong>.
+          </div>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text"><strong>Tambah SA:</strong> Data Guru → klik user → Kelola Peran → 👑 Super Admin.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text">Warning merah muncul (akses penuh) → konfirmasi → SA baru aktif.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text"><strong>Transfer SA:</strong> Pengaturan → Transfer → pilih user → ketik nama persis → transfer.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">4</div>
+          <div class="action-text">Setelah transfer, <strong>login ulang</strong> — role lama turun, role baru naik.</div>
+        </div>
+      </div>
+
+      <div class="tip-box danger">
+        <span id="tipDangerSA"></span>
+        <div>
+          <strong>Guardrail:</strong> Sistem <strong>tidak bisa</strong> hapus SA terakhir. Minimal selalu ada 1 SA aktif — kalau Anda coba hapus SA terakhir, backend akan tolak dengan pesan error.
+        </div>
+      </div>
+
+      <div class="tip-box info">
+        <span id="tipInfoSA"></span>
+        <div>
+          <strong>SA wajib punya pengurus + peserta</strong> agar fully functional. Tanpa pengurus, banyak fitur admin tidak jalan. Tanpa peserta, tidak bisa presensi/kumpul tugas.
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section">
+      <div class="faq-header">
+        <div class="faq-icon-wrap" id="faqIcon"></div>
+        <h2 class="faq-title">Pertanyaan Umum</h2>
+        <p class="faq-sub">Kalau panduan di atas belum menjawab, cek FAQ ini dulu</p>
+      </div>
+
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>
+            Beda Pengurus dan Super Admin di mana?
+            <span class="faq-chevron" id="faqChev1"></span>
+          </summary>
+          <div class="faq-answer">
+            <strong>Pengurus</strong>: operasional harian (guru, pertemuan, verifikasi, award, laporan).
+            <strong>Super Admin</strong>: semua Pengurus + <strong>hapus permanen</strong> + <strong>backup</strong> + <strong>transfer SA</strong>. Kalau ada 3+ pengurus, biasanya cukup 1-2 SA saja.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Guru tidak bisa login — apa yang dicek dulu?
+            <span class="faq-chevron" id="faqChev2"></span>
+          </summary>
+          <div class="faq-answer">
+            <strong>1)</strong> Akun aktif? (Data Guru → lihat badge hijau). <strong>2)</strong> Email & PIN benar? Coba reset PIN. <strong>3)</strong> Password sudah ganti? Cek "PIN sudah diubah" — kalau iya, minta user login ulang. <strong>4)</strong> Browser cache — coba incognito.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Kapan pakai Bulk Action vs Import CSV?
+            <span class="faq-chevron" id="faqChev3"></span>
+          </summary>
+          <div class="faq-answer">
+            <strong>Bulk Action</strong>: operasi <strong>pada guru existing</strong> (reset PIN massal, nonaktifkan, assign peran). <strong>Import CSV</strong>: <strong>tambah guru baru</strong> dari file (setup awal, migrasi).
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Cara hapus guru yang sudah ada presensi/tugas?
+            <span class="faq-chevron" id="faqChev4"></span>
+          </summary>
+          <div class="faq-answer">
+            <strong>Tidak bisa dihapus permanen</strong> — hanya bisa dinonaktifkan. Ini supaya data historis (presensi, award periode lama) tetap utuh. Kalau akun nonaktif login → muncul error "Akun tidak aktif".
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Verifikasi luar radius — poin masuk kapan?
+            <span class="faq-chevron" id="faqChev5"></span>
+          </summary>
+          <div class="faq-answer">
+            Saat admin <strong>setujui</strong>: presensi tercatat dengan poin 50. Saat <strong>tolak</strong>: status jadi <strong>alfa</strong> (0 poin). Guru tidak bisa "presensi ulang" setelah diverifikasi.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Award dihitung otomatis — bisa override manual?
+            <span class="faq-chevron" id="faqChev6"></span>
+          </summary>
+          <div class="faq-answer">
+            Bisa. Setelah <strong>Hitung</strong>, Anda bisa <strong>set juara</strong> manual per nominasi (klik nominasi → tetapkan juara 1/2/3). Formula tetap jalan sebagai saran, tapi keputusan Anda yang final.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Data testing mau direset sebelum publish — bagaimana?
+            <span class="faq-chevron" id="faqChev7"></span>
+          </summary>
+          <div class="faq-answer">
+            Backup dulu via Pengaturan. Lalu jalankan SQL reset (lihat roadmap). Yang <strong>dipertahankan</strong>: users, sekolah, peran, ks_sekolah, jabatan, kategori_ajuan, feedback_aspek, pelapor. Yang <strong>dihapus</strong>: pertemuan, presensi, tugas, feedback, award, dll.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Kenapa KS tidak bisa akses admin/index.html?
+            <span class="faq-chevron" id="faqChev8"></span>
+          </summary>
+          <div class="faq-answer">
+            By design. KS pakai menu khusus di <strong>beranda</strong> (Sekolahku + Verifikasi), bukan Admin Panel. Kalau KS coba akses, backend tolak. Ini mencegah KS "salah masuk" ke fitur yang bukan wewenangnya.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Berapa maksimal Super Admin yang sehat?
+            <span class="faq-chevron" id="faqChev9"></span>
+          </summary>
+          <div class="faq-answer">
+            <strong>1-3 SA</strong>. Lebih dari 3 sulit audit (siapa ubah apa). Ideal: <strong>1 SA utama + 1 SA backup</strong> (jaga-jaga kalau SA utama tidak aktif).
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Kalau salah hapus permanen, bisa recover?
+            <span class="faq-chevron" id="faqChev10"></span>
+          </summary>
+          <div class="faq-answer">
+            <strong>Tidak bisa</strong> via UI. Recovery hanya via <strong>Supabase → Database → Backups</strong> (backup harian otomatis, retention 7-30 hari tergantung plan). Karena itu, <strong>backup mingguan</strong> + hindari hard delete sangat disarankan.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Import CSV banyak guru — ada batas?
+            <span class="faq-chevron" id="faqChev11"></span>
+          </summary>
+          <div class="faq-answer">
+            Batas upload ke Edge Function ~ <strong>500 baris per batch</strong>. Kalau lebih, pecah jadi 2-3 file. Setiap batch tercatat di <strong>impor_log</strong> — bisa audit siapa import kapan.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Lupa PIN admin sendiri?
+            <span class="faq-chevron" id="faqChev12"></span>
+          </summary>
+          <div class="faq-answer">
+            Minta admin lain reset via <strong>Data Guru</strong>. Kalau Anda satu-satunya admin, hubungi <strong>Super Admin</strong>. Kalau Anda satu-satunya SA dan lupa PIN — reset manual via <strong>Supabase SQL</strong> (generate hash baru) atau restore dari backup.
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Footer CTA -->
+    <div class="guide-footer-cta">
+      <div class="guide-footer-cta-inner">
+        <h3>Siap Kelola NAKULAKU?</h3>
+        <p>Login sebagai admin dan mulai operasikan sistem. Kalau ada kendala, koordinasi dengan sesama pengurus.</p>
+        <div class="guide-footer-cta-actions">
+          <a href="login.html" class="hero-cta primary">
+            <span id="ctaIconLogin2"></span>
+            Masuk Sekarang
+          </a>
+          <a href="admin/index.html" class="hero-cta secondary">
+            <span id="ctaIconAdmin"></span>
+            Admin Panel
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<button class="back-to-top" id="backToTop" aria-label="Kembali ke atas"></button>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+// ═══════════════════════════════════════════════
+// ICON RENDER
+// ═══════════════════════════════════════════════
+const ICONS_MAP = {
+  metaSteps: 'list',
+  metaDurasi: 'clock',
+  metaRole: 'shield',
+  ctaIconLogin: 'logIn',
+  ctaIconDown: 'chevronDown',
+  ctaIconLogin2: 'logIn',
+  ctaIconAdmin: 'layoutDashboard',
+  introIcon: 'shield',
+  mockIconLayout: 'layoutDashboard',
+  mockIconDash: 'activity',
+  mockIconUsers: 'users',
+  mockIconBulk: 'checkSquare',
+  mockIconImport: 'upload',
+  mockIconMaster: 'database',
+  mockIconCal: 'calendar',
+  mockIconCheck: 'checkCircle',
+  mockIconTag: 'tag',
+  mockIconAward: 'award',
+  mockIconTrash: 'trash',
+  mockIconBackup: 'save',
+  mockIconCrown: 'award',
+  mockPlusIcon: 'plus',
+  msIconLayout: 'layoutDashboard',
+  msIconUsers: 'users',
+  msIconUpload: 'upload',
+  msIconDB: 'database',
+  msIconCal: 'calendar',
+  msIconList: 'list',
+  dividerIconCrown: 'award',
+  tipInfoLogin: 'info',
+  tipWarnSA: 'alertTriangle',
+  tipInfoDash: 'info',
+  tipOkGuru: 'checkCircle',
+  tipWarnMutasi: 'alertTriangle',
+  tipOkImport: 'checkCircle',
+  tipDangerSekolah: 'alertCircle',
+  tipInfoWindow: 'clock',
+  tipOkNarsum: 'checkCircle',
+  tipOkBulk: 'checkCircle',
+  tipDangerSistem: 'alertCircle',
+  tipInfoPoin: 'info',
+  tipOkAward: 'checkCircle',
+  tipWarnSnapshot: 'calendar',
+  tipDangerDelete: 'alertCircle',
+  tipWarnBackup: 'alertTriangle',
+  tipOkBackup: 'checkCircle',
+  tipDangerSA: 'alertCircle',
+  tipInfoSA: 'info',
+  faqIcon: 'helpCircle',
+  faqChev1: 'chevronDown',
+  faqChev2: 'chevronDown',
+  faqChev3: 'chevronDown',
+  faqChev4: 'chevronDown',
+  faqChev5: 'chevronDown',
+  faqChev6: 'chevronDown',
+  faqChev7: 'chevronDown',
+  faqChev8: 'chevronDown',
+  faqChev9: 'chevronDown',
+  faqChev10: 'chevronDown',
+  faqChev11: 'chevronDown',
+  faqChev12: 'chevronDown',
+  pageLinkIconGuru: 'users',
+  pageLinkIconBulk: 'checkSquare',
+  pageLinkIconPeriode: 'calendar',
+  pageLinkIconPertemuan: 'list',
+  pageLinkIconVerifSekolah: 'checkCircle',
+  pageLinkIconKarya: 'sparkles',
+  pageLinkIconAward: 'award',
+  pageLinkIconLaporan: 'download',
+  headerBtnIcon: 'logIn',
+};
+
+Object.keys(ICONS_MAP).forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const iconName = ICONS_MAP[id];
+  if (window.Icons && Icons.get) {
+    const svg = Icons.get(iconName, { class: 'icon-sm' });
+    if (svg) el.innerHTML = svg;
+  }
+});
+
+// Fallback helpCircle
+if (window.Icons && !Icons.paths?.helpCircle) {
+  const faqIcon = document.getElementById('faqIcon');
+  if (faqIcon) {
+    faqIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+  }
+}
+
+// Chip meta text
+const metaSteps = document.getElementById('metaSteps');
+if (metaSteps) metaSteps.innerHTML = `${Icons.get('list', { class: 'icon-sm' })} 12 Langkah`;
+const metaDurasi = document.getElementById('metaDurasi');
+if (metaDurasi) metaDurasi.innerHTML = `${Icons.get('clock', { class: 'icon-sm' })} ~20 menit baca`;
+const metaRole = document.getElementById('metaRole');
+if (metaRole) metaRole.innerHTML = `${Icons.get('shield', { class: 'icon-sm' })} Pengurus & SA`;
+
+// ═══════════════════════════════════════════════
+// SECTIONS
+// ═══════════════════════════════════════════════
+const SECTIONS = [
+  { id: 'step-1',  num: '1',  label: 'Login Admin' },
+  { id: 'step-2',  num: '2',  label: 'Dashboard' },
+  { id: 'step-3',  num: '3',  label: 'Data Guru' },
+  { id: 'step-4',  num: '4',  label: 'Bulk & Import' },
+  { id: 'step-5',  num: '5',  label: 'Master Data' },
+  { id: 'step-6',  num: '6',  label: 'Kegiatan' },
+  { id: 'step-7',  num: '7',  label: 'Verifikasi', sa: false },
+  { id: 'step-8',  num: '8',  label: 'Kategori Ajuan' },
+  { id: 'step-9',  num: '9',  label: 'Award & Laporan' },
+  { id: 'step-10', num: '10', label: 'Hapus Permanen', sa: true },
+  { id: 'step-11', num: '11', label: 'Backup', sa: true },
+  { id: 'step-12', num: '12', label: 'Kelola SA', sa: true },
+];
+
+const tocListEl = document.getElementById('tocList');
+if (tocListEl) {
+  tocListEl.innerHTML = SECTIONS.map(s => `
+    <a href="#${s.id}" class="toc-item" data-target="${s.id}">
+      <span class="toc-num">${s.num}</span>
+      <span>${s.label}</span>
+      ${s.sa ? `<span class="toc-badge">SA</span>` : ''}
+    </a>
+  `).join('');
+}
+
+const stepPickerChipsEl = document.getElementById('stepPickerChips');
+if (stepPickerChipsEl) {
+  stepPickerChipsEl.innerHTML = SECTIONS.map(s => `
+    <a href="#${s.id}" class="step-picker-chip" data-target="${s.id}">
+      <span style="font-weight:800;">${s.num}</span> ${s.label}
+    </a>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════
+// SMOOTH SCROLL
+// ═══════════════════════════════════════════════
+document.querySelectorAll('a[href^="#step-"]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    const targetId = link.getAttribute('href').substring(1);
+    const target = document.getElementById(targetId);
+    if (!target) return;
+    e.preventDefault();
+    const headerH = document.getElementById('appHeader')?.offsetHeight || 60;
+    const top = target.getBoundingClientRect().top + window.pageYOffset - headerH - 20;
+    window.scrollTo({ top, behavior: 'smooth' });
+  });
+});
+
+// ═══════════════════════════════════════════════
+// ACTIVE TOC
+// ═══════════════════════════════════════════════
+const allSections = SECTIONS.map(s => document.getElementById(s.id)).filter(Boolean);
+
+function updateActiveTOC() {
+  const scrollPos = window.scrollY + 100;
+  let active = null;
+  allSections.forEach(sec => {
+    if (sec.offsetTop <= scrollPos) active = sec.id;
+  });
+
+  document.querySelectorAll('.toc-item, .step-picker-chip').forEach(el => {
+    el.classList.toggle('active', el.dataset.target === active);
+  });
+
+  const tocActive = tocListEl?.querySelector('.toc-item.active');
+  if (tocActive && window.innerWidth >= 1024) {
+    tocActive.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  const mobileActive = stepPickerChipsEl?.querySelector('.step-picker-chip.active');
+  if (mobileActive && window.innerWidth < 1024) {
+    const wrap = mobileActive.closest('.step-picker-mobile');
+    if (wrap) {
+      const chipLeft = mobileActive.offsetLeft;
+      const chipW = mobileActive.offsetWidth;
+      const wrapW = wrap.offsetWidth;
+      wrap.scrollTo({ left: chipLeft - wrapW / 2 + chipW / 2, behavior: 'smooth' });
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════
+// SCROLL PROGRESS + BACK TO TOP
+// ═══════════════════════════════════════════════
+const progressEl = document.getElementById('scrollProgress');
+const backTopBtn = document.getElementById('backToTop');
+
+function updateScroll() {
+  const scrollTop = window.scrollY;
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docH > 0 ? (scrollTop / docH) * 100 : 0;
+  if (progressEl) progressEl.style.width = pct + '%';
+  if (backTopBtn) backTopBtn.classList.toggle('show', scrollTop > 400);
+  updateActiveTOC();
+}
+
+window.addEventListener('scroll', () => requestAnimationFrame(updateScroll), { passive: true });
+window.addEventListener('resize', () => requestAnimationFrame(updateScroll));
+
+if (backTopBtn) {
+  backTopBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>`;
+  backTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+updateScroll();
+
+// ═══════════════════════════════════════════════
+// SMART HEADER
+// ═══════════════════════════════════════════════
+(async () => {
+  const token = Api.getToken();
+  const btn = document.getElementById('headerBtn');
+  const btnText = document.getElementById('headerBtnText');
+  const btnIcon = document.getElementById('headerBtnIcon');
+
+  if (!token) {
+    btn.href = 'login.html';
+    btnText.textContent = 'Masuk';
+    btnIcon.innerHTML = Icons.get('logIn', { class: 'icon-sm' });
+    return;
+  }
+
+  try {
+    const v = await Api.verify(token);
+    if (v.valid) {
+      btn.href = 'admin/index.html';
+      btnText.textContent = 'Admin Panel';
+      btnIcon.innerHTML = Icons.get('layoutDashboard', { class: 'icon-sm' });
+    } else {
+      btn.href = 'login.html';
+      btnText.textContent = 'Masuk';
+      btnIcon.innerHTML = Icons.get('logIn', { class: 'icon-sm' });
+    }
+  } catch {
+    btn.href = 'login.html';
+    btnText.textContent = 'Masuk';
+    btnIcon.innerHTML = Icons.get('logIn', { class: 'icon-sm' });
+  }
+})();
+</script>
+
+</body>
+</html>
