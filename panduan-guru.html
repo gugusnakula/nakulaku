@@ -1,0 +1,2054 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#611329" />
+<title>Panduan Guru — NAKULAKU</title>
+<meta name="description" content="Panduan lengkap penggunaan NAKULAKU untuk guru KKG Gugus Nakula — dari login sampai sertifikat." />
+
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lora:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/nakula.css" />
+
+<style>
+  /* ═══════════════════════════════════════
+     SCROLL PROGRESS
+     ═══════════════════════════════════════ */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--maroon) 0%, var(--gold) 100%);
+    z-index: 100;
+    width: 0%;
+    transition: width .1s linear;
+    box-shadow: 0 0 8px rgba(201,169,97,.5);
+  }
+
+  /* ═══════════════════════════════════════
+     PUBLIC HEADER
+     ═══════════════════════════════════════ */
+  .public-header {
+    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 100%);
+    color: white;
+    padding: 12px 16px;
+    padding-top: calc(12px + env(safe-area-inset-top));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 2px 12px rgba(97,19,41,.15);
+    min-height: 60px;
+    gap: 10px;
+  }
+  .public-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: white;
+    min-width: 0;
+    flex-shrink: 0;
+  }
+  .public-header-logo {
+    width: 36px; height: 36px;
+    background: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--gold);
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .public-header-logo img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.25); }
+  .public-header-text { min-width: 0; }
+  .public-header-title { font-weight: 800; font-size: 14px; letter-spacing: .5px; line-height: 1.1; }
+  .public-header-sub { font-size: 10px; opacity: .8; }
+
+  .public-header-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+  .header-cta-btn {
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    padding: 8px 14px;
+    border-radius: 10px;
+    transition: all .15s;
+    box-shadow: 0 4px 12px rgba(201,169,97,.3);
+    white-space: nowrap;
+  }
+  .header-cta-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(201,169,97,.4); color: white; text-decoration: none; }
+  .header-cta-btn svg { width: 14px; height: 14px; }
+
+  /* ═══════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════ */
+  .guide-hero {
+    background:
+      radial-gradient(ellipse at top right, rgba(201,169,97,.35) 0%, transparent 50%),
+      linear-gradient(135deg, #2C0714 0%, #4A0D1F 40%, #7D1D3A 100%);
+    color: white;
+    padding: 40px 24px 32px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+  .guide-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23C9A961' stroke-width='0.6' opacity='0.15'%3E%3Ccircle cx='20' cy='20' r='12'/%3E%3Ccircle cx='60' cy='20' r='12'/%3E%3Ccircle cx='20' cy='60' r='12'/%3E%3Ccircle cx='60' cy='60' r='12'/%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .guide-hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .guide-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(201,169,97,.5);
+    border-radius: 999px;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    backdrop-filter: blur(6px);
+  }
+  .guide-hero-title {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+    color: white;
+  }
+  .guide-hero-title .accent {
+    display: block;
+    background: linear-gradient(135deg, #E8C877 0%, #C9A961 50%, #A37E2E 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 36px;
+    margin-top: 4px;
+    filter: drop-shadow(0 4px 16px rgba(201,169,97,.4));
+  }
+  @media (min-width: 720px) {
+    .guide-hero { padding: 56px 24px 44px; }
+    .guide-hero-title { font-size: 34px; }
+    .guide-hero-title .accent { font-size: 48px; }
+  }
+  .guide-hero-desc {
+    font-family: 'Lora', Georgia, serif;
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.55;
+    color: rgba(255,255,255,.9);
+    max-width: 520px;
+    margin: 0 auto 18px;
+    font-weight: 500;
+  }
+  .guide-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+  .hero-meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,.95);
+  }
+  .hero-meta-chip svg { width: 13px; height: 13px; }
+  .guide-hero-cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 12px 22px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: all .2s var(--ease-out);
+  }
+  .hero-cta.primary {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
+    box-shadow: 0 8px 20px rgba(201,169,97,.4);
+  }
+  .hero-cta.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(201,169,97,.5);
+    color: white;
+    text-decoration: none;
+  }
+  .hero-cta.secondary {
+    background: rgba(255,255,255,.12);
+    color: white;
+    border: 1.5px solid rgba(255,255,255,.25);
+  }
+  .hero-cta.secondary:hover {
+    background: rgba(255,255,255,.2);
+    color: white;
+    text-decoration: none;
+  }
+  .hero-cta svg { width: 16px; height: 16px; }
+
+  /* ═══════════════════════════════════════
+     MAIN LAYOUT
+     ═══════════════════════════════════════ */
+  .guide-main {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 24px 16px 60px;
+  }
+  @media (min-width: 1024px) {
+    .guide-main {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+      padding: 40px 32px 80px;
+    }
+  }
+
+  /* ═══════════════════════════════════════
+     SIDEBAR TOC (Desktop only)
+     ═══════════════════════════════════════ */
+  .guide-toc {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .guide-toc {
+      display: block;
+      position: sticky;
+      top: 80px;
+      height: fit-content;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+      padding-right: 8px;
+      align-self: start;
+    }
+    .guide-toc::-webkit-scrollbar { width: 4px; }
+    .guide-toc::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border-radius: 4px;
+    }
+  }
+  .toc-title {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding-left: 12px;
+  }
+  .toc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-left: 2px solid var(--border);
+    padding-left: 4px;
+  }
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--muted);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all .15s;
+    position: relative;
+  }
+  .toc-item:hover {
+    background: var(--maroon-faint);
+    color: var(--maroon);
+    text-decoration: none;
+  }
+  .toc-item.active {
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    font-weight: 800;
+  }
+  .toc-item .toc-num {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all .15s;
+  }
+  .toc-item.active .toc-num {
+    background: var(--maroon);
+    color: white;
+  }
+
+  /* ═══════════════════════════════════════
+     MOBILE STEP PICKER
+     ═══════════════════════════════════════ */
+  .step-picker-mobile {
+    display: block;
+    margin-bottom: 24px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 8px;
+    position: sticky;
+    top: 60px;
+    z-index: 20;
+    box-shadow: 0 2px 12px rgba(97,19,41,.06);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .step-picker-mobile::-webkit-scrollbar { display: none; }
+  @media (min-width: 1024px) {
+    .step-picker-mobile { display: none; }
+  }
+  .step-picker-chips {
+    display: flex;
+    gap: 6px;
+  }
+  .step-picker-chip {
+    flex-shrink: 0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--bg);
+    border: 1.5px solid transparent;
+    font-size: 11.5px;
+    font-weight: 800;
+    color: var(--muted);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all .15s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .step-picker-chip:hover {
+    border-color: var(--maroon-light);
+    color: var(--maroon);
+    text-decoration: none;
+  }
+  .step-picker-chip.active {
+    background: var(--maroon);
+    color: white;
+  }
+
+  /* ═══════════════════════════════════════
+     GUIDE CONTENT
+     ═══════════════════════════════════════ */
+  .guide-content {
+    min-width: 0;
+  }
+
+  .guide-intro-card {
+    background: linear-gradient(135deg, var(--maroon-faint) 0%, #FDF4F7 100%);
+    border: 1.5px solid rgba(125,29,58,.12);
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .guide-intro-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--maroon);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 6px 16px rgba(125,29,58,.25);
+  }
+  .guide-intro-body { flex: 1; min-width: 0; }
+  .guide-intro-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--maroon);
+    margin-bottom: 4px;
+  }
+  .guide-intro-desc {
+    font-size: 12.5px;
+    color: var(--ink);
+    line-height: 1.6;
+    font-weight: 500;
+  }
+
+  .guide-section {
+    margin-bottom: 48px;
+    scroll-margin-top: 80px;
+  }
+  @media (min-width: 1024px) {
+    .guide-section { scroll-margin-top: 24px; }
+  }
+
+  .section-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .section-num {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+    position: relative;
+    box-shadow: 0 6px 16px rgba(0,0,0,.15);
+  }
+  .section-num.maroon { background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%); }
+  .section-num.gold { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); }
+  .section-num.success { background: linear-gradient(135deg, #22C55E 0%, #15803D 100%); }
+  .section-num.info { background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%); }
+  .section-num.purple { background: linear-gradient(135deg, #A855F7 0%, #7C3AED 100%); }
+  .section-num.warning { background: linear-gradient(135deg, #F59E0B 0%, #B45309 100%); }
+
+  .section-title-wrap { flex: 1; min-width: 0; }
+  .section-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .section-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.3;
+    letter-spacing: -0.3px;
+  }
+  @media (min-width: 720px) {
+    .section-title { font-size: 24px; }
+  }
+
+  .section-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 20px;
+  }
+  .section-desc strong { color: var(--ink); font-weight: 700; }
+
+  /* Mock UI card */
+  .mock-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+    position: relative;
+    box-shadow: 0 4px 16px rgba(97,19,41,.05);
+  }
+  .mock-header {
+    font-size: 9.5px;
+    font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .mock-header svg { width: 14px; height: 14px; }
+
+  .mock-hero-mini {
+    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .mock-hero-mini .mh-label {
+    font-size: 9px;
+    opacity: 0.8;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .mock-hero-mini .mh-title {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .mock-hero-mini .mh-meta {
+    font-size: 10.5px;
+    opacity: 0.85;
+    font-weight: 600;
+  }
+
+  .mock-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 12px;
+    background: var(--bg);
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .mock-row:last-child { margin-bottom: 0; }
+  .mock-avatar-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .mock-info-sm { flex: 1; min-width: 0; }
+  .mock-info-sm .t {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .mock-info-sm .s {
+    font-size: 10.5px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .mock-badge-sm {
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .mock-badge-sm.success { background: var(--success-soft); color: var(--success); }
+  .mock-badge-sm.warning { background: var(--warning-soft); color: var(--warning); }
+  .mock-badge-sm.info { background: var(--info-soft); color: var(--info); }
+  .mock-badge-sm.danger { background: var(--danger-soft); color: var(--danger); }
+  .mock-badge-sm.gold { background: var(--gold-soft); color: var(--gold-dark); }
+
+  .mock-btn-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .mock-btn-mini {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: inherit;
+    border: none;
+  }
+  .mock-btn-mini.primary {
+    background: var(--maroon);
+    color: white;
+  }
+  .mock-btn-mini.secondary {
+    background: var(--surface);
+    color: var(--maroon);
+    border: 1.5px solid var(--border);
+  }
+
+  .mock-link-pill-mini {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-decoration: none;
+    margin-top: 8px;
+  }
+  .mock-link-pill-mini.drive { background: #FEF3C7; color: #D97706; border: 1px solid rgba(217,119,6,.15); }
+  .mock-link-pill-mini.youtube { background: #FEE2E2; color: #DC2626; border: 1px solid rgba(220,38,38,.15); }
+  .mock-link-pill-mini svg { width: 12px; height: 12px; }
+
+  /* Tips box */
+  .tip-box {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 14px 16px;
+    border-radius: 14px;
+    margin-bottom: 12px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    font-weight: 500;
+  }
+  .tip-box:last-child { margin-bottom: 0; }
+  .tip-box svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .tip-box strong { font-weight: 800; }
+  .tip-box.info {
+    background: linear-gradient(135deg, var(--info-soft) 0%, #EFF6FF 100%);
+    border: 1px solid rgba(30,64,175,.15);
+    color: var(--info);
+  }
+  .tip-box.success {
+    background: linear-gradient(135deg, var(--success-soft) 0%, #ECFDF5 100%);
+    border: 1px solid rgba(21,128,61,.15);
+    color: var(--success);
+  }
+  .tip-box.warning {
+    background: linear-gradient(135deg, var(--warning-soft) 0%, #FFFBEB 100%);
+    border: 1px solid rgba(180,83,9,.15);
+    color: var(--warning);
+  }
+  .tip-box.danger {
+    background: linear-gradient(135deg, var(--danger-soft) 0%, #FEF2F2 100%);
+    border: 1px solid rgba(185,28,28,.15);
+    color: var(--danger);
+  }
+
+  /* Action list */
+  .action-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .action-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+  }
+  .action-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: var(--maroon-soft);
+    color: var(--maroon);
+    font-size: 11px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .action-text {
+    flex: 1;
+    font-size: 12.5px;
+    color: var(--ink);
+    line-height: 1.55;
+    font-weight: 500;
+  }
+  .action-text strong { font-weight: 800; }
+
+  /* Link ke halaman asli */
+  .page-link-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1.5px dashed var(--border-strong);
+    border-radius: 12px;
+    margin-top: 12px;
+  }
+  .page-link-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .page-link-label strong { color: var(--ink); }
+  .page-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 14px;
+    background: var(--maroon);
+    color: white;
+    border-radius: 8px;
+    font-size: 11.5px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: all .15s;
+    flex-shrink: 0;
+  }
+  .page-link-btn:hover {
+    background: var(--maroon-dark);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(125,29,58,.25);
+  }
+  .page-link-btn svg { width: 13px; height: 13px; }
+
+  /* ═══════════════════════════════════════
+     FAQ
+     ═══════════════════════════════════════ */
+  .faq-section {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1.5px dashed var(--border);
+  }
+  .faq-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .faq-header .faq-icon-wrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    box-shadow: 0 8px 20px rgba(201,169,97,.3);
+  }
+  .faq-header .faq-icon-wrap svg { width: 26px; height: 26px; }
+  .faq-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .faq-sub {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .faq-item {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: all .15s;
+  }
+  .faq-item[open] {
+    border-color: var(--maroon-light);
+    box-shadow: 0 4px 12px rgba(125,29,58,.06);
+  }
+  .faq-item summary {
+    padding: 14px 18px;
+    font-size: 13.5px;
+    font-weight: 800;
+    color: var(--ink);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    transition: background .15s;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary:hover { background: var(--bg); }
+  .faq-item summary .faq-chevron {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--maroon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s;
+  }
+  .faq-item summary .faq-chevron svg { width: 12px; height: 12px; }
+  .faq-item[open] summary .faq-chevron {
+    background: var(--maroon);
+    color: white;
+    transform: rotate(180deg);
+  }
+  .faq-answer {
+    padding: 0 18px 16px;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.65;
+    font-weight: 500;
+  }
+  .faq-answer strong { color: var(--ink); font-weight: 800; }
+  .faq-answer a { color: var(--maroon); font-weight: 700; }
+
+  /* ═══════════════════════════════════════
+     FOOTER CTA
+     ═══════════════════════════════════════ */
+  .guide-footer-cta {
+    margin-top: 48px;
+    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 100%);
+    color: white;
+    border-radius: 22px;
+    padding: 32px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .guide-footer-cta::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,169,97,.3) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .guide-footer-cta-inner { position: relative; z-index: 1; }
+  .guide-footer-cta h3 {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: white;
+  }
+  .guide-footer-cta p {
+    font-size: 13px;
+    opacity: 0.85;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .guide-footer-cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  /* ═══════════════════════════════════════
+     BACK TO TOP
+     ═══════════════════════════════════════ */
+  .back-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--maroon);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(125,29,58,.35);
+    opacity: 0;
+    visibility: hidden;
+    transition: all .2s var(--ease-out);
+    z-index: 40;
+  }
+  .back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+  }
+  .back-to-top:hover {
+    background: var(--maroon-dark);
+    transform: translateY(-2px);
+  }
+  .back-to-top svg { width: 20px; height: 20px; }
+
+  /* ═══════════════════════════════════════
+     UTILITY
+     ═══════════════════════════════════════ */
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- Scroll progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Header -->
+<header class="public-header" id="appHeader">
+  <a href="beranda.html" class="public-header-brand">
+    <div class="public-header-logo">
+      <img src="assets/img/logo-mark.svg" alt="Nakula" />
+    </div>
+    <div class="public-header-text">
+      <div class="public-header-title">NAKULAKU</div>
+      <div class="public-header-sub">KKG Gugus Nakula</div>
+    </div>
+  </a>
+  <div class="public-header-actions">
+    <a href="#" id="headerBtn" class="header-cta-btn">
+      <span id="headerBtnIcon"></span>
+      <span id="headerBtnText">Masuk</span>
+    </a>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="guide-hero">
+  <div class="guide-hero-inner">
+    <div class="guide-hero-badge">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);"></span>
+      Panduan Guru · Step-by-Step
+    </div>
+    <h1 class="guide-hero-title">
+      Selamat Datang di
+      <span class="accent">NAKULAKU</span>
+    </h1>
+    <p class="guide-hero-desc">
+      Panduan lengkap dari login pertama sampai sertifikat keluar.
+      Ikuti 10 langkah berikut dan Anda akan jadi pengguna NAKULAKU yang mahir.
+    </p>
+    <div class="guide-hero-meta">
+      <span class="hero-meta-chip">${'' /* JS */}</span>
+      <span class="hero-meta-chip" id="metaSteps">10 Langkah</span>
+      <span class="hero-meta-chip" id="metaDurasi">⏱️ ~15 menit baca</span>
+    </div>
+    <div class="guide-hero-cta-row">
+      <a href="login.html" class="hero-cta primary">
+        <span id="ctaIconLogin"></span>
+        Mulai Login
+      </a>
+      <a href="#step-1" class="hero-cta secondary">
+        <span id="ctaIconDown"></span>
+        Lihat Panduan
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Main -->
+<div class="guide-main">
+
+  <!-- Sidebar TOC (desktop) -->
+  <aside class="guide-toc" id="tocSidebar">
+    <div class="toc-title">Daftar Langkah</div>
+    <nav class="toc-list" id="tocList"></nav>
+  </aside>
+
+  <!-- Content -->
+  <main class="guide-content">
+
+    <!-- Mobile step picker -->
+    <div class="step-picker-mobile">
+      <div class="step-picker-chips" id="stepPickerChips"></div>
+    </div>
+
+    <!-- Intro -->
+    <div class="guide-intro-card">
+      <div class="guide-intro-icon" id="introIcon"></div>
+      <div class="guide-intro-body">
+        <div class="guide-intro-title">Sebelum Mulai</div>
+        <div class="guide-intro-desc">
+          Anda akan menerima <strong>email</strong> dan <strong>PIN 5–6 digit</strong> dari admin/panitia.
+          Simpan baik-baik. Kalau lupa PIN, minta reset ke admin sekolah Anda.
+          Panduan ini bisa dibuka kapan saja tanpa login.
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 1 — LOGIN -->
+    <section class="guide-section" id="step-1">
+      <div class="section-head">
+        <div class="section-num maroon">1</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Langkah Pertama</div>
+          <h2 class="section-title">Login ke Akun Anda</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Gunakan <strong>email + PIN</strong> yang sudah diberikan admin. Jangan bagikan PIN ke siapa pun.
+        Kalau berhasil, Anda akan langsung masuk ke <strong>Beranda</strong>.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconLogin"></span> Halaman Login
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div>
+            <div style="font-size:10px;font-weight:800;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px;">Email</div>
+            <div style="padding:10px 12px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;font-size:12px;color:var(--muted);font-weight:600;">
+              guru@sekolah.sch.id
+            </div>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:800;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px;">PIN</div>
+            <div style="padding:10px 12px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;font-size:16px;color:var(--muted);font-weight:800;letter-spacing:6px;">
+              • • • • •
+            </div>
+          </div>
+          <button class="mock-btn-mini primary" style="width:100%;justify-content:center;margin-top:6px;">
+            Masuk
+          </button>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text">Buka <strong>login.html</strong> atau klik tombol <strong>Masuk</strong> di halaman ini.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text">Isi <strong>email</strong> yang terdaftar dan <strong>PIN 5–6 digit</strong>.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text">Klik <strong>Masuk</strong> — Anda akan diarahkan ke Beranda.</div>
+        </div>
+      </div>
+
+      <div class="tip-box warning">
+        <span id="tipWarnLogin"></span>
+        <div>
+          <strong>Lupa PIN?</strong> Hubungi admin sekolah Anda. Jangan coba-coba login berkali-kali dengan PIN salah — akun bisa terkunci sementara.
+        </div>
+      </div>
+
+      <div class="page-link-box">
+        <div class="page-link-label">Siap login? <strong>Buka halaman login →</strong></div>
+        <a href="login.html" class="page-link-btn">
+          <span id="pageLinkIconLogin"></span> Login
+        </a>
+      </div>
+    </section>
+
+    <!-- STEP 2 — BERANDA -->
+    <section class="guide-section" id="step-2">
+      <div class="section-head">
+        <div class="section-num gold">2</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Kenali Dashboard</div>
+          <h2 class="section-title">Beranda — Rumah Digital Anda</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Setelah login, Anda akan melihat <strong>Beranda</strong>. Ini pusat navigasi Anda — semua yang perlu
+        dikerjakan bisa dilihat sekilas di sini.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconHome"></span> Preview Beranda
+        </div>
+        <div class="mock-hero-mini">
+          <div class="mh-label">Selamat Pagi, Bapak/Ibu 🌅</div>
+          <div class="mh-title">Budi Santoso, S.Pd.</div>
+          <div class="mh-meta">SD Negeri 1 Krisak · Guru Kelas</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.15);">
+            <div style="text-align:center;">
+              <div style="font-size:16px;font-weight:800;">5<span style="font-size:10px;opacity:.7;">/16</span></div>
+              <div style="font-size:8.5px;opacity:.75;font-weight:700;letter-spacing:.3px;text-transform:uppercase;margin-top:2px;">Presensi</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:16px;font-weight:800;">12<span style="font-size:10px;opacity:.7;">/16</span></div>
+              <div style="font-size:8.5px;opacity:.75;font-weight:700;letter-spacing:.3px;text-transform:uppercase;margin-top:2px;">Tugas</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:16px;font-weight:800;">3<span style="font-size:10px;opacity:.7;">/16</span></div>
+              <div style="font-size:8.5px;opacity:.75;font-weight:700;letter-spacing:.3px;text-transform:uppercase;margin-top:2px;">Selesai</div>
+            </div>
+          </div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm">📢</div>
+          <div class="mock-info-sm">
+            <div class="t">Pengumuman Terbaru</div>
+            <div class="s">Rapat KKG bulan ini akan diadakan…</div>
+          </div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm">📅</div>
+          <div class="mock-info-sm">
+            <div class="t">Pertemuan #6 — Asesmen Formatif</div>
+            <div class="s">Besok, 24 Okt 2026</div>
+          </div>
+          <span class="mock-badge-sm success">Buka</span>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text"><strong>Hero Profil</strong> — nama, sekolah, dan statistik ringkas Anda.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text"><strong>Menu Khusus</strong> — Sekolahku, Karya, Penilaian Tugas (kalau narasumber), dll.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text"><strong>Pengumuman</strong> — dari pengurus KKG.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">4</div>
+          <div class="action-text"><strong>Pertemuan Terbaru</strong> — klik untuk buka detail.</div>
+        </div>
+      </div>
+
+      <div class="tip-box success">
+        <span id="tipOkHome"></span>
+        <div><strong>Tips:</strong> Bookmark <strong>beranda.html</strong> di browser Anda, supaya bisa langsung buka tanpa ketik URL.</div>
+      </div>
+    </section>
+
+    <!-- STEP 3 — PRESENSI -->
+    <section class="guide-section" id="step-3">
+      <div class="section-head">
+        <div class="section-num success">3</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Kehadiran</div>
+          <h2 class="section-title">Presensi dengan Selfie + GPS</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Presensi hanya bisa dilakukan saat <strong>jendela waktu terbuka</strong> — yaitu 30 menit sebelum
+        jam mulai sampai 30 menit setelah jam selesai. Kalau Anda di lokasi yang benar, poin langsung penuh.
+      </p>
+
+      <div class="tip-box info">
+        <span id="tipInfoWindow"></span>
+        <div>
+          <strong>Jendela presensi</strong> dihitung otomatis dari jam pertemuan. Contoh: jam mulai 08:00 → jendela buka <strong>07:30–12:30</strong> (kalau selesai 12:00).
+        </div>
+      </div>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconCam"></span> Halaman Presensi
+        </div>
+        <div style="background:#1C1414;border-radius:12px;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;margin-bottom:12px;position:relative;">
+          <div style="color:white;font-size:32px;opacity:.4;">📸</div>
+          <div style="position:absolute;bottom:8px;left:8px;padding:3px 8px;background:rgba(201,169,97,.9);color:white;border-radius:6px;font-size:9px;font-weight:800;letter-spacing:.3px;">
+            PERTEMUAN #6 · 08:23 WIB · 42m dari titik
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:8px 12px;background:var(--success-soft);border-radius:8px;margin-bottom:10px;">
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--success);"></div>
+          <div style="font-size:11px;font-weight:800;color:var(--success);">✓ Dalam radius (42m dari 100m)</div>
+        </div>
+        <div class="mock-btn-row">
+          <button class="mock-btn-mini secondary" style="flex:1;justify-content:center;">📷 Ambil Ulang</button>
+          <button class="mock-btn-mini primary" style="flex:2;justify-content:center;">Kirim Presensi</button>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text">Buka pertemuan → klik <strong>Isi Presensi</strong>.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text">Izinkan akses <strong>kamera</strong> & <strong>lokasi</strong>. Ambil selfie menghadap kamera depan.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text">Cek jarak dari titik lokasi — kalau <strong>hijau</strong>, Anda di dalam radius.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">4</div>
+          <div class="action-text">Klik <strong>Kirim Presensi</strong>. Watermark otomatis ditambahkan.</div>
+        </div>
+      </div>
+
+      <div class="tip-box warning">
+        <span id="tipWarnRadius"></span>
+        <div>
+          <strong>Luar radius?</strong> Presensi tetap bisa dikirim, tapi <strong>poin ditunda</strong> sampai admin memverifikasi. Kalau disetujui = 50 poin, kalau ditolak = alfa (0 poin).
+        </div>
+      </div>
+
+      <div class="tip-box danger">
+        <span id="tipDangerCamera"></span>
+        <div>
+          <strong>Kamera & GPS error?</strong> Coba: refresh halaman, cek izin browser, atau gunakan HP lain. Kalau tetap gagal, hubungi KS untuk <strong>override presensi</strong> (tandai hadir manual).
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 4 — AJUKAN IZIN -->
+    <section class="guide-section" id="step-4">
+      <div class="section-head">
+        <div class="section-num info">4</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Kalau Berhalangan</div>
+          <h2 class="section-title">Ajukan Izin / Sakit / Dinas Luar</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Tidak bisa hadir? <strong>Jangan diamkan</strong> — ajukan izin supaya KS tahu alasan Anda.
+        Ajuan yang disetujui akan otomatis membuat presensi dengan poin sesuai kategori.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconFile"></span> Wizard Ajukan Izin (3 Langkah)
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-bottom:14px;">
+          <div style="flex:1;text-align:center;">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--maroon);color:white;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 4px;">✓</div>
+            <div style="font-size:9.5px;font-weight:800;color:var(--maroon);">Kategori</div>
+          </div>
+          <div style="flex:1;text-align:center;">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--maroon);color:white;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 4px;">✓</div>
+            <div style="font-size:9.5px;font-weight:800;color:var(--maroon);">Detail</div>
+          </div>
+          <div style="flex:1;text-align:center;">
+            <div style="width:24px;height:24px;border-radius:50%;background:var(--border);color:var(--muted);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 4px;">3</div>
+            <div style="font-size:9.5px;font-weight:800;color:var(--muted);">Kirim</div>
+          </div>
+        </div>
+
+        <div class="mock-row">
+          <div class="mock-avatar-sm">🤒</div>
+          <div class="mock-info-sm">
+            <div class="t">Sakit</div>
+            <div class="s">Wajib lampirkan surat dokter</div>
+          </div>
+        </div>
+        <div class="mock-row" style="border:1.5px solid var(--maroon);background:var(--maroon-faint);">
+          <div class="mock-avatar-sm">💼</div>
+          <div class="mock-info-sm">
+            <div class="t">Dinas Luar</div>
+            <div class="s">Bisa multi-hari</div>
+          </div>
+          <span class="mock-badge-sm gold">Dipilih</span>
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm">📝</div>
+          <div class="mock-info-sm">
+            <div class="t">Izin Pribadi</div>
+            <div class="s">Alasan mendesak</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text">Buka pertemuan yang berhalangan → klik <strong>Ajukan Izin</strong>.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text">Pilih <strong>kategori</strong> (sakit / izin pribadi / dinas luar / cuti / dll).</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text">Isi <strong>alasan</strong> + <strong>lampiran</strong> (kalau kategori butuh bukti).</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">4</div>
+          <div class="action-text">Untuk kategori multi-hari, isi <strong>tanggal mulai & selesai</strong>.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">5</div>
+          <div class="action-text">Klik <strong>Kirim</strong>. Tunggu verifikasi KS di dashboard.</div>
+        </div>
+      </div>
+
+      <div class="tip-box info">
+        <span id="tipInfoMulti"></span>
+        <div>
+          <strong>Multi-hari:</strong> Sakit, cuti, dinas luar, dan cuti melahirkan bisa diajukan untuk rentang tanggal. Presensi otomatis dibuat untuk <strong>semua pertemuan</strong> dalam rentang saat disetujui.
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 5 — MATERI -->
+    <section class="guide-section" id="step-5">
+      <div class="section-head">
+        <div class="section-num purple">5</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Belajar Mandiri</div>
+          <h2 class="section-title">Baca Materi Pertemuan</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Materi bisa berupa video YouTube, file Google Drive, PDF, atau slide. Klik pill untuk buka di tab baru.
+        Tandai materi yang sudah Anda baca supaya progres bertambah.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconBook"></span> Daftar Materi
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:var(--info-soft);color:var(--info);">📹</div>
+          <div class="mock-info-sm">
+            <div class="t">Video: Asesmen Formatif di Kelas 5</div>
+            <div class="s">Durasi 12 menit</div>
+            <a href="#" class="mock-link-pill-mini youtube" onclick="event.preventDefault();">
+              <span id="pillYtIcon"></span> YouTube
+            </a>
+          </div>
+          <span class="mock-badge-sm success">✓ Baca</span>
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:var(--gold-soft);color:var(--gold-dark);">📄</div>
+          <div class="mock-info-sm">
+            <div class="t">Slide Presentasi Narsum</div>
+            <div class="s">PDF, 24 halaman</div>
+            <a href="#" class="mock-link-pill-mini drive" onclick="event.preventDefault();">
+              <span id="pillDriveIcon"></span> Google Drive
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text">Buka pertemuan → klik tab <strong>Materi</strong>.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text">Klik pill (<strong>YouTube / Drive / PDF / Web</strong>) untuk buka materi.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text">Klik <strong>✓</strong> untuk tandai sudah baca, atau <strong>⭐</strong> untuk bookmark.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 6 — TUGAS -->
+    <section class="guide-section" id="step-6">
+      <div class="section-head">
+        <div class="section-num info">6</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Pengumpulan & Penilaian</div>
+          <h2 class="section-title">Kumpulkan Tugas</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Tugas dikumpulkan dalam bentuk <strong>link</strong> (Google Drive, YouTube, dll).
+        Narsum akan menilai dan memberi komentar. Kalau perlu revisi, Anda bisa kumpul ulang <strong>tanpa batas</strong>.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconClip"></span> Detail Tugas
+        </div>
+        <div style="font-size:13px;font-weight:800;color:var(--ink);margin-bottom:6px;">RPP Asesmen Formatif</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.5;margin-bottom:10px;">
+          Buat RPP singkat yang menerapkan asesmen formatif…
+        </div>
+        <div style="padding:8px 12px;background:var(--bg);border-radius:8px;font-size:10.5px;color:var(--muted);font-weight:700;margin-bottom:12px;">
+          ⏱️ Deadline: 25 Okt 2026 23:59
+        </div>
+        <div style="padding:10px 14px;background:var(--success-soft);border-radius:8px;font-size:11px;font-weight:800;color:var(--success);display:flex;align-items:center;gap:6px;margin-bottom:10px;">
+          ✓ Tugas Diterima · Nilai: 85/100
+        </div>
+        <a href="#" class="mock-link-pill-mini drive" onclick="event.preventDefault();">
+          <span id="pillDrive2Icon"></span> Google Drive
+        </a>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text">Buka pertemuan → tab <strong>Tugas</strong> → klik tugas.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text">Isi <strong>link</strong> (Drive/YouTube/PDF) + catatan opsional. Validasi format URL.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text">Klik <strong>Kumpulkan Tugas</strong>. Status awal: <strong>Menunggu Dinilai</strong>.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">4</div>
+          <div class="action-text">Narsum memberi <strong>nilai 1–100</strong> + <strong>komentar otomatis</strong>.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">5</div>
+          <div class="action-text">Kalau <strong>Revisi</strong>, perbaiki dan kumpul ulang. Kalau <strong>Diterima</strong>, selesai.</div>
+        </div>
+      </div>
+
+      <div class="tip-box success">
+        <span id="tipOkSubmit"></span>
+        <div><strong>Komentar otomatis:</strong> Setiap kali narsum nilai, sistem membuat komentar di thread tugas Anda — berisi nilai + status + pesan tambahan.</div>
+      </div>
+
+      <div class="tip-box warning">
+        <span id="tipWarnDeadline"></span>
+        <div><strong>Lewat deadline:</strong> Masih bisa submit, tapi Anda diberi badge <strong>telat</strong> di halaman tugas. Narsum tetap bisa menilai.</div>
+      </div>
+    </section>
+
+    <!-- STEP 7 — DISKUSI -->
+    <section class="guide-section" id="step-7">
+      <div class="section-head">
+        <div class="section-num purple">7</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Interaksi</div>
+          <h2 class="section-title">Diskusi, Refleksi & Catatan Pribadi</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Di setiap pertemuan, Anda bisa <strong>bertanya ke narsum</strong> lewat diskusi, menulis <strong>refleksi</strong> di akhir, dan menyimpan <strong>catatan pribadi</strong> yang hanya Anda yang bisa lihat.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconChat"></span> Tab Diskusi
+        </div>
+        <div class="mock-row" style="background:var(--maroon-soft);">
+          <div class="mock-avatar-sm" style="background:white;">N</div>
+          <div class="mock-info-sm">
+            <div class="t" style="display:flex;align-items:center;gap:6px;">Pak Narsum <span class="mock-badge-sm gold" style="font-size:8px;">📌 PIN</span></div>
+            <div class="s" style="line-height:1.5;">Jangan lupa tugas dikumpulkan sebelum deadline ya, Bapak/Ibu.</div>
+          </div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm">B</div>
+          <div class="mock-info-sm">
+            <div class="t">Budi Santoso</div>
+            <div class="s" style="line-height:1.5;">Terima kasih, Pak. Mau tanya — format RPP-nya wajib pakai template baru?</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text"><strong>Diskusi</strong> — tulis pertanyaan, balas narsum/sesama guru. Pin hanya narsum/admin.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text"><strong>Refleksi</strong> — tulis 1 hal yang akan Anda terapkan di kelas. Sekali saja per pertemuan.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text"><strong>Catatan pribadi</strong> — tulis bebas, hanya Anda yang bisa lihat. Bisa diedit kapan saja.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 8 — FEEDBACK -->
+    <section class="guide-section" id="step-8">
+      <div class="section-head">
+        <div class="section-num warning">8</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Bantu Kami Lebih Baik</div>
+          <h2 class="section-title">Isi Feedback Pertemuan</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Setiap pertemuan, Anda bisa memberi rating 1–5 untuk <strong>5 kategori</strong> (sekolah tuan rumah, penyelenggara, narsum, materi, umum). Feedback Anda <strong>anonim</strong> — tidak memengaruhi nilai Anda.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconStar"></span> Form Feedback
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg);border-radius:8px;">
+            <span style="font-size:11.5px;font-weight:700;color:var(--ink);">Kesiapan Materi</span>
+            <div style="display:flex;gap:3px;">
+              ${Array.from({length:5},(_,i)=>`<span style="width:22px;height:22px;border-radius:5px;background:${i<4?'var(--maroon)':'var(--surface)'};color:${i<4?'white':'var(--muted)'};font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);">${i+1}</span>`).join('')}
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg);border-radius:8px;">
+            <span style="font-size:11.5px;font-weight:700;color:var(--ink);">Kualitas Narsum</span>
+            <div style="display:flex;gap:3px;">
+              ${Array.from({length:5},(_,i)=>`<span style="width:22px;height:22px;border-radius:5px;background:${i<5?'var(--maroon)':'var(--surface)'};color:${i<5?'white':'var(--muted)'};font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);">${i+1}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text">Buka pertemuan → tab <strong>Feedback</strong>.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text">Beri rating <strong>1–5</strong> untuk tiap aspek. Minimal 1 aspek terisi.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text">Isi <strong>saran</strong> & <strong>kritik</strong> (opsional, tapi sangat membantu).</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">4</div>
+          <div class="action-text">Klik <strong>Kirim Feedback</strong>. Tidak bisa diedit setelah terkirim.</div>
+        </div>
+      </div>
+
+      <div class="tip-box info">
+        <span id="tipInfoFeedback"></span>
+        <div>Feedback yang jujur membantu panitia & narsum meningkatkan kualitas pertemuan berikutnya. <strong>Tidak ada penilaian benar/salah.</strong></div>
+      </div>
+    </section>
+
+    <!-- STEP 9 — AKTIVITAS & KARYA -->
+    <section class="guide-section" id="step-9">
+      <div class="section-head">
+        <div class="section-num maroon">9</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Rapor & Kontribusi</div>
+          <h2 class="section-title">Aktivitas Saya & Karya Guru</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        <strong>Aktivitas Saya</strong> adalah rapor digital Anda — riwayat presensi, tugas, dan sertifikat dalam satu tempat.
+        <strong>Karya Guru</strong> adalah tempat Anda membagikan <strong>inovasi</strong> dan <strong>aksi nyata</strong> ke galeri publik.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconActivity"></span> Aktivitas Saya
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;">
+          <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+            <div style="font-size:18px;font-weight:800;color:var(--maroon);">12</div>
+            <div style="font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.3px;text-transform:uppercase;margin-top:3px;">Hadir</div>
+          </div>
+          <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+            <div style="font-size:18px;font-weight:800;color:var(--maroon);">3</div>
+            <div style="font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.3px;text-transform:uppercase;margin-top:3px;">Izin</div>
+          </div>
+          <div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;">
+            <div style="font-size:18px;font-weight:800;color:var(--maroon);">1</div>
+            <div style="font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.3px;text-transform:uppercase;margin-top:3px;">Alfa</div>
+          </div>
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:var(--gold-soft);color:var(--gold-dark);">💡</div>
+          <div class="mock-info-sm">
+            <div class="t">Karya: Papan Pintar Interaktif</div>
+            <div class="s">Inovasi · Menunggu verifikasi</div>
+          </div>
+          <span class="mock-badge-sm warning">Menunggu</span>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text"><strong>Aktivitas Saya</strong> — lihat tab Presensi / Tugas / Sertifikat. Data otomatis terisi.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text"><strong>Karya Saya</strong> — ajukan inovasi (media/metode/modul) atau aksi nyata (implementasi materi KKG).</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text">Karya diverifikasi admin → kalau disetujui, tampil di <strong>galeri publik</strong> sekolah.</div>
+        </div>
+      </div>
+
+      <div class="tip-box success">
+        <span id="tipOkKarya"></span>
+        <div>Karya yang disetujui memberi <strong>tambahan poin</strong> di belakang layar (hanya admin yang lihat nominal). Fokus di kualitas, bukan poin.</div>
+      </div>
+    </section>
+
+    <!-- STEP 10 — SERTIFIKAT & PROFIL -->
+    <section class="guide-section" id="step-10">
+      <div class="section-head">
+        <div class="section-num gold">10</div>
+        <div class="section-title-wrap">
+          <div class="section-label">Penyelesaian</div>
+          <h2 class="section-title">Sertifikat & Kelola Profil</h2>
+        </div>
+      </div>
+
+      <p class="section-desc">
+        Di akhir periode, sertifikat digital Anda akan otomatis muncul di <strong>Aktivitas Saya</strong>.
+        Anda juga bisa mengubah <strong>foto profil</strong> dan <strong>PIN</strong> di halaman <strong>Profil</strong>.
+      </p>
+
+      <div class="mock-card">
+        <div class="mock-header">
+          <span id="mockIconAward"></span> Sertifikat
+        </div>
+        <div class="mock-row">
+          <div class="mock-avatar-sm" style="background:var(--gold-soft);color:var(--gold-dark);">🏆</div>
+          <div class="mock-info-sm">
+            <div class="t">Sertifikat KKG Periode 2026</div>
+            <div class="s">Terbit: 31 Des 2026 · No: KKG/2026/042</div>
+          </div>
+          <button class="mock-btn-mini secondary" style="font-size:10px;padding:5px 10px;">📥 PDF</button>
+        </div>
+      </div>
+
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-num">1</div>
+          <div class="action-text"><strong>Sertifikat</strong> — buka <strong>Aktivitas Saya</strong> → tab Sertifikat → klik <strong>PDF</strong> untuk download.</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">2</div>
+          <div class="action-text"><strong>Foto profil</strong> — buka <strong>Profil</strong> → klik avatar → upload foto (maks 200 KB, auto-kompres).</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">3</div>
+          <div class="action-text"><strong>Ganti PIN</strong> — di halaman Profil → masukkan PIN lama + PIN baru (5–6 digit).</div>
+        </div>
+        <div class="action-item">
+          <div class="action-num">4</div>
+          <div class="action-text">Setelah ganti PIN, Anda akan <strong>logout otomatis</strong>. Login ulang dengan PIN baru.</div>
+        </div>
+      </div>
+
+      <div class="page-link-box">
+        <div class="page-link-label"><strong>Sudah siap?</strong> Buka profil Anda →</div>
+        <a href="profil.html" class="page-link-btn">
+          <span id="pageLinkIconProfile"></span> Profil
+        </a>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section">
+      <div class="faq-header">
+        <div class="faq-icon-wrap" id="faqIcon"></div>
+        <h2 class="faq-title">Pertanyaan Umum</h2>
+        <p class="faq-sub">Kalau panduan di atas belum menjawab, cek FAQ ini dulu</p>
+      </div>
+
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>
+            Lupa PIN, harus bagaimana?
+            <span class="faq-chevron" id="faqChev1"></span>
+          </summary>
+          <div class="faq-answer">
+            Hubungi <strong>admin sekolah</strong> atau <strong>KS</strong> untuk reset PIN. Anda akan menerima PIN baru via WhatsApp atau secara langsung. Setelah login, segera ganti PIN di halaman <strong>Profil</strong>.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Kamera atau GPS tidak mau jalan?
+            <span class="faq-chevron" id="faqChev2"></span>
+          </summary>
+          <div class="faq-answer">
+            <strong>1)</strong> Cek izin browser: pengaturan HP → aplikasi → browser → izinkan Kamera & Lokasi. <strong>2)</strong> Refresh halaman atau tutup-buka browser. <strong>3)</strong> Kalau tetap gagal, minta KS untuk <strong>override presensi</strong> (tandai hadir manual dengan alasan).
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Presensi sudah ditutup, tapi saya hadir?
+            <span class="faq-chevron" id="faqChev3"></span>
+          </summary>
+          <div class="faq-answer">
+            Hubungi <strong>KS sekolah Anda</strong> — mereka bisa melakukan <strong>override presensi</strong> dalam batas <strong>H+1</strong> setelah pertemuan. Siapkan bukti (misal foto Anda di lokasi, chat, dll) sebagai lampiran override.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Tugas saya diminta revisi, apakah bisa kumpul ulang?
+            <span class="faq-chevron" id="faqChev4"></span>
+          </summary>
+          <div class="faq-answer">
+            <strong>Bisa, tanpa batas</strong>. Buka tugas → klik <strong>Perbarui Tugas</strong> → isi link baru → kirim. Narsum akan menilai ulang. Setiap perbaikan tercatat sebagai komentar "🔄 Memperbarui link pengumpulan."
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Kenapa poin/nilai saya tidak muncul?
+            <span class="faq-chevron" id="faqChev5"></span>
+          </summary>
+          <div class="faq-answer">
+            <strong>Poin disembunyikan</strong> dari tampilan guru — hanya admin yang bisa melihat. Anda tetap bisa melihat <strong>nilai tugas</strong> (1–100) di halaman detail tugas, dan status <strong>Hadir/Izin/Alfa</strong> di Aktivitas Saya.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Kapan sertifikat keluar?
+            <span class="faq-chevron" id="faqChev6"></span>
+          </summary>
+          <div class="faq-answer">
+            Setelah <strong>periode selesai</strong> dan admin menerbitkan sertifikat. Biasanya 1–2 minggu setelah pertemuan terakhir. Anda akan lihat di <strong>Aktivitas Saya → Sertifikat</strong>.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Bagaimana kalau saya mutasi ke sekolah lain?
+            <span class="faq-chevron" id="faqChev7"></span>
+          </summary>
+          <div class="faq-answer">
+            Hubungi <strong>admin KKG</strong>. Mereka akan memindahkan akun Anda ke sekolah baru. <strong>Semua data historis tetap tersimpan</strong> (presensi, tugas, feedback, karya) dan tidak hilang. Akun Anda tetap sama — hanya sekolahnya yang berubah.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Bisa presensi dari rumah kalau sakit ringan?
+            <span class="faq-chevron" id="faqChev8"></span>
+          </summary>
+          <div class="faq-answer">
+            Presensi tetap berbasis <strong>radius lokasi</strong>. Kalau di rumah di luar radius, presensi akan tercatat <strong>luar radius</strong> dan harus diverifikasi admin. Alternatif lebih baik: <strong>ajukan izin sakit</strong> dengan kategori <strong>Sakit (90 poin)</strong> kalau ada surat dokter.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Komentar di diskusi bisa dihapus?
+            <span class="faq-chevron" id="faqChev9"></span>
+          </summary>
+          <div class="faq-answer">
+            <strong>Ya</strong>, Anda bisa hapus komentar Anda sendiri. Narsum dan admin juga bisa hapus komentar apa pun. Yang di-pin narsum tetap tampil paling atas selama belum dihapus.
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>
+            Notifikasi belum masuk ke HP?
+            <span class="faq-chevron" id="faqChev10"></span>
+          </summary>
+          <div class="faq-answer">
+            NAKULAKU <strong>belum punya notifikasi push</strong> di versi ini. Cek berkala di <strong>Beranda</strong> dan <strong>Aktivitas Saya</strong> untuk melihat update terbaru. Fitur notifikasi akan ditambahkan di fase berikutnya.
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Footer CTA -->
+    <div class="guide-footer-cta">
+      <div class="guide-footer-cta-inner">
+        <h3>Siap Mulai Perjalanan Anda?</h3>
+        <p>Login sekarang dan mulai jelajahi semua fitur NAKULAKU. Kalau ada kendala, hubungi admin sekolah.</p>
+        <div class="guide-footer-cta-actions">
+          <a href="login.html" class="hero-cta primary">
+            <span id="ctaIconLogin2"></span>
+            Masuk Sekarang
+          </a>
+          <a href="beranda.html" class="hero-cta secondary">
+            <span id="ctaIconHome2"></span>
+            Ke Beranda
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Back to top -->
+<button class="back-to-top" id="backToTop" aria-label="Kembali ke atas"></button>
+
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/ui.js"></script>
+<script>
+// ═══════════════════════════════════════════════
+// ICON RENDER (semua ikon via JS — hindari ${} di HTML statis)
+// ═══════════════════════════════════════════════
+const ICONS_MAP = {
+  metaSteps: { icon: 'list' },
+  metaDurasi: { icon: 'clock' },
+  ctaIconLogin: { icon: 'logIn' },
+  ctaIconDown: { icon: 'chevronDown' },
+  ctaIconLogin2: { icon: 'logIn' },
+  ctaIconHome2: { icon: 'home' },
+  introIcon: { icon: 'info' },
+  mockIconLogin: { icon: 'lock' },
+  mockIconHome: { icon: 'home' },
+  mockIconCam: { icon: 'camera' },
+  mockIconFile: { icon: 'fileText' },
+  mockIconBook: { icon: 'book' },
+  mockIconClip: { icon: 'clipboard' },
+  mockIconChat: { icon: 'messageCircle' },
+  mockIconStar: { icon: 'star' },
+  mockIconActivity: { icon: 'activity' },
+  mockIconAward: { icon: 'award' },
+  tipWarnLogin: { icon: 'alertTriangle' },
+  tipOkHome: { icon: 'checkCircle' },
+  tipInfoWindow: { icon: 'clock' },
+  tipWarnRadius: { icon: 'mapPin' },
+  tipDangerCamera: { icon: 'alertCircle' },
+  tipInfoMulti: { icon: 'calendar' },
+  tipOkSubmit: { icon: 'checkCircle' },
+  tipWarnDeadline: { icon: 'clock' },
+  tipInfoFeedback: { icon: 'star' },
+  tipOkKarya: { icon: 'sparkles' },
+  faqIcon: { icon: 'helpCircle' },
+  faqChev1: { icon: 'chevronDown' },
+  faqChev2: { icon: 'chevronDown' },
+  faqChev3: { icon: 'chevronDown' },
+  faqChev4: { icon: 'chevronDown' },
+  faqChev5: { icon: 'chevronDown' },
+  faqChev6: { icon: 'chevronDown' },
+  faqChev7: { icon: 'chevronDown' },
+  faqChev8: { icon: 'chevronDown' },
+  faqChev9: { icon: 'chevronDown' },
+  faqChev10: { icon: 'chevronDown' },
+  pillYtIcon: { icon: 'play' },
+  pillDriveIcon: { icon: 'fileText' },
+  pillDrive2Icon: { icon: 'fileText' },
+  pageLinkIconLogin: { icon: 'logIn' },
+  pageLinkIconProfile: { icon: 'user' },
+  tipWarnLogin2: { icon: 'alertTriangle' },
+  headerBtnIcon: { icon: 'logIn' },
+};
+
+Object.keys(ICONS_MAP).forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const iconName = ICONS_MAP[id].icon;
+  if (window.Icons && Icons.get) {
+    const svg = Icons.get(iconName, { class: 'icon-sm' });
+    if (svg) el.innerHTML = svg;
+  }
+});
+
+// Fallback untuk helpCircle jika tidak ada di icons.js
+if (window.Icons && !Icons.paths?.helpCircle) {
+  const faqIcon = document.getElementById('faqIcon');
+  if (faqIcon) {
+    faqIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// TOC BUILDER
+// ═══════════════════════════════════════════════
+const SECTIONS = [
+  { id: 'step-1',  num: '1',  label: 'Login',            color: 'maroon' },
+  { id: 'step-2',  num: '2',  label: 'Beranda',          color: 'gold' },
+  { id: 'step-3',  num: '3',  label: 'Presensi',         color: 'success' },
+  { id: 'step-4',  num: '4',  label: 'Ajukan Izin',      color: 'info' },
+  { id: 'step-5',  num: '5',  label: 'Baca Materi',      color: 'purple' },
+  { id: 'step-6',  num: '6',  label: 'Kumpulkan Tugas',  color: 'info' },
+  { id: 'step-7',  num: '7',  label: 'Diskusi & Refleksi', color: 'purple' },
+  { id: 'step-8',  num: '8',  label: 'Feedback',         color: 'warning' },
+  { id: 'step-9',  num: '9',  label: 'Aktivitas & Karya', color: 'maroon' },
+  { id: 'step-10', num: '10', label: 'Sertifikat & Profil', color: 'gold' },
+];
+
+// Build TOC sidebar
+const tocListEl = document.getElementById('tocList');
+if (tocListEl) {
+  tocListEl.innerHTML = SECTIONS.map(s => `
+    <a href="#${s.id}" class="toc-item" data-target="${s.id}">
+      <span class="toc-num">${s.num}</span>
+      <span>${s.label}</span>
+    </a>
+  `).join('');
+}
+
+// Build mobile step chips
+const stepPickerChipsEl = document.getElementById('stepPickerChips');
+if (stepPickerChipsEl) {
+  stepPickerChipsEl.innerHTML = SECTIONS.map(s => `
+    <a href="#${s.id}" class="step-picker-chip" data-target="${s.id}">
+      <span style="font-weight:800;">${s.num}</span> ${s.label}
+    </a>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════
+// SMOOTH SCROLL
+// ═══════════════════════════════════════════════
+document.querySelectorAll('a[href^="#step-"]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    const targetId = link.getAttribute('href').substring(1);
+    const target = document.getElementById(targetId);
+    if (!target) return;
+    e.preventDefault();
+    const headerH = document.getElementById('appHeader')?.offsetHeight || 60;
+    const top = target.getBoundingClientRect().top + window.pageYOffset - headerH - 20;
+    window.scrollTo({ top, behavior: 'smooth' });
+  });
+});
+
+// ═══════════════════════════════════════════════
+// ACTIVE TOC ON SCROLL (IntersectionObserver)
+// ═══════════════════════════════════════════════
+const allSections = SECTIONS.map(s => document.getElementById(s.id)).filter(Boolean);
+
+function updateActiveTOC() {
+  const scrollPos = window.scrollY + 100;
+  let active = null;
+  allSections.forEach(sec => {
+    if (sec.offsetTop <= scrollPos) active = sec.id;
+  });
+
+  document.querySelectorAll('.toc-item, .step-picker-chip').forEach(el => {
+    el.classList.toggle('active', el.dataset.target === active);
+  });
+
+  // Auto-scroll TOC sidebar supaya aktif tetap terlihat
+  const tocActive = tocListEl?.querySelector('.toc-item.active');
+  if (tocActive && window.innerWidth >= 1024) {
+    tocActive.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  // Auto-scroll mobile chip
+  const mobileActive = stepPickerChipsEl?.querySelector('.step-picker-chip.active');
+  if (mobileActive && window.innerWidth < 1024) {
+    const wrap = mobileActive.closest('.step-picker-mobile');
+    if (wrap) {
+      const chipLeft = mobileActive.offsetLeft;
+      const chipW = mobileActive.offsetWidth;
+      const wrapW = wrap.offsetWidth;
+      wrap.scrollTo({ left: chipLeft - wrapW / 2 + chipW / 2, behavior: 'smooth' });
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════
+// SCROLL PROGRESS + BACK TO TOP
+// ═══════════════════════════════════════════════
+const progressEl = document.getElementById('scrollProgress');
+const backTopBtn = document.getElementById('backToTop');
+
+function updateScroll() {
+  // Progress
+  const scrollTop = window.scrollY;
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docH > 0 ? (scrollTop / docH) * 100 : 0;
+  if (progressEl) progressEl.style.width = pct + '%';
+
+  // Back to top
+  if (backTopBtn) {
+    backTopBtn.classList.toggle('show', scrollTop > 400);
+  }
+
+  // TOC active
+  updateActiveTOC();
+}
+
+window.addEventListener('scroll', () => requestAnimationFrame(updateScroll), { passive: true });
+window.addEventListener('resize', () => requestAnimationFrame(updateScroll));
+
+// Back to top click
+if (backTopBtn) {
+  backTopBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>`;
+  backTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+// Initial
+updateScroll();
+
+// ═══════════════════════════════════════════════
+// SMART HEADER (login state)
+// ═══════════════════════════════════════════════
+(async () => {
+  const token = Api.getToken();
+  const btn = document.getElementById('headerBtn');
+  const btnText = document.getElementById('headerBtnText');
+  const btnIcon = document.getElementById('headerBtnIcon');
+
+  if (!token) {
+    // Public — tombol "Masuk"
+    btn.href = 'login.html';
+    btnText.textContent = 'Masuk';
+    btnIcon.innerHTML = Icons.get('logIn', { class: 'icon-sm' });
+    return;
+  }
+
+  try {
+    const v = await Api.verify(token);
+    if (v.valid) {
+      // Logged in — tombol "Ke Beranda"
+      btn.href = 'beranda.html';
+      btnText.textContent = 'Ke Beranda';
+      btnIcon.innerHTML = Icons.get('home', { class: 'icon-sm' });
+    } else {
+      btn.href = 'login.html';
+      btnText.textContent = 'Masuk';
+      btnIcon.innerHTML = Icons.get('logIn', { class: 'icon-sm' });
+    }
+  } catch {
+    btn.href = 'login.html';
+    btnText.textContent = 'Masuk';
+    btnIcon.innerHTML = Icons.get('logIn', { class: 'icon-sm' });
+  }
+})();
+</script>
+
+</body>
+</html>
