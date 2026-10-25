@@ -992,7 +992,30 @@ function renderLinkPill(url, opts = {}) {
 
 // Cek apakah status presensi pertemuan: buka/tutup/belum
 function hitungStatusPresensi(p) {
-  if (!p.tanggal || !p.jam_mulai || !p.jam_selesai) return 'belum';
+  if (!p.tanggal) return 'belum';
+
+  // ── BELAJAR MANDIRI: whole-day window ──
+  if (p.mode_kegiatan === 'belajar_mandiri') {
+    const tgl = String(p.tanggal).slice(0, 10);
+    const buka = new Date(`${tgl}T00:00:00+07:00`);
+    let tutup;
+    if (p.presensi_tutup) {
+      const t = String(p.presensi_tutup).slice(0, 8);
+      tutup = new Date(`${tgl}T${t}+07:00`);
+    } else if (p.batas_tepat_waktu) {
+      const t = String(p.batas_tepat_waktu).slice(0, 8);
+      tutup = new Date(new Date(`${tgl}T${t}+07:00`).getTime() + 4 * 60 * 60 * 1000);
+    } else {
+      tutup = new Date(`${tgl}T23:59:59+07:00`);
+    }
+    const now = new Date();
+    if (now < buka) return 'belum';
+    if (now > tutup) return 'tutup';
+    return 'buka';
+  }
+
+  // ── TATAP MUKA: logic existing ──
+  if (!p.jam_mulai || !p.jam_selesai) return 'belum';
   const tgl = String(p.tanggal).slice(0, 10);
   const getTime = (s) => {
     if (!s) return null;
@@ -1079,12 +1102,19 @@ function renderHero() {
   const p = data.pertemuan;
   document.title = p.judul + ' — Admin NAKULAKU';
 
+  const isMandiri = p.mode_kegiatan === 'belajar_mandiri';
+
   const statusPresensi = hitungStatusPresensi(p);
   const statusPresensiChip = statusPresensi === 'buka'
     ? `<span class="hero-chip presensi-buka">${Icons.get('camera', { class: 'icon-sm' })} Presensi BUKA</span>`
     : statusPresensi === 'tutup'
       ? `<span class="hero-chip presensi-tutup">${Icons.get('lock', { class: 'icon-sm' })} Presensi TUTUP</span>`
       : `<span class="hero-chip presensi-tutup">${Icons.get('clock', { class: 'icon-sm' })} Presensi BELUM</span>`;
+
+  // Chip mode kegiatan
+  const modeChip = isMandiri
+    ? `<span class="hero-chip" style="background:rgba(201,169,97,.3);border-color:rgba(201,169,97,.5);color:#FBF4E0;">${Icons.get('book', { class: 'icon-sm' })} Belajar Mandiri</span>`
+    : `<span class="hero-chip" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);">${Icons.get('users', { class: 'icon-sm' })} Tatap Muka</span>`;
 
   // Hitung quick stats
   const totalHadir = data.jumlah_presensi || 0;
@@ -1096,6 +1126,9 @@ function renderHero() {
   const narsumText = narsumNama
     ? `Narasumber: <strong>${UI.escapeHtml(narsumNama)}</strong>`
     : 'Narasumber: <em style="opacity:.7;">Belum ditunjuk</em>';
+
+  // Label statistik "Hadir" → "Kumpul Bukti" untuk mandiri
+  const labelHadir = isMandiri ? 'Kumpul Bukti' : 'Hadir';
 
   document.getElementById('hero').innerHTML = `
     <div class="hero-breadcrumb">
@@ -1110,9 +1143,13 @@ function renderHero() {
       <div class="hero-badges">
         <span class="hero-chip">${Icons.get('calendar', { class: 'icon-sm' })} #${p.urutan}</span>
         <span class="hero-chip status-${p.status}">${(p.status || 'draft').toUpperCase()}</span>
+        ${modeChip}
         ${statusPresensiChip}
       </div>
       <div class="hero-actions">
+        <button class="hero-action-btn" id="btnToggleMode" title="Ubah mode kegiatan">
+          ${Icons.get('refreshCw', { class: 'icon-sm' })}
+        </button>
         <button class="hero-action-btn" id="btnPreview" title="Preview sebagai guru">
           ${Icons.get('eye', { class: 'icon-sm' })}
         </button>
@@ -1132,12 +1169,14 @@ function renderHero() {
         ${Icons.get('calendar', { class: 'icon-sm' })}
         ${UI.formatTanggal(p.tanggal)}${p.jam_mulai ? ' · ' + UI.formatJam(p.jam_mulai) + (p.jam_selesai ? '–' + UI.formatJam(p.jam_selesai) : '') : ''}
       </div>
-      ${p.lokasi_nama ? `
-        <div class="hero-meta">
-          ${Icons.get('mapPin', { class: 'icon-sm' })}
-          ${UI.escapeHtml(p.lokasi_nama)}
-        </div>
-      ` : ''}
+      ${isMandiri
+        ? `<div class="hero-meta">${Icons.get('book', { class: 'icon-sm' })} <em>Mode belajar mandiri — tanpa presensi fisik</em></div>`
+        : (p.lokasi_nama ? `
+          <div class="hero-meta">
+            ${Icons.get('mapPin', { class: 'icon-sm' })}
+            ${UI.escapeHtml(p.lokasi_nama)}
+          </div>
+        ` : '')}
       <div class="hero-meta">
         ${Icons.get('userCheck', { class: 'icon-sm' })}
         ${narsumText}
@@ -1147,7 +1186,7 @@ function renderHero() {
     <div class="hero-stats">
       <div class="hero-stat">
         <div class="hero-stat-val">${totalHadir}</div>
-        <div class="hero-stat-label">Hadir</div>
+        <div class="hero-stat-label">${labelHadir}</div>
       </div>
       <div class="hero-stat">
         <div class="hero-stat-val" style="color:${pendingVerif > 0 ? '#FCA5A5' : 'inherit'}">${pendingVerif}</div>
@@ -1161,6 +1200,30 @@ function renderHero() {
   `;
 
   // Action handlers
+  document.getElementById('btnToggleMode').addEventListener('click', async () => {
+    const p2 = data.pertemuan;
+    const modeLama = p2.mode_kegiatan || 'tatap_muka';
+    const modeBaru = modeLama === 'belajar_mandiri' ? 'tatap_muka' : 'belajar_mandiri';
+    const labelLama = modeLama === 'belajar_mandiri' ? 'Belajar Mandiri' : 'Tatap Muka';
+    const labelBaru = modeBaru === 'belajar_mandiri' ? 'Belajar Mandiri' : 'Tatap Muka';
+
+    const ok = await UI.konfirmasi(
+      'Ubah Mode Kegiatan',
+      `Ubah mode dari "${labelLama}" ke "${labelBaru}"?\n\nPresensi guru akan menyesuaikan otomatis. Presensi dan feedback lama tetap dipertahankan.`,
+      { okText: 'Ubah Mode' }
+    );
+    if (!ok) return;
+
+    const res = await Api.call('admin.pertemuan.simpan', {
+      pertemuan: { ...p2, mode_kegiatan: modeBaru },
+    });
+    if (!res.ok) { UI.gagal(res.error); return; }
+
+    data.pertemuan.mode_kegiatan = modeBaru;
+    renderHero();
+    UI.sukses(`Mode diubah ke "${labelBaru}".`);
+  });
+
   document.getElementById('btnPreview').addEventListener('click', () => {
     window.open(`../pertemuan.html?id=${pertemuanId}`, '_blank', 'noopener');
   });
@@ -1810,7 +1873,7 @@ async function loadVerifikasi() {
     return;
   }
 
-  // ⚠️ Filter by pertemuan_id di frontend (backend bug — lihat catatan)
+  // Filter by pertemuan_id di frontend (backend bug — lihat catatan)
   const semua = res.data || [];
   daftarVerifikasi = semua.filter(v => v.pertemuan_id === pertemuanId);
 
