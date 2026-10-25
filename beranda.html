@@ -516,6 +516,68 @@
     .hero-avatar { width: 76px; height: 76px; font-size: 30px; }
     .hero-stat-val { font-size: 22px; }
   }
+  /* ═══════════════════════════════════════════════
+     BELAJAR MANDIRI — amber/gold variant
+     ═══════════════════════════════════════════════ */
+  .pertemuan-premium.mandiri {
+    background: linear-gradient(135deg, #FEF9E7 0%, #FCF0D0 100%);
+    border-color: rgba(201,169,97,.4);
+  }
+  .pertemuan-premium.mandiri:hover {
+    border-color: var(--gold);
+    box-shadow: 0 8px 20px rgba(201,169,97,.25);
+  }
+  .pertemuan-premium.mandiri .pertemuan-num-premium {
+    background: linear-gradient(135deg, #FEF3C7 0%, #FCD34D 100%);
+    color: #78350F;
+    border-color: rgba(180,83,9,.25);
+  }
+  .pertemuan-premium.mandiri.selesai .pertemuan-num-premium {
+    background: linear-gradient(135deg, #D1FAE5 0%, #86EFAC 100%);
+    color: var(--success);
+    border-color: rgba(21,128,61,.25);
+  }
+  .pertemuan-badge-mandiri {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(201,169,97,.22);
+    color: #78350F;
+    border: 1px solid rgba(201,169,97,.4);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .3px;
+    margin-top: 5px;
+  }
+  .pertemuan-badge-mandiri.done {
+    background: var(--success-soft);
+    color: var(--success);
+    border-color: rgba(21,128,61,.25);
+  }
+
+  /* Countdown amber untuk mandiri */
+  .countdown-card.mandiri {
+    background: linear-gradient(135deg, #FEF9E7 0%, #FCF0D0 100%);
+    border-color: rgba(201,169,97,.4);
+  }
+  .countdown-card.mandiri .countdown-title { color: #78350F; }
+  .countdown-card.mandiri .countdown-desc { color: #92400E; }
+  .countdown-card.mandiri .countdown-chevron { color: var(--gold-dark); }
+  .countdown-card.mandiri .countdown-icon {
+    background: #FEF3C7;
+    color: var(--gold-dark);
+  }
+
+  /* Progress CTA amber untuk mandiri */
+  .progress-cta.mandiri {
+    background: linear-gradient(135deg, #B45309 0%, #D97706 100%);
+    box-shadow: 0 6px 16px rgba(180,83,9,.25);
+  }
+  .progress-cta.mandiri:hover {
+    box-shadow: 0 10px 24px rgba(180,83,9,.35);
+  }
 </style>
 </head>
 <body>
@@ -1120,12 +1182,16 @@ function renderKartuProgres() {
     infoText.innerHTML = '<span>Selamat! Semua pertemuan telah selesai 🎉</span>';
     cta.classList.add('hidden');
   } else if (lanjut) {
-    infoIcon.innerHTML = Icons.get('arrowRight', { class: 'icon-sm' });
-    infoIcon.style.background = 'var(--gold-soft)';
-    infoIcon.style.color = 'var(--gold-dark)';
+    const isMandiri = lanjut.mode_kegiatan === 'belajar_mandiri';
+    infoIcon.innerHTML = Icons.get(isMandiri ? 'book' : 'arrowRight', { class: 'icon-sm' });
+    infoIcon.style.background = isMandiri ? '#FEF3C7' : 'var(--gold-soft)';
+    infoIcon.style.color = isMandiri ? '#B45309' : 'var(--gold-dark)';
     infoText.innerHTML = `<span>Lanjut: <strong>Pertemuan #${lanjut.urutan}</strong> — ${UI.escapeHtml(lanjut.judul)}</span>`;
     cta.href = 'pertemuan.html?id=' + lanjut.id;
-    ctaText.textContent = 'Buka Pertemuan #' + lanjut.urutan;
+    cta.classList.toggle('mandiri', isMandiri);
+    ctaText.textContent = isMandiri
+      ? '📚 Kumpul Bukti Belajar #' + lanjut.urutan
+      : 'Buka Pertemuan #' + lanjut.urutan;
     cta.classList.remove('hidden');
   } else {
     infoIcon.innerHTML = Icons.get('clock', { class: 'icon-sm' });
@@ -1160,17 +1226,25 @@ function renderCountdownNext() {
   else if (diffDays === 1) text = 'Besok';
   else text = `${diffDays} hari lagi`;
 
+  const isMandiri = upcoming.mode_kegiatan === 'belajar_mandiri';
+  const cls = isMandiri ? 'mandiri' : '';
+  const iconName = isMandiri ? 'book' : 'calendar';
+
+  const descTambahan = isMandiri
+    ? '· Kumpulkan bukti belajar'
+    : (upcoming.lokasi_nama ? '· ' + UI.escapeHtml(upcoming.lokasi_nama) : '');
+
   el.innerHTML = `
-    <a href="pertemuan.html?id=${upcoming.id}" class="countdown-card">
+    <a href="pertemuan.html?id=${upcoming.id}" class="countdown-card ${cls}">
       <div class="countdown-icon">
-        ${Icons.get('calendar', { class: 'icon' })}
+        ${Icons.get(iconName, { class: 'icon' })}
       </div>
       <div class="countdown-body">
         <div class="countdown-title">⏰ Pertemuan berikutnya ${text}</div>
         <div class="countdown-desc">
           #${upcoming.urutan} — ${UI.escapeHtml(upcoming.judul)}
           · ${UI.formatTanggalPendek(upcoming.tanggal)}
-          ${upcoming.lokasi_nama ? '· ' + UI.escapeHtml(upcoming.lokasi_nama) : ''}
+          ${descTambahan}
         </div>
       </div>
       <span class="countdown-chevron">${Icons.get('chevronRight', { class: 'icon' })}</span>
@@ -1186,10 +1260,24 @@ function renderListPertemuan() {
   el.innerHTML = daftarPertemuan.map((p, idx) => {
     const locked = !p.terbuka;
     const done = p.selesai;
-    const cls = locked ? 'locked' : (done ? 'selesai' : '');
+    const isMandiri = p.mode_kegiatan === 'belajar_mandiri';
+
+    const cls = [
+      locked ? 'locked' : '',
+      done ? 'selesai' : '',
+      isMandiri ? 'mandiri' : '',
+    ].filter(Boolean).join(' ');
 
     let badgeHtml = '';
-    if (done) {
+    if (isMandiri && !locked) {
+      badgeHtml = `
+        <div class="pertemuan-badge-mandiri ${done ? 'done' : ''}">
+          ${done
+            ? Icons.get('check', { class: 'icon-sm' }) + ' Belajar Mandiri · Selesai'
+            : Icons.get('book', { class: 'icon-sm' }) + ' Belajar Mandiri'}
+        </div>
+      `;
+    } else if (done) {
       badgeHtml = `
         <div style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;background:var(--success-soft);color:var(--success);margin-top:5px;">
           ${Icons.get('check', { class: 'icon-sm' })} Selesai
@@ -1203,6 +1291,19 @@ function renderListPertemuan() {
       `;
     }
 
+    // Meta baris ke-2: lokasi (tatap muka) atau "kumpulkan bukti" (mandiri)
+    const metaBaris2 = isMandiri
+      ? `
+        <div class="pertemuan-meta-premium">
+          ${Icons.get('book', { class: 'icon-sm' })} Kumpulkan bukti belajar
+        </div>
+      `
+      : (p.lokasi_nama ? `
+        <div class="pertemuan-meta-premium">
+          ${Icons.get('mapPin', { class: 'icon-sm' })} ${UI.escapeHtml(p.lokasi_nama)}
+        </div>
+      ` : '');
+
     return `
       <div class="pertemuan-premium ${cls}" style="animation-delay:${idx * 0.05}s"
            onclick="${locked ? 'showLocked(' + p.id + ')' : 'bukaPertemuan(' + p.id + ')'}">
@@ -1214,11 +1315,7 @@ function renderListPertemuan() {
           <div class="pertemuan-meta-premium">
             ${Icons.get('calendar', { class: 'icon-sm' })} ${UI.formatTanggal(p.tanggal)}
           </div>
-          ${p.lokasi_nama ? `
-            <div class="pertemuan-meta-premium">
-              ${Icons.get('mapPin', { class: 'icon-sm' })} ${UI.escapeHtml(p.lokasi_nama)}
-            </div>
-          ` : ''}
+          ${metaBaris2}
           ${badgeHtml}
         </div>
         <span class="chevron-premium">${Icons.get(locked ? 'lock' : 'chevronRight', { class: 'icon' })}</span>
