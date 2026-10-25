@@ -219,6 +219,77 @@
     </div>
   </section>
 
+  <!-- STAGE BELAJAR MANDIRI -->
+  <section id="stageMandiri" class="hidden">
+    <div class="stage-card">
+      <div class="info-header">
+        <div class="info-badge" style="background: var(--gold-soft); color: var(--gold-dark);">
+          <span data-icon="book" class="icon-sm"></span> BELAJAR MANDIRI
+        </div>
+        <div class="info-pertemuan" id="mandiriJudul">Memuat…</div>
+        <div class="info-sub" id="mandiriSub">—</div>
+      </div>
+
+      <div style="background: #EFF6FF; border: 1.5px solid #BFDBFE; border-radius: 12px; padding: 12px; margin-bottom: 14px; font-size: 12px; color: #1E40AF; line-height: 1.5;">
+        <strong>ℹ️ Kegiatan ini belajar mandiri.</strong> Tidak perlu selfie + GPS. Kumpulkan bukti belajar Anda di bawah.
+      </div>
+
+      <div class="field">
+        <label class="label">Jenis Bukti Belajar *</label>
+        <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px;">
+          <label class="guru-pick-item" style="border:1.5px solid var(--border); border-radius:12px; padding:12px;">
+            <input type="radio" name="jenisBukti" value="refleksi" checked />
+            <div class="guru-pick-body">
+              <div class="guru-pick-name">📝 Refleksi Tertulis</div>
+              <div class="guru-pick-sub">Tulis refleksi minimal 150 kata</div>
+            </div>
+          </label>
+          <label class="guru-pick-item" style="border:1.5px solid var(--border); border-radius:12px; padding:12px;">
+            <input type="radio" name="jenisBukti" value="foto" />
+            <div class="guru-pick-body">
+              <div class="guru-pick-name">📸 Foto Bukti Kerja</div>
+              <div class="guru-pick-sub">Upload foto hasil belajar / praktek</div>
+            </div>
+          </label>
+          <label class="guru-pick-item" style="border:1.5px solid var(--border); border-radius:12px; padding:12px;">
+            <input type="radio" name="jenisBukti" value="link" />
+            <div class="guru-pick-body">
+              <div class="guru-pick-name">🔗 Link Laporan</div>
+              <div class="guru-pick-sub">URL ke dokumen / video / form</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div id="inputRefleksi" class="field" style="margin-top:14px;">
+        <label class="label">Refleksi * <span id="kataCount" style="color:var(--muted); font-weight:600;">(0/150 kata)</span></label>
+        <textarea id="refleksiText" class="input" rows="8" placeholder="Ceritakan apa yang Anda pelajari, kendala, dan rencana tindak lanjut…" style="resize:vertical; width:100%;"></textarea>
+      </div>
+
+      <div id="inputFoto" class="field hidden" style="margin-top:14px;">
+        <label class="label">Upload Foto *</label>
+        <input type="file" id="fotoFile" class="input" accept="image/*" capture="environment" style="width:100%;" />
+        <div id="fotoPreview" style="margin-top:8px;"></div>
+      </div>
+
+      <div id="inputLink" class="field hidden" style="margin-top:14px;">
+        <label class="label">URL Laporan *</label>
+        <input type="url" id="linkInput" class="input" placeholder="https://drive.google.com/…" style="width:100%;" />
+      </div>
+
+      <div class="field" style="margin-top:14px;">
+        <label class="label">Catatan Tambahan (opsional)</label>
+        <textarea id="catatanMandiri" class="input" rows="2" placeholder="Info tambahan…" style="resize:vertical; width:100%;"></textarea>
+      </div>
+
+      <div id="alertMandiri" class="alert alert-error hidden" style="margin-top:12px;"></div>
+
+      <button class="btn btn-primary btn-full" id="btnKirimMandiri" style="margin-top:16px;">
+        <span data-icon="send" class="icon-sm"></span> Kirim Bukti Belajar
+      </button>
+    </div>
+  </section>
+
   <!-- STAGE 4: SUKSES -->
   <section id="stageSukses" class="hidden">
     <div class="stage-card">
@@ -275,7 +346,7 @@ pertemuanId = params.get('id');
 if (pertemuanId) document.getElementById('btnBack').href = 'pertemuan.html?id=' + pertemuanId;
 
 function showStage(nama) {
-  ['stageLoading', 'stageKamera', 'stagePreview', 'stageSukses', 'stageError'].forEach(id => {
+  ['stageLoading', 'stageKamera', 'stagePreview', 'stageSukses', 'stageError', 'stageMandiri'].forEach(id => {
     document.getElementById(id).classList.toggle('hidden', id !== nama);
   });
 }
@@ -295,17 +366,24 @@ function showStage(nama) {
 
   if (res.data.presensi_saya) {
     showStage('stageError');
-    document.getElementById('errorDesc').textContent = 'Anda sudah presensi.';
+    const isMandiri = pertemuanData.mode_kegiatan === 'belajar_mandiri';
+    document.getElementById('errorDesc').textContent = isMandiri
+      ? 'Anda sudah mengirim bukti belajar untuk pertemuan ini.'
+      : 'Anda sudah presensi.';
     return;
   }
 
-  document.getElementById('judulPertemuan').textContent = pertemuanData.judul;
-  document.getElementById('subPertemuan').textContent = UI.formatTanggal(pertemuanData.tanggal) + ' · ' + (pertemuanData.lokasi_nama || '');
-
-  showStage('stageKamera');
-  mulaiClock();
-  mulaiKamera();
-  mulaiGPS();
+  // ── Branch by mode ──
+  if (pertemuanData.mode_kegiatan === 'belajar_mandiri') {
+    initBelajarMandiri(res.data);
+  } else {
+    document.getElementById('judulPertemuan').textContent = pertemuanData.judul;
+    document.getElementById('subPertemuan').textContent = UI.formatTanggal(pertemuanData.tanggal) + ' · ' + (pertemuanData.lokasi_nama || '');
+    showStage('stageKamera');
+    mulaiClock();
+    mulaiKamera();
+    mulaiGPS();
+  }
 })();
 
 function mulaiClock() {
@@ -617,6 +695,150 @@ document.getElementById('btnKirim').addEventListener('click', async () => {
   showStage('stageSukses');
   UI.sukses('Berhasil!');
 });
+// ═══════════════════════════════════════════════════
+// BELAJAR MANDIRI
+// ═══════════════════════════════════════════════════
+let mandiriJenis = 'refleksi';
+let mandiriFotoBase64 = null;
+
+function initBelajarMandiri(detailRes) {
+  showStage('stageMandiri');
+  document.getElementById('mandiriJudul').textContent = pertemuanData.judul;
+  document.getElementById('mandiriSub').textContent =
+    UI.formatTanggal(pertemuanData.tanggal) +
+    (pertemuanData.batas_tepat_waktu
+      ? ' · Batas tepat waktu: ' + String(pertemuanData.batas_tepat_waktu).slice(0, 5) + ' WIB'
+      : '');
+
+  // Cek window
+  if (detailRes.presensi_status === 'belum') {
+    showStage('stageError');
+    document.getElementById('errorDesc').textContent = 'Belum waktunya submit bukti belajar.';
+    return;
+  }
+  if (detailRes.presensi_status === 'tutup') {
+    showStage('stageError');
+    document.getElementById('errorDesc').textContent = 'Waktu pengumpulan sudah ditutup.';
+    return;
+  }
+
+  // Radio switch
+  document.querySelectorAll('input[name="jenisBukti"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      mandiriJenis = radio.value;
+      document.getElementById('inputRefleksi').classList.toggle('hidden', mandiriJenis !== 'refleksi');
+      document.getElementById('inputFoto').classList.toggle('hidden', mandiriJenis !== 'foto');
+      document.getElementById('inputLink').classList.toggle('hidden', mandiriJenis !== 'link');
+    });
+  });
+
+  // Refleksi counter
+  document.getElementById('refleksiText').addEventListener('input', (e) => {
+    const count = e.target.value.trim().split(/\s+/).filter(Boolean).length;
+    const el = document.getElementById('kataCount');
+    el.textContent = `(${count}/150 kata)`;
+    el.style.color = count >= 150 ? 'var(--success, #16A34A)' : 'var(--muted)';
+  });
+
+  // Foto upload + kompres
+  document.getElementById('fotoFile').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    mandiriFotoBase64 = await kompresGambar(file);
+    document.getElementById('fotoPreview').innerHTML =
+      `<img src="${mandiriFotoBase64}" style="width:100%;border-radius:12px;border:1.5px solid var(--border);" />`;
+  });
+
+  // Submit
+  document.getElementById('btnKirimMandiri').addEventListener('click', submitMandiri);
+}
+
+function kompresGambar(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxW = 1280;
+        const ratio = Math.min(maxW / img.width, 1);
+        canvas.width = Math.round(img.width * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/webp', 0.75));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function submitMandiri() {
+  const btn = document.getElementById('btnKirimMandiri');
+  const alert = document.getElementById('alertMandiri');
+  alert.classList.add('hidden');
+
+  let buktiIsi = '';
+  let buktiMeta = {};
+
+  if (mandiriJenis === 'refleksi') {
+    const text = document.getElementById('refleksiText').value.trim();
+    const wordCount = text.split(/\s+/).filter(Boolean).length;
+    if (wordCount < 150) {
+      alert.textContent = `Refleksi minimal 150 kata (sekarang ${wordCount}).`;
+      alert.classList.remove('hidden');
+      return;
+    }
+    buktiIsi = text;
+    buktiMeta = { kata: wordCount };
+  } else if (mandiriJenis === 'foto') {
+    if (!mandiriFotoBase64) {
+      alert.textContent = 'Pilih foto dulu.';
+      alert.classList.remove('hidden');
+      return;
+    }
+    buktiIsi = mandiriFotoBase64;
+    buktiMeta = { size_kb: Math.round((mandiriFotoBase64.length * 0.75) / 1024) };
+  } else if (mandiriJenis === 'link') {
+    const url = document.getElementById('linkInput').value.trim();
+    if (!/^https?:\/\/.+/i.test(url)) {
+      alert.textContent = 'URL tidak valid (harus http:// atau https://).';
+      alert.classList.remove('hidden');
+      return;
+    }
+    buktiIsi = url;
+  }
+
+  const catatan = document.getElementById('catatanMandiri').value.trim();
+
+  UI.btnLoading(btn, 'Mengirim…');
+  const res = await fetch(NAKULA_CONFIG.SUPABASE_URL + '/functions/v1/nakula-presensi', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': NAKULA_CONFIG.ANON_KEY },
+    body: JSON.stringify({
+      token: Api.getToken(),
+      pertemuan_id: Number(pertemuanId),
+      bukti_jenis: mandiriJenis,
+      bukti_isi: buktiIsi,
+      bukti_meta: buktiMeta,
+      catatan,
+    }),
+  }).then((r) => r.json());
+
+  UI.btnReset(btn);
+
+  if (!res.ok) {
+    alert.textContent = res.error || 'Gagal mengirim.';
+    alert.classList.remove('hidden');
+    return;
+  }
+
+  const label = res.data.status === 'tepat_waktu' ? 'Tepat waktu' : 'Terlambat';
+  document.getElementById('suksesDesc').textContent =
+    `Bukti belajar terkirim! Status: ${label} · ${res.data.poin} poin.`;
+  showStage('stageSukses');
+  UI.sukses('Berhasil!');
+}
 </script>
 </body>
 </html>
