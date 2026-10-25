@@ -528,6 +528,31 @@
   }
   .alert-error { background: var(--danger-soft); color: var(--danger); border: 1px solid rgba(185,28,28,.2); }
   .alert.hidden { display: none; }
+
+  /* ═══════════════════════════════════════════
+     BADGE MODE KEGIATAN (tatap_muka / belajar_mandiri)
+     ═══════════════════════════════════════════ */
+  .mode-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    margin-top: 5px;
+    margin-left: 4px;
+  }
+  .mode-badge.tatap {
+    background: var(--border);
+    color: var(--muted);
+  }
+  .mode-badge.mandiri {
+    background: rgba(201,169,97,.2);
+    color: #78350F;
+    border: 1px solid rgba(201,169,97,.4);
+  }
 </style>
 </head>
 <body class="admin-body">
@@ -1360,6 +1385,21 @@ async function bukaForm(pertemuan) {
           </select>
         </div>
 
+        <div class="field" style="margin-top:12px;">
+          <label class="label">Mode Kegiatan</label>
+          <select id="fMode" class="input">
+            <option value="tatap_muka" ${(p.mode_kegiatan || 'tatap_muka') === 'tatap_muka' ? 'selected' : ''}>
+              🏫 Tatap Muka (selfie + GPS)
+            </option>
+            <option value="belajar_mandiri" ${p.mode_kegiatan === 'belajar_mandiri' ? 'selected' : ''}>
+              📚 Belajar Mandiri (kumpulkan bukti)
+            </option>
+          </select>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;font-weight:600;line-height:1.5;">
+            <strong>Belajar Mandiri</strong>: guru tidak presensi fisik — mereka kumpulkan refleksi/foto/link sebagai bukti belajar. Cocok untuk kegiatan yang diganti menjadi tugas mandiri.
+          </div>
+        </div>
+
         <div id="formAlert" class="alert alert-error hidden"></div>
       </div>
 
@@ -1426,6 +1466,7 @@ async function bukaForm(pertemuan) {
       narasumber_user_id: narsumUserId,
       narasumber_nama: narsumNama || null,
       status: overlay.querySelector('#fStatus').value,
+      mode_kegiatan: overlay.querySelector('#fMode').value,
     };
 
     if (!payload.judul) {
