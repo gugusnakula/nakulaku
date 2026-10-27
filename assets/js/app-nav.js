@@ -192,3 +192,17 @@ if (backBtn) backBtn.style.display = 'none';
 
 header.insertBefore(hamburger, header.firstChild);
 })();
+
+// ═══════════════════════════════════════════════
+// AUTO-LOAD PWA BOOTSTRAP
+// ═══════════════════════════════════════════════
+(function () {
+  if (document.querySelector('script[data-pwa]')) return;
+  const self = document.currentScript;
+  if (!self || !self.src) return;
+  const s = document.createElement('script');
+  s.src = self.src.replace(/app-nav\.js.*$/i, 'pwa.js');
+  s.dataset.pwa = '1';
+  s.defer = true;
+  document.head.appendChild(s);
+})();
