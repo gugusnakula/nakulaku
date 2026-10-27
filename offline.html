@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#611329" />
+<title>Offline — NAKULAKU</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/nakula.css" />
+<style>
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: var(--bg);
+  }
+  .offline-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 24px;
+    padding: 36px 28px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 12px 40px rgba(125,29,58,.08);
+  }
+  .offline-icon {
+    width: 90px; height: 90px;
+    border-radius: 26px;
+    background: linear-gradient(135deg, #4A0D1F 0%, #7D1D3A 100%);
+    color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 22px;
+    box-shadow: 0 8px 24px rgba(97,19,41,.28);
+    font-size: 42px;
+    font-weight: 800;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .offline-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--maroon);
+    margin-bottom: 8px;
+  }
+  .offline-desc {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 24px;
+  }
+  .offline-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 13px 24px;
+    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-mid) 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 6px 16px rgba(125,29,58,.25);
+    transition: all .2s;
+    width: 100%;
+  }
+  .offline-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(125,29,58,.35);
+  }
+  .offline-hint {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    color: var(--muted-soft);
+    margin-top: 18px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="offline-card">
+  <div class="offline-icon">N</div>
+  <h1 class="offline-title">Tidak Ada Koneksi</h1>
+  <p class="offline-desc">
+    Sepertinya Anda sedang offline. Periksa koneksi internet Anda, lalu coba lagi.
+  </p>
+  <a href="beranda.html" class="offline-btn">🔄 Coba Lagi</a>
+  <div class="offline-hint">
+    Halaman yang pernah dibuka tetap bisa diakses. Data baru memerlukan koneksi internet.
+  </div>
+</div>
+
+</body>
+</html>
