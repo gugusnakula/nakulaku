@@ -13,19 +13,8 @@
   "lang": "id",
   "dir": "ltr",
   "categories": ["education", "productivity"],
+  "prefer_related_applications": false,
   "icons": [
-    {
-      "src": "assets/img/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "assets/img/icon-maskable.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "maskable"
-    },
     {
       "src": "assets/img/icon-192.png",
       "sizes": "192x192",
@@ -39,9 +28,27 @@
       "purpose": "any"
     },
     {
+      "src": "assets/img/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
       "src": "assets/img/icon-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/img/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
       "purpose": "maskable"
     }
   ],
@@ -51,18 +58,39 @@
       "short_name": "Presensi",
       "description": "Buka beranda & presensi terdekat",
       "url": "./beranda.html",
-      "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "assets/img/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name": "Aktivitas Saya",
       "short_name": "Aktivitas",
       "description": "Rapor digital Anda",
-      "url": "./aktivitas.html"
+      "url": "./aktivitas.html",
+      "icons": [
+        {
+          "src": "assets/img/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name": "Profil",
       "short_name": "Profil",
-      "url": "./profil.html"
+      "description": "Kelola akun & foto profil",
+      "url": "./profil.html",
+      "icons": [
+        {
+          "src": "assets/img/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }
