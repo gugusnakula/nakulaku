@@ -39,7 +39,7 @@
   if (!document.querySelector('link[rel="apple-touch-icon"]')) {
     const l = document.createElement('link');
     l.rel = 'apple-touch-icon';
-    l.href = rootPath + 'assets/img/icon-192.png';
+    l.href = rootPath + 'assets/img/apple-touch-icon.png';
     document.head.appendChild(l);
   }
 
