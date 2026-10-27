@@ -1,0 +1,68 @@
+{
+  "name": "NAKULAKU Ekosistem",
+  "short_name": "NAKULAKU",
+  "description": "LMS penilaian pelatihan guru KKG Gugus Nakula, Kec. Selogiri",
+  "id": "/nakulaku/",
+  "start_url": "./beranda.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#FCFAF7",
+  "theme_color": "#611329",
+  "lang": "id",
+  "dir": "ltr",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "assets/img/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/img/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/img/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Presensi",
+      "short_name": "Presensi",
+      "description": "Buka beranda & presensi terdekat",
+      "url": "./beranda.html",
+      "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Aktivitas Saya",
+      "short_name": "Aktivitas",
+      "description": "Rapor digital Anda",
+      "url": "./aktivitas.html"
+    },
+    {
+      "name": "Profil",
+      "short_name": "Profil",
+      "url": "./profil.html"
+    }
+  ]
+}
