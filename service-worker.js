@@ -8,7 +8,7 @@
 //   - Lainnya                        → Network Only
 // ═══════════════════════════════════════════════
 
-const VERSION = 'nakulaku-v1.0.5';          // ⬅️ bump saat deploy update
+const VERSION = 'nakulaku-v1.0.6';          // ⬅️ bump saat deploy update
 const SHELL_CACHE = `shell-${VERSION}`;
 const PAGE_CACHE  = `page-${VERSION}`;
 const IMG_CACHE   = `img-${VERSION}`;
