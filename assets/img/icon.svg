@@ -1,25 +1,85 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
+    <!-- Deep maroon diagonal gradient -->
     <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#4A0D1F"/>
-      <stop offset="100%" stop-color="#9B2649"/>
+      <stop offset="0%" stop-color="#2D0612"/>
+      <stop offset="50%" stop-color="#4A0D1F"/>
+      <stop offset="100%" stop-color="#7D1D3A"/>
     </linearGradient>
-    <radialGradient id="glow" cx="0.8" cy="0.15" r="0.5">
-      <stop offset="0%" stop-color="#C9A961" stop-opacity="0.4"/>
+
+    <!-- Warm gold glow from top-right -->
+    <radialGradient id="glow" cx="0.8" cy="0.18" r="0.55">
+      <stop offset="0%" stop-color="#C9A961" stop-opacity="0.42"/>
+      <stop offset="55%" stop-color="#C9A961" stop-opacity="0.06"/>
       <stop offset="100%" stop-color="#C9A961" stop-opacity="0"/>
     </radialGradient>
+
+    <!-- Vignette for corners -->
+    <radialGradient id="vignette" cx="0.5" cy="0.5" r="0.75">
+      <stop offset="55%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.4"/>
+    </radialGradient>
+
+    <!-- Soft gold halo behind N -->
+    <radialGradient id="nHalo" cx="0.5" cy="0.5" r="0.35">
+      <stop offset="0%" stop-color="#C9A961" stop-opacity="0.18"/>
+      <stop offset="70%" stop-color="#C9A961" stop-opacity="0.03"/>
+      <stop offset="100%" stop-color="#C9A961" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Rich 3-stop gold (metallic look) -->
+    <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F7E9BE"/>
+      <stop offset="40%" stop-color="#D4B76A"/>
+      <stop offset="65%" stop-color="#C9A961"/>
+      <stop offset="100%" stop-color="#8B7534"/>
+    </linearGradient>
+
+    <!-- Premium drop shadow -->
+    <filter id="shadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="4" stdDeviation="7" flood-color="#1A0410" flood-opacity="0.65"/>
+    </filter>
   </defs>
+
+  <!-- LAYER 1: Base maroon gradient -->
   <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+
+  <!-- LAYER 2: Warm glow top-right -->
   <rect width="512" height="512" rx="112" fill="url(#glow)"/>
-  <circle cx="256" cy="256" r="140" fill="none" stroke="#C9A961" stroke-width="18"/>
-  <text
-    x="256" y="316"
-    font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif"
-    font-size="200"
-    font-weight="800"
-    text-anchor="middle"
-    fill="#C9A961"
-  >N</text>
-  <circle cx="416" cy="112" r="36" fill="#C9A961"/>
-  <circle cx="416" cy="112" r="36" fill="none" stroke="#4A0D1F" stroke-width="6" opacity="0.3"/>
+
+  <!-- LAYER 3: Vignette corners -->
+  <rect width="512" height="512" rx="112" fill="url(#vignette)"/>
+
+  <!-- LAYER 4: Inner border highlight (premium depth) -->
+  <rect x="1.5" y="1.5" width="509" height="509" rx="110.5"
+        fill="none" stroke="#F7E9BE" stroke-width="1.2" opacity="0.22"/>
+
+  <!-- LAYER 5: Soft halo behind N -->
+  <circle cx="256" cy="256" r="200" fill="url(#nHalo)"/>
+
+  <!-- LAYER 6: N monogram (gold, premium) -->
+  <text x="256" y="316"
+        font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="188"
+        font-weight="800"
+        text-anchor="middle"
+        fill="url(#goldGrad)"
+        letter-spacing="-8"
+        filter="url(#shadow)">N</text>
+
+  <!-- LAYER 7: Corner badge — gold circle with checkmark -->
+  <g filter="url(#shadow)">
+    <circle cx="408" cy="104" r="44" fill="url(#goldGrad)"/>
+    <circle cx="408" cy="104" r="44" fill="none"
+            stroke="#2D0612" stroke-width="3" opacity="0.55"/>
+    <circle cx="408" cy="104" r="44" fill="none"
+            stroke="#F7E9BE" stroke-width="1.2" opacity="0.7"/>
+    <path d="M 390 102 L 403 116 L 428 86"
+          stroke="#2D0612"
+          stroke-width="9"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          fill="none"
+          opacity="0.85"/>
+  </g>
 </svg>
