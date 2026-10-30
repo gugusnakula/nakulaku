@@ -1088,3 +1088,40 @@ body.app-nav-active .page { padding-bottom: calc(24px + env(safe-area-inset-bott
   background: var(--maroon-dark);
   box-shadow: 0 6px 16px rgba(125,29,58,.25);
 }
+/* ═══════════════════════════════════════════════
+   HEADER ALIGNMENT FIX — rata kiri konsisten
+   Override default center agar semua header
+   judul + deskripsi rata kiri dekat hamburger.
+   ═══════════════════════════════════════════════ */
+
+/* ── Header guru/KS/public ── */
+.app-header-brand {
+  justify-content: flex-start;
+}
+.app-header-text,
+.app-header-title,
+.app-header-sub {
+  text-align: left;
+}
+
+/* ── Header admin ── */
+.admin-header-left {
+  justify-content: flex-start;
+}
+.admin-header-title,
+.admin-header-title-1,
+.admin-header-title-2 {
+  text-align: left;
+}
+
+/* ── Header KS (jika ada) ── */
+.ks-header-title,
+.ks-header-sub {
+  text-align: left;
+}
+
+/* ── Desktop topbar (judul halaman) ── */
+.desktop-topbar h2,
+.admin-topbar-title {
+  text-align: left;
+}
