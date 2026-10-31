@@ -6,9 +6,10 @@
 //   - HTML                           → Network First (fresh, fallback cache)
 //   - CSS/JS/Font/Icon               → Cache First
 //   - Lainnya                        → Network Only
+// bump 2026-10-31: header alignment fix
 // ═══════════════════════════════════════════════
 
-const VERSION = 'nakulaku-v1.0.6';          // ⬅️ bump saat deploy update
+const VERSION = 'nakulaku-v1.0.8';          // ⬅️ bump saat deploy update
 const SHELL_CACHE = `shell-${VERSION}`;
 const PAGE_CACHE  = `page-${VERSION}`;
 const IMG_CACHE   = `img-${VERSION}`;

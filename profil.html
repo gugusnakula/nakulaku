@@ -235,14 +235,13 @@
 
 <!-- MOBILE HEADER (Otomatis tersembunyi di Desktop) -->
 <header class="app-header">
-  <div class="app-header-brand">
-    <!-- Di mobile, tombol back diganti otomatis jadi hamburger oleh app-nav.js -->
+  <div class="app-header-brand" style="justify-content:flex-start;">
     <a href="beranda.html" class="header-btn" style="text-decoration:none;">
       <span data-icon="chevronLeft"></span>
     </a>
-    <div class="app-header-text">
-      <div class="app-header-title">Profil Saya</div>
-      <div class="app-header-sub">NAKULAKU</div>
+    <div class="app-header-text" style="text-align:left;">
+      <div class="app-header-title" style="text-align:left;">Profil Saya</div>
+      <div class="app-header-sub" style="text-align:left;">NAKULAKU</div>
     </div>
   </div>
   <button class="header-btn" data-act="logout" aria-label="Keluar">
@@ -289,7 +288,7 @@
 
     <!-- TOPBAR (Desktop) -->
     <div class="desktop-topbar">
-      <h2>Profil Saya</h2>
+      <h2 style="text-align:left;">Profil Saya</h2>
       <div style="display:flex;align-items:center;gap:10px;">
         <div class="user-chip" id="userChipDesktop"></div>
         <button class="btn-icon" data-act="logout" aria-label="Keluar">
