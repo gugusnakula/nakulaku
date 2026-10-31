@@ -71,3 +71,72 @@
       .catch((err) => console.warn('[PWA] SW gagal:', err));
   });
 })();
+// ═══════════════════════════════════════════════
+// FORCE HEADER RATA KIRI (mobile + desktop)
+// Dijalankan setelah app-nav.js untuk menang override
+// ═══════════════════════════════════════════════
+(function fixHeaderAlignment() {
+  function applyFix() {
+    // ── Mobile header ──
+    const appHeader = document.querySelector('.app-header');
+    if (appHeader) {
+      appHeader.style.justifyContent = 'space-between';
+      appHeader.style.textAlign = 'left';
+    }
+
+    const brand = document.querySelector('.app-header-brand');
+    if (brand) {
+      brand.style.justifyContent = 'flex-start';
+      brand.style.textAlign = 'left';
+      brand.style.flex = '1';
+      brand.style.minWidth = '0';
+    }
+
+    const text = document.querySelector('.app-header-text');
+    if (text) {
+      text.style.textAlign = 'left';
+      text.style.alignItems = 'flex-start';
+      text.style.flex = '1';
+      text.style.minWidth = '0';
+      text.style.display = 'flex';
+      text.style.flexDirection = 'column';
+    }
+
+    document.querySelectorAll('.app-header-title, .app-header-sub').forEach(el => {
+      el.style.textAlign = 'left';
+      el.style.width = '100%';
+    });
+
+    // ── Admin header ──
+    const adminLeft = document.querySelector('.admin-header-left');
+    if (adminLeft) {
+      adminLeft.style.justifyContent = 'flex-start';
+      adminLeft.style.textAlign = 'left';
+    }
+    document.querySelectorAll('.admin-header-title, .admin-header-title-1, .admin-header-title-2').forEach(el => {
+      el.style.textAlign = 'left';
+    });
+
+    // ── Desktop topbar ──
+    document.querySelectorAll('.desktop-topbar h1, .desktop-topbar h2, .desktop-topbar h3, .admin-topbar-title').forEach(el => {
+      el.style.textAlign = 'left';
+    });
+  }
+
+  // Jalan segera
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyFix);
+  } else {
+    applyFix();
+  }
+
+  // Jalan lagi setelah delay (kalau app-nav.js inject header belakangan)
+  setTimeout(applyFix, 100);
+  setTimeout(applyFix, 500);
+
+  // Jalan lagi setiap kali ada mutation (kalau app-nav.js re-render)
+  const observer = new MutationObserver(() => {
+    applyFix();
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+})();
