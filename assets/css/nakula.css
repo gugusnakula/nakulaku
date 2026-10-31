@@ -1125,3 +1125,30 @@ body.app-nav-active .page { padding-bottom: calc(24px + env(safe-area-inset-bott
 .admin-topbar-title {
   text-align: left;
 }
+/* ═══════════════════════════════════════════════
+   EXTRA: Custom header class rata kiri
+   Cover halaman yang pakai class selain .app-header
+   ═══════════════════════════════════════════════ */
+.page-header,
+.page-header-text,
+.page-header-title,
+.page-header-sub,
+.hero-header,
+.hero-header-text,
+.hero-header-title,
+.hero-header-sub,
+.detail-header,
+.detail-header-text,
+.detail-header-title,
+.detail-header-sub,
+.header-title,
+.header-sub,
+.header-text {
+  text-align: left;
+}
+
+.page-header,
+.hero-header,
+.detail-header {
+  justify-content: flex-start;
+}
