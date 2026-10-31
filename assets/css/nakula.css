@@ -1152,3 +1152,39 @@ body.app-nav-active .page { padding-bottom: calc(24px + env(safe-area-inset-bott
 .detail-header {
   justify-content: flex-start;
 }
+
+/* ═══════════════════════════════════════════════
+   BULLETPROOF HEADER — override semua
+   ═══════════════════════════════════════════════ */
+.app-header-brand {
+  justify-content: flex-start !important;
+}
+.app-header-text,
+.app-header-title,
+.app-header-sub {
+  text-align: left !important;
+}
+
+.admin-header-left {
+  justify-content: flex-start !important;
+}
+.admin-header-title,
+.admin-header-title-1,
+.admin-header-title-2 {
+  text-align: left !important;
+}
+
+.desktop-topbar,
+.desktop-topbar h1,
+.desktop-topbar h2,
+.desktop-topbar h3,
+.admin-topbar,
+.admin-topbar h1,
+.admin-topbar h2,
+.admin-topbar-title {
+  text-align: left !important;
+}
+
+.app-header-text {
+  align-items: flex-start !important;
+}
