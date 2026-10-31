@@ -9,7 +9,7 @@
 // bump 2026-10-31: header alignment fix
 // ═══════════════════════════════════════════════
 
-const VERSION = 'nakulaku-v1.0.8';          // ⬅️ bump saat deploy update
+const VERSION = 'nakulaku-v1.0.9';          // ⬅️ bump saat deploy update
 const SHELL_CACHE = `shell-${VERSION}`;
 const PAGE_CACHE  = `page-${VERSION}`;
 const IMG_CACHE   = `img-${VERSION}`;
