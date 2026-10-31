@@ -186,11 +186,24 @@ hamburger.className = 'hamburger-btn';
 hamburger.innerHTML = Icons.get('menu');
 hamburger.onclick = openDrawer;
 
-// Sembunyikan tombol back/chevron kiri lama
-const backBtn = header.querySelector('a.header-btn[href="beranda.html"]');
+// ✅ FIX 1: Sembunyikan semua back button (termasuk ../beranda.html di subfolder)
+const backBtn = header.querySelector('.app-header-brand > a.header-btn');
 if (backBtn) backBtn.style.display = 'none';
 
-header.insertBefore(hamburger, header.firstChild);
+// ✅ FIX 2: Insert hamburger ke DALAM .app-header-brand, BUKAN ke header
+// Agar flex space-between tetap 2 kolom: [☰ + Judul] ... [Logout]
+const brandWrap = header.querySelector('.app-header-brand');
+if (brandWrap) {
+  brandWrap.insertBefore(hamburger, brandWrap.firstChild);
+} else {
+  // Fallback kalau tidak ada brand wrapper
+  header.insertBefore(hamburger, header.firstChild);
+  header.style.justifyContent = 'flex-start';
+  header.style.gap = '12px';
+  // Dorong elemen terakhir (logout) ke kanan
+  const lastChild = header.lastElementChild;
+  if (lastChild && lastChild !== hamburger) lastChild.style.marginLeft = 'auto';
+}
 })();
 
 // ═══════════════════════════════════════════════
