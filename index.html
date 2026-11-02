@@ -2116,11 +2116,25 @@
 </body>
 </html>
 <style>
+  /* Mencegah teks terblok */
   .stats-band, .stat-card, .stat-value, .stat-label, .stat-value-suffix {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
     cursor: default;
+  }
+
+  /* Menghilangkan kotak putih (bocor dari nakula.css) */
+  .stats-band .stat-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  /* Mengembalikan warna teks label menjadi putih transparan */
+  .stats-band .stat-label {
+    color: rgba(255, 255, 255, 0.75) !important;
   }
 </style>
